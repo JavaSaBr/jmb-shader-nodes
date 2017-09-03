@@ -1,0 +1,189 @@
+import java.nio.file.Files
+import java.nio.file.Paths
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0-RC2'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'idea'
+apply plugin: 'org.junit.platform.gradle.plugin'
+
+group = 'com.spaceshift'
+version = '1.0.0'
+
+ext.artifactId = 'shader-nodes'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+compileTestJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    options.compilerArgs += '-parameters'
+}
+
+ext.junitPlatformVersion = "1.0.0-M5"
+ext.junitJupiterVersion = "5.0.0-M5"
+ext.log4jVersion = '2.6.2'
+
+junitPlatform {
+    filters {
+        engines {
+        }
+        tags {
+        }
+    }
+    logManager 'org.apache.logging.log4j.jul.LogManager'
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven { url 'https://jitpack.io' }
+}
+
+configurations {
+    pluginDependences
+}
+
+dependencies {
+    compile 'com.github.JavaSaBr:jME3-SpaceShift-Editor:develop-SNAPSHOT'
+
+    testCompile "org.junit.platform:junit-platform-commons:$junitPlatformVersion"
+    testRuntime "org.junit.platform:junit-platform-engine:$junitPlatformVersion"
+
+    testCompile "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion"
+
+    testRuntime "org.apache.logging.log4j:log4j-core:$log4jVersion"
+    testRuntime "org.apache.logging.log4j:log4j-jul:$log4jVersion"
+
+    // Only needed to run tests in an (IntelliJ) IDE(A) that bundles an older version
+    testCompile "org.junit.platform:junit-platform-launcher:$junitPlatformVersion"
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+task cleanPluginFolders(type: Delete) {
+    doFirst {
+
+        def projectFolder = Paths.get("$buildDir").getParent()
+        def embeddedPluginsFolder = projectFolder.resolve("embedded-plugins")
+        def deployPlugin = projectFolder.resolve("deploy-plugin")
+
+        if (Files.exists(embeddedPluginsFolder)) {
+            GFileUtils.deleteDirectory(embeddedPluginsFolder.toFile())
+        }
+
+        if (Files.exists(deployPlugin)) {
+            GFileUtils.deleteDirectory(deployPlugin.toFile())
+        }
+    }
+}
+
+task createPluginFolders(dependsOn: 'cleanPluginFolders') {
+    doFirst {
+
+        def projectFolder = Paths.get("$buildDir").getParent()
+        def embeddedPluginsFolder = projectFolder.resolve("embedded-plugins")
+
+        Files.createDirectory(embeddedPluginsFolder)
+
+        def pluginFolder = embeddedPluginsFolder.resolve(String.valueOf(artifactId))
+
+        Files.createDirectory(pluginFolder)
+
+        def configuration = configurations.pluginDependences
+        def dependencies = configuration.dependencies
+
+        if (dependencies.isEmpty()) {
+            return
+        }
+
+        def libsFolder = pluginFolder.resolve("libs")
+
+        Files.createDirectory(libsFolder)
+    }
+}
+
+task copyPluginDependences(type: Copy, dependsOn: ['install', 'createPluginFolders']) {
+
+    def configuration = configurations.pluginDependences
+    def dependencies = configuration.dependencies
+
+    if (dependencies.isEmpty()) {
+        return
+    }
+
+    def projectFolder = Paths.get("$buildDir").getParent()
+    def embeddedPluginsFolder = projectFolder.resolve("embedded-plugins")
+    def pluginFolder = embeddedPluginsFolder.resolve(String.valueOf(artifactId))
+    def libsFolder = pluginFolder.resolve("libs")
+
+    into libsFolder.toString()
+    from configuration
+}
+
+task preparePlugin(type: Copy, dependsOn: 'copyPluginDependences') {
+
+    def projectFolder = Paths.get("$buildDir").getParent()
+    def embeddedPluginsFolder = projectFolder.resolve("embedded-plugins")
+    def pluginFolder = embeddedPluginsFolder.resolve(String.valueOf(artifactId))
+
+    from jar
+    into pluginFolder.toString()
+}
+
+task deployPlugin(type: Zip, dependsOn: 'preparePlugin') {
+    doFirst {
+
+        def projectFolder = Paths.get("$buildDir").getParent()
+        def deployPluginFolder = projectFolder.resolve("deploy-plugin")
+
+        if (!Files.exists(deployPluginFolder)) {
+            Files.createDirectory(deployPluginFolder)
+        }
+    }
+
+    def projectFolder = Paths.get("$buildDir").getParent()
+    def embeddedPluginsFolder = projectFolder.resolve("embedded-plugins")
+    def pluginFolder = embeddedPluginsFolder.resolve(String.valueOf(artifactId))
+    def deployPluginFolder = projectFolder.resolve("deploy-plugin")
+
+    from pluginFolder.toString()
+    destinationDir deployPluginFolder.toFile()
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.1'
+}
+
+defaultTasks 'install'
+
+// To specify a license in the pom:
+install {
+    repositories.mavenInstaller {
+        pom.version = version
+        pom.artifactId = artifactId
+    }
+}
