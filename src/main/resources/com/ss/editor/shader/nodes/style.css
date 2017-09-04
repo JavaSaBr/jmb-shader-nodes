@@ -53,9 +53,17 @@
 
 .shader-node-parameter-socket {
     -fx-background-color: -var-font-color;
-    -fx-background-radius: 8px;
-    -fx-min-width: 8px;
-    -fx-min-height: 8px;
+    -fx-background-radius: 10px;
+    -fx-border-width: 2px;
+    -fx-border-color: -var-border-color;
+    -fx-border-radius: 5px;
+    -fx-min-width: 10px;
+    -fx-min-height: 10px;
     -fx-max-height: -fx-min-height;
     -fx-max-width: -fx-min-width;
+}
+
+.shader-node-line {
+    -fx-stroke: -var-font-color;
+    -fx-fill: transparent;
 }
