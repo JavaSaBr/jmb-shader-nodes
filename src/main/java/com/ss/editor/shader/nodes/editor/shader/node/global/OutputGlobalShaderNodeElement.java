@@ -4,6 +4,7 @@ import com.jme3.material.ShaderGenerationInfo;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.InputShaderNodeParameter;
+import com.ss.editor.shader.nodes.editor.shader.node.parameter.ShaderNodeParameter;
 import com.ss.rlib.ui.util.FXUtils;
 import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +28,12 @@ public class OutputGlobalShaderNodeElement extends GlobalShaderNodeElement {
     }
 
     @Override
+    public ShaderNodeParameter parameterFor(final @NotNull ShaderNodeVariable variable, final boolean output) {
+        if (!output) return null;
+        return super.parameterFor(variable, output);
+    }
+
+    @Override
     protected void fillParameters(@NotNull final VBox container) {
         super.fillParameters(container);
 
@@ -34,10 +41,10 @@ public class OutputGlobalShaderNodeElement extends GlobalShaderNodeElement {
         final ShaderNodeVariable vertexGlobal = info.getVertexGlobal();
         final List<ShaderNodeVariable> fragmentGlobals = info.getFragmentGlobals();
 
-        FXUtils.addToPane(new InputShaderNodeParameter(vertexGlobal), container);
+        FXUtils.addToPane(new InputShaderNodeParameter(this, vertexGlobal), container);
 
         for (final ShaderNodeVariable fragmentGlobal : fragmentGlobals) {
-            FXUtils.addToPane(new InputShaderNodeParameter(fragmentGlobal), container);
+            FXUtils.addToPane(new InputShaderNodeParameter(this, fragmentGlobal), container);
         }
     }
 }

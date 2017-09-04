@@ -2,7 +2,9 @@ package com.ss.editor.shader.nodes.editor.shader.node;
 
 import static com.ss.editor.shader.nodes.ShaderNodesEditorPlugin.CSS_SHADER_NODE;
 import static com.ss.editor.shader.nodes.ShaderNodesEditorPlugin.CSS_SHADER_NODE_HEADER;
+import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
+import com.ss.editor.shader.nodes.editor.shader.node.parameter.ShaderNodeParameter;
 import com.ss.rlib.ui.util.FXUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.BooleanPropertyBase;
@@ -107,8 +109,23 @@ public class ShaderNodeElement<T> extends VBox {
     /**
      * @return the shader object.
      */
-    protected @NotNull T getObject() {
+    public @NotNull T getObject() {
         return object;
+    }
+
+    /**
+     * Try to find parameter of the variable.
+     *
+     * @param variable the variable.
+     * @param output   true if the variable is output.
+     * @return the parameter or null.
+     */
+    public ShaderNodeParameter parameterFor(@NotNull final ShaderNodeVariable variable, final boolean output) {
+        return parametersContainer.getChildren().stream()
+                .filter(ShaderNodeParameter.class::isInstance)
+                .map(ShaderNodeParameter.class::cast)
+                .filter(parameter -> parameter.getVariable().getName().equals(variable.getName()))
+                .findAny().orElse(null);
     }
 
     /**

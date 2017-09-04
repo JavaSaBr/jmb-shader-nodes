@@ -1,13 +1,25 @@
 package com.ss.editor.shader.nodes.editor.shader;
 
 import static com.ss.editor.shader.nodes.ShaderNodesEditorPlugin.CSS_SHADER_NODES_ROOT;
+import static com.ss.rlib.util.ObjectUtils.notNull;
+import static java.util.stream.Collectors.toList;
 import com.jme3.material.ShaderGenerationInfo;
 import com.jme3.material.TechniqueDef;
 import com.jme3.shader.ShaderNode;
+import com.jme3.shader.ShaderNodeVariable;
+import com.jme3.shader.VariableMapping;
+import com.ss.editor.manager.ExecutorManager;
 import com.ss.editor.shader.nodes.editor.shader.node.ShaderNodeElement;
+import com.ss.editor.shader.nodes.editor.shader.node.VariableLine;
 import com.ss.editor.shader.nodes.editor.shader.node.global.InputGlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.global.OutputGlobalShaderNodeElement;
-import com.ss.editor.shader.nodes.editor.shader.node.main.MainShaderNode;
+import com.ss.editor.shader.nodes.editor.shader.node.main.AttributeShaderNodeElement;
+import com.ss.editor.shader.nodes.editor.shader.node.main.MainShaderNodeElement;
+import com.ss.editor.shader.nodes.editor.shader.node.main.MaterialShaderNodeElement;
+import com.ss.editor.shader.nodes.editor.shader.node.main.WorldShaderNodeElement;
+import com.ss.editor.shader.nodes.editor.shader.node.parameter.ShaderNodeParameter;
+import com.ss.rlib.logging.Logger;
+import com.ss.rlib.logging.LoggerManager;
 import com.ss.rlib.ui.util.FXUtils;
 import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
@@ -22,7 +34,9 @@ import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * The container of all shader nodes.
@@ -31,7 +45,13 @@ import java.util.List;
  */
 public class ShaderNodesContainer extends ScrollPane {
 
+    @NotNull
+    private static final Logger LOGGER = LoggerManager.getLogger(ShaderNodesContainer.class);
+
     private static final double ZOOM_INTENSITY = 0.0005;
+
+    @NotNull
+    private static final ExecutorManager EXECUTOR_MANAGER = ExecutorManager.getInstance();
 
     /**
      * The root component to place all nodes.
@@ -60,6 +80,7 @@ public class ShaderNodesContainer extends ScrollPane {
         this.root = new Pane();
         this.root.prefHeightProperty().bind(heightProperty());
         this.root.prefWidthProperty().bind(widthProperty());
+        this.root.widthProperty().addListener((observable, oldValue, newValue) -> invalidateLayout());
         this.zoomNode = new Group(root);
         this.zoomNode.setOnScroll(this::processEvent);
         this.scaleValue = 1;
@@ -79,6 +100,31 @@ public class ShaderNodesContainer extends ScrollPane {
     }
 
     /**
+     * Reset all layouts.
+     */
+    private void invalidateLayout() {
+        EXECUTOR_MANAGER.addFXTask(() -> root.getChildren().stream()
+                .filter(ShaderNodeElement.class::isInstance)
+                .forEach(this::resetLayout));
+    }
+
+    /**
+     * Rest layout of the node.
+     *
+     * @param node the node.
+     */
+    private void resetLayout(@NotNull final Node node) {
+        final double layoutX = node.getLayoutX();
+        final double layoutY = node.getLayoutY();
+        node.setLayoutX(-1);
+        node.setLayoutY(-1);
+        node.setLayoutX(layoutX);
+        node.setLayoutY(layoutY);
+        node.setLayoutX(ThreadLocalRandom.current().nextInt(600));
+        node.setLayoutY(ThreadLocalRandom.current().nextInt(600));
+    }
+
+    /**
      * Request to select the node.
      *
      * @param requester the node to select.
@@ -87,6 +133,7 @@ public class ShaderNodesContainer extends ScrollPane {
 
         final ObservableList<Node> children = root.getChildren();
         children.stream().filter(node -> node != requester)
+                .filter(ShaderNodeElement.class::isInstance)
                 .map(node -> (ShaderNodeElement<?>) node)
                 .forEach(element -> element.setSelected(false));
 
@@ -113,13 +160,112 @@ public class ShaderNodesContainer extends ScrollPane {
         final ShaderGenerationInfo shaderGenerationInfo = techniqueDef.getShaderGenerationInfo();
         final Pane root = getRoot();
 
+        final List<ShaderNodeVariable> uniforms = new ArrayList<>();
+        uniforms.addAll(shaderGenerationInfo.getFragmentUniforms());
+        uniforms.addAll(shaderGenerationInfo.getVertexUniforms());
+        uniforms.addAll(shaderGenerationInfo.getAttributes());
+
         FXUtils.addToPane(new InputGlobalShaderNodeElement(this, shaderGenerationInfo), root);
         FXUtils.addToPane(new OutputGlobalShaderNodeElement(this, shaderGenerationInfo), root);
 
         final List<ShaderNode> shaderNodes = techniqueDef.getShaderNodes();
 
         for (final ShaderNode shaderNode : shaderNodes) {
-            FXUtils.addToPane(new MainShaderNode(this, shaderNode), root);
+            FXUtils.addToPane(new MainShaderNodeElement(this, shaderNode), root);
+        }
+
+        for (final ShaderNodeVariable variable : uniforms) {
+            final String nameSpace = variable.getNameSpace();
+            if ("MatParam".equals(nameSpace)) {
+                FXUtils.addToPane(new MaterialShaderNodeElement(this, variable), root);
+            } else if ("WorldParam".equals(nameSpace)) {
+                FXUtils.addToPane(new WorldShaderNodeElement(this, variable), root);
+            } else if ("Attr".equals(nameSpace)) {
+                FXUtils.addToPane(new AttributeShaderNodeElement(this, variable), root);
+            }
+        }
+
+        refreshLines();
+    }
+
+    /**
+     * Get the current technique.
+     *
+     * @return the current technique.
+     */
+    private @NotNull TechniqueDef getTechniqueDef() {
+        return notNull(techniqueDef);
+    }
+
+    /**
+     * Try to find shader node parameter for the variable.
+     *
+     * @param variable the variable.
+     * @param output   true if the variable is output.
+     * @return the parameter or null.
+     */
+    private @Nullable ShaderNodeParameter findByVariable(@NotNull final ShaderNodeVariable variable, final boolean output) {
+        return root.getChildren().stream()
+                .filter(ShaderNodeElement.class::isInstance)
+                .map(ShaderNodeElement.class::cast)
+                .filter(shaderNodeElement -> shaderNodeElement.parameterFor(variable, output) != null)
+                .map(shaderNodeElement -> shaderNodeElement.parameterFor(variable, output))
+                .findAny().orElse(null);
+    }
+
+    /**
+     * Refresh all lines.
+     */
+    private void refreshLines() {
+
+        final ObservableList<Node> children = root.getChildren();
+        final List<Node> lines = children.stream()
+                .filter(VariableLine.class::isInstance)
+                .collect(toList());
+
+        children.removeAll(lines);
+
+        final List<ShaderNode> shaderNodes = getTechniqueDef().getShaderNodes();
+
+        for (final ShaderNode shaderNode : shaderNodes) {
+
+            final List<VariableMapping> inputMapping = shaderNode.getInputMapping();
+            final List<VariableMapping> outputMapping = shaderNode.getOutputMapping();
+
+            buildLines(children, inputMapping, false);
+            buildLines(children, outputMapping, true);
+        }
+
+        final List<Node> toBack = children.stream()
+                .filter(VariableLine.class::isInstance)
+                .collect(toList());
+        toBack.forEach(Node::toBack);
+    }
+
+    /**
+     * Build relation lines between variables.
+     *
+     * @param children the current children.
+     * @param mappings the mappings.
+     * @param output   true if it's output mapping.
+     */
+    private void buildLines(@NotNull final ObservableList<Node> children, @NotNull final List<VariableMapping> mappings,
+                            final boolean output) {
+
+        for (final VariableMapping variableMapping : mappings) {
+
+            final ShaderNodeVariable leftVariable = variableMapping.getLeftVariable();
+            final ShaderNodeVariable rightVariable = variableMapping.getRightVariable();
+
+            final ShaderNodeParameter leftParameter = findByVariable(leftVariable, output);
+            final ShaderNodeParameter rightParameter = findByVariable(rightVariable, output);
+
+            if (leftParameter == null || rightParameter == null) {
+                LOGGER.warning("not found parameters for " + leftVariable + " and  " + rightVariable);
+                continue;
+            }
+
+            children.add(new VariableLine(rightParameter, leftParameter));
         }
     }
 

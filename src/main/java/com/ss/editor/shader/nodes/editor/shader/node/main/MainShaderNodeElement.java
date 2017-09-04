@@ -7,6 +7,7 @@ import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.editor.shader.node.ShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.InputShaderNodeParameter;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.OutputShaderNodeParameter;
+import com.ss.editor.shader.nodes.editor.shader.node.parameter.ShaderNodeParameter;
 import com.ss.rlib.ui.util.FXUtils;
 import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
@@ -18,15 +19,26 @@ import java.util.List;
  *
  * @author JavaSaBr
  */
-public class MainShaderNode extends ShaderNodeElement<ShaderNode> {
+public class MainShaderNodeElement extends ShaderNodeElement<ShaderNode> {
 
-    public MainShaderNode(@NotNull final ShaderNodesContainer container, @NotNull final ShaderNode object) {
+    public MainShaderNodeElement(@NotNull final ShaderNodesContainer container, @NotNull final ShaderNode object) {
         super(container, object);
     }
 
     @Override
     protected @NotNull String getTitleText() {
         return getObject().getName();
+    }
+
+    @Override
+    public ShaderNodeParameter parameterFor(@NotNull final ShaderNodeVariable variable, final boolean output) {
+
+        final ShaderNode shaderNode = getObject();
+        if (!shaderNode.getName().equals(variable.getNameSpace())) {
+            return null;
+        }
+
+        return super.parameterFor(variable, output);
     }
 
     @Override
@@ -39,11 +51,11 @@ public class MainShaderNode extends ShaderNodeElement<ShaderNode> {
         final List<ShaderNodeVariable> outputs = definition.getOutputs();
 
         for (final ShaderNodeVariable variable : inputs) {
-            FXUtils.addToPane(new InputShaderNodeParameter(variable), container);
+            FXUtils.addToPane(new InputShaderNodeParameter(this, variable), container);
         }
 
         for (final ShaderNodeVariable variable : outputs) {
-            FXUtils.addToPane(new OutputShaderNodeParameter(variable), container);
+            FXUtils.addToPane(new OutputShaderNodeParameter(this, variable), container);
         }
     }
 }

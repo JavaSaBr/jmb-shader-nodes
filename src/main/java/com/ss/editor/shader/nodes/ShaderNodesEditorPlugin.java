@@ -44,6 +44,9 @@ public class ShaderNodesEditorPlugin extends EditorPlugin {
     @NotNull
     public static final String CSS_SHADER_NODE_PARAMETER_SOCKET = "shader-node-parameter-socket";
 
+    @NotNull
+    public static final String CSS_SHADER_NODE_LINE = "shader-node-line";
+
     public ShaderNodesEditorPlugin(@NotNull final PluginContainer pluginContainer) {
         super(pluginContainer);
     }
