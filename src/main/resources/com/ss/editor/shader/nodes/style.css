@@ -5,3 +5,57 @@
     -fx-min-width: 10555px;
     -fx-min-height: 5555px;
 }
+
+.shader-node {
+    -fx-background: -var-button-background-color;
+    -fx-background-color: -fx-background;
+    -fx-background-insets: 0px;
+    -fx-background-radius: 3px;
+    -fx-border-color: -var-border-color;
+    -fx-border-width: 1px;
+    -fx-border-radius: 3px;
+    -fx-padding: 0px 0px 2px 0px;
+}
+
+.shader-node:selected {
+    -fx-border-color: -var-button-hover-border-color;
+    -fx-background: -var-button-hover-background-color;
+}
+
+.shader-node > .header {
+    -fx-background-color: -var-menu-bar-background-color;
+    -fx-background-insets: 0;
+    -fx-background-radius: 2px 2px 0px 0px;
+    -fx-padding: 0px 4px 0px 4px;
+}
+
+.shader-node > .vbox {
+    -fx-alignment: center;
+}
+
+.shader-node-parameter {
+    -fx-spacing: 2px;
+}
+
+.shader-node-input-parameter {
+    -fx-alignment: center-left;
+    -fx-padding: 0px 0px 0px -4px;
+}
+
+.shader-node-output-parameter {
+    -fx-alignment: center-right;
+    -fx-padding: 0px -4px 0px 0px;
+}
+
+.shader-node-parameter > .label {
+    -fx-min-height: 20px;
+}
+
+.shader-node-parameter-socket {
+    -fx-background-color: -var-font-color;
+    -fx-background-radius: 8px;
+    -fx-min-width: 8px;
+    -fx-min-height: 8px;
+    -fx-max-height: -fx-min-height;
+    -fx-max-width: -fx-min-width;
+}

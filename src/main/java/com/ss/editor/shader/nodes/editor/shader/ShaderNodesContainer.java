@@ -1,21 +1,33 @@
 package com.ss.editor.shader.nodes.editor.shader;
 
-import com.ss.editor.shader.nodes.ShaderNodesEditorPlugin;
+import static com.ss.editor.shader.nodes.ShaderNodesEditorPlugin.CSS_SHADER_NODES_ROOT;
+import com.jme3.material.ShaderGenerationInfo;
+import com.jme3.material.TechniqueDef;
+import com.jme3.shader.ShaderNode;
+import com.ss.editor.shader.nodes.editor.shader.node.ShaderNodeElement;
+import com.ss.editor.shader.nodes.editor.shader.node.global.InputGlobalShaderNodeElement;
+import com.ss.editor.shader.nodes.editor.shader.node.global.OutputGlobalShaderNodeElement;
+import com.ss.editor.shader.nodes.editor.shader.node.main.MainShaderNode;
 import com.ss.rlib.ui.util.FXUtils;
+import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * The container of all shader nodes.
  *
- * @author JsavaSaBr
+ * @author JavaSaBr
  */
 public class ShaderNodesContainer extends ScrollPane {
 
@@ -27,10 +39,22 @@ public class ShaderNodesContainer extends ScrollPane {
     @NotNull
     private final Pane root;
 
+    /**
+     * The wrapper of scaled node.
+     */
     @NotNull
     private final Group zoomNode;
 
-    private double scaleValue = 1;
+    /**
+     * The current technique.
+     */
+    @Nullable
+    private TechniqueDef techniqueDef;
+
+    /**
+     * The current scale.
+     */
+    private double scaleValue;
 
     public ShaderNodesContainer() {
         this.root = new Pane();
@@ -38,11 +62,9 @@ public class ShaderNodesContainer extends ScrollPane {
         this.root.prefWidthProperty().bind(widthProperty());
         this.zoomNode = new Group(root);
         this.zoomNode.setOnScroll(this::processEvent);
+        this.scaleValue = 1;
 
-        FXUtils.addClassTo(root, ShaderNodesEditorPlugin.CSS_SHADER_NODES_ROOT);
-
-        hmaxProperty().addListener((observable, oldValue, newValue) -> setHvalue(newValue.doubleValue() / 2));
-        vmaxProperty().addListener((observable, oldValue, newValue) -> setVvalue(newValue.doubleValue() / 2));
+        FXUtils.addClassTo(root, CSS_SHADER_NODES_ROOT);
 
         final VBox centered = new VBox(zoomNode);
         centered.setAlignment(Pos.CENTER);
@@ -51,18 +73,69 @@ public class ShaderNodesContainer extends ScrollPane {
         setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         setContent(centered);
-        setHvalue(getHmax() / 2);
-        setVvalue(getVmax() / 2);
         setFitToHeight(true);
         setFitToWidth(true);
         updateScale();
     }
 
+    /**
+     * Request to select the node.
+     *
+     * @param requester the node to select.
+     */
+    public void requestSelect(@NotNull final ShaderNodeElement<?> requester) {
+
+        final ObservableList<Node> children = root.getChildren();
+        children.stream().filter(node -> node != requester)
+                .map(node -> (ShaderNodeElement<?>) node)
+                .forEach(element -> element.setSelected(false));
+
+        requester.setSelected(true);
+    }
+
+    /**
+     * Get the root component to place all nodes.
+     *
+     * @return the root component to place all nodes.
+     */
+    private @NotNull Pane getRoot() {
+        return root;
+    }
+
+    /**
+     * Show the technique.
+     *
+     * @param techniqueDef the technique.
+     */
+    public void show(@NotNull TechniqueDef techniqueDef) {
+        this.techniqueDef = techniqueDef;
+
+        final ShaderGenerationInfo shaderGenerationInfo = techniqueDef.getShaderGenerationInfo();
+        final Pane root = getRoot();
+
+        FXUtils.addToPane(new InputGlobalShaderNodeElement(this, shaderGenerationInfo), root);
+        FXUtils.addToPane(new OutputGlobalShaderNodeElement(this, shaderGenerationInfo), root);
+
+        final List<ShaderNode> shaderNodes = techniqueDef.getShaderNodes();
+
+        for (final ShaderNode shaderNode : shaderNodes) {
+            FXUtils.addToPane(new MainShaderNode(this, shaderNode), root);
+        }
+    }
+
+    /**
+     * Update scale value.
+     */
     private void updateScale() {
         root.setScaleX(scaleValue);
         root.setScaleY(scaleValue);
     }
 
+    /**
+     * Handle zoom.
+     *
+     * @param event the scroll event.
+     */
     private void processEvent(@NotNull final ScrollEvent event) {
 
         double zoomFactor = event.getDeltaY() * ZOOM_INTENSITY;
@@ -76,7 +149,7 @@ public class ShaderNodesContainer extends ScrollPane {
 
         final double newScale = scaleValue + zoomFactor;
 
-        scaleValue = Math.min(Math.max(newScale, 0.2F), 2F);
+        scaleValue = Math.min(Math.max(newScale, 0.2F), 1F);
 
         updateScale();
 

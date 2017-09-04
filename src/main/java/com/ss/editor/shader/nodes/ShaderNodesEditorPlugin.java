@@ -26,6 +26,24 @@ public class ShaderNodesEditorPlugin extends EditorPlugin {
     @NotNull
     public static final String CSS_SHADER_NODES_ROOT = "shader-nodes-root";
 
+    @NotNull
+    public static final String CSS_SHADER_NODE = "shader-node";
+
+    @NotNull
+    public static final String CSS_SHADER_NODE_HEADER = "header";
+
+    @NotNull
+    public static final String CSS_SHADER_NODE_PARAMETER = "shader-node-parameter";
+
+    @NotNull
+    public static final String CSS_SHADER_NODE_INPUT_PARAMETER = "shader-node-input-parameter";
+
+    @NotNull
+    public static final String CSS_SHADER_NODE_OUTPUT_PARAMETER = "shader-node-output-parameter";
+
+    @NotNull
+    public static final String CSS_SHADER_NODE_PARAMETER_SOCKET = "shader-node-parameter-socket";
+
     public ShaderNodesEditorPlugin(@NotNull final PluginContainer pluginContainer) {
         super(pluginContainer);
     }

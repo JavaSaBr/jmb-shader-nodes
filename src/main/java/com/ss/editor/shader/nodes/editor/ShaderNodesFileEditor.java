@@ -336,6 +336,14 @@ public class ShaderNodesFileEditor extends Advanced3DFileEditor<ShaderNodesEdito
         return notNull(settingsTree);
     }
 
+    /**
+     * @return the shader nodes container.
+     */
+    @FromAnyThread
+    private @NotNull ShaderNodesContainer getShaderNodesContainer() {
+        return notNull(shaderNodesContainer);
+    }
+
     @FXThread
     @Override
     protected void createToolbar(@NotNull final HBox container) {
@@ -477,12 +485,17 @@ public class ShaderNodesFileEditor extends Advanced3DFileEditor<ShaderNodesEdito
             return;
         }
 
-        EXECUTOR_MANAGER.addJMETask(() -> currentMaterial.selectTechnique(newValue, EDITOR.getRenderManager()));
+        final MaterialDef materialDef = getMaterialDef();
+        final List<TechniqueDef> techniqueDefs = materialDef.getTechniqueDefs(newValue);
+
+        getShaderNodesContainer().show(techniqueDefs.get(0));
 
         final ShaderNodesEditorState editorState = getEditorState();
         if (editorState != null) {
             //FIXME
         }
+
+        EXECUTOR_MANAGER.addJMETask(() -> currentMaterial.selectTechnique(newValue, EDITOR.getRenderManager()));
     }
 
     /**
