@@ -63,8 +63,28 @@
     -fx-max-width: -fx-min-width;
 }
 
+.shader-node-parameter-input-socket {
+}
+
+.shader-node-parameter-input-socket:droppable {
+    -fx-background-color: -fx-focus-color;
+}
+
+.shader-node-parameter-output-socket:hover {
+    -fx-background-color: -fx-focus-color;
+}
+
+.shader-node-parameter-output-socket:dragged {
+    -fx-background-color: -fx-focus-color;
+}
+
 .shader-node-line {
     -fx-stroke: -var-font-color;
+    -fx-fill: transparent;
+}
+
+.shader-node-temp-line {
+    -fx-stroke: -fx-focus-color;
     -fx-fill: transparent;
 }
 
