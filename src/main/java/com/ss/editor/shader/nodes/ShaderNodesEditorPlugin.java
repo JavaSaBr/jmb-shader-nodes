@@ -1,6 +1,7 @@
 package com.ss.editor.shader.nodes;
 
 import com.ss.editor.annotation.FromAnyThread;
+import com.ss.editor.manager.FileIconManager;
 import com.ss.editor.plugin.EditorPlugin;
 import com.ss.editor.shader.nodes.editor.ShaderNodesFileEditor;
 import com.ss.editor.ui.component.editor.EditorRegistry;
@@ -24,28 +25,7 @@ import org.jetbrains.annotations.NotNull;
 public class ShaderNodesEditorPlugin extends EditorPlugin {
 
     @NotNull
-    public static final String CSS_SHADER_NODES_ROOT = "shader-nodes-root";
-
-    @NotNull
-    public static final String CSS_SHADER_NODE = "shader-node";
-
-    @NotNull
-    public static final String CSS_SHADER_NODE_HEADER = "header";
-
-    @NotNull
-    public static final String CSS_SHADER_NODE_PARAMETER = "shader-node-parameter";
-
-    @NotNull
-    public static final String CSS_SHADER_NODE_INPUT_PARAMETER = "shader-node-input-parameter";
-
-    @NotNull
-    public static final String CSS_SHADER_NODE_OUTPUT_PARAMETER = "shader-node-output-parameter";
-
-    @NotNull
-    public static final String CSS_SHADER_NODE_PARAMETER_SOCKET = "shader-node-parameter-socket";
-
-    @NotNull
-    public static final String CSS_SHADER_NODE_LINE = "shader-node-line";
+    public static final String PROJECT_FILE_EXTENSION = "j3snm";
 
     public ShaderNodesEditorPlugin(@NotNull final PluginContainer pluginContainer) {
         super(pluginContainer);
@@ -63,5 +43,18 @@ public class ShaderNodesEditorPlugin extends EditorPlugin {
     public void register(@NotNull final EditorRegistry registry) {
         super.register(registry);
         registry.register(ShaderNodesFileEditor.DESCRIPTION);
+    }
+
+    @Override
+    @FromAnyThread
+    public void register(@NotNull final FileIconManager iconManager) {
+        super.register(iconManager);
+        iconManager.register((path, extension) -> {
+            if (PROJECT_FILE_EXTENSION.equals(extension)) {
+                return "com/ss/editor/shader/nodes/icons/vector.svg";
+            } else {
+                return null;
+            }
+        });
     }
 }

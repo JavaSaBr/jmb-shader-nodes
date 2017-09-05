@@ -1,9 +1,10 @@
 package com.ss.editor.shader.nodes.editor.shader.node.parameter;
 
-import static com.ss.editor.shader.nodes.ShaderNodesEditorPlugin.CSS_SHADER_NODE_PARAMETER;
-import static com.ss.editor.shader.nodes.ShaderNodesEditorPlugin.CSS_SHADER_NODE_PARAMETER_SOCKET;
+import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.CSS_SHADER_NODE_PARAMETER;
+import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.CSS_SHADER_NODE_PARAMETER_SOCKET;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.shader.nodes.editor.shader.node.ShaderNodeElement;
+import com.ss.editor.shader.nodes.editor.shader.node.parameter.socket.SocketElement;
 import com.ss.rlib.ui.util.FXUtils;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -15,6 +16,12 @@ import org.jetbrains.annotations.NotNull;
  * @author JavaSaBr
  */
 public class ShaderNodeParameter extends HBox {
+
+    /**
+     * The shader node element.
+     */
+    @NotNull
+    private final ShaderNodeElement<?> nodeElement;
 
     /**
      * The variable.
@@ -40,14 +47,34 @@ public class ShaderNodeParameter extends HBox {
     @NotNull
     private final Label typeLabel;
 
-    public ShaderNodeParameter(@NotNull final ShaderNodeElement<?> nodeElement, @NotNull final ShaderNodeVariable variable) {
+    public ShaderNodeParameter(@NotNull final ShaderNodeElement<?> nodeElement,
+                               @NotNull final ShaderNodeVariable variable) {
+        this.nodeElement = nodeElement;
         this.variable = variable;
-        this.socket = new SocketElement(nodeElement);
+        this.socket = createSocket();
         this.nameLabel = new Label();
         this.typeLabel = new Label();
         createContent();
         FXUtils.addClassTo(this, CSS_SHADER_NODE_PARAMETER);
         FXUtils.addClassTo(socket, CSS_SHADER_NODE_PARAMETER_SOCKET);
+    }
+
+    /**
+     * Get the shader node element.
+     *
+     * @return the shader node element.
+     */
+    public @NotNull ShaderNodeElement<?> getNodeElement() {
+        return nodeElement;
+    }
+
+    /**
+     * Create a socket element.
+     *
+     * @return the socket element.
+     */
+    protected @NotNull SocketElement createSocket() {
+        return new SocketElement(this);
     }
 
     /**
@@ -78,6 +105,9 @@ public class ShaderNodeParameter extends HBox {
         return variable;
     }
 
+    /**
+     * Create content of this parameter.
+     */
     protected void createContent() {
 
         final ShaderNodeVariable variable = getVariable();

@@ -1,12 +1,13 @@
 package com.ss.editor.shader.nodes.editor.shader.node;
 
-import static com.ss.editor.shader.nodes.ShaderNodesEditorPlugin.CSS_SHADER_NODE;
-import static com.ss.editor.shader.nodes.ShaderNodesEditorPlugin.CSS_SHADER_NODE_HEADER;
+import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.CSS_SHADER_NODE;
+import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.CSS_SHADER_NODE_HEADER;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.InputShaderNodeParameter;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.OutputShaderNodeParameter;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.ShaderNodeParameter;
+import com.ss.editor.shader.nodes.editor.shader.node.parameter.socket.SocketElement;
 import com.ss.rlib.ui.util.FXUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.BooleanPropertyBase;
@@ -110,6 +111,13 @@ public class ShaderNodeElement<T> extends VBox {
     }
 
     /**
+     * @return the container of this node.
+     */
+    public @NotNull ShaderNodesContainer getContainer() {
+        return container;
+    }
+
+    /**
      * @return the shader object.
      */
     public @NotNull T getObject() {
@@ -161,6 +169,18 @@ public class ShaderNodeElement<T> extends VBox {
     }
 
     /**
+     * Reset layout of this node.
+     */
+    public void resetLayout() {
+        final double layoutX = getLayoutX();
+        final double layoutY = getLayoutY();
+        setLayoutX(-1D);
+        setLayoutY(-1D);
+        setLayoutX(layoutX);
+        setLayoutY(layoutY);
+    }
+
+    /**
      * Fill parameters of this node.
      *
      * @param container the parameters container.
@@ -175,9 +195,14 @@ public class ShaderNodeElement<T> extends VBox {
      */
     private void handleMouseDragged(@NotNull final MouseEvent event) {
 
+        if (event.getTarget() instanceof SocketElement) {
+            return;
+        }
+
         if (isResizing()) {
             final double mouseX = event.getX();
             setPrefWidth(getPrefWidth() + (mouseX - x));
+            resetLayout();
             x = mouseX;
         } else {
 
@@ -211,6 +236,7 @@ public class ShaderNodeElement<T> extends VBox {
         if (isResizing()) {
             setResizing(false);
             setCursor(Cursor.DEFAULT);
+            resetLayout();
         } else if (isDragging()) {
             setDragging(false);
         }
@@ -222,6 +248,12 @@ public class ShaderNodeElement<T> extends VBox {
      * @param event the mouse moved event.
      */
     private void handleMouseMoved(@NotNull final MouseEvent event) {
+
+        if (event.getTarget() instanceof SocketElement) {
+            setCursor(Cursor.DEFAULT);
+            return;
+        }
+
         if (isInResizableZone(event) || isResizing()) {
             setCursor(Cursor.W_RESIZE);
         } else {
@@ -240,7 +272,9 @@ public class ShaderNodeElement<T> extends VBox {
      */
     private void handleMousePressed(@NotNull final MouseEvent event) {
 
-        if (event.getButton() != MouseButton.MIDDLE) {
+        if (event.getTarget() instanceof SocketElement) {
+            return;
+        } else if (event.getButton() != MouseButton.MIDDLE) {
             container.requestSelect(this);
         }
 

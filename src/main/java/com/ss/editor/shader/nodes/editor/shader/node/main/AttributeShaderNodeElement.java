@@ -11,6 +11,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AttributeShaderNodeElement extends OutputVariableShaderNodeElement {
 
+    @NotNull
+    public static final String NAMESPACE = "Attr";
+
     public AttributeShaderNodeElement(@NotNull final ShaderNodesContainer container,
                                       @NotNull final ShaderNodeVariable variable) {
         super(container, variable);
@@ -23,6 +26,6 @@ public class AttributeShaderNodeElement extends OutputVariableShaderNodeElement 
 
     @Override
     protected @NotNull String getNameSpace() {
-        return "Attr";
+        return NAMESPACE;
     }
 }

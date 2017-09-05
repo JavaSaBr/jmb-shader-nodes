@@ -1,6 +1,6 @@
 package com.ss.editor.shader.nodes.editor.shader;
 
-import static com.ss.editor.shader.nodes.ShaderNodesEditorPlugin.CSS_SHADER_NODES_ROOT;
+import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.CSS_SHADER_NODES_ROOT;
 import static com.ss.rlib.util.ObjectUtils.notNull;
 import static java.util.stream.Collectors.toList;
 import com.jme3.material.ShaderGenerationInfo;
@@ -10,14 +10,16 @@ import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.VariableMapping;
 import com.ss.editor.manager.ExecutorManager;
 import com.ss.editor.shader.nodes.editor.shader.node.ShaderNodeElement;
-import com.ss.editor.shader.nodes.editor.shader.node.VariableLine;
 import com.ss.editor.shader.nodes.editor.shader.node.global.InputGlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.global.OutputGlobalShaderNodeElement;
+import com.ss.editor.shader.nodes.editor.shader.node.line.TempLine;
+import com.ss.editor.shader.nodes.editor.shader.node.line.VariableLine;
 import com.ss.editor.shader.nodes.editor.shader.node.main.AttributeShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.main.MainShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.main.MaterialShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.main.WorldShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.ShaderNodeParameter;
+import com.ss.editor.shader.nodes.editor.shader.node.parameter.socket.SocketElement;
 import com.ss.rlib.logging.Logger;
 import com.ss.rlib.logging.LoggerManager;
 import com.ss.rlib.ui.util.FXUtils;
@@ -28,6 +30,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.DragEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -73,6 +76,12 @@ public class ShaderNodesContainer extends ScrollPane {
     private TechniqueDef techniqueDef;
 
     /**
+     * The temp line to show a process of binding variables.
+     */
+    @Nullable
+    private TempLine tempLine;
+
+    /**
      * The current scale.
      */
     private double scaleValue;
@@ -82,6 +91,7 @@ public class ShaderNodesContainer extends ScrollPane {
         this.root.prefHeightProperty().bind(heightProperty());
         this.root.prefWidthProperty().bind(widthProperty());
         this.root.widthProperty().addListener((observable, oldValue, newValue) -> invalidateLayout());
+        this.root.setOnDragOver(this::handleDragOver);
         this.zoomNode = new Group(root);
         this.zoomNode.setOnScroll(this::processEvent);
         this.scaleValue = 1;
@@ -100,12 +110,14 @@ public class ShaderNodesContainer extends ScrollPane {
         updateScale();
     }
 
+
     /**
      * Reset all layouts.
      */
     private void invalidateLayout() {
         EXECUTOR_MANAGER.addFXTask(() -> root.getChildren().stream()
                 .filter(ShaderNodeElement.class::isInstance)
+                .map(ShaderNodeElement.class::cast)
                 .forEach(this::resetLayout));
     }
 
@@ -114,15 +126,79 @@ public class ShaderNodesContainer extends ScrollPane {
      *
      * @param node the node.
      */
-    private void resetLayout(@NotNull final Node node) {
-        final double layoutX = node.getLayoutX();
-        final double layoutY = node.getLayoutY();
-        node.setLayoutX(-1);
-        node.setLayoutY(-1);
-        node.setLayoutX(layoutX);
-        node.setLayoutY(layoutY);
+    private void resetLayout(@NotNull final ShaderNodeElement<?> node) {
+        node.resetLayout();
         node.setLayoutX(ThreadLocalRandom.current().nextInt(600));
         node.setLayoutY(ThreadLocalRandom.current().nextInt(600));
+    }
+
+    /**
+     * Get the temp line to show a process of binding variables.
+     *
+     * @return the temp line to show a process of binding variables.
+     */
+    private @Nullable TempLine getTempLine() {
+        return tempLine;
+    }
+
+    /**
+     * Set the temp line to show a process of binding variables.
+     *
+     * @param tempLine the temp line to show a process of binding variables.
+     */
+    private void setTempLine(@Nullable final TempLine tempLine) {
+        this.tempLine = tempLine;
+    }
+
+    /**
+     * Sets to show the process of attaching a variable.
+     *
+     * @param sourceSocket the source socket.
+     */
+    public void startAttaching(@NotNull final SocketElement sourceSocket) {
+
+        TempLine tempLine = getTempLine();
+
+        if (tempLine != null) {
+            FXUtils.removeFromParent(tempLine, root);
+            setTempLine(null);
+        }
+
+        tempLine = new TempLine(sourceSocket);
+        setTempLine(tempLine);
+
+        FXUtils.addToPane(tempLine, root);
+    }
+
+    private void handleDragOver(final DragEvent dragEvent) {
+        if (dragEvent.getGestureSource() instanceof SocketElement) {
+            updateAttaching(dragEvent.getSceneX(), dragEvent.getSceneY());
+            dragEvent.consume();
+        }
+    }
+
+    /**
+     * Update the process of attaching a variable.
+     *
+     * @param sceneX the sceneX.
+     * @param sceneY the sceneY.
+     */
+    public void updateAttaching(final double sceneX, final double sceneY) {
+
+        final TempLine tempLine = getTempLine();
+        if (tempLine == null) return;
+
+        final Point2D localCoords = root.sceneToLocal(sceneX, sceneY);
+        tempLine.updateEnd(localCoords.getX(), localCoords.getY());
+    }
+
+    public void finishAttaching() {
+
+        final TempLine tempLine = getTempLine();
+        if (tempLine == null) return;
+
+        FXUtils.removeFromParent(tempLine, root);
+        setTempLine(null);
     }
 
     /**
@@ -177,11 +253,11 @@ public class ShaderNodesContainer extends ScrollPane {
 
         for (final ShaderNodeVariable variable : uniforms) {
             final String nameSpace = variable.getNameSpace();
-            if ("MatParam".equals(nameSpace)) {
+            if (MaterialShaderNodeElement.NAMESPACE.equals(nameSpace)) {
                 FXUtils.addToPane(new MaterialShaderNodeElement(this, variable), root);
-            } else if ("WorldParam".equals(nameSpace)) {
+            } else if (WorldShaderNodeElement.NAMESPACE.equals(nameSpace)) {
                 FXUtils.addToPane(new WorldShaderNodeElement(this, variable), root);
-            } else if ("Attr".equals(nameSpace)) {
+            } else if (AttributeShaderNodeElement.NAMESPACE.equals(nameSpace)) {
                 FXUtils.addToPane(new AttributeShaderNodeElement(this, variable), root);
             }
         }

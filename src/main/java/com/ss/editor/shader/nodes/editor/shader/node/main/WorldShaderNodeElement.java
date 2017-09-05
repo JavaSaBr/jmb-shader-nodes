@@ -11,6 +11,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class WorldShaderNodeElement extends OutputVariableShaderNodeElement {
 
+    @NotNull
+    public static final String NAMESPACE = "WorldParam";
+
     public WorldShaderNodeElement(@NotNull final ShaderNodesContainer container,
                                   @NotNull final ShaderNodeVariable variable) {
         super(container, variable);
@@ -23,6 +26,6 @@ public class WorldShaderNodeElement extends OutputVariableShaderNodeElement {
 
     @Override
     protected @NotNull String getNameSpace() {
-        return "WorldParam";
+        return NAMESPACE;
     }
 }

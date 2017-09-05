@@ -11,6 +11,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class MaterialShaderNodeElement extends OutputVariableShaderNodeElement {
 
+    @NotNull
+    public static final String NAMESPACE = "MatParam";
+
     public MaterialShaderNodeElement(@NotNull final ShaderNodesContainer container,
                                      @NotNull final ShaderNodeVariable variable) {
         super(container, variable);
@@ -23,6 +26,6 @@ public class MaterialShaderNodeElement extends OutputVariableShaderNodeElement {
 
     @Override
     protected @NotNull String getNameSpace() {
-        return "MatParam";
+        return NAMESPACE;
     }
 }

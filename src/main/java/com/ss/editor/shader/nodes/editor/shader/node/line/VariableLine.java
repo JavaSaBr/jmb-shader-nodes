@@ -1,8 +1,8 @@
-package com.ss.editor.shader.nodes.editor.shader.node;
+package com.ss.editor.shader.nodes.editor.shader.node.line;
 
-import static com.ss.editor.shader.nodes.ShaderNodesEditorPlugin.CSS_SHADER_NODE_LINE;
+import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.CSS_SHADER_NODE_LINE;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.ShaderNodeParameter;
-import com.ss.editor.shader.nodes.editor.shader.node.parameter.SocketElement;
+import com.ss.editor.shader.nodes.editor.shader.node.parameter.socket.SocketElement;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.StrokeLineCap;
 import org.jetbrains.annotations.NotNull;
