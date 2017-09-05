@@ -6,6 +6,7 @@ import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.editor.shader.node.ShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.ShaderNodeParameter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The implementation of a global parameters.
@@ -14,13 +15,17 @@ import org.jetbrains.annotations.NotNull;
  */
 public class GlobalShaderNodeElement extends ShaderNodeElement<ShaderGenerationInfo> {
 
+    @NotNull
+    public static final String NAMESPACE = "Global";
+
     public GlobalShaderNodeElement(@NotNull final ShaderNodesContainer container, @NotNull final ShaderGenerationInfo object) {
         super(container, object);
     }
 
     @Override
-    public ShaderNodeParameter parameterFor(@NotNull final ShaderNodeVariable variable, final boolean output) {
-        if (!"Global".equals(variable.getNameSpace())) return null;
-        return super.parameterFor(variable, output);
+    public @Nullable ShaderNodeParameter parameterFor(@NotNull final ShaderNodeVariable variable,
+                                                      final boolean fromOutputMapping, final boolean input) {
+        if (!NAMESPACE.equals(variable.getNameSpace())) return null;
+        return super.parameterFor(variable, fromOutputMapping, input);
     }
 }

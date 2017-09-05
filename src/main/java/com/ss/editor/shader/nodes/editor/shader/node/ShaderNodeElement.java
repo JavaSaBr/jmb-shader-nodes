@@ -4,6 +4,8 @@ import static com.ss.editor.shader.nodes.ShaderNodesEditorPlugin.CSS_SHADER_NODE
 import static com.ss.editor.shader.nodes.ShaderNodesEditorPlugin.CSS_SHADER_NODE_HEADER;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
+import com.ss.editor.shader.nodes.editor.shader.node.parameter.InputShaderNodeParameter;
+import com.ss.editor.shader.nodes.editor.shader.node.parameter.OutputShaderNodeParameter;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.ShaderNodeParameter;
 import com.ss.rlib.ui.util.FXUtils;
 import javafx.beans.property.BooleanProperty;
@@ -18,6 +20,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The base implementation of shader node.
@@ -116,13 +119,16 @@ public class ShaderNodeElement<T> extends VBox {
     /**
      * Try to find parameter of the variable.
      *
-     * @param variable the variable.
-     * @param output   true if the variable is output.
+     * @param variable          the variable.
+     * @param fromOutputMapping true if the variable is from output mapping.
+     * @param input             true if the variable is input variable.
      * @return the parameter or null.
      */
-    public ShaderNodeParameter parameterFor(@NotNull final ShaderNodeVariable variable, final boolean output) {
+    public @Nullable ShaderNodeParameter parameterFor(@NotNull final ShaderNodeVariable variable,
+                                                      final boolean fromOutputMapping, final boolean input) {
         return parametersContainer.getChildren().stream()
                 .filter(ShaderNodeParameter.class::isInstance)
+                .filter(node -> input ? node instanceof InputShaderNodeParameter : node instanceof OutputShaderNodeParameter)
                 .map(ShaderNodeParameter.class::cast)
                 .filter(parameter -> parameter.getVariable().getName().equals(variable.getName()))
                 .findAny().orElse(null);

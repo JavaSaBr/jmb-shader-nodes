@@ -8,6 +8,7 @@ import com.ss.editor.shader.nodes.editor.shader.node.parameter.ShaderNodeParamet
 import com.ss.rlib.ui.util.FXUtils;
 import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -28,9 +29,10 @@ public class OutputGlobalShaderNodeElement extends GlobalShaderNodeElement {
     }
 
     @Override
-    public ShaderNodeParameter parameterFor(final @NotNull ShaderNodeVariable variable, final boolean output) {
-        if (!output) return null;
-        return super.parameterFor(variable, output);
+    public @Nullable ShaderNodeParameter parameterFor(final @NotNull ShaderNodeVariable variable,
+                                                      final boolean fromOutputMapping, final boolean input) {
+        if (!fromOutputMapping) return null;
+        return super.parameterFor(variable, fromOutputMapping, input);
     }
 
     @Override

@@ -36,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -200,16 +201,18 @@ public class ShaderNodesContainer extends ScrollPane {
     /**
      * Try to find shader node parameter for the variable.
      *
-     * @param variable the variable.
-     * @param output   true if the variable is output.
+     * @param variable          the variable.
+     * @param fromOutputMapping true if the variable is from output mapping.
+     * @param input             true if the variable is input variable.
      * @return the parameter or null.
      */
-    private @Nullable ShaderNodeParameter findByVariable(@NotNull final ShaderNodeVariable variable, final boolean output) {
+    private @Nullable ShaderNodeParameter findByVariable(@NotNull final ShaderNodeVariable variable,
+                                                         final boolean fromOutputMapping, final boolean input) {
         return root.getChildren().stream()
                 .filter(ShaderNodeElement.class::isInstance)
                 .map(ShaderNodeElement.class::cast)
-                .filter(shaderNodeElement -> shaderNodeElement.parameterFor(variable, output) != null)
-                .map(shaderNodeElement -> shaderNodeElement.parameterFor(variable, output))
+                .map(shaderNodeElement -> shaderNodeElement.parameterFor(variable, fromOutputMapping, input))
+                .filter(Objects::nonNull)
                 .findAny().orElse(null);
     }
 
@@ -245,20 +248,20 @@ public class ShaderNodesContainer extends ScrollPane {
     /**
      * Build relation lines between variables.
      *
-     * @param children the current children.
-     * @param mappings the mappings.
-     * @param output   true if it's output mapping.
+     * @param children          the current children.
+     * @param mappings          the mappings.
+     * @param fromOutputMapping true if it's from output mapping.
      */
     private void buildLines(@NotNull final ObservableList<Node> children, @NotNull final List<VariableMapping> mappings,
-                            final boolean output) {
+                            final boolean fromOutputMapping) {
 
         for (final VariableMapping variableMapping : mappings) {
 
             final ShaderNodeVariable leftVariable = variableMapping.getLeftVariable();
             final ShaderNodeVariable rightVariable = variableMapping.getRightVariable();
 
-            final ShaderNodeParameter leftParameter = findByVariable(leftVariable, output);
-            final ShaderNodeParameter rightParameter = findByVariable(rightVariable, output);
+            final ShaderNodeParameter leftParameter = findByVariable(leftVariable, fromOutputMapping, true);
+            final ShaderNodeParameter rightParameter = findByVariable(rightVariable, fromOutputMapping, false);
 
             if (leftParameter == null || rightParameter == null) {
                 LOGGER.warning("not found parameters for " + leftVariable + " and  " + rightVariable);

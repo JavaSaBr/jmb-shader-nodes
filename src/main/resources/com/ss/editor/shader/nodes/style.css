@@ -67,3 +67,7 @@
     -fx-stroke: -var-font-color;
     -fx-fill: transparent;
 }
+
+.shader-node-line:hover {
+    -fx-stroke: -fx-focus-color;
+}
