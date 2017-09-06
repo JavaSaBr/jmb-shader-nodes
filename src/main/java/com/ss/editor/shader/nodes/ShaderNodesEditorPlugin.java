@@ -3,7 +3,9 @@ package com.ss.editor.shader.nodes;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.manager.FileIconManager;
 import com.ss.editor.plugin.EditorPlugin;
+import com.ss.editor.shader.nodes.creator.ShaderNodesProjectFileCreator;
 import com.ss.editor.shader.nodes.editor.ShaderNodesFileEditor;
+import com.ss.editor.ui.component.creator.FileCreatorRegistry;
 import com.ss.editor.ui.component.editor.EditorRegistry;
 import com.ss.editor.ui.css.CSSRegistry;
 import com.ss.rlib.plugin.PluginContainer;
@@ -36,6 +38,13 @@ public class ShaderNodesEditorPlugin extends EditorPlugin {
     public void register(@NotNull final CSSRegistry registry) {
         super.register(registry);
         registry.register("com/ss/editor/shader/nodes/style.css");
+    }
+
+    @Override
+    @FromAnyThread
+    public void register(@NotNull final FileCreatorRegistry registry) {
+        super.register(registry);
+        registry.register(ShaderNodesProjectFileCreator.DESCRIPTION);
     }
 
     @Override
