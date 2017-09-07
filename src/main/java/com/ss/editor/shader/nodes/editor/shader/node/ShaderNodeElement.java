@@ -9,6 +9,7 @@ import com.ss.editor.shader.nodes.editor.shader.node.parameter.OutputShaderNodeP
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.ShaderNodeParameter;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.socket.SocketElement;
 import com.ss.rlib.ui.util.FXUtils;
+import com.ss.rlib.util.StringUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.BooleanPropertyBase;
 import javafx.css.PseudoClass;
@@ -108,6 +109,36 @@ public class ShaderNodeElement<T> extends VBox {
         createContent();
         setPrefWidth(200);
         FXUtils.addClassTo(this, CSS_SHADER_NODE);
+    }
+
+    /**
+     * Check the availability to attach the output parameter to the input parameter.
+     *
+     * @param inputParameter  the input parameter.
+     * @param outputParameter the output parameter.
+     * @return true of we can attach.
+     */
+    public boolean canAttach(@NotNull final InputShaderNodeParameter inputParameter,
+                             @NotNull final OutputShaderNodeParameter outputParameter) {
+
+        if (inputParameter.getNodeElement() == outputParameter.getNodeElement()) {
+            return false;
+        }
+
+        final ShaderNodeVariable inVar = inputParameter.getVariable();
+        final ShaderNodeVariable outVar = outputParameter.getVariable();
+
+        return StringUtils.equals(inVar.getType(), outVar.getType());
+    }
+
+    /**
+     * Attach the output parameter to the input parameter.
+     *
+     * @param inputParameter  the input parameter.
+     * @param outputParameter the output parameter.
+     */
+    public void attach(@NotNull final InputShaderNodeParameter inputParameter,
+                       @NotNull final OutputShaderNodeParameter outputParameter) {
     }
 
     /**

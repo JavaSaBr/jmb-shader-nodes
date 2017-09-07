@@ -3,6 +3,9 @@ package com.ss.editor.shader.nodes.editor.shader.node.main;
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeDefinition;
 import com.jme3.shader.ShaderNodeVariable;
+import com.jme3.shader.VariableMapping;
+import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
+import com.ss.editor.shader.nodes.editor.operation.AttachParameterToShaderNodeOperation;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.editor.shader.node.ShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.InputShaderNodeParameter;
@@ -60,5 +63,26 @@ public class MainShaderNodeElement extends ShaderNodeElement<ShaderNode> {
         for (final ShaderNodeVariable variable : outputs) {
             FXUtils.addToPane(new OutputShaderNodeParameter(this, variable), container);
         }
+    }
+
+    @Override
+    public void attach(@NotNull final InputShaderNodeParameter inputParameter,
+                       @NotNull final OutputShaderNodeParameter outputParameter) {
+        super.attach(inputParameter, outputParameter);
+
+        final ShaderNodeVariable inVar = inputParameter.getVariable();
+        final ShaderNodeVariable outVar = outputParameter.getVariable();
+        final ShaderNode shaderNode = getObject();
+
+        final VariableMapping currentMapping = shaderNode.getInputMapping().stream()
+                .filter(mapping -> mapping.getLeftVariable().getName().equals(inVar.getName()))
+                .findAny().orElse(null);
+
+        final VariableMapping newMapping = new VariableMapping();
+        newMapping.setLeftVariable(new ShaderNodeVariable(inVar.getType(), shaderNode.getDefinition().getName(), inVar.getName(), null, inVar.getPrefix()));
+        newMapping.setRightVariable(new ShaderNodeVariable(outVar.getType(), outVar.getNameSpace(), outVar.getName(), null, outVar.getPrefix()));
+
+        final ShaderNodesChangeConsumer changeConsumer = getContainer().getChangeConsumer();
+        changeConsumer.execute(new AttachParameterToShaderNodeOperation(shaderNode, newMapping, currentMapping));
     }
 }

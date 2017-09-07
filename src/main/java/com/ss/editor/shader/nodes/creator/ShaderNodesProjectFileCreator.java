@@ -66,6 +66,7 @@ public class ShaderNodesProjectFileCreator extends GenericFileCreator {
 
         final J3MLoader loader = new J3MLoader();
         final MaterialDef materialDef = (MaterialDef) loader.load(assetInfo);
+        materialDef.setAssetName(null);
 
         final ShaderNodesProject project = new ShaderNodesProject();
         project.setMaterialDef(materialDef);

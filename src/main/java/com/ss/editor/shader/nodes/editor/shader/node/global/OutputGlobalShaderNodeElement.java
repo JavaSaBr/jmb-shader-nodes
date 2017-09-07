@@ -3,7 +3,10 @@ package com.ss.editor.shader.nodes.editor.shader.node.global;
 import com.jme3.material.ShaderGenerationInfo;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
+import com.ss.editor.shader.nodes.editor.shader.node.ShaderNodeElement;
+import com.ss.editor.shader.nodes.editor.shader.node.main.*;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.InputShaderNodeParameter;
+import com.ss.editor.shader.nodes.editor.shader.node.parameter.OutputShaderNodeParameter;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.ShaderNodeParameter;
 import com.ss.rlib.ui.util.FXUtils;
 import javafx.scene.layout.VBox;
@@ -47,6 +50,32 @@ public class OutputGlobalShaderNodeElement extends GlobalShaderNodeElement {
 
         for (final ShaderNodeVariable fragmentGlobal : fragmentGlobals) {
             FXUtils.addToPane(new InputShaderNodeParameter(this, fragmentGlobal), container);
+        }
+    }
+
+    @Override
+    public boolean canAttach(@NotNull final InputShaderNodeParameter inputParameter,
+                             @NotNull final OutputShaderNodeParameter outputParameter) {
+
+        if (!super.canAttach(inputParameter, outputParameter)) {
+            return false;
+        }
+
+        final ShaderNodeVariable vertexGlobal = getObject().getVertexGlobal();
+        boolean isVertex = vertexGlobal == inputParameter.getVariable();
+
+        final ShaderNodeElement<?> sourceElement = outputParameter.getNodeElement();
+
+        if (isVertex) {
+            return sourceElement instanceof MaterialShaderNodeElement ||
+                    sourceElement instanceof AttributeShaderNodeElement ||
+                    sourceElement instanceof VertexShaderNodeElement ||
+                    sourceElement instanceof WorldShaderNodeElement;
+        } else {
+            return sourceElement instanceof MaterialShaderNodeElement ||
+                    sourceElement instanceof FragmentShaderNodeElement ||
+                    sourceElement instanceof VertexShaderNodeElement ||
+                    sourceElement instanceof WorldShaderNodeElement;
         }
     }
 }

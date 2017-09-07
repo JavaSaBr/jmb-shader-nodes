@@ -1,9 +1,10 @@
 package com.ss.editor.shader.nodes.editor.shader.node.parameter.socket;
 
 import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.CSS_SHADER_NODE_PARAMETER_INPUT_SOCKET;
-import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.editor.shader.node.ShaderNodeElement;
+import com.ss.editor.shader.nodes.editor.shader.node.parameter.InputShaderNodeParameter;
+import com.ss.editor.shader.nodes.editor.shader.node.parameter.OutputShaderNodeParameter;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.ShaderNodeParameter;
 import com.ss.rlib.ui.util.FXUtils;
 import javafx.beans.property.BooleanProperty;
@@ -70,6 +71,23 @@ public class InputSocketElement extends SocketElement {
      */
     private void handleDragDropped(@NotNull final DragEvent dragEvent) {
         droppable.setValue(false);
+
+        final InputShaderNodeParameter parameter = (InputShaderNodeParameter) getParameter();
+        final ShaderNodeElement<?> nodeElement = parameter.getNodeElement();
+
+        final Object gestureSource = dragEvent.getGestureSource();
+        if (!(gestureSource instanceof SocketElement)) {
+            return;
+        }
+
+        final SocketElement outputSocket = (SocketElement) gestureSource;
+        final OutputShaderNodeParameter outputParameter = (OutputShaderNodeParameter) outputSocket.getParameter();
+
+        if (!nodeElement.canAttach(parameter, outputParameter)) {
+            return;
+        }
+
+        nodeElement.attach(parameter, outputParameter);
     }
 
     /**
@@ -79,7 +97,7 @@ public class InputSocketElement extends SocketElement {
      */
     private void handleDragOver(@NotNull final DragEvent dragEvent) {
 
-        final ShaderNodeParameter parameter = getParameter();
+        final InputShaderNodeParameter parameter = (InputShaderNodeParameter) getParameter();
         final ShaderNodeElement<?> nodeElement = parameter.getNodeElement();
         final ShaderNodesContainer container = nodeElement.getContainer();
         container.updateAttaching(dragEvent.getSceneX(), dragEvent.getSceneY());
@@ -89,11 +107,8 @@ public class InputSocketElement extends SocketElement {
             return;
         }
 
-        final SocketElement element = (SocketElement) gestureSource;
-        final ShaderNodeVariable sourceVar = element.getParameter().getVariable();
-        final ShaderNodeVariable targetVar = parameter.getVariable();
-
-        if (!sourceVar.getType().equals(targetVar.getType())) {
+        final SocketElement outputSocket = (SocketElement) gestureSource;
+        if (!nodeElement.canAttach(parameter, (OutputShaderNodeParameter) outputSocket.getParameter())) {
             return;
         }
 

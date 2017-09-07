@@ -6,9 +6,7 @@ import static java.util.stream.Collectors.toList;
 import com.jme3.material.ShaderGenerationInfo;
 import com.jme3.material.TechniqueDef;
 import com.jme3.math.Vector2f;
-import com.jme3.shader.ShaderNode;
-import com.jme3.shader.ShaderNodeVariable;
-import com.jme3.shader.VariableMapping;
+import com.jme3.shader.*;
 import com.ss.editor.manager.ExecutorManager;
 import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.editor.shader.node.ShaderNodeElement;
@@ -16,10 +14,7 @@ import com.ss.editor.shader.nodes.editor.shader.node.global.InputGlobalShaderNod
 import com.ss.editor.shader.nodes.editor.shader.node.global.OutputGlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.line.TempLine;
 import com.ss.editor.shader.nodes.editor.shader.node.line.VariableLine;
-import com.ss.editor.shader.nodes.editor.shader.node.main.AttributeShaderNodeElement;
-import com.ss.editor.shader.nodes.editor.shader.node.main.MainShaderNodeElement;
-import com.ss.editor.shader.nodes.editor.shader.node.main.MaterialShaderNodeElement;
-import com.ss.editor.shader.nodes.editor.shader.node.main.WorldShaderNodeElement;
+import com.ss.editor.shader.nodes.editor.shader.node.main.*;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.ShaderNodeParameter;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.socket.SocketElement;
 import com.ss.rlib.logging.Logger;
@@ -114,7 +109,7 @@ public class ShaderNodesContainer extends ScrollPane {
         this.scaleValue = 1;
 
         this.root.widthProperty().addListener((observable, oldValue, newValue) ->
-                EXECUTOR_MANAGER.addFXTask(this::invalidateLayout));
+                EXECUTOR_MANAGER.addFXTask(this::invalidateSizes));
 
         FXUtils.addClassTo(root, CSS_SHADER_NODES_ROOT);
 
@@ -140,12 +135,18 @@ public class ShaderNodesContainer extends ScrollPane {
     }
 
     /**
+     * @return the change consumer.
+     */
+    public @NotNull ShaderNodesChangeConsumer getChangeConsumer() {
+        return changeConsumer;
+    }
+
+    /**
      * Reset all layouts.
      */
-    private void invalidateLayout() {
+    private void invalidateSizes() {
 
         final Array<ShaderNodeElement<?>> nodeElements = getNodeElements();
-        final Vector2f[] locations = changeConsumer.getNodeElementLocations();
         final double[] widths = changeConsumer.getNodeElementWidths();
 
         for (int i = 0; i < nodeElements.size(); i++) {
@@ -153,7 +154,30 @@ public class ShaderNodesContainer extends ScrollPane {
             final ShaderNodeElement<?> node = nodeElements.get(i);
             node.resetLayout();
 
-            if (locations.length <= i || widths.length <= i) {
+            if (widths.length <= i) {
+                continue;
+            }
+
+            node.setPrefWidth(widths[i]);
+        }
+
+        EXECUTOR_MANAGER.addFXTask(this::invalidateLayout);
+    }
+
+    /**
+     * Reset all layouts.
+     */
+    private void invalidateLayout() {
+
+        final Array<ShaderNodeElement<?>> nodeElements = getNodeElements();
+        final Vector2f[] locations = changeConsumer.getNodeElementLocations();
+
+        for (int i = 0; i < nodeElements.size(); i++) {
+
+            final ShaderNodeElement<?> node = nodeElements.get(i);
+            node.resetLayout();
+
+            if (locations.length <= i) {
                 continue;
             }
 
@@ -161,7 +185,6 @@ public class ShaderNodesContainer extends ScrollPane {
 
             node.setLayoutX(location.getX());
             node.setLayoutY(location.getY());
-            node.setPrefWidth(widths[i]);
         }
     }
 
@@ -275,7 +298,9 @@ public class ShaderNodesContainer extends ScrollPane {
      *
      * @param techniqueDef the technique.
      */
-    public void show(@NotNull TechniqueDef techniqueDef) {
+    public void show(@NotNull final TechniqueDef techniqueDef) {
+        if (techniqueDef.equals(this.techniqueDef)) return;
+
         this.techniqueDef = techniqueDef;
 
         final ShaderGenerationInfo shaderGenerationInfo = techniqueDef.getShaderGenerationInfo();
@@ -295,7 +320,12 @@ public class ShaderNodesContainer extends ScrollPane {
         final List<ShaderNode> shaderNodes = techniqueDef.getShaderNodes();
 
         for (final ShaderNode shaderNode : shaderNodes) {
-            nodeElements.add(new MainShaderNodeElement(this, shaderNode));
+            final ShaderNodeDefinition definition = shaderNode.getDefinition();
+            if (definition.getType() == Shader.ShaderType.Vertex) {
+                nodeElements.add(new VertexShaderNodeElement(this, shaderNode));
+            } else if (definition.getType() == Shader.ShaderType.Fragment) {
+                nodeElements.add(new FragmentShaderNodeElement(this, shaderNode));
+            }
         }
 
         for (final ShaderNodeVariable variable : uniforms) {
@@ -344,7 +374,7 @@ public class ShaderNodesContainer extends ScrollPane {
     /**
      * Refresh all lines.
      */
-    private void refreshLines() {
+    public void refreshLines() {
 
         final ObservableList<Node> children = root.getChildren();
         final List<Node> lines = children.stream()

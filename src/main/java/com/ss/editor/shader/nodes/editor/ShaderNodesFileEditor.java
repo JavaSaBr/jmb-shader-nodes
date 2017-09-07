@@ -1,9 +1,14 @@
 package com.ss.editor.shader.nodes.editor;
 
 import static com.ss.rlib.util.ObjectUtils.notNull;
+import com.jme3.export.binary.BinaryExporter;
 import com.jme3.export.binary.BinaryImporter;
-import com.jme3.material.*;
+import com.jme3.material.Material;
+import com.jme3.material.MaterialDef;
+import com.jme3.material.TechniqueDef;
 import com.jme3.math.Vector2f;
+import com.jme3.shader.ShaderNode;
+import com.jme3.shader.VariableMapping;
 import com.jme3.util.clone.Cloner;
 import com.ss.editor.annotation.BackgroundThread;
 import com.ss.editor.annotation.FXThread;
@@ -32,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -97,10 +103,11 @@ public class ShaderNodesFileEditor extends
 
     @Override
     @FXThread
-    protected void doOpenFile(@NotNull final Path file) {
+    protected void doOpenFile(@NotNull final Path file) throws IOException {
         super.doOpenFile(file);
 
         final BinaryImporter importer = BinaryImporter.getInstance();
+        importer.setAssetManager(EDITOR.getAssetManager());
 
         try (final InputStream in = Files.newInputStream(file)) {
             setProject((ShaderNodesProject) importer.load(in));
@@ -118,6 +125,12 @@ public class ShaderNodesFileEditor extends
     @BackgroundThread
     protected void doSave(@NotNull final Path toStore) throws IOException {
         super.doSave(toStore);
+
+        final BinaryExporter exporter = BinaryExporter.getInstance();
+
+        try (final OutputStream out = Files.newOutputStream(toStore)) {
+            exporter.save(getProject(), out);
+        }
     }
 
     @Override
@@ -180,17 +193,19 @@ public class ShaderNodesFileEditor extends
      * Handle changing the technique.
      */
     @FXThread
-    private void changeTechnique(@NotNull final String newValue) {
+    private void changeTechnique(@Nullable final String newValue) {
 
         final Material currentMaterial = getCurrentMaterial();
-        if (currentMaterial == null) {
+        if (currentMaterial == null || newValue == null) {
             return;
         }
 
         final MaterialDef materialDef = getMaterialDef();
         final List<TechniqueDef> techniqueDefs = materialDef.getTechniqueDefs(newValue);
+        final TechniqueDef techniqueDef = techniqueDefs.get(0);
 
-        getShaderNodesContainer().show(techniqueDefs.get(0));
+        final ShaderNodesContainer container = getShaderNodesContainer();
+        container.show(techniqueDef);
 
         final ShaderNodesEditorState editorState = getEditorState();
         if (editorState != null) {
@@ -281,32 +296,9 @@ public class ShaderNodesFileEditor extends
     }
 
     private @NotNull MaterialDef clone(@NotNull final MaterialDef materialDef) {
-
-        final Collection<MatParam> materialParams = materialDef.getMaterialParams();
-        final Collection<String> techniqueDefsNames = materialDef.getTechniqueDefsNames();
-
-        final MaterialDef newMaterialDef = new MaterialDef(EDITOR.getAssetManager(), materialDef.getAssetName());
-
-        materialParams.stream()
-                .filter(MatParamTexture.class::isInstance)
-                .map(MatParamTexture.class::cast)
-                .forEach(param -> newMaterialDef.addMaterialParamTexture(param.getVarType(), param.getName(), param.getColorSpace()));
-        materialParams.stream()
-                .filter(param -> !(param instanceof MatParamTexture))
-                .forEach(param -> newMaterialDef.addMaterialParam(param.getVarType(), param.getName(), param.getValue()));
-
-        for (final String defsName : techniqueDefsNames) {
-
-            final List<TechniqueDef> techniqueDefs = materialDef.getTechniqueDefs(defsName);
-
-            for (final TechniqueDef techniqueDef : techniqueDefs) {
-                final TechniqueDef clone = techniqueDef.jmeClone();
-                clone.cloneFields(new Cloner(), techniqueDef);
-                newMaterialDef.addTechniqueDef(clone);
-            }
-        }
-
-        return newMaterialDef;
+        final Cloner cloner = new Cloner();
+        final MaterialDef clone = cloner.clone(materialDef);
+        return clone;
     }
 
     @Override
@@ -354,5 +346,30 @@ public class ShaderNodesFileEditor extends
         if (editorState == null) return new double[0];
 
         return editorState.getNodeElementWidths();
+    }
+
+    @Override
+    @FXThread
+    public void notifyAddMapping(@NotNull final ShaderNode shaderNode, @NotNull final VariableMapping mapping) {
+        buildMaterial();
+        final ShaderNodesContainer container = getShaderNodesContainer();
+        container.refreshLines();
+    }
+
+    @Override
+    @FXThread
+    public void notifyRemoveMapping(@NotNull final ShaderNode shaderNode, @NotNull final VariableMapping mapping) {
+        buildMaterial();
+        final ShaderNodesContainer container = getShaderNodesContainer();
+        container.refreshLines();
+    }
+
+    @Override
+    @FXThread
+    public void notifyReplacedMapping(@NotNull final ShaderNode shaderNode, @NotNull final VariableMapping oldMapping,
+                                      @NotNull final VariableMapping newMapping) {
+        buildMaterial();
+        final ShaderNodesContainer container = getShaderNodesContainer();
+        container.refreshLines();
     }
 }
