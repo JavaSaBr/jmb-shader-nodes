@@ -5,10 +5,12 @@ import static com.ss.rlib.util.ObjectUtils.notNull;
 import static java.util.stream.Collectors.toList;
 import com.jme3.material.ShaderGenerationInfo;
 import com.jme3.material.TechniqueDef;
+import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.VariableMapping;
 import com.ss.editor.manager.ExecutorManager;
+import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.editor.shader.node.ShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.global.InputGlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.global.OutputGlobalShaderNodeElement;
@@ -23,6 +25,8 @@ import com.ss.editor.shader.nodes.editor.shader.node.parameter.socket.SocketElem
 import com.ss.rlib.logging.Logger;
 import com.ss.rlib.logging.LoggerManager;
 import com.ss.rlib.ui.util.FXUtils;
+import com.ss.rlib.util.array.Array;
+import com.ss.rlib.util.array.ArrayFactory;
 import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
@@ -58,6 +62,18 @@ public class ShaderNodesContainer extends ScrollPane {
     private static final ExecutorManager EXECUTOR_MANAGER = ExecutorManager.getInstance();
 
     /**
+     * All current node elements.
+     */
+    @NotNull
+    private final Array<ShaderNodeElement<?>> nodeElements;
+
+    /**
+     * The change consumer.
+     */
+    @NotNull
+    private final ShaderNodesChangeConsumer changeConsumer;
+
+    /**
      * The root component to place all nodes.
      */
     @NotNull
@@ -86,15 +102,19 @@ public class ShaderNodesContainer extends ScrollPane {
      */
     private double scaleValue;
 
-    public ShaderNodesContainer() {
+    public ShaderNodesContainer(@NotNull final ShaderNodesChangeConsumer changeConsumer) {
+        this.changeConsumer = changeConsumer;
+        this.nodeElements = ArrayFactory.newArray(ShaderNodeElement.class);
         this.root = new Pane();
         this.root.prefHeightProperty().bind(heightProperty());
         this.root.prefWidthProperty().bind(widthProperty());
-        this.root.widthProperty().addListener((observable, oldValue, newValue) -> invalidateLayout());
         this.root.setOnDragOver(this::handleDragOver);
         this.zoomNode = new Group(root);
         this.zoomNode.setOnScroll(this::processEvent);
         this.scaleValue = 1;
+
+        this.root.widthProperty().addListener((observable, oldValue, newValue) ->
+                EXECUTOR_MANAGER.addFXTask(this::invalidateLayout));
 
         FXUtils.addClassTo(root, CSS_SHADER_NODES_ROOT);
 
@@ -110,15 +130,39 @@ public class ShaderNodesContainer extends ScrollPane {
         updateScale();
     }
 
+    /**
+     * Get all current node elements.
+     *
+     * @return all current node elements.
+     */
+    public @NotNull Array<ShaderNodeElement<?>> getNodeElements() {
+        return nodeElements;
+    }
 
     /**
      * Reset all layouts.
      */
     private void invalidateLayout() {
-        EXECUTOR_MANAGER.addFXTask(() -> root.getChildren().stream()
-                .filter(ShaderNodeElement.class::isInstance)
-                .map(ShaderNodeElement.class::cast)
-                .forEach(this::resetLayout));
+
+        final Array<ShaderNodeElement<?>> nodeElements = getNodeElements();
+        final Vector2f[] locations = changeConsumer.getNodeElementLocations();
+        final double[] widths = changeConsumer.getNodeElementWidths();
+
+        for (int i = 0; i < nodeElements.size(); i++) {
+
+            final ShaderNodeElement<?> node = nodeElements.get(i);
+            node.resetLayout();
+
+            if (locations.length <= i || widths.length <= i) {
+                continue;
+            }
+
+            final Vector2f location = locations[i];
+
+            node.setLayoutX(location.getX());
+            node.setLayoutY(location.getY());
+            node.setPrefWidth(widths[i]);
+        }
     }
 
     /**
@@ -237,30 +281,35 @@ public class ShaderNodesContainer extends ScrollPane {
         final ShaderGenerationInfo shaderGenerationInfo = techniqueDef.getShaderGenerationInfo();
         final Pane root = getRoot();
 
+        final Array<ShaderNodeElement<?>> nodeElements = getNodeElements();
+        nodeElements.clear();
+
         final List<ShaderNodeVariable> uniforms = new ArrayList<>();
         uniforms.addAll(shaderGenerationInfo.getFragmentUniforms());
         uniforms.addAll(shaderGenerationInfo.getVertexUniforms());
         uniforms.addAll(shaderGenerationInfo.getAttributes());
 
-        FXUtils.addToPane(new InputGlobalShaderNodeElement(this, shaderGenerationInfo), root);
-        FXUtils.addToPane(new OutputGlobalShaderNodeElement(this, shaderGenerationInfo), root);
+        nodeElements.add(new InputGlobalShaderNodeElement(this, shaderGenerationInfo));
+        nodeElements.add(new OutputGlobalShaderNodeElement(this, shaderGenerationInfo));
 
         final List<ShaderNode> shaderNodes = techniqueDef.getShaderNodes();
 
         for (final ShaderNode shaderNode : shaderNodes) {
-            FXUtils.addToPane(new MainShaderNodeElement(this, shaderNode), root);
+            nodeElements.add(new MainShaderNodeElement(this, shaderNode));
         }
 
         for (final ShaderNodeVariable variable : uniforms) {
             final String nameSpace = variable.getNameSpace();
             if (MaterialShaderNodeElement.NAMESPACE.equals(nameSpace)) {
-                FXUtils.addToPane(new MaterialShaderNodeElement(this, variable), root);
+                nodeElements.add(new MaterialShaderNodeElement(this, variable));
             } else if (WorldShaderNodeElement.NAMESPACE.equals(nameSpace)) {
-                FXUtils.addToPane(new WorldShaderNodeElement(this, variable), root);
+                nodeElements.add(new WorldShaderNodeElement(this, variable));
             } else if (AttributeShaderNodeElement.NAMESPACE.equals(nameSpace)) {
-                FXUtils.addToPane(new AttributeShaderNodeElement(this, variable), root);
+                nodeElements.add(new AttributeShaderNodeElement(this, variable));
             }
         }
+
+        nodeElements.forEach(root.getChildren(), (nodeElement, nodes) -> nodes.add(nodeElement));
 
         refreshLines();
     }

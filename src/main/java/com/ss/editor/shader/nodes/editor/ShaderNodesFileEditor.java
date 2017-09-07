@@ -3,12 +3,12 @@ package com.ss.editor.shader.nodes.editor;
 import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.jme3.export.binary.BinaryImporter;
 import com.jme3.material.*;
+import com.jme3.math.Vector2f;
 import com.jme3.util.clone.Cloner;
 import com.ss.editor.annotation.BackgroundThread;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.model.node.material.RootMaterialSettings;
-import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.plugin.api.editor.material.BaseMaterialFileEditor;
 import com.ss.editor.shader.nodes.ShaderNodesEditorPlugin;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
@@ -25,6 +25,7 @@ import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,7 +43,9 @@ import java.util.function.Supplier;
  *
  * @author JavaSaBr
  */
-public class ShaderNodesFileEditor extends BaseMaterialFileEditor<ShaderNodesEditor3DState, ShaderNodesEditorState, ChangeConsumer> {
+public class ShaderNodesFileEditor extends
+        BaseMaterialFileEditor<ShaderNodesEditor3DState, ShaderNodesEditorState, ShaderNodesChangeConsumer> implements
+        ShaderNodesChangeConsumer {
 
     /**
      * The description of this editor.
@@ -124,7 +127,7 @@ public class ShaderNodesFileEditor extends BaseMaterialFileEditor<ShaderNodesEdi
         final StackPane editorAreaPane = getEditorAreaPane();
         final BorderPane editor3DArea = notNull(get3DArea());
 
-        shaderNodesContainer = new ShaderNodesContainer();
+        shaderNodesContainer = new ShaderNodesContainer(this);
         shaderNodesArea = new BorderPane(shaderNodesContainer);
 
         FXUtils.removeFromParent(editor3DArea, editorAreaPane);
@@ -310,5 +313,46 @@ public class ShaderNodesFileEditor extends BaseMaterialFileEditor<ShaderNodesEdi
     @FromAnyThread
     public @NotNull EditorDescription getDescription() {
         return DESCRIPTION;
+    }
+
+    @Override
+    @FXThread
+    public void notifyClosed() {
+
+        final ShaderNodesEditorState editorState = getEditorState();
+        if (editorState == null) return;
+
+        final ShaderNodesContainer shaderNodesContainer = getShaderNodesContainer();
+        final Vector2f[] locations = shaderNodesContainer.getNodeElements()
+                .stream().map(element -> new Vector2f((float) element.getLayoutX(), (float) element.getLayoutY()))
+                .toArray(Vector2f[]::new);
+
+        final double[] widths = shaderNodesContainer.getNodeElements()
+                .stream().mapToDouble(Region::getPrefWidth)
+                .toArray();
+
+        editorState.updateNodeElementLocations(locations);
+        editorState.updateNodeElementWidths(widths);
+
+
+        super.notifyClosed();
+    }
+
+    @Override
+    public @NotNull Vector2f[] getNodeElementLocations() {
+
+        final ShaderNodesEditorState editorState = getEditorState();
+        if (editorState == null) return new Vector2f[0];
+
+        return editorState.getNodeElementLocations();
+    }
+
+    @Override
+    public @NotNull double[] getNodeElementWidths() {
+
+        final ShaderNodesEditorState editorState = getEditorState();
+        if (editorState == null) return new double[0];
+
+        return editorState.getNodeElementWidths();
     }
 }
