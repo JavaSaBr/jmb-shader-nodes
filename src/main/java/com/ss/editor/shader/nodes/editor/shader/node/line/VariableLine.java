@@ -1,6 +1,6 @@
 package com.ss.editor.shader.nodes.editor.shader.node.line;
 
-import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.CSS_SHADER_NODE_LINE;
+import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE_LINE;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.ShaderNodeParameter;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.socket.SocketElement;
 import javafx.scene.shape.CubicCurve;
@@ -25,7 +25,7 @@ public class VariableLine extends CubicCurve {
         this.outParameter = outParameter;
         this.inParameter = inParameter;
         configureLine();
-        getStyleClass().add(CSS_SHADER_NODE_LINE);
+        getStyleClass().add(SHADER_NODE_LINE);
     }
 
     /**

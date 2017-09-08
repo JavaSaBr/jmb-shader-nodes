@@ -1,6 +1,6 @@
 package com.ss.editor.shader.nodes.editor.shader.node.parameter.socket;
 
-import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.CSS_SHADER_NODE_PARAMETER_OUTPUT_SOCKET;
+import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE_PARAMETER_OUTPUT_SOCKET;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.editor.shader.node.ShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.ShaderNodeParameter;
@@ -52,7 +52,7 @@ public class OutputSocketElement extends SocketElement {
         setOnDragDetected(this::handleStartDrag);
         setOnDragDone(this::handleStopDrag);
         setOnMouseDragged(this::handleMouseDragged);
-        FXUtils.addClassTo(this, CSS_SHADER_NODE_PARAMETER_OUTPUT_SOCKET);
+        FXUtils.addClassTo(this, SHADER_NODE_PARAMETER_OUTPUT_SOCKET);
     }
 
     /**

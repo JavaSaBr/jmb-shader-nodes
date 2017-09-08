@@ -1,15 +1,19 @@
 package com.ss.editor.shader.nodes.editor.shader;
 
-import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.CSS_SHADER_NODES_ROOT;
+import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODES_ROOT;
 import static com.ss.rlib.util.ObjectUtils.notNull;
 import static java.util.stream.Collectors.toList;
+import com.jme3.material.MatParam;
+import com.jme3.material.MaterialDef;
 import com.jme3.material.ShaderGenerationInfo;
 import com.jme3.material.TechniqueDef;
 import com.jme3.math.Vector2f;
 import com.jme3.shader.*;
+import com.ss.editor.annotation.FXThread;
 import com.ss.editor.manager.ExecutorManager;
 import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.editor.shader.node.ShaderNodeElement;
+import com.ss.editor.shader.nodes.editor.shader.node.action.AddMaterialParamShaderModeAction;
 import com.ss.editor.shader.nodes.editor.shader.node.global.InputGlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.global.OutputGlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.line.TempLine;
@@ -17,6 +21,7 @@ import com.ss.editor.shader.nodes.editor.shader.node.line.VariableLine;
 import com.ss.editor.shader.nodes.editor.shader.node.main.*;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.ShaderNodeParameter;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.socket.SocketElement;
+import com.ss.editor.shader.nodes.util.MaterialDefUtils;
 import com.ss.rlib.logging.Logger;
 import com.ss.rlib.logging.LoggerManager;
 import com.ss.rlib.ui.util.FXUtils;
@@ -28,9 +33,11 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
@@ -38,8 +45,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * The container of all shader nodes.
@@ -81,6 +88,12 @@ public class ShaderNodesContainer extends ScrollPane {
     private final Group zoomNode;
 
     /**
+     * The context menu.
+     */
+    @NotNull
+    private final ContextMenu contextMenu;
+
+    /**
      * The current technique.
      */
     @Nullable
@@ -104,14 +117,17 @@ public class ShaderNodesContainer extends ScrollPane {
         this.root.prefHeightProperty().bind(heightProperty());
         this.root.prefWidthProperty().bind(widthProperty());
         this.root.setOnDragOver(this::handleDragOver);
+        this.root.setOnMouseClicked(this::handleMouseClicked);
         this.zoomNode = new Group(root);
-        this.zoomNode.setOnScroll(this::processEvent);
+        this.zoomNode.setOnScroll(this::handleScrollEvent);
         this.scaleValue = 1;
+        this.contextMenu = new ContextMenu();
 
+        this.root.setOnContextMenuRequested(this::handleContextMenuEvent);
         this.root.widthProperty().addListener((observable, oldValue, newValue) ->
                 EXECUTOR_MANAGER.addFXTask(this::invalidateSizes));
 
-        FXUtils.addClassTo(root, CSS_SHADER_NODES_ROOT);
+        FXUtils.addClassTo(root, SHADER_NODES_ROOT);
 
         final VBox centered = new VBox(zoomNode);
         centered.setAlignment(Pos.CENTER);
@@ -178,25 +194,14 @@ public class ShaderNodesContainer extends ScrollPane {
             node.resetLayout();
 
             if (locations.length <= i) {
-                continue;
+                node.setLayoutX(10D);
+                node.setLayoutY(10D);
+            } else {
+                final Vector2f location = locations[i];
+                node.setLayoutX(location.getX());
+                node.setLayoutY(location.getY());
             }
-
-            final Vector2f location = locations[i];
-
-            node.setLayoutX(location.getX());
-            node.setLayoutY(location.getY());
         }
-    }
-
-    /**
-     * Rest layout of the node.
-     *
-     * @param node the node.
-     */
-    private void resetLayout(@NotNull final ShaderNodeElement<?> node) {
-        node.resetLayout();
-        node.setLayoutX(ThreadLocalRandom.current().nextInt(600));
-        node.setLayoutY(ThreadLocalRandom.current().nextInt(600));
     }
 
     /**
@@ -237,11 +242,53 @@ public class ShaderNodesContainer extends ScrollPane {
         FXUtils.addToPane(tempLine, root);
     }
 
-    private void handleDragOver(final DragEvent dragEvent) {
+    /**
+     * Handle the drag over event.
+     *
+     * @param dragEvent the drag over event.
+     */
+    private void handleDragOver(@NotNull final DragEvent dragEvent) {
         if (dragEvent.getGestureSource() instanceof SocketElement) {
             updateAttaching(dragEvent.getSceneX(), dragEvent.getSceneY());
             dragEvent.consume();
         }
+    }
+
+    /**
+     * Handle the mouse event.
+     *
+     * @param event the mouse event.
+     */
+    private void handleMouseClicked(@NotNull final MouseEvent event) {
+        if (event.getButton() == MouseButton.PRIMARY && contextMenu.isShowing()) {
+            contextMenu.hide();
+        }
+    }
+
+    /**
+     * Handle the context menu event.
+     *
+     * @param event the context menu event.
+     */
+    private void handleContextMenuEvent(@NotNull final ContextMenuEvent event) {
+
+        if (contextMenu.isShowing()) {
+            contextMenu.hide();
+        }
+
+        final Vector2f location = new Vector2f((float) event.getX(), (float) event.getY());
+        final TechniqueDef techniqueDef = getTechniqueDef();
+        final MaterialDef materialDef = getChangeConsumer().getMaterialDef();
+
+        final ObservableList<MenuItem> items = contextMenu.getItems();
+        items.clear();
+
+        final Menu menu = new Menu("Add");
+        menu.getItems().addAll(new AddMaterialParamShaderModeAction(this, materialDef, location));
+
+        items.addAll(menu);
+
+        contextMenu.show(root, event.getScreenX(), event.getScreenY());
     }
 
     /**
@@ -309,13 +356,33 @@ public class ShaderNodesContainer extends ScrollPane {
         final Array<ShaderNodeElement<?>> nodeElements = getNodeElements();
         nodeElements.clear();
 
+        final ShaderNodesChangeConsumer consumer = getChangeConsumer();
+        final MaterialDef materialDef = consumer.getMaterialDef();
+
+        final Map<String, MatParam> matParams = MaterialDefUtils.getMatParams(materialDef);
+        final List<UniformBinding> worldBindings = techniqueDef.getWorldBindings();
+
         final List<ShaderNodeVariable> uniforms = new ArrayList<>();
-        uniforms.addAll(shaderGenerationInfo.getFragmentUniforms());
-        uniforms.addAll(shaderGenerationInfo.getVertexUniforms());
+
+        for (final MatParam matParam : matParams.values()) {
+            uniforms.add(MaterialShaderNodeElement.toVariable(matParam));
+        }
+
+        for (final UniformBinding worldBinding : worldBindings) {
+            uniforms.add(WorldShaderNodeElement.toVariable(worldBinding));
+        }
+
         uniforms.addAll(shaderGenerationInfo.getAttributes());
 
         nodeElements.add(new InputGlobalShaderNodeElement(this, shaderGenerationInfo));
         nodeElements.add(new OutputGlobalShaderNodeElement(this, shaderGenerationInfo));
+
+        for (final ShaderNodeVariable variable : uniforms) {
+            final ShaderNodeElement<?> nodeElement = createNodeElement(variable);
+            if (nodeElement != null) {
+                nodeElements.add(nodeElement);
+            }
+        }
 
         final List<ShaderNode> shaderNodes = techniqueDef.getShaderNodes();
 
@@ -328,21 +395,95 @@ public class ShaderNodesContainer extends ScrollPane {
             }
         }
 
-        for (final ShaderNodeVariable variable : uniforms) {
-            final String nameSpace = variable.getNameSpace();
-            if (MaterialShaderNodeElement.NAMESPACE.equals(nameSpace)) {
-                nodeElements.add(new MaterialShaderNodeElement(this, variable));
-            } else if (WorldShaderNodeElement.NAMESPACE.equals(nameSpace)) {
-                nodeElements.add(new WorldShaderNodeElement(this, variable));
-            } else if (AttributeShaderNodeElement.NAMESPACE.equals(nameSpace)) {
-                nodeElements.add(new AttributeShaderNodeElement(this, variable));
-            }
-        }
-
         nodeElements.forEach(root.getChildren(), (nodeElement, nodes) -> nodes.add(nodeElement));
+        nodeElements.sort(ShaderNodeElement.TITLE_COMPARATOR);
 
         refreshLines();
     }
+
+    /**
+     * Find a node element by the variable.
+     *
+     * @param variable the variable.
+     * @return the node element or null.
+     */
+    @FXThread
+    private @Nullable ShaderNodeElement<?> findNodeElementByVariable(final @NotNull ShaderNodeVariable variable) {
+        return (ShaderNodeElement<?>) root.getChildren().stream()
+                    .filter(ShaderNodeElement.class::isInstance)
+                    .map(ShaderNodeElement.class::cast)
+                    .filter(element -> element.getObject().equals(variable))
+                    .findAny().orElse(null);
+    }
+
+    @FXThread
+    public void addMatParam(@NotNull final MatParam matParam, @NotNull final Vector2f location) {
+        addNodeElement(MaterialShaderNodeElement.toVariable(matParam), location);
+    }
+
+    @FXThread
+    public void addNodeElement(@NotNull final ShaderNodeVariable variable, @NotNull final Vector2f location) {
+
+        final ShaderNodeElement<?> nodeElement = createNodeElement(variable);
+        if (nodeElement == null) {
+            return;
+        }
+
+        nodeElement.setLayoutX(location.getX());
+        nodeElement.setLayoutY(location.getY());
+
+        final ObservableList<Node> children = root.getChildren();
+        children.add(nodeElement);
+
+        final Array<ShaderNodeElement<?>> nodeElements = getNodeElements();
+        nodeElements.add(nodeElement);
+        nodeElements.sort(ShaderNodeElement.TITLE_COMPARATOR);
+    }
+
+    @FXThread
+    public void removeMatParam(@NotNull final MatParam matParam) {
+        removeNodeElement(MaterialShaderNodeElement.toVariable(matParam));
+    }
+
+    /**
+     * Remove an element of the variable.
+     *
+     * @param variable the variable.
+     */
+    @FXThread
+    public void removeNodeElement(@NotNull final ShaderNodeVariable variable) {
+
+        final ShaderNodeElement<?> nodeElement = findNodeElementByVariable(variable);
+        if (nodeElement == null) {
+            return;
+        }
+
+        root.getChildren().remove(nodeElement);
+        getNodeElements().slowRemove(nodeElement);
+        refreshLines();
+    }
+
+    /**
+     * Create a node element for the variable.
+     *
+     * @param variable the variable.
+     * @return the node element.
+     */
+    private @Nullable ShaderNodeElement<?> createNodeElement(@NotNull ShaderNodeVariable variable) {
+
+        ShaderNodeElement<?> nodeElement = null;
+
+        final String nameSpace = variable.getNameSpace();
+        if (MaterialShaderNodeElement.NAMESPACE.equals(nameSpace)) {
+            nodeElement = new MaterialShaderNodeElement(this, variable);
+        } else if (WorldShaderNodeElement.NAMESPACE.equals(nameSpace)) {
+            nodeElement = new WorldShaderNodeElement(this, variable);
+        } else if (AttributeShaderNodeElement.NAMESPACE.equals(nameSpace)) {
+            nodeElement = new AttributeShaderNodeElement(this, variable);
+        }
+        return nodeElement;
+    }
+
 
     /**
      * Get the current technique.
@@ -440,7 +581,7 @@ public class ShaderNodesContainer extends ScrollPane {
      *
      * @param event the scroll event.
      */
-    private void processEvent(@NotNull final ScrollEvent event) {
+    private void handleScrollEvent(@NotNull final ScrollEvent event) {
 
         double zoomFactor = event.getDeltaY() * ZOOM_INTENSITY;
 

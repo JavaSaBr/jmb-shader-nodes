@@ -1,7 +1,7 @@
 package com.ss.editor.shader.nodes.editor.shader.node.parameter;
 
-import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.CSS_SHADER_NODE_PARAMETER;
-import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.CSS_SHADER_NODE_PARAMETER_SOCKET;
+import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE_PARAMETER;
+import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE_PARAMETER_SOCKET;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.shader.nodes.editor.shader.node.ShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.socket.SocketElement;
@@ -55,8 +55,8 @@ public class ShaderNodeParameter extends HBox {
         this.nameLabel = new Label();
         this.typeLabel = new Label();
         createContent();
-        FXUtils.addClassTo(this, CSS_SHADER_NODE_PARAMETER);
-        FXUtils.addClassTo(socket, CSS_SHADER_NODE_PARAMETER_SOCKET);
+        FXUtils.addClassTo(this, SHADER_NODE_PARAMETER);
+        FXUtils.addClassTo(socket, SHADER_NODE_PARAMETER_SOCKET);
     }
 
     /**

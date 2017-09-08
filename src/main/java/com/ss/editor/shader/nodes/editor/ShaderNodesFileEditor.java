@@ -3,6 +3,7 @@ package com.ss.editor.shader.nodes.editor;
 import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.jme3.export.binary.BinaryExporter;
 import com.jme3.export.binary.BinaryImporter;
+import com.jme3.material.MatParam;
 import com.jme3.material.Material;
 import com.jme3.material.MaterialDef;
 import com.jme3.material.TechniqueDef;
@@ -253,10 +254,8 @@ public class ShaderNodesFileEditor extends
 
     }
 
-    /**
-     * @return the edited material definition.
-     */
-    private @NotNull MaterialDef getMaterialDef() {
+    @Override
+    public @NotNull MaterialDef getMaterialDef() {
         return notNull(getProject().getMaterialDef());
     }
 
@@ -297,8 +296,7 @@ public class ShaderNodesFileEditor extends
 
     private @NotNull MaterialDef clone(@NotNull final MaterialDef materialDef) {
         final Cloner cloner = new Cloner();
-        final MaterialDef clone = cloner.clone(materialDef);
-        return clone;
+        return cloner.clone(materialDef);
     }
 
     @Override
@@ -314,6 +312,13 @@ public class ShaderNodesFileEditor extends
         final ShaderNodesEditorState editorState = getEditorState();
         if (editorState == null) return;
 
+        final ComboBox<String> techniqueComboBox = getTechniqueComboBox();
+        final String currentTech = techniqueComboBox.getSelectionModel().getSelectedItem();
+
+        if (currentTech == null) {
+            return;
+        }
+
         final ShaderNodesContainer shaderNodesContainer = getShaderNodesContainer();
         final Vector2f[] locations = shaderNodesContainer.getNodeElements()
                 .stream().map(element -> new Vector2f((float) element.getLayoutX(), (float) element.getLayoutY()))
@@ -323,9 +328,8 @@ public class ShaderNodesFileEditor extends
                 .stream().mapToDouble(Region::getPrefWidth)
                 .toArray();
 
-        editorState.updateNodeElementLocations(locations);
-        editorState.updateNodeElementWidths(widths);
-
+        editorState.updateNodeElementLocations(currentTech, locations);
+        editorState.updateNodeElementWidths(currentTech, widths);
 
         super.notifyClosed();
     }
@@ -336,7 +340,10 @@ public class ShaderNodesFileEditor extends
         final ShaderNodesEditorState editorState = getEditorState();
         if (editorState == null) return new Vector2f[0];
 
-        return editorState.getNodeElementLocations();
+        final ComboBox<String> techniqueComboBox = getTechniqueComboBox();
+        final String currentTech = techniqueComboBox.getSelectionModel().getSelectedItem();
+
+        return editorState.getNodeElementLocations(currentTech);
     }
 
     @Override
@@ -345,12 +352,15 @@ public class ShaderNodesFileEditor extends
         final ShaderNodesEditorState editorState = getEditorState();
         if (editorState == null) return new double[0];
 
-        return editorState.getNodeElementWidths();
+        final ComboBox<String> techniqueComboBox = getTechniqueComboBox();
+        final String currentTech = techniqueComboBox.getSelectionModel().getSelectedItem();
+
+        return editorState.getNodeElementWidths(currentTech);
     }
 
     @Override
     @FXThread
-    public void notifyAddMapping(@NotNull final ShaderNode shaderNode, @NotNull final VariableMapping mapping) {
+    public void notifyAddedMapping(@NotNull final ShaderNode shaderNode, @NotNull final VariableMapping mapping) {
         buildMaterial();
         final ShaderNodesContainer container = getShaderNodesContainer();
         container.refreshLines();
@@ -358,7 +368,7 @@ public class ShaderNodesFileEditor extends
 
     @Override
     @FXThread
-    public void notifyRemoveMapping(@NotNull final ShaderNode shaderNode, @NotNull final VariableMapping mapping) {
+    public void notifyRemovedMapping(@NotNull final ShaderNode shaderNode, @NotNull final VariableMapping mapping) {
         buildMaterial();
         final ShaderNodesContainer container = getShaderNodesContainer();
         container.refreshLines();
@@ -371,5 +381,21 @@ public class ShaderNodesFileEditor extends
         buildMaterial();
         final ShaderNodesContainer container = getShaderNodesContainer();
         container.refreshLines();
+    }
+
+    @FXThread
+    @Override
+    public void notifyAddedMatParameter(@NotNull final MatParam matParam, @NotNull final Vector2f location) {
+        buildMaterial();
+        final ShaderNodesContainer container = getShaderNodesContainer();
+        container.addMatParam(matParam, location);
+    }
+
+    @FXThread
+    @Override
+    public void notifyRemovedMatParameter(@NotNull final MatParam matParam) {
+        buildMaterial();
+        final ShaderNodesContainer container = getShaderNodesContainer();
+        container.removeMatParam(matParam);
     }
 }

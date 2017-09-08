@@ -76,7 +76,7 @@ public class AttachParameterToShaderNodeOperation extends ShaderNodeOperation {
 
     @Override
     @FXThread
-    protected void undoImplInFXThread(final @NotNull ShaderNodesChangeConsumer editor) {
+    protected void undoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
         super.undoImplInFXThread(editor);
         notify(editor, newMapping, oldMapping);
     }
@@ -87,9 +87,9 @@ public class AttachParameterToShaderNodeOperation extends ShaderNodeOperation {
         if (oldMapping != null && newMapping != null) {
             editor.notifyReplacedMapping(shaderNode, oldMapping, newMapping);
         } else if (oldMapping != null) {
-            editor.notifyRemoveMapping(shaderNode, oldMapping);
+            editor.notifyRemovedMapping(shaderNode, oldMapping);
         } else if (newMapping != null) {
-            editor.notifyAddMapping(shaderNode, newMapping);
+            editor.notifyAddedMapping(shaderNode, newMapping);
         }
     }
 }

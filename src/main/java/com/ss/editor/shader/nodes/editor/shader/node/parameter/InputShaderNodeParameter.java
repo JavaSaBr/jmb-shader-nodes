@@ -1,6 +1,6 @@
 package com.ss.editor.shader.nodes.editor.shader.node.parameter;
 
-import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.CSS_SHADER_NODE_INPUT_PARAMETER;
+import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE_INPUT_PARAMETER;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.shader.nodes.editor.shader.node.ShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.socket.InputSocketElement;
@@ -18,7 +18,7 @@ public class InputShaderNodeParameter extends ShaderNodeParameter {
     public InputShaderNodeParameter(@NotNull final ShaderNodeElement<?> nodeElement,
                                     @NotNull final ShaderNodeVariable variable) {
         super(nodeElement, variable);
-        FXUtils.addClassTo(this, CSS_SHADER_NODE_INPUT_PARAMETER);
+        FXUtils.addClassTo(this, SHADER_NODE_INPUT_PARAMETER);
     }
 
     @Override

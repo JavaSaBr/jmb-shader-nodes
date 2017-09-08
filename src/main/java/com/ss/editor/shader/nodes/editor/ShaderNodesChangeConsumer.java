@@ -1,5 +1,7 @@
 package com.ss.editor.shader.nodes.editor;
 
+import com.jme3.material.MatParam;
+import com.jme3.material.MaterialDef;
 import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.VariableMapping;
@@ -29,13 +31,24 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
     @FromAnyThread
     @NotNull double[] getNodeElementWidths();
 
-    @FXThread
-    void notifyAddMapping(@NotNull final ShaderNode shaderNode, @NotNull final VariableMapping mapping);
+    /**
+     * @return the edited material definition.
+     */
+    @NotNull MaterialDef getMaterialDef();
 
     @FXThread
-    void notifyRemoveMapping(@NotNull final ShaderNode shaderNode, @NotNull final VariableMapping mapping);
+    void notifyAddedMapping(@NotNull final ShaderNode shaderNode, @NotNull final VariableMapping mapping);
+
+    @FXThread
+    void notifyRemovedMapping(@NotNull final ShaderNode shaderNode, @NotNull final VariableMapping mapping);
 
     @FXThread
     void notifyReplacedMapping(@NotNull final ShaderNode shaderNode, @NotNull final VariableMapping oldMapping,
                                @NotNull final VariableMapping newMapping);
+
+    @FXThread
+    void notifyAddedMatParameter(@NotNull final MatParam matParam, @NotNull Vector2f location);
+
+    @FXThread
+    void notifyRemovedMatParameter(@NotNull final MatParam matParam);
 }

@@ -1,6 +1,6 @@
 package com.ss.editor.shader.nodes.editor.shader.node.line;
 
-import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.CSS_SHADER_NODE_TEMP_LINE;
+import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE_TEMP_LINE;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.socket.SocketElement;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.StrokeLineCap;
@@ -19,7 +19,7 @@ public class TempLine extends CubicCurve {
     public TempLine(@NotNull final SocketElement sourceSocket) {
         this.sourceSocket = sourceSocket;
         configureLine();
-        getStyleClass().add(CSS_SHADER_NODE_TEMP_LINE);
+        getStyleClass().add(SHADER_NODE_TEMP_LINE);
     }
 
     /**

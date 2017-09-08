@@ -1,7 +1,7 @@
 package com.ss.editor.shader.nodes.editor.shader.node;
 
-import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.CSS_SHADER_NODE;
-import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.CSS_SHADER_NODE_HEADER;
+import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE;
+import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE_HEADER;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.InputShaderNodeParameter;
@@ -10,6 +10,7 @@ import com.ss.editor.shader.nodes.editor.shader.node.parameter.ShaderNodeParamet
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.socket.SocketElement;
 import com.ss.rlib.ui.util.FXUtils;
 import com.ss.rlib.util.StringUtils;
+import com.ss.rlib.util.array.ArrayComparator;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.BooleanPropertyBase;
 import javafx.css.PseudoClass;
@@ -30,6 +31,19 @@ import org.jetbrains.annotations.Nullable;
  * @author JavaSaBr
  */
 public class ShaderNodeElement<T> extends VBox {
+
+    @NotNull
+    public static final ArrayComparator<ShaderNodeElement<?>> TITLE_COMPARATOR = (first, second) -> {
+
+        final Class<? extends ShaderNodeElement> firstClass = first.getClass();
+        final Class<? extends ShaderNodeElement> secondClass = second.getClass();
+
+        if (firstClass != secondClass) {
+            return StringUtils.compare(firstClass.getName(), secondClass.getName());
+        }
+
+        return StringUtils.compareIgnoreCase(first.getTitleText(), second.getTitleText());
+    };
 
     /**
      * The margin around the control that a user can click in to start resizing
@@ -108,7 +122,7 @@ public class ShaderNodeElement<T> extends VBox {
         this.parametersContainer = new VBox();
         createContent();
         setPrefWidth(200);
-        FXUtils.addClassTo(this, CSS_SHADER_NODE);
+        FXUtils.addClassTo(this, SHADER_NODE);
     }
 
     /**
@@ -190,7 +204,7 @@ public class ShaderNodeElement<T> extends VBox {
         final StackPane header = new StackPane();
         final Label titleLabel = new Label(getTitleText());
 
-        FXUtils.addClassTo(header, CSS_SHADER_NODE_HEADER);
+        FXUtils.addClassTo(header, SHADER_NODE_HEADER);
 
         FXUtils.addToPane(titleLabel, header);
         FXUtils.addToPane(header, this);
@@ -243,8 +257,8 @@ public class ShaderNodeElement<T> extends VBox {
             double offsetX = parentCoords.getX() - mouseX;
             double offsetY = parentCoords.getY() - mouseY;
 
-            x += offsetX;
-            y += offsetY;
+            x = Math.max(x + offsetX, 10D);
+            y = Math.max(y + offsetY, 10D);
 
             setLayoutX(x);
             setLayoutY(y);
