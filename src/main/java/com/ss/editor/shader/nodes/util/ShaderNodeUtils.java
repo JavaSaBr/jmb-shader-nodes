@@ -1,5 +1,6 @@
 package com.ss.editor.shader.nodes.util;
 
+import com.jme3.scene.VertexBuffer;
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.VariableMapping;
@@ -10,6 +11,8 @@ import com.ss.editor.shader.nodes.editor.shader.node.parameter.OutputShaderNodeP
 import com.ss.rlib.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
 
 /**
  * The utility class.
@@ -157,5 +160,108 @@ public class ShaderNodeUtils {
         newMapping.getLeftVariable().setShaderOutput(isShaderOutput);
 
         return newMapping;
+    }
+
+    /**
+     * Get the UI type of the attribute.
+     *
+     * @param attribute the attribute.
+     * @return the UI type.
+     */
+    public static @NotNull String getAttributeUIType(@NotNull final VertexBuffer.Type attribute) {
+        switch (attribute) {
+            case BoneWeight:
+            case BindPoseNormal:
+            case Binormal:
+            case Normal: {
+                return "Vector 3 x Float";
+            }
+            case Size: {
+                return "Float";
+            }
+            case Position:
+            case BindPosePosition:
+            case BindPoseTangent:
+            case Tangent: {
+                return "Vector 4 x Float";
+            }
+            case Color: {
+                return "Color";
+            }
+            case InterleavedData: {
+                return "Integer";
+            }
+            case Index: {
+                return "Unsigned Integer";
+            }
+            case BoneIndex: {
+                return "Vector 4 x Unsigned Integer";
+            }
+            case TexCoord:
+            case TexCoord2:
+            case TexCoord3:
+            case TexCoord4:
+            case TexCoord5:
+            case TexCoord6:
+            case TexCoord7:
+            case TexCoord8: {
+                return "Vector 2 x Float";
+            }
+        }
+        throw new RuntimeException("unknown attribute " + attribute);
+    }
+
+    /**
+     * Convert UI type of shader to real type.
+     *
+     * @param type the UI type.
+     * @return the real type.
+     */
+    public static @NotNull String uiTypeToType(@NotNull final String type) {
+        switch (type) {
+            case "Vector 4 x Unsigned Integer":
+                return "uvec4";
+            case "Color":
+                return "vec4";
+            case "Vector 4 x Float":
+                return "vec4";
+            case "Vector 3 x Float":
+                return "vec3";
+            case "Vector 2 x Float":
+                return "vec2";
+            case "Unsigned Integer":
+                return "uint";
+            case "Integer":
+                return "int";
+            case "Float":
+                return "float";
+            default:
+                return type;
+        }
+    }
+
+    /**
+     * Check the list of variables to contain a variable with the name and the namespace.
+     *
+     * @param variables the variables.
+     * @param name      the name.
+     * @param nameSpace the namespace.
+     * @return true of the list contains it.
+     */
+    public static boolean containsByNN(@NotNull final Collection<ShaderNodeVariable> variables,
+                                       @NotNull final String name, @NotNull final String nameSpace) {
+
+        for (final ShaderNodeVariable variable : variables) {
+
+            if (!StringUtils.equals(variable.getNameSpace(), nameSpace)) {
+                continue;
+            } else if (!StringUtils.equals(variable.getName(), name)) {
+                continue;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 }

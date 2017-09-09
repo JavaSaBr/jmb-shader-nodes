@@ -9,6 +9,8 @@ import com.jme3.material.MaterialDef;
 import com.jme3.material.TechniqueDef;
 import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNode;
+import com.jme3.shader.ShaderNodeVariable;
+import com.jme3.shader.UniformBinding;
 import com.jme3.shader.VariableMapping;
 import com.jme3.util.clone.Cloner;
 import com.ss.editor.annotation.BackgroundThread;
@@ -397,5 +399,33 @@ public class ShaderNodesFileEditor extends
         buildMaterial();
         final ShaderNodesContainer container = getShaderNodesContainer();
         container.removeMatParam(matParam);
+    }
+
+    @FXThread
+    @Override
+    public void notifyAddedAttribute(@NotNull final ShaderNodeVariable variable, @NotNull final Vector2f location) {
+        final ShaderNodesContainer container = getShaderNodesContainer();
+        container.addNodeElement(variable, location);
+    }
+
+    @FXThread
+    @Override
+    public void notifyRemovedAttribute(@NotNull final ShaderNodeVariable variable) {
+        final ShaderNodesContainer container = getShaderNodesContainer();
+        container.removeNodeElement(variable);
+    }
+
+    @Override
+    @FXThread
+    public void notifyAddedWorldParameter(@NotNull final UniformBinding binding, @NotNull final Vector2f location) {
+        final ShaderNodesContainer container = getShaderNodesContainer();
+        container.addWorldParam(binding, location);
+    }
+
+    @Override
+    @FXThread
+    public void notifyRemovedWorldParameter(@NotNull final UniformBinding binding) {
+        final ShaderNodesContainer container = getShaderNodesContainer();
+        container.removeWorldParam(binding);
     }
 }

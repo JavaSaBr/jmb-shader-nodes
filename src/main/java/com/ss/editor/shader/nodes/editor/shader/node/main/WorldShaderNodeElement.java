@@ -23,7 +23,7 @@ public class WorldShaderNodeElement extends OutputVariableShaderNodeElement {
      */
     public static @NotNull ShaderNodeVariable toVariable(@NotNull final UniformBinding binding) {
         return new ShaderNodeVariable(binding.getGlslType(), NAMESPACE, binding.name(),
-                null, "w_");
+                null, "g_");
     }
 
     public WorldShaderNodeElement(@NotNull final ShaderNodesContainer container,
