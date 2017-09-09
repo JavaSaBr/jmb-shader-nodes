@@ -16,7 +16,7 @@ import java.util.Map;
  *
  * @author JavaSaBr
  */
-public class AddMatParamShaderNodeOperation extends ShaderNodeOperation {
+public class AddMaterialParameterOperation extends ShaderNodeOperation {
 
     @NotNull
     private final MaterialDef materialDef;
@@ -27,8 +27,8 @@ public class AddMatParamShaderNodeOperation extends ShaderNodeOperation {
     @NotNull
     private final Vector2f location;
 
-    public AddMatParamShaderNodeOperation(@NotNull final MaterialDef materialDef, @NotNull final MatParam matParam,
-                                          @NotNull final Vector2f location) {
+    public AddMaterialParameterOperation(@NotNull final MaterialDef materialDef, @NotNull final MatParam matParam,
+                                         @NotNull final Vector2f location) {
         this.materialDef = materialDef;
         this.matParam = matParam;
         this.location = location;

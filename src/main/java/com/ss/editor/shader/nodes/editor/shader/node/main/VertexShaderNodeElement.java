@@ -40,4 +40,10 @@ public class VertexShaderNodeElement extends MainShaderNodeElement {
                 sourceElement instanceof VertexShaderNodeElement ||
                 sourceElement instanceof WorldShaderNodeElement;
     }
+
+    @Override
+    public void attach(@NotNull final InputShaderNodeParameter inputParameter,
+                       @NotNull final OutputShaderNodeParameter outputParameter) {
+        super.attach(inputParameter, outputParameter);
+    }
 }

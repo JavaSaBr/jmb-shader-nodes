@@ -1,11 +1,13 @@
 package com.ss.editor.shader.nodes.editor.shader.node.main;
 
-import com.jme3.shader.ShaderNode;
-import com.jme3.shader.ShaderNodeDefinition;
-import com.jme3.shader.ShaderNodeVariable;
-import com.jme3.shader.VariableMapping;
+import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.findInMappingByNLeftVar;
+import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.makeMapping;
+import com.jme3.material.TechniqueDef;
+import com.jme3.shader.*;
 import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
-import com.ss.editor.shader.nodes.editor.operation.AttachParameterToShaderNodeOperation;
+import com.ss.editor.shader.nodes.editor.operation.attach.AttachAttributeToShaderNodeOperation;
+import com.ss.editor.shader.nodes.editor.operation.attach.AttachUniformToShaderNodeOperation;
+import com.ss.editor.shader.nodes.editor.operation.attach.AttachVarToShaderNodeOperation;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.editor.shader.node.ShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.InputShaderNodeParameter;
@@ -70,19 +72,43 @@ public class MainShaderNodeElement extends ShaderNodeElement<ShaderNode> {
                        @NotNull final OutputShaderNodeParameter outputParameter) {
         super.attach(inputParameter, outputParameter);
 
+        final ShaderNodeElement<?> nodeElement = outputParameter.getNodeElement();
+
         final ShaderNodeVariable inVar = inputParameter.getVariable();
         final ShaderNodeVariable outVar = outputParameter.getVariable();
         final ShaderNode shaderNode = getObject();
 
-        final VariableMapping currentMapping = shaderNode.getInputMapping().stream()
-                .filter(mapping -> mapping.getLeftVariable().getName().equals(inVar.getName()))
-                .findAny().orElse(null);
-
-        final VariableMapping newMapping = new VariableMapping();
-        newMapping.setLeftVariable(new ShaderNodeVariable(inVar.getType(), shaderNode.getDefinition().getName(), inVar.getName(), null, inVar.getPrefix()));
-        newMapping.setRightVariable(new ShaderNodeVariable(outVar.getType(), outVar.getNameSpace(), outVar.getName(), null, outVar.getPrefix()));
+        final VariableMapping currentMapping = findInMappingByNLeftVar(shaderNode, inVar);
+        final VariableMapping newMapping = makeMapping(inputParameter, outputParameter);
 
         final ShaderNodesChangeConsumer changeConsumer = getContainer().getChangeConsumer();
-        changeConsumer.execute(new AttachParameterToShaderNodeOperation(shaderNode, newMapping, currentMapping));
+
+        if (nodeElement instanceof AttributeShaderNodeElement) {
+            changeConsumer.execute(new AttachAttributeToShaderNodeOperation(shaderNode, newMapping, currentMapping));
+            return;
+        }
+
+        final ShaderNodesContainer container = nodeElement.getContainer();
+        final TechniqueDef techniqueDef = container.getTechniqueDef();
+
+        if (nodeElement instanceof MainShaderNodeElement) {
+            final ShaderNode outShaderNode = ((MainShaderNodeElement) nodeElement).getObject();
+            changeConsumer.execute(new AttachVarToShaderNodeOperation(shaderNode, newMapping, currentMapping,
+                    techniqueDef, outShaderNode));
+        } else if (nodeElement instanceof MaterialShaderNodeElement || nodeElement instanceof WorldShaderNodeElement) {
+
+            final Shader.ShaderType type = shaderNode.getDefinition().getType();
+
+            if (type == Shader.ShaderType.Vertex) {
+
+                final List<ShaderNode> fragmentNodes = container.findWithRightInputVar(newMapping.getLeftVariable(),
+                        FragmentShaderNodeElement.class);
+
+                newMapping.getLeftVariable().setShaderOutput(!fragmentNodes.isEmpty());
+            }
+
+            changeConsumer.execute(new AttachUniformToShaderNodeOperation(shaderNode, outVar, techniqueDef,
+                    newMapping, currentMapping));
+        }
     }
 }

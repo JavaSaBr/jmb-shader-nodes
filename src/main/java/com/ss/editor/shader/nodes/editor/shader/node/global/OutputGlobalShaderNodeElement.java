@@ -1,10 +1,18 @@
 package com.ss.editor.shader.nodes.editor.shader.node.global;
 
+import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.findOutMappingByNNLeftVar;
+import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.makeMapping;
 import com.jme3.material.ShaderGenerationInfo;
+import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
+import com.jme3.shader.VariableMapping;
+import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
+import com.ss.editor.shader.nodes.editor.operation.attach.AttachVarToGlobalNodeOperation;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.editor.shader.node.ShaderNodeElement;
-import com.ss.editor.shader.nodes.editor.shader.node.main.*;
+import com.ss.editor.shader.nodes.editor.shader.node.main.FragmentShaderNodeElement;
+import com.ss.editor.shader.nodes.editor.shader.node.main.MainShaderNodeElement;
+import com.ss.editor.shader.nodes.editor.shader.node.main.VertexShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.InputShaderNodeParameter;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.OutputShaderNodeParameter;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.ShaderNodeParameter;
@@ -67,15 +75,37 @@ public class OutputGlobalShaderNodeElement extends GlobalShaderNodeElement {
         final ShaderNodeElement<?> sourceElement = outputParameter.getNodeElement();
 
         if (isVertex) {
-            return sourceElement instanceof MaterialShaderNodeElement ||
-                    sourceElement instanceof AttributeShaderNodeElement ||
-                    sourceElement instanceof VertexShaderNodeElement ||
-                    sourceElement instanceof WorldShaderNodeElement;
+            return sourceElement instanceof VertexShaderNodeElement;
         } else {
-            return sourceElement instanceof MaterialShaderNodeElement ||
-                    sourceElement instanceof FragmentShaderNodeElement ||
-                    sourceElement instanceof VertexShaderNodeElement ||
-                    sourceElement instanceof WorldShaderNodeElement;
+            return sourceElement instanceof FragmentShaderNodeElement;
         }
+    }
+
+    @Override
+    public void attach(@NotNull final InputShaderNodeParameter inputParameter,
+                       @NotNull final OutputShaderNodeParameter outputParameter) {
+        super.attach(inputParameter, outputParameter);
+
+        final ShaderNodeElement<?> nodeElement = outputParameter.getNodeElement();
+        if (!(nodeElement instanceof MainShaderNodeElement)) {
+            return;
+        }
+
+        final ShaderNode shaderNode = ((MainShaderNodeElement) nodeElement).getObject();
+        final ShaderNodeVariable inVar = inputParameter.getVariable();
+
+        final VariableMapping currentMapping = findOutMappingByNNLeftVar(shaderNode, inVar);
+        final VariableMapping newMapping = makeMapping(inputParameter, outputParameter);
+
+        if (newMapping.equals(currentMapping)) {
+            return;
+        }
+
+        final ShaderNodesContainer container = getContainer();
+        final List<ShaderNode> currentNodes = container.findWithLeftOutputVar(inVar);
+        currentNodes.remove(shaderNode);
+
+        final ShaderNodesChangeConsumer changeConsumer = container.getChangeConsumer();
+        changeConsumer.execute(new AttachVarToGlobalNodeOperation(shaderNode, newMapping, currentMapping, currentNodes));
     }
 }

@@ -1,6 +1,8 @@
 package com.ss.editor.shader.nodes.editor.shader;
 
 import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODES_ROOT;
+import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.hasInMappingByRightVar;
+import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.hasOutMappingByLeftVar;
 import static com.ss.rlib.util.ObjectUtils.notNull;
 import static java.util.stream.Collectors.toList;
 import com.jme3.material.MatParam;
@@ -402,6 +404,40 @@ public class ShaderNodesContainer extends ScrollPane {
     }
 
     /**
+     * Find all shader nodes with left output variables.
+     *
+     * @param leftVariable the left variable.
+     * @return the list of nodes.
+     */
+    @FXThread
+    public @NotNull List<ShaderNode> findWithLeftOutputVar(@NotNull final ShaderNodeVariable leftVariable) {
+        return root.getChildren().stream()
+                .filter(MainShaderNodeElement.class::isInstance)
+                .map(MainShaderNodeElement.class::cast)
+                .map(ShaderNodeElement::getObject)
+                .filter(shaderNode -> hasOutMappingByLeftVar(shaderNode, leftVariable))
+                .collect(toList());
+    }
+
+    /**
+     * Find all shader nodes with right input variables.
+     *
+     * @param rightVariable the right variable.
+     * @param type          the type.
+     * @return the list of nodes.
+     */
+    @FXThread
+    public @NotNull List<ShaderNode> findWithRightInputVar(@NotNull final ShaderNodeVariable rightVariable,
+                                                           @NotNull final Class<? extends MainShaderNodeElement> type) {
+        return root.getChildren().stream()
+                .filter(type::isInstance)
+                .map(type::cast)
+                .map(ShaderNodeElement::getObject)
+                .filter(shaderNode -> hasInMappingByRightVar(shaderNode, rightVariable))
+                .collect(toList());
+    }
+
+    /**
      * Find a node element by the variable.
      *
      * @param variable the variable.
@@ -414,6 +450,24 @@ public class ShaderNodesContainer extends ScrollPane {
                     .map(ShaderNodeElement.class::cast)
                     .filter(element -> element.getObject().equals(variable))
                     .findAny().orElse(null);
+    }
+
+    /**
+     * Try to find shader node parameter for the variable.
+     *
+     * @param variable          the variable.
+     * @param fromOutputMapping true if the variable is from output mapping.
+     * @param input             true if the variable is input variable.
+     * @return the parameter or null.
+     */
+    private @Nullable ShaderNodeParameter findByVariable(@NotNull final ShaderNodeVariable variable,
+                                                         final boolean fromOutputMapping, final boolean input) {
+        return root.getChildren().stream()
+                .filter(ShaderNodeElement.class::isInstance)
+                .map(ShaderNodeElement.class::cast)
+                .map(shaderNodeElement -> shaderNodeElement.parameterFor(variable, fromOutputMapping, input))
+                .filter(Objects::nonNull)
+                .findAny().orElse(null);
     }
 
     @FXThread
@@ -490,26 +544,8 @@ public class ShaderNodesContainer extends ScrollPane {
      *
      * @return the current technique.
      */
-    private @NotNull TechniqueDef getTechniqueDef() {
+    public @NotNull TechniqueDef getTechniqueDef() {
         return notNull(techniqueDef);
-    }
-
-    /**
-     * Try to find shader node parameter for the variable.
-     *
-     * @param variable          the variable.
-     * @param fromOutputMapping true if the variable is from output mapping.
-     * @param input             true if the variable is input variable.
-     * @return the parameter or null.
-     */
-    private @Nullable ShaderNodeParameter findByVariable(@NotNull final ShaderNodeVariable variable,
-                                                         final boolean fromOutputMapping, final boolean input) {
-        return root.getChildren().stream()
-                .filter(ShaderNodeElement.class::isInstance)
-                .map(ShaderNodeElement.class::cast)
-                .map(shaderNodeElement -> shaderNodeElement.parameterFor(variable, fromOutputMapping, input))
-                .filter(Objects::nonNull)
-                .findAny().orElse(null);
     }
 
     /**

@@ -10,7 +10,7 @@ import com.ss.editor.annotation.FXThread;
 import com.ss.editor.plugin.api.dialog.GenericFactoryDialog;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
 import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
-import com.ss.editor.shader.nodes.editor.operation.AddMatParamShaderNodeOperation;
+import com.ss.editor.shader.nodes.editor.operation.AddMaterialParameterOperation;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
 import com.ss.rlib.util.VarTable;
 import com.ss.rlib.util.array.Array;
@@ -114,7 +114,7 @@ public class AddMaterialParamShaderModeAction extends ShaderNodeAction<MaterialD
         final VarType varType = vars.getEnum(PROP_TYPE, VarType.class);
         final MatParam matParam = new MatParam(varType, name, null);
 
-        changeConsumer.execute(new AddMatParamShaderNodeOperation(materialDef, matParam, getLocation()));
+        changeConsumer.execute(new AddMaterialParameterOperation(materialDef, matParam, getLocation()));
     }
 
     /**
