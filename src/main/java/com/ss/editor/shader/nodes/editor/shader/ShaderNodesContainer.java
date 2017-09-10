@@ -17,6 +17,7 @@ import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.editor.shader.node.ShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.action.AddAttributeShaderModeAction;
 import com.ss.editor.shader.nodes.editor.shader.node.action.AddMaterialParamShaderModeAction;
+import com.ss.editor.shader.nodes.editor.shader.node.action.AddMaterialTextureParamShaderModeAction;
 import com.ss.editor.shader.nodes.editor.shader.node.action.AddWorldParameterShaderModeAction;
 import com.ss.editor.shader.nodes.editor.shader.node.global.InputGlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.global.OutputGlobalShaderNodeElement;
@@ -289,6 +290,7 @@ public class ShaderNodesContainer extends ScrollPane {
 
         final Menu menu = new Menu("Add");
         menu.getItems().addAll(new AddMaterialParamShaderModeAction(this, materialDef, location),
+                new AddMaterialTextureParamShaderModeAction(this, materialDef, location),
                 new AddWorldParameterShaderModeAction(this, techniqueDef, location),
                 new AddAttributeShaderModeAction(this, techniqueDef, location));
 

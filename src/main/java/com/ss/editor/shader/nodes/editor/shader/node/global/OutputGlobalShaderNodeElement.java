@@ -1,5 +1,6 @@
 package com.ss.editor.shader.nodes.editor.shader.node.global;
 
+import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.calculateRightSwizzling;
 import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.findOutMappingByNNLeftVar;
 import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.makeMapping;
 import com.jme3.material.ShaderGenerationInfo;
@@ -96,6 +97,7 @@ public class OutputGlobalShaderNodeElement extends GlobalShaderNodeElement {
 
         final VariableMapping currentMapping = findOutMappingByNNLeftVar(shaderNode, inVar);
         final VariableMapping newMapping = makeMapping(inputParameter, outputParameter);
+        newMapping.setRightSwizzling(calculateRightSwizzling(inVar, outputParameter.getVariable()));
 
         if (newMapping.equals(currentMapping)) {
             return;

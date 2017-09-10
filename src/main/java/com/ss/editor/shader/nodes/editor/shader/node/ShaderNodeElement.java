@@ -2,6 +2,7 @@ package com.ss.editor.shader.nodes.editor.shader.node;
 
 import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE;
 import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE_HEADER;
+import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.calculateRightSwizzling;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.InputShaderNodeParameter;
@@ -142,7 +143,8 @@ public class ShaderNodeElement<T> extends VBox {
         final ShaderNodeVariable inVar = inputParameter.getVariable();
         final ShaderNodeVariable outVar = outputParameter.getVariable();
 
-        return StringUtils.equals(inVar.getType(), outVar.getType());
+        return StringUtils.equals(inVar.getType(), outVar.getType()) ||
+                calculateRightSwizzling(inVar, outVar) != null;
     }
 
     /**

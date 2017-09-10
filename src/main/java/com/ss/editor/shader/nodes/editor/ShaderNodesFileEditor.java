@@ -322,11 +322,11 @@ public class ShaderNodesFileEditor extends
         }
 
         final ShaderNodesContainer shaderNodesContainer = getShaderNodesContainer();
-        final Vector2f[] locations = shaderNodesContainer.getNodeElements()
+        final Vector2f[] locations = shaderNodesContainer.getSavedNodeElements()
                 .stream().map(element -> new Vector2f((float) element.getLayoutX(), (float) element.getLayoutY()))
                 .toArray(Vector2f[]::new);
 
-        final double[] widths = shaderNodesContainer.getNodeElements()
+        final double[] widths = shaderNodesContainer.getSavedNodeElements()
                 .stream().mapToDouble(Region::getPrefWidth)
                 .toArray();
 

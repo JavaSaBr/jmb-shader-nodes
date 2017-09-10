@@ -264,4 +264,54 @@ public class ShaderNodeUtils {
 
         return false;
     }
+
+    /**
+     * Try to calculate a right swizzling for the mapping.
+     *
+     * @param leftVar  the left variable.
+     * @param rightVar the right variable.
+     * @returnthe right swizzling or null.
+     */
+    public static @Nullable String calculateRightSwizzling(@NotNull final ShaderNodeVariable leftVar,
+                                                           @NotNull final ShaderNodeVariable rightVar) {
+
+        final String leftType = leftVar.getType();
+        final String rightType = rightVar.getType();
+
+        if (leftType == null || rightType == null) {
+            return null;
+        }
+
+        switch (rightType) {
+            case "vec4": {
+                switch (leftType) {
+                    case "vec3":
+                        return "xyz";
+                    case "vec2":
+                        return "xy";
+                    case "float":
+                        return "x";
+                }
+                break;
+            }
+            case "vec3": {
+                switch (leftType) {
+                    case "vec2":
+                        return "xy";
+                    case "float":
+                        return "x";
+                }
+                break;
+            }
+            case "vec2": {
+                switch (leftType) {
+                    case "float":
+                        return "x";
+                }
+                break;
+            }
+        }
+
+        return null;
+    }
 }

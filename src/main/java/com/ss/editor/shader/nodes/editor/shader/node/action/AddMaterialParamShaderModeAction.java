@@ -5,8 +5,11 @@ import static com.ss.editor.extension.property.EditablePropertyType.STRING_FROM_
 import com.jme3.material.MatParam;
 import com.jme3.material.MaterialDef;
 import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
+import com.jme3.math.Vector4f;
 import com.jme3.shader.VarType;
 import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.plugin.api.dialog.GenericFactoryDialog;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
 import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
@@ -27,17 +30,18 @@ import java.util.EnumSet;
 public class AddMaterialParamShaderModeAction extends ShaderNodeAction<MaterialDef> {
 
     @NotNull
-    private static final String PROP_NAME = "name";
+    protected static final String PROP_NAME = "name";
 
     @NotNull
-    private static final String PROP_TYPE = "type";
+    protected static final String PROP_TYPE = "type";
 
     @NotNull
-    private static final EnumSet<VarType> TEXTURE_TYPES = EnumSet.of(VarType.Texture2D,
+    protected static final String PROP_DEFAULT = "default";
+
+    @NotNull
+    protected static final EnumSet<VarType> TEXTURE_TYPES = EnumSet.of(VarType.Texture2D,
             VarType.Texture3D,
-            VarType.TextureArray,
-            VarType.TextureCubeMap,
-            VarType.TextureBuffer
+            VarType.TextureCubeMap
     );
 
     @NotNull
@@ -82,11 +86,34 @@ public class AddMaterialParamShaderModeAction extends ShaderNodeAction<MaterialD
     @FXThread
     protected @NotNull Array<PropertyDefinition> getDefinitions() {
 
+        final Array<String> varTypes = getVarTypes();
         final Array<PropertyDefinition> definitions = ArrayFactory.newArray(PropertyDefinition.class);
-        definitions.add(new PropertyDefinition(STRING, "name", PROP_NAME, "newParam1"));
-        definitions.add(new PropertyDefinition(STRING_FROM_LIST, "type", PROP_TYPE, VarType.Float.name(), getVarTypes()));
+        definitions.add(new PropertyDefinition(STRING, "name", PROP_NAME, getNewParameterName()));
+        definitions.add(new PropertyDefinition(STRING_FROM_LIST, "type", PROP_TYPE, varTypes.first(), varTypes));
+
+        if (needDefaultValue()) {
+            definitions.add(new PropertyDefinition(STRING, "default", PROP_DEFAULT, ""));
+        }
 
         return definitions;
+    }
+
+    /**
+     * Get the default name of a new parameter.
+     *
+     * @return the default name of a new parameter.
+     */
+    @FromAnyThread
+    protected @NotNull String getNewParameterName() {
+        return "FloatValue";
+    }
+
+    /**
+     * @return true if need to add default value property.
+     */
+    @FromAnyThread
+    protected boolean needDefaultValue() {
+        return true;
     }
 
     /**
@@ -94,6 +121,7 @@ public class AddMaterialParamShaderModeAction extends ShaderNodeAction<MaterialD
      *
      * @return the list of variable types.
      */
+    @FromAnyThread
     protected @NotNull Array<String> getVarTypes() {
         return VAR_TYPES;
     }
@@ -112,7 +140,43 @@ public class AddMaterialParamShaderModeAction extends ShaderNodeAction<MaterialD
 
         final String name = vars.getString(PROP_NAME);
         final VarType varType = vars.getEnum(PROP_TYPE, VarType.class);
+        final String defaultValue = vars.getString(PROP_DEFAULT, "");
+
         final MatParam matParam = new MatParam(varType, name, null);
+
+        if (!defaultValue.isEmpty()) {
+            switch (varType) {
+                case Boolean:
+                    matParam.setValue(vars.getBoolean(PROP_DEFAULT));
+                    break;
+                case Int:
+                    matParam.setValue(vars.getInteger(PROP_DEFAULT));
+                    break;
+                case Float:
+                    matParam.setValue(vars.getFloat(PROP_DEFAULT));
+                    break;
+                case Vector4:
+                    float[] array = vars.getFloatArray(PROP_DEFAULT, " ");
+                    matParam.setValue(new Vector4f(array[0], array[1], array[2], array[3]));
+                    break;
+                case Vector3:
+                    array = vars.getFloatArray(PROP_DEFAULT, " ");
+                    matParam.setValue(new Vector3f(array[0], array[1], array[2]));
+                    break;
+                case Vector2:
+                    array = vars.getFloatArray(PROP_DEFAULT, " ");
+                    matParam.setValue(new Vector2f(array[0], array[1]));
+                    break;
+                case FloatArray:
+                    array = vars.getFloatArray(PROP_DEFAULT, " ");
+                    matParam.setValue(array);
+                    break;
+                case IntArray:
+                    final int[] intArray = vars.getIntegerArray(PROP_DEFAULT, " ");
+                    matParam.setValue(intArray);
+                    break;
+            }
+        }
 
         changeConsumer.execute(new AddMaterialParameterOperation(materialDef, matParam, getLocation()));
     }

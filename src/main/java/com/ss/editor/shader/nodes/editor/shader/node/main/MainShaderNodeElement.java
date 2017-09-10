@@ -1,7 +1,6 @@
 package com.ss.editor.shader.nodes.editor.shader.node.main;
 
-import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.findInMappingByNLeftVar;
-import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.makeMapping;
+import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.*;
 import com.jme3.material.TechniqueDef;
 import com.jme3.shader.*;
 import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
@@ -80,6 +79,11 @@ public class MainShaderNodeElement extends ShaderNodeElement<ShaderNode> {
 
         final VariableMapping currentMapping = findInMappingByNLeftVar(shaderNode, inVar);
         final VariableMapping newMapping = makeMapping(inputParameter, outputParameter);
+        newMapping.setRightSwizzling(calculateRightSwizzling(inVar, outVar));
+
+        if (newMapping.equals(currentMapping)) {
+            return;
+        }
 
         final ShaderNodesChangeConsumer changeConsumer = getContainer().getChangeConsumer();
 
