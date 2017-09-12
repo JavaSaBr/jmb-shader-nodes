@@ -322,11 +322,11 @@ public class ShaderNodesFileEditor extends
         }
 
         final ShaderNodesContainer shaderNodesContainer = getShaderNodesContainer();
-        final Vector2f[] locations = shaderNodesContainer.getSavedNodeElements()
+        final Vector2f[] locations = shaderNodesContainer.getNodeElements()
                 .stream().map(element -> new Vector2f((float) element.getLayoutX(), (float) element.getLayoutY()))
                 .toArray(Vector2f[]::new);
 
-        final double[] widths = shaderNodesContainer.getSavedNodeElements()
+        final double[] widths = shaderNodesContainer.getNodeElements()
                 .stream().mapToDouble(Region::getPrefWidth)
                 .toArray();
 
@@ -427,5 +427,19 @@ public class ShaderNodesFileEditor extends
     public void notifyRemovedWorldParameter(@NotNull final UniformBinding binding) {
         final ShaderNodesContainer container = getShaderNodesContainer();
         container.removeWorldParam(binding);
+    }
+
+    @Override
+    @FXThread
+    public void notifyAddedShaderNode(@NotNull final ShaderNode shaderNode, @NotNull final Vector2f location) {
+        final ShaderNodesContainer container = getShaderNodesContainer();
+        container.addShaderNode(shaderNode, location);
+    }
+
+    @Override
+    @FXThread
+    public void notifyRemovedRemovedShaderNode(@NotNull final ShaderNode shaderNode) {
+        final ShaderNodesContainer container = getShaderNodesContainer();
+        container.removeShaderNode(shaderNode);
     }
 }

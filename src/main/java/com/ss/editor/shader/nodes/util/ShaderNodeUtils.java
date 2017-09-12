@@ -1,5 +1,6 @@
 package com.ss.editor.shader.nodes.util;
 
+import com.jme3.material.TechniqueDef;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
@@ -21,6 +22,20 @@ import java.util.Collection;
  */
 public class ShaderNodeUtils {
 
+    /**
+     * Find a shader node with the name.
+     *
+     * @param techniqueDef the technique definition.
+     * @param name         the name.
+     * @return the shader node or null.
+     */
+    public static @Nullable ShaderNode findByName(@NotNull final TechniqueDef techniqueDef,
+                                                  @NotNull final String name) {
+        return techniqueDef.getShaderNodes().stream()
+                .filter(shaderNode -> shaderNode.getName().equals(name))
+                .findAny().orElse(null);
+
+    }
     /**
      * Compare two variables by name and namespace.
      *
@@ -279,7 +294,7 @@ public class ShaderNodeUtils {
         final String rightType = rightVar.getType();
 
         if (leftType == null || rightType == null) {
-            return null;
+            return "";
         }
 
         switch (rightType) {
@@ -312,6 +327,6 @@ public class ShaderNodeUtils {
             }
         }
 
-        return null;
+        return "";
     }
 }

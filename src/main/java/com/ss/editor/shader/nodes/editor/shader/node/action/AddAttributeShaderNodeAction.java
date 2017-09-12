@@ -23,7 +23,7 @@ import java.util.List;
  *
  * @author JavaSaBr
  */
-public class AddAttributeShaderModeAction extends AddTechniqueDefParameterShaderModeAction {
+public class AddAttributeShaderNodeAction extends AddTechniqueDefParameterShaderNodeAction {
 
     @NotNull
     private static final Array<String> ATTRIBUTE_TYPES = ArrayFactory.newArray(String.class);
@@ -33,7 +33,7 @@ public class AddAttributeShaderModeAction extends AddTechniqueDefParameterShader
             ATTRIBUTE_TYPES.add(attribute.name());
         }
     }
-    public AddAttributeShaderModeAction(@NotNull final ShaderNodesContainer container,
+    public AddAttributeShaderNodeAction(@NotNull final ShaderNodesContainer container,
                                         @NotNull final TechniqueDef techniqueDef, @NotNull final Vector2f location) {
         super(container, techniqueDef, location);
 

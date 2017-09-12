@@ -144,7 +144,7 @@ public class ShaderNodeElement<T> extends VBox {
         final ShaderNodeVariable outVar = outputParameter.getVariable();
 
         return StringUtils.equals(inVar.getType(), outVar.getType()) ||
-                calculateRightSwizzling(inVar, outVar) != null;
+                !StringUtils.isEmpty(calculateRightSwizzling(inVar, outVar));
     }
 
     /**

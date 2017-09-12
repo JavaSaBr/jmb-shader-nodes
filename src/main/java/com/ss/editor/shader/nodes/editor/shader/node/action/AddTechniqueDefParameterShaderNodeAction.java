@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author JavaSaBr
  */
-public abstract class AddTechniqueDefParameterShaderModeAction extends ShaderNodeAction<TechniqueDef> {
+public abstract class AddTechniqueDefParameterShaderNodeAction extends ShaderNodeAction<TechniqueDef> {
 
     @NotNull
     protected static final String PROP_NAME = "name";
@@ -28,7 +28,7 @@ public abstract class AddTechniqueDefParameterShaderModeAction extends ShaderNod
     @NotNull
     private final Array<String> available;
 
-    public AddTechniqueDefParameterShaderModeAction(@NotNull final ShaderNodesContainer container,
+    public AddTechniqueDefParameterShaderNodeAction(@NotNull final ShaderNodesContainer container,
                                                     @NotNull final TechniqueDef techniqueDef,
                                                     @NotNull final Vector2f location) {
         super(container, techniqueDef, location);

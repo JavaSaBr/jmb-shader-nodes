@@ -10,7 +10,7 @@ import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
 import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
-import com.ss.editor.shader.nodes.editor.operation.AddMaterialParameterOperation;
+import com.ss.editor.shader.nodes.editor.operation.add.AddMaterialParameterOperation;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
 import com.ss.rlib.util.VarTable;
 import com.ss.rlib.util.array.Array;
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author JavaSaBr
  */
-public class AddMaterialTextureParamShaderModeAction extends AddMaterialParamShaderModeAction {
+public class AddMaterialTextureParamShaderNodeAction extends AddMaterialParamShaderNodeAction {
 
     @NotNull
     private static final String PROP_COLOR_SPACE = "colorSpace";
@@ -36,7 +36,7 @@ public class AddMaterialTextureParamShaderModeAction extends AddMaterialParamSha
         }
     }
 
-    public AddMaterialTextureParamShaderModeAction(@NotNull final ShaderNodesContainer container,
+    public AddMaterialTextureParamShaderNodeAction(@NotNull final ShaderNodesContainer container,
                                                    @NotNull final MaterialDef materialDef,
                                                    @NotNull final Vector2f location) {
         super(container, materialDef, location);

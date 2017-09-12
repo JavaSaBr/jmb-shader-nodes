@@ -13,7 +13,7 @@ import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.plugin.api.dialog.GenericFactoryDialog;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
 import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
-import com.ss.editor.shader.nodes.editor.operation.AddMaterialParameterOperation;
+import com.ss.editor.shader.nodes.editor.operation.add.AddMaterialParameterOperation;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
 import com.ss.rlib.util.VarTable;
 import com.ss.rlib.util.array.Array;
@@ -27,7 +27,7 @@ import java.util.EnumSet;
  *
  * @author JavaSaBr
  */
-public class AddMaterialParamShaderModeAction extends ShaderNodeAction<MaterialDef> {
+public class AddMaterialParamShaderNodeAction extends ShaderNodeAction<MaterialDef> {
 
     @NotNull
     protected static final String PROP_NAME = "name";
@@ -55,7 +55,7 @@ public class AddMaterialParamShaderModeAction extends ShaderNodeAction<MaterialD
         }
     }
 
-    public AddMaterialParamShaderModeAction(@NotNull final ShaderNodesContainer container,
+    public AddMaterialParamShaderNodeAction(@NotNull final ShaderNodesContainer container,
                                             @NotNull final MaterialDef materialDef,
                                             @NotNull final Vector2f location) {
         super(container, materialDef, location);

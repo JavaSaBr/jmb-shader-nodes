@@ -1,7 +1,10 @@
 package com.ss.editor.shader.nodes;
 
+import com.ss.editor.FileExtensions;
+import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.manager.FileIconManager;
+import com.ss.editor.manager.ResourceManager;
 import com.ss.editor.plugin.EditorPlugin;
 import com.ss.editor.shader.nodes.creator.ShaderNodesProjectFileCreator;
 import com.ss.editor.shader.nodes.editor.ShaderNodesFileEditor;
@@ -9,6 +12,7 @@ import com.ss.editor.ui.component.creator.FileCreatorRegistry;
 import com.ss.editor.ui.component.editor.EditorRegistry;
 import com.ss.editor.ui.css.CSSRegistry;
 import com.ss.rlib.plugin.PluginContainer;
+import com.ss.rlib.plugin.PluginSystem;
 import com.ss.rlib.plugin.annotation.PluginDescription;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 @PluginDescription(
         id = "com.ss.editor.shader.nodes",
         version = "1.0.0",
-        minAppVersion = "1.1.0",
+        minAppVersion = "1.2.0",
         name = "Shader Nodes",
         description = "A plugin with an Editor to work with Shader Nodes."
 )
@@ -31,6 +35,14 @@ public class ShaderNodesEditorPlugin extends EditorPlugin {
 
     public ShaderNodesEditorPlugin(@NotNull final PluginContainer pluginContainer) {
         super(pluginContainer);
+    }
+
+    @FXThread
+    @Override
+    public void onBeforeCreateJavaFXContext(@NotNull final PluginSystem pluginSystem) {
+        super.onBeforeCreateJavaFXContext(pluginSystem);
+        final ResourceManager resourceManager = ResourceManager.getInstance();
+        resourceManager.registerInterestedFileType(FileExtensions.JME_SHADER_NODE);
     }
 
     @Override

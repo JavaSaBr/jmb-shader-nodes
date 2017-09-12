@@ -65,4 +65,10 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
 
     @FXThread
     void notifyRemovedWorldParameter(@NotNull final UniformBinding binding);
+
+    @FXThread
+    void notifyAddedShaderNode(@NotNull final ShaderNode shaderNode, @NotNull Vector2f location);
+
+    @FXThread
+    void notifyRemovedRemovedShaderNode(@NotNull final ShaderNode shaderNode);
 }
