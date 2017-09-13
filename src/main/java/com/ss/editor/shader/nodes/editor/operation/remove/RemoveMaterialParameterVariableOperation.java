@@ -20,7 +20,7 @@ import java.util.Map;
  *
  * @author JavaSaBr
  */
-public class RemoveMaterialParameterOperation extends RemoveUniformOperation {
+public class RemoveMaterialParameterVariableOperation extends RemoveUniformVariableOperation {
 
     /**
      * The material definition.
@@ -34,11 +34,11 @@ public class RemoveMaterialParameterOperation extends RemoveUniformOperation {
     @NotNull
     private final MatParam matParam;
 
-    public RemoveMaterialParameterOperation(@NotNull final List<ShaderNode> shaderNodes,
-                                            @NotNull final MaterialDef materialDef,
-                                            @NotNull final TechniqueDef techniqueDef, @NotNull final MatParam matParam,
-                                            @NotNull final ShaderNodeVariable variable,
-                                            @NotNull final Vector2f location) {
+    public RemoveMaterialParameterVariableOperation(@NotNull final List<ShaderNode> shaderNodes,
+                                                    @NotNull final MaterialDef materialDef,
+                                                    @NotNull final TechniqueDef techniqueDef, @NotNull final MatParam matParam,
+                                                    @NotNull final ShaderNodeVariable variable,
+                                                    @NotNull final Vector2f location) {
         super(shaderNodes, techniqueDef, variable, location);
         this.materialDef = materialDef;
         this.matParam = matParam;

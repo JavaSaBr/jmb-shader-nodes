@@ -8,7 +8,7 @@ import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
-import com.ss.editor.shader.nodes.editor.operation.remove.RemoveMaterialParameterOperation;
+import com.ss.editor.shader.nodes.editor.operation.remove.RemoveMaterialParameterVariableOperation;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.editor.shader.node.main.MainShaderNodeElement;
 import org.jetbrains.annotations.NotNull;
@@ -46,9 +46,9 @@ public class RemoveMaterialParamShaderNodeAction extends ShaderNodeAction<Shader
         final MatParam matParam = materialDef.getMaterialParam(variable.getName());
 
         final List<ShaderNode> usingNodes = container.findWithRightInputVar(variable, MainShaderNodeElement.class);
-        final ShaderNodesChangeConsumer consumer = container.getChangeConsumer();
 
-        consumer.execute(new RemoveMaterialParameterOperation(usingNodes, materialDef, techniqueDef,
+        final ShaderNodesChangeConsumer consumer = container.getChangeConsumer();
+        consumer.execute(new RemoveMaterialParameterVariableOperation(usingNodes, materialDef, techniqueDef,
                 matParam, variable, getLocation()));
     }
 }

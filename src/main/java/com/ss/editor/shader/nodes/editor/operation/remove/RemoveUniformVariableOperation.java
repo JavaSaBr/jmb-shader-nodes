@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @author JavaSaBr
  */
-public class RemoveUniformOperation extends RemoveOperation {
+public class RemoveUniformVariableOperation extends RemoveVariableOperation {
 
     /**
      * The variable from vertex uniforms.
@@ -31,8 +31,8 @@ public class RemoveUniformOperation extends RemoveOperation {
     @Nullable
     protected ShaderNodeVariable fragmentUniform;
 
-    public RemoveUniformOperation(@NotNull final List<ShaderNode> shaderNodes, @NotNull final TechniqueDef techniqueDef,
-                                  @NotNull final ShaderNodeVariable variable, @NotNull final Vector2f location) {
+    public RemoveUniformVariableOperation(@NotNull final List<ShaderNode> shaderNodes, @NotNull final TechniqueDef techniqueDef,
+                                          @NotNull final ShaderNodeVariable variable, @NotNull final Vector2f location) {
 
         super(shaderNodes, techniqueDef, variable, location);
     }

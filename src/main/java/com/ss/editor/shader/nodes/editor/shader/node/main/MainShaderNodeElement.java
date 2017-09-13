@@ -2,7 +2,9 @@ package com.ss.editor.shader.nodes.editor.shader.node.main;
 
 import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.*;
 import com.jme3.material.TechniqueDef;
+import com.jme3.math.Vector2f;
 import com.jme3.shader.*;
+import com.ss.editor.annotation.FXThread;
 import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.editor.operation.attach.AttachAttributeToShaderNodeOperation;
 import com.ss.editor.shader.nodes.editor.operation.attach.AttachGlobalToShaderNodeOperation;
@@ -10,6 +12,8 @@ import com.ss.editor.shader.nodes.editor.operation.attach.AttachUniformToShaderN
 import com.ss.editor.shader.nodes.editor.operation.attach.AttachVarToShaderNodeOperation;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.editor.shader.node.ShaderNodeElement;
+import com.ss.editor.shader.nodes.editor.shader.node.action.RemoveShaderNodeAction;
+import com.ss.editor.shader.nodes.editor.shader.node.action.ShaderNodeAction;
 import com.ss.editor.shader.nodes.editor.shader.node.global.InputGlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.InputShaderNodeParameter;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.OutputShaderNodeParameter;
@@ -121,5 +125,12 @@ public class MainShaderNodeElement extends ShaderNodeElement<ShaderNode> {
             changeConsumer.execute(new AttachUniformToShaderNodeOperation(shaderNode, outVar, techniqueDef,
                     newMapping, currentMapping));
         }
+    }
+
+    @Override
+    @FXThread
+    public @Nullable ShaderNodeAction<?> getDeleteAction() {
+        return new RemoveShaderNodeAction(getContainer(), getObject(),
+                new Vector2f((float) getLayoutX(), (float) getLayoutY()));
     }
 }

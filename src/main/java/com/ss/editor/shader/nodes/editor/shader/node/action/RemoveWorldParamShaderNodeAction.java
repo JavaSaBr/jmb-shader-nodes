@@ -7,7 +7,7 @@ import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.UniformBinding;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
-import com.ss.editor.shader.nodes.editor.operation.remove.RemoveWorldParameterOperation;
+import com.ss.editor.shader.nodes.editor.operation.remove.RemoveWorldParameterVariableOperation;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.editor.shader.node.main.MainShaderNodeElement;
 import org.jetbrains.annotations.NotNull;
@@ -44,8 +44,9 @@ public class RemoveWorldParamShaderNodeAction extends ShaderNodeAction<ShaderNod
         final UniformBinding binding = UniformBinding.valueOf(variable.getName());
 
         final List<ShaderNode> usingNodes = container.findWithRightInputVar(variable, MainShaderNodeElement.class);
-        final ShaderNodesChangeConsumer consumer = container.getChangeConsumer();
 
-        consumer.execute(new RemoveWorldParameterOperation(usingNodes, techniqueDef, binding, variable, getLocation()));
+        final ShaderNodesChangeConsumer consumer = container.getChangeConsumer();
+        consumer.execute(new RemoveWorldParameterVariableOperation(usingNodes, techniqueDef,
+                binding, variable, getLocation()));
     }
 }

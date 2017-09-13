@@ -1,5 +1,6 @@
 package com.ss.editor.shader.nodes.util;
 
+import static java.util.stream.Collectors.toList;
 import com.jme3.material.MatParam;
 import com.jme3.material.MaterialDef;
 import com.jme3.material.TechniqueDef;
@@ -17,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * The utility class.
@@ -150,6 +152,37 @@ public class ShaderNodeUtils {
         return shaderNode.getInputMapping().stream()
                 .filter(mapping -> equalsByNameAndNameSpace(mapping.getRightVariable(), variable))
                 .findAny().orElse(null);
+    }
+
+    /**
+     * Find input mappings with the right variable by the name and the namespace.
+     *
+     * @param shaderNode the shader node.
+     * @param variable   the right variable.
+     * @return the mapping or null.
+     */
+    public static @NotNull List<VariableMapping> findInMappingsByNNRightVar(@NotNull final ShaderNode shaderNode,
+                                                                            @NotNull final ShaderNodeVariable variable) {
+        return shaderNode.getInputMapping().stream()
+                .filter(mapping -> equalsByNameAndNameSpace(mapping.getRightVariable(), variable))
+                .collect(toList());
+    }
+
+    /**
+     * Find input mappings with the right variable by the name and the namespace.
+     *
+     * @param shaderNode the shader node.
+     * @param variable   the right variable.
+     * @param nameSpace  the name space.
+     * @return the mapping or null.
+     */
+    public static @NotNull List<VariableMapping> findInMappingsByNNRightVar(@NotNull final ShaderNode shaderNode,
+                                                                            @NotNull final ShaderNodeVariable variable,
+                                                                            @NotNull final String nameSpace) {
+        return shaderNode.getInputMapping().stream()
+                .filter(mapping -> equalsByName(mapping.getLeftVariable(), variable))
+                .filter(mapping -> mapping.getLeftVariable().getNameSpace().equals(nameSpace))
+                .collect(toList());
     }
 
     /**
