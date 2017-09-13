@@ -4,7 +4,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
-import com.ss.editor.shader.nodes.editor.shader.node.action.RemoveAttributeShaderNodeAction;
+import com.ss.editor.shader.nodes.editor.shader.node.action.remove.RemoveAttributeShaderNodeAction;
 import com.ss.editor.shader.nodes.editor.shader.node.action.ShaderNodeAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

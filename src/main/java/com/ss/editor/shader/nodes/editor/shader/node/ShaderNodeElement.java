@@ -3,10 +3,13 @@ package com.ss.editor.shader.nodes.editor.shader.node;
 import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE;
 import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE_HEADER;
 import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.calculateRightSwizzling;
+import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.editor.shader.node.action.ShaderNodeAction;
+import com.ss.editor.shader.nodes.editor.shader.node.action.remove.RemoveRelationShaderNodeAction;
+import com.ss.editor.shader.nodes.editor.shader.node.line.VariableLine;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.InputShaderNodeParameter;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.OutputShaderNodeParameter;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.ShaderNodeParameter;
@@ -416,12 +419,12 @@ public class ShaderNodeElement<T> extends VBox {
     }
 
     /**
-     * Get an action to detach the input parameter.
+     * Get an action to detach the relation.
      *
      * @return the action or null.
      */
     @FXThread
-    public @Nullable ShaderNodeAction<?> getDetachAction(@NotNull final InputShaderNodeParameter parameter) {
-        return null;
+    public @Nullable ShaderNodeAction<?> getDetachAction(@NotNull final VariableLine line) {
+        return new RemoveRelationShaderNodeAction(getContainer(), line, Vector2f.ZERO);
     }
 }

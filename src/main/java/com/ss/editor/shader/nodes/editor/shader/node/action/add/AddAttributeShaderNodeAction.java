@@ -1,4 +1,4 @@
-package com.ss.editor.shader.nodes.editor.shader.node.action;
+package com.ss.editor.shader.nodes.editor.shader.node.action.add;
 
 import static com.ss.editor.shader.nodes.editor.shader.node.main.AttributeShaderNodeElement.NAMESPACE;
 import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.*;

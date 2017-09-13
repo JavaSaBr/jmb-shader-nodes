@@ -57,6 +57,16 @@ public class VariableLine extends CubicCurve {
     }
 
     /**
+     * Get the output parameter.
+     *
+     * @return the output parameter.
+     */
+    @FXThread
+    public @NotNull ShaderNodeParameter getOutParameter() {
+        return outParameter;
+    }
+
+    /**
      * Configure the line.
      */
     @FXThread

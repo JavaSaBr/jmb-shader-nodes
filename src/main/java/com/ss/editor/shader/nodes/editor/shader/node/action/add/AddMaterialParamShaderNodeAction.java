@@ -1,4 +1,4 @@
-package com.ss.editor.shader.nodes.editor.shader.node.action;
+package com.ss.editor.shader.nodes.editor.shader.node.action.add;
 
 import static com.ss.editor.extension.property.EditablePropertyType.STRING;
 import static com.ss.editor.extension.property.EditablePropertyType.STRING_FROM_LIST;
@@ -15,6 +15,7 @@ import com.ss.editor.plugin.api.property.PropertyDefinition;
 import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.editor.operation.add.AddMaterialParameterOperation;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
+import com.ss.editor.shader.nodes.editor.shader.node.action.ShaderNodeAction;
 import com.ss.rlib.util.VarTable;
 import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayFactory;

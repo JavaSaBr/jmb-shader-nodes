@@ -15,13 +15,13 @@ import com.ss.editor.annotation.FXThread;
 import com.ss.editor.manager.ExecutorManager;
 import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.editor.shader.node.ShaderNodeElement;
-import com.ss.editor.shader.nodes.editor.shader.node.action.*;
+import com.ss.editor.shader.nodes.editor.shader.node.action.ShaderNodeAction;
+import com.ss.editor.shader.nodes.editor.shader.node.action.add.*;
 import com.ss.editor.shader.nodes.editor.shader.node.global.InputGlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.global.OutputGlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.line.TempLine;
 import com.ss.editor.shader.nodes.editor.shader.node.line.VariableLine;
 import com.ss.editor.shader.nodes.editor.shader.node.main.*;
-import com.ss.editor.shader.nodes.editor.shader.node.parameter.InputShaderNodeParameter;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.ShaderNodeParameter;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.socket.SocketElement;
 import com.ss.editor.shader.nodes.util.MaterialDefUtils;
@@ -347,7 +347,7 @@ public class ShaderNodesContainer extends ScrollPane {
 
             final ShaderNodeParameter parameter = ((VariableLine) source).getInParameter();
             final ShaderNodeElement<?> nodeElement = parameter.getNodeElement();
-            final ShaderNodeAction<?> detachAction = nodeElement.getDetachAction((InputShaderNodeParameter) parameter);
+            final ShaderNodeAction<?> detachAction = nodeElement.getDetachAction((VariableLine) source);
 
             if (detachAction != null) {
                 items.add(detachAction);

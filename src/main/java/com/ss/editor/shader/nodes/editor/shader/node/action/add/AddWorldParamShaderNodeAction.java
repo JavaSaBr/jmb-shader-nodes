@@ -1,4 +1,4 @@
-package com.ss.editor.shader.nodes.editor.shader.node.action;
+package com.ss.editor.shader.nodes.editor.shader.node.action.add;
 
 import com.jme3.material.TechniqueDef;
 import com.jme3.math.Vector2f;

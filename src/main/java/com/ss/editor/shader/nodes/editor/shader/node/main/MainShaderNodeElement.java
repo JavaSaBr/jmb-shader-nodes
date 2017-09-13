@@ -12,7 +12,7 @@ import com.ss.editor.shader.nodes.editor.operation.attach.AttachUniformToShaderN
 import com.ss.editor.shader.nodes.editor.operation.attach.AttachVarToShaderNodeOperation;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.editor.shader.node.ShaderNodeElement;
-import com.ss.editor.shader.nodes.editor.shader.node.action.RemoveShaderNodeAction;
+import com.ss.editor.shader.nodes.editor.shader.node.action.remove.RemoveShaderNodeAction;
 import com.ss.editor.shader.nodes.editor.shader.node.action.ShaderNodeAction;
 import com.ss.editor.shader.nodes.editor.shader.node.global.InputGlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.InputShaderNodeParameter;

@@ -6,7 +6,7 @@ import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.VarType;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
-import com.ss.editor.shader.nodes.editor.shader.node.action.RemoveMaterialParamShaderNodeAction;
+import com.ss.editor.shader.nodes.editor.shader.node.action.remove.RemoveMaterialParamShaderNodeAction;
 import com.ss.editor.shader.nodes.editor.shader.node.action.ShaderNodeAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

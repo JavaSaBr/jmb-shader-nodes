@@ -186,18 +186,36 @@ public class ShaderNodeUtils {
     }
 
     /**
-     * Find an input mapping with the left variable by name and namespace.
+     * Find an input mapping with the left variable by the name and the namespace.
      *
      * @param shaderNode the shader node.
      * @param variable   the left variable.
      * @return the mapping or null.
      */
     public static @Nullable VariableMapping findInMappingByNNLeftVar(@NotNull final ShaderNode shaderNode,
-                                                                    @NotNull final ShaderNodeVariable variable) {
+                                                                     @NotNull final ShaderNodeVariable variable) {
         return shaderNode.getInputMapping().stream()
                 .filter(mapping -> equalsByNameAndNameSpace(mapping.getLeftVariable(), variable))
                 .findAny().orElse(null);
     }
+
+    /**
+     * Find an input mapping with the left variable by the name and the namespace.
+     *
+     * @param shaderNode the shader node.
+     * @param variable   the left variable.
+     * @param nameSpace  the name space.
+     * @return the mapping or null.
+     */
+    public static @Nullable VariableMapping findInMappingByNNLeftVar(@NotNull final ShaderNode shaderNode,
+                                                                     @NotNull final ShaderNodeVariable variable,
+                                                                     @NotNull final String nameSpace) {
+        return shaderNode.getInputMapping().stream()
+                .filter(mapping -> equalsByName(mapping.getLeftVariable(), variable))
+                .filter(mapping -> mapping.getLeftVariable().getNameSpace().equals(nameSpace))
+                .findAny().orElse(null);
+    }
+
 
     /**
      * Check the shader node.

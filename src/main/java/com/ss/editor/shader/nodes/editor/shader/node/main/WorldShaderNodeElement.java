@@ -5,7 +5,7 @@ import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.UniformBinding;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
-import com.ss.editor.shader.nodes.editor.shader.node.action.RemoveWorldParamShaderNodeAction;
+import com.ss.editor.shader.nodes.editor.shader.node.action.remove.RemoveWorldParamShaderNodeAction;
 import com.ss.editor.shader.nodes.editor.shader.node.action.ShaderNodeAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

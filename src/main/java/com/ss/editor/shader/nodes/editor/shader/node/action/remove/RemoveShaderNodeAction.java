@@ -1,4 +1,4 @@
-package com.ss.editor.shader.nodes.editor.shader.node.action;
+package com.ss.editor.shader.nodes.editor.shader.node.action.remove;
 
 import com.jme3.material.TechniqueDef;
 import com.jme3.math.Vector2f;
@@ -9,6 +9,7 @@ import com.ss.editor.annotation.FXThread;
 import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.editor.operation.remove.RemoveShaderNodeOperation;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
+import com.ss.editor.shader.nodes.editor.shader.node.action.ShaderNodeAction;
 import com.ss.editor.shader.nodes.editor.shader.node.main.MainShaderNodeElement;
 import org.jetbrains.annotations.NotNull;
 
