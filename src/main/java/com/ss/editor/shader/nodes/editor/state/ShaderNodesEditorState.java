@@ -20,8 +20,11 @@ public class ShaderNodesEditorState extends EditorMaterialEditorState {
     /**
      * The constant serialVersionUID.
      */
-    public static final long serialVersionUID = 5;
+    public static final long serialVersionUID = 7;
 
+    /**
+     * The state of technique definitions.
+     */
     @NotNull
     private List<TechniqueDefState> techniqueDefStates;
 
@@ -87,5 +90,10 @@ public class ShaderNodesEditorState extends EditorMaterialEditorState {
 
             state.cleanUp(materialDef, techniqueDef);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "ShaderNodesEditorState{" + "techniqueDefStates=" + techniqueDefStates + '}';
     }
 }

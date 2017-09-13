@@ -150,7 +150,12 @@ public class ShaderNodesFileEditor extends
 
         final ShaderNodesEditor3DState editor3DState = getEditor3DState();
         editor3DState.changeMode(ShaderNodesEditor3DState.ModelType.BOX);
+    }
 
+    @Override
+    @FXThread
+    protected void loadState() {
+        super.loadState();
         EXECUTOR_MANAGER.addFXTask(this::buildMaterial);
     }
 
@@ -525,6 +530,38 @@ public class ShaderNodesFileEditor extends
         if (state == null) return 0D;
         final ShaderNodeVariableState variableState = state.getState(variable);
         return variableState == null ? 0D : variableState.getWidth();
+    }
+
+    @Override
+    @FXThread
+    public @Nullable Vector2f getGlobalNodeLocation(final boolean input) {
+        final TechniqueDefState state = getTechniqueDefState();
+        if (state == null) return null;
+        return input ? state.getInputNodeLocation() : state.getOutputNodeLocation();
+    }
+
+    @Override
+    @FXThread
+    public double getGlobalNodeWidth(final boolean input) {
+        final TechniqueDefState state = getTechniqueDefState();
+        if (state == null) return 0D;
+        return input ? state.getInputNodeWidth() : state.getOutputNodeWidth();
+    }
+
+    @Override
+    @FXThread
+    public void notifyChangeGlobalNodeState(final boolean input, @NotNull final Vector2f location, final double width) {
+
+        final TechniqueDefState state = getTechniqueDefState();
+        if (state == null) return;
+
+        if (input) {
+            state.setInputNodeLocation(location);
+            state.setInputNodeWidth((int) width);
+        } else {
+            state.setOutputNodeLocation(location);
+            state.setOutputNodeWidth((int) width);
+        }
     }
 
     /**

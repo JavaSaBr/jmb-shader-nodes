@@ -176,6 +176,10 @@ public class ShaderNodesContainer extends ScrollPane {
                 width = consumer.getWidth((ShaderNode) object);
             } else if (object instanceof ShaderNodeVariable) {
                 width = consumer.getWidth((ShaderNodeVariable) object);
+            } else if (nodeElement instanceof InputGlobalShaderNodeElement) {
+                width = consumer.getGlobalNodeWidth(true);
+            } else if (nodeElement instanceof OutputGlobalShaderNodeElement) {
+                width = consumer.getGlobalNodeWidth(false);
             } else {
                 width = 0D;
             }
@@ -185,6 +189,7 @@ public class ShaderNodesContainer extends ScrollPane {
             }
 
             nodeElement.setPrefWidth(width);
+            nodeElement.resize(width, nodeElement.getHeight());
         }
 
         EXECUTOR_MANAGER.addFXTask(this::invalidateLayout);
@@ -209,6 +214,10 @@ public class ShaderNodesContainer extends ScrollPane {
                 location = consumer.getLocation((ShaderNode) object);
             } else if (object instanceof ShaderNodeVariable) {
                 location = consumer.getLocation((ShaderNodeVariable) object);
+            } else if (nodeElement instanceof InputGlobalShaderNodeElement) {
+                location = consumer.getGlobalNodeLocation(true);
+            } else if (nodeElement instanceof OutputGlobalShaderNodeElement) {
+                location = consumer.getGlobalNodeLocation(false);
             } else {
                 location = null;
             }
@@ -767,6 +776,10 @@ public class ShaderNodesContainer extends ScrollPane {
             consumer.notifyChangeState((ShaderNode) object, location, width);
         } else if (object instanceof ShaderNodeVariable) {
             consumer.notifyChangeState((ShaderNodeVariable) object, location, width);
+        } else if (nodeElement instanceof InputGlobalShaderNodeElement) {
+            consumer.notifyChangeGlobalNodeState(true, location, width);
+        } else if (nodeElement instanceof OutputGlobalShaderNodeElement) {
+            consumer.notifyChangeGlobalNodeState(false, location, width);
         }
     }
 }

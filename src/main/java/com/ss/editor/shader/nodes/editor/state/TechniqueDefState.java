@@ -51,10 +51,34 @@ public class TechniqueDefState extends AbstractEditorState {
     @NotNull
     private List<ShaderNodeVariableState> shaderVariableStates;
 
+    /**
+     * The location of output node.
+     */
+    @NotNull
+    private Vector2f outputNodeLocation;
+
+    /**
+     * The location of input node.
+     */
+    @NotNull
+    private Vector2f inputNodeLocation;
+
+    /**
+     * The width of output node.
+     */
+    private int outputNodeWidth;
+
+    /**
+     * The width of input node.
+     */
+    private int inputNodeWidth;
+
     public TechniqueDefState(@NotNull final String name) {
         this.name = name;
         this.shaderNodeStates = new ArrayList<>();
         this.shaderVariableStates = new ArrayList<>();
+        this.inputNodeLocation = new Vector2f(10, 10);
+        this.outputNodeLocation = new Vector2f(10, 10);
     }
 
     /**
@@ -127,6 +151,8 @@ public class TechniqueDefState extends AbstractEditorState {
                 .filter(variableState -> variableState.getName().equals(variable.getName()))
                 .findAny();
 
+        System.out.println("notify change " + width);
+
         if (state.isPresent()) {
             final ShaderNodeVariableState variableState = state.get();
             variableState.setLocation(location);
@@ -153,6 +179,8 @@ public class TechniqueDefState extends AbstractEditorState {
         final Optional<ShaderNodeState> state = shaderNodeStates.stream()
                 .filter(variableState -> variableState.getName().equals(shaderNode.getName()))
                 .findAny();
+
+        System.out.println("notify change " + width);
 
         if (state.isPresent()) {
             final ShaderNodeState nodeState = state.get();
@@ -199,5 +227,101 @@ public class TechniqueDefState extends AbstractEditorState {
     @FXThread
     public @NotNull String getName() {
         return name;
+    }
+
+    /**
+     * Get the location of input node.
+     *
+     * @return the location of input node.
+     */
+    @FXThread
+    public @NotNull Vector2f getInputNodeLocation() {
+        return inputNodeLocation;
+    }
+
+    /**
+     * Get the location of output node.
+     *
+     * @return the location of output node.
+     */
+    @FXThread
+    public @NotNull Vector2f getOutputNodeLocation() {
+        return outputNodeLocation;
+    }
+
+    /**
+     * Set the location of input node.
+     *
+     * @param inputNodeLocation the location of input node.
+     */
+    @FXThread
+    public void setInputNodeLocation(@NotNull final Vector2f inputNodeLocation) {
+        final Vector2f prev = getInputNodeLocation();
+        this.inputNodeLocation = inputNodeLocation;
+        if (!prev.equals(inputNodeLocation)) notifyChange();
+    }
+
+    /**
+     * Set the location of output node.
+     *
+     * @param outputNodeLocation the location of output node.
+     */
+    @FXThread
+    public void setOutputNodeLocation(@NotNull final Vector2f outputNodeLocation) {
+        final Vector2f prev = getOutputNodeLocation();
+        this.outputNodeLocation = outputNodeLocation;
+        if (!prev.equals(outputNodeLocation)) notifyChange();
+    }
+
+    /**
+     * Get the width of output node.
+     *
+     * @return the width of output node.
+     */
+    @FXThread
+    public int getOutputNodeWidth() {
+        return outputNodeWidth;
+    }
+
+    /**
+     * Get the width of input node.
+     *
+     * @return the width of input node.
+     */
+    @FXThread
+    public int getInputNodeWidth() {
+        return inputNodeWidth;
+    }
+
+    /**
+     * Set the width of output node.
+     *
+     * @param outputNodeWidth the width of output node.
+     */
+    @FXThread
+    public void setOutputNodeWidth(final int outputNodeWidth) {
+        final int prev = getOutputNodeWidth();
+        this.outputNodeWidth = outputNodeWidth;
+        if (prev != outputNodeWidth) notifyChange();
+    }
+
+    /**
+     * Set the width of input node.
+     *
+     * @param inputNodeWidth the width of input node.
+     */
+    @FXThread
+    public void setInputNodeWidth(final int inputNodeWidth) {
+        final int prev = getInputNodeWidth();
+        this.inputNodeWidth = inputNodeWidth;
+        if (prev != inputNodeWidth) notifyChange();
+    }
+
+    @Override
+    public String toString() {
+        return "TechniqueDefState{" + "name='" + name + '\'' + ", shaderNodeStates=" + shaderNodeStates +
+                ", shaderVariableStates=" + shaderVariableStates + ", outputNodeLocation=" + outputNodeLocation +
+                ", inputNodeLocation=" + inputNodeLocation + ", outputNodeWidth=" + outputNodeWidth +
+                ", inputNodeWidth=" + inputNodeWidth + '}';
     }
 }

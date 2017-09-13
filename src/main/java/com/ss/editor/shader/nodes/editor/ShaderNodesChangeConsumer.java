@@ -63,14 +63,23 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
     void notifyChangeState(@NotNull final ShaderNode shaderNode, @NotNull final Vector2f location, final double width);
 
     @FXThread
+    void notifyChangeGlobalNodeState(final boolean input, @NotNull final Vector2f location, final double width);
+
+    @FXThread
     @Nullable Vector2f getLocation(@NotNull final ShaderNode shaderNode);
 
     @FXThread
     @Nullable Vector2f getLocation(@NotNull final ShaderNodeVariable variable);
 
     @FXThread
+    @Nullable Vector2f getGlobalNodeLocation(final boolean input);
+
+    @FXThread
     double getWidth(@NotNull final ShaderNode shaderNode);
 
     @FXThread
     double getWidth(@NotNull final ShaderNodeVariable variable);
+
+    @FXThread
+    double getGlobalNodeWidth(final boolean input);
 }
