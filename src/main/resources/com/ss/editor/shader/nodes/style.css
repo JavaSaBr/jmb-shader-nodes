@@ -81,13 +81,15 @@
 .shader-node-line {
     -fx-stroke: -var-font-color;
     -fx-fill: transparent;
+    -fx-stroke-width: 2px;
+}
+
+.shader-node-line:hover {
+    -fx-stroke: -fx-focus-color;
+    -fx-stroke-width: 4px;
 }
 
 .shader-node-temp-line {
     -fx-stroke: -fx-focus-color;
     -fx-fill: transparent;
-}
-
-.shader-node-line:hover {
-    -fx-stroke: -fx-focus-color;
 }

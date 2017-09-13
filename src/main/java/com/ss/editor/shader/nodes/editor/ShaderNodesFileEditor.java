@@ -17,7 +17,6 @@ import com.jme3.shader.VariableMapping;
 import com.ss.editor.annotation.BackgroundThread;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
-import com.ss.editor.model.node.material.RootMaterialSettings;
 import com.ss.editor.plugin.api.editor.material.BaseMaterialFileEditor;
 import com.ss.editor.shader.nodes.ShaderNodesEditorPlugin;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
@@ -25,6 +24,7 @@ import com.ss.editor.shader.nodes.editor.state.ShaderNodeState;
 import com.ss.editor.shader.nodes.editor.state.ShaderNodeVariableState;
 import com.ss.editor.shader.nodes.editor.state.ShaderNodesEditorState;
 import com.ss.editor.shader.nodes.editor.state.TechniqueDefState;
+import com.ss.editor.shader.nodes.model.PreviewMaterialSettings;
 import com.ss.editor.shader.nodes.model.ShaderNodesProject;
 import com.ss.editor.ui.component.editor.EditorDescription;
 import com.ss.editor.ui.component.editor.state.EditorState;
@@ -147,6 +147,7 @@ public class ShaderNodesFileEditor extends
         final MaterialDef materialDef = (MaterialDef) loader.load(assetInfo);
 
         setMaterialDef(materialDef);
+        getEditor3DState().updateMaterial(EDITOR.getDefaultMaterial());
 
         final ShaderNodesEditor3DState editor3DState = getEditor3DState();
         editor3DState.changeMode(ShaderNodesEditor3DState.ModelType.BOX);
@@ -156,7 +157,14 @@ public class ShaderNodesFileEditor extends
     @FXThread
     protected void loadState() {
         super.loadState();
+
         EXECUTOR_MANAGER.addFXTask(this::buildMaterial);
+
+        final ShaderNodesEditorState editorState = getEditorState();
+
+        if (editorState != null) {
+            editorState.cleanUp(getMaterialDef());
+        }
     }
 
     @Override
@@ -357,7 +365,7 @@ public class ShaderNodesFileEditor extends
             selectionModel.select(TechniqueDef.DEFAULT_TECHNIQUE_NAME);
         }
 
-        getSettingsTree().fill(new RootMaterialSettings(newMaterial));
+        getSettingsTree().fill(new PreviewMaterialSettings(newMaterial));
     }
 
     private @NotNull MaterialDef clone(@NotNull final MaterialDef materialDef) {

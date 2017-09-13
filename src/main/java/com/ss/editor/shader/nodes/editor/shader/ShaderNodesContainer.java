@@ -21,6 +21,7 @@ import com.ss.editor.shader.nodes.editor.shader.node.global.OutputGlobalShaderNo
 import com.ss.editor.shader.nodes.editor.shader.node.line.TempLine;
 import com.ss.editor.shader.nodes.editor.shader.node.line.VariableLine;
 import com.ss.editor.shader.nodes.editor.shader.node.main.*;
+import com.ss.editor.shader.nodes.editor.shader.node.parameter.InputShaderNodeParameter;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.ShaderNodeParameter;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.socket.SocketElement;
 import com.ss.editor.shader.nodes.util.MaterialDefUtils;
@@ -306,7 +307,10 @@ public class ShaderNodesContainer extends ScrollPane {
      *
      * @param event the context menu event.
      */
-    private void handleContextMenuEvent(@NotNull final ContextMenuEvent event) {
+    @FXThread
+    public void handleContextMenuEvent(@NotNull final ContextMenuEvent event) {
+
+        final Object source = event.getSource();
 
         if (contextMenu.isShowing()) {
             contextMenu.hide();
@@ -319,14 +323,36 @@ public class ShaderNodesContainer extends ScrollPane {
         final ObservableList<MenuItem> items = contextMenu.getItems();
         items.clear();
 
-        final Menu menu = new Menu("Add");
-        menu.getItems().addAll(new AddMaterialParamShaderNodeAction(this, materialDef, location),
-                new AddMaterialTextureParamShaderNodeAction(this, materialDef, location),
-                new AddWorldParameterShaderNodeAction(this, techniqueDef, location),
-                new AddAttributeShaderNodeAction(this, techniqueDef, location),
-                new AddNodeShaderNodeAction(this, techniqueDef, location));
+        if (source == root) {
 
-        items.addAll(menu);
+            final Menu menu = new Menu("Add");
+            menu.getItems().addAll(new AddMaterialParamShaderNodeAction(this, materialDef, location),
+                    new AddMaterialTextureParamShaderNodeAction(this, materialDef, location),
+                    new AddWorldParameterShaderNodeAction(this, techniqueDef, location),
+                    new AddAttributeShaderNodeAction(this, techniqueDef, location),
+                    new AddNodeShaderNodeAction(this, techniqueDef, location));
+
+            items.addAll(menu);
+
+        } else if (source instanceof ShaderNodeElement) {
+
+            final ShaderNodeElement<?> nodeElement = (ShaderNodeElement<?>) source;
+            final ShaderNodeAction<?> deleteAction = nodeElement.getDeleteAction();
+
+            if(deleteAction != null) {
+                items.add(deleteAction);
+            }
+
+        } else if (source instanceof VariableLine) {
+
+            final ShaderNodeParameter parameter = ((VariableLine) source).getInParameter();
+            final ShaderNodeElement<?> nodeElement = parameter.getNodeElement();
+            final ShaderNodeAction<?> detachAction = nodeElement.getDetachAction((InputShaderNodeParameter) parameter);
+
+            if (detachAction != null) {
+                items.add(detachAction);
+            }
+        }
 
         contextMenu.show(root, event.getScreenX(), event.getScreenY());
     }

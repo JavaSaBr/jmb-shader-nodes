@@ -6,6 +6,7 @@ import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.calculateRightSwiz
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
+import com.ss.editor.shader.nodes.editor.shader.node.action.ShaderNodeAction;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.InputShaderNodeParameter;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.OutputShaderNodeParameter;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.ShaderNodeParameter;
@@ -19,6 +20,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -106,11 +108,19 @@ public class ShaderNodeElement<T> extends VBox {
         setOnMouseDragged(this::handleMouseDragged);
         setOnMouseMoved(this::handleMouseMoved);
         setOnMouseReleased(this::handleMouseReleased);
+        setOnContextMenuRequested(this::handleContextMenuRequested);
         this.object = object;
         this.parametersContainer = new VBox();
         createContent();
         setPrefWidth(200);
         FXUtils.addClassTo(this, SHADER_NODE);
+    }
+
+    @FXThread
+    private void handleContextMenuRequested(@NotNull final ContextMenuEvent event) {
+        final ShaderNodesContainer container = getContainer();
+        container.handleContextMenuEvent(event);
+        event.consume();
     }
 
     /**
@@ -393,5 +403,25 @@ public class ShaderNodeElement<T> extends VBox {
     @FXThread
     protected void setResizing(final boolean resizing) {
         this.resizing = resizing;
+    }
+
+    /**
+     * Get an action to delete this element.
+     *
+     * @return the action or null.
+     */
+    @FXThread
+    public @Nullable ShaderNodeAction<?> getDeleteAction() {
+        return null;
+    }
+
+    /**
+     * Get an action to detach the input parameter.
+     *
+     * @return the action or null.
+     */
+    @FXThread
+    public @Nullable ShaderNodeAction<?> getDetachAction(@NotNull final InputShaderNodeParameter parameter) {
+        return null;
     }
 }

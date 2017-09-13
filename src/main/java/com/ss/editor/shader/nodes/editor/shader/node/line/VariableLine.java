@@ -1,8 +1,12 @@
 package com.ss.editor.shader.nodes.editor.shader.node.line;
 
 import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE_LINE;
+import com.ss.editor.annotation.FXThread;
+import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
+import com.ss.editor.shader.nodes.editor.shader.node.ShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.ShaderNodeParameter;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.socket.SocketElement;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.StrokeLineCap;
 import org.jetbrains.annotations.NotNull;
@@ -24,13 +28,38 @@ public class VariableLine extends CubicCurve {
                         @NotNull final ShaderNodeParameter inParameter) {
         this.outParameter = outParameter;
         this.inParameter = inParameter;
+        setOnContextMenuRequested(this::handleContextMenuRequested);
         configureLine();
         getStyleClass().add(SHADER_NODE_LINE);
     }
 
     /**
+     * Handle context menu requested events.
+     *
+     * @param event the menu requested event.
+     */
+    @FXThread
+    private void handleContextMenuRequested(@NotNull final ContextMenuEvent event) {
+        final ShaderNodeElement<?> nodeElement = inParameter.getNodeElement();
+        final ShaderNodesContainer container = nodeElement.getContainer();
+        container.handleContextMenuEvent(event);
+        event.consume();
+    }
+
+    /**
+     * Get the input parameter.
+     *
+     * @return the input parameter.
+     */
+    @FXThread
+    public @NotNull ShaderNodeParameter getInParameter() {
+        return inParameter;
+    }
+
+    /**
      * Configure the line.
      */
+    @FXThread
     private void configureLine() {
 
         final SocketElement outSocket = outParameter.getSocket();

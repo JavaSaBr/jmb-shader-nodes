@@ -8,8 +8,10 @@ import com.ss.editor.manager.ResourceManager;
 import com.ss.editor.plugin.EditorPlugin;
 import com.ss.editor.shader.nodes.creator.ShaderNodesProjectFileCreator;
 import com.ss.editor.shader.nodes.editor.ShaderNodesFileEditor;
+import com.ss.editor.shader.nodes.tree.factory.ShaderNodesTreeNodeFactory;
 import com.ss.editor.ui.component.creator.FileCreatorRegistry;
 import com.ss.editor.ui.component.editor.EditorRegistry;
+import com.ss.editor.ui.control.tree.node.TreeNodeFactoryRegistry;
 import com.ss.editor.ui.css.CSSRegistry;
 import com.ss.rlib.plugin.PluginContainer;
 import com.ss.rlib.plugin.PluginSystem;
@@ -64,6 +66,13 @@ public class ShaderNodesEditorPlugin extends EditorPlugin {
     public void register(@NotNull final EditorRegistry registry) {
         super.register(registry);
         registry.register(ShaderNodesFileEditor.DESCRIPTION);
+    }
+
+    @Override
+    @FromAnyThread
+    public void register(@NotNull final TreeNodeFactoryRegistry registry) {
+        super.register(registry);
+        registry.register(ShaderNodesTreeNodeFactory.getInstance());
     }
 
     @Override
