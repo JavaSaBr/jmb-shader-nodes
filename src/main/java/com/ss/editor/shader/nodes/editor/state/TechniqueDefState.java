@@ -151,8 +151,6 @@ public class TechniqueDefState extends AbstractEditorState {
                 .filter(variableState -> variableState.getName().equals(variable.getName()))
                 .findAny();
 
-        System.out.println("notify change " + width);
-
         if (state.isPresent()) {
             final ShaderNodeVariableState variableState = state.get();
             variableState.setLocation(location);
@@ -179,8 +177,6 @@ public class TechniqueDefState extends AbstractEditorState {
         final Optional<ShaderNodeState> state = shaderNodeStates.stream()
                 .filter(variableState -> variableState.getName().equals(shaderNode.getName()))
                 .findAny();
-
-        System.out.println("notify change " + width);
 
         if (state.isPresent()) {
             final ShaderNodeState nodeState = state.get();

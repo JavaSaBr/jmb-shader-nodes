@@ -67,7 +67,9 @@ public class SocketElement extends Pane {
                                     @Nullable final Number oldValue, @Nullable final Number newValue) {
 
         final ShaderNodeParameter parameter = getParameter();
-        final Parent parent = parameter.getNodeElement().getParent();
+        final ShaderNodeElement<?> nodeElement = parameter.getNodeElement();
+        final Parent parent = nodeElement.getParent();
+
         if (parent == null) {
             return;
         }

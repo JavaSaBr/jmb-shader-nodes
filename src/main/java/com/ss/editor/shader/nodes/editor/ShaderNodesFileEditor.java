@@ -445,6 +445,7 @@ public class ShaderNodesFileEditor extends
     @FXThread
     @Override
     public void notifyAddedAttribute(@NotNull final ShaderNodeVariable variable, @NotNull final Vector2f location) {
+        buildMaterial();
         final ShaderNodesContainer container = getShaderNodesContainer();
         container.addNodeElement(variable, location);
     }
@@ -452,6 +453,7 @@ public class ShaderNodesFileEditor extends
     @FXThread
     @Override
     public void notifyRemovedAttribute(@NotNull final ShaderNodeVariable variable) {
+        buildMaterial();
         final ShaderNodesContainer container = getShaderNodesContainer();
         container.removeNodeElement(variable);
     }
@@ -459,6 +461,7 @@ public class ShaderNodesFileEditor extends
     @Override
     @FXThread
     public void notifyAddedWorldParameter(@NotNull final UniformBinding binding, @NotNull final Vector2f location) {
+        buildMaterial();
         final ShaderNodesContainer container = getShaderNodesContainer();
         container.addWorldParam(binding, location);
     }
@@ -466,6 +469,7 @@ public class ShaderNodesFileEditor extends
     @Override
     @FXThread
     public void notifyRemovedWorldParameter(@NotNull final UniformBinding binding) {
+        buildMaterial();
         final ShaderNodesContainer container = getShaderNodesContainer();
         container.removeWorldParam(binding);
     }
@@ -473,6 +477,7 @@ public class ShaderNodesFileEditor extends
     @Override
     @FXThread
     public void notifyAddedShaderNode(@NotNull final ShaderNode shaderNode, @NotNull final Vector2f location) {
+        buildMaterial();
         final ShaderNodesContainer container = getShaderNodesContainer();
         container.addShaderNode(shaderNode, location);
     }
@@ -480,6 +485,7 @@ public class ShaderNodesFileEditor extends
     @Override
     @FXThread
     public void notifyRemovedRemovedShaderNode(@NotNull final ShaderNode shaderNode) {
+        buildMaterial();
         final ShaderNodesContainer container = getShaderNodesContainer();
         container.removeShaderNode(shaderNode);
     }

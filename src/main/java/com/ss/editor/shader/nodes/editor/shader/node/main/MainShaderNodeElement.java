@@ -5,10 +5,12 @@ import com.jme3.material.TechniqueDef;
 import com.jme3.shader.*;
 import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.editor.operation.attach.AttachAttributeToShaderNodeOperation;
+import com.ss.editor.shader.nodes.editor.operation.attach.AttachGlobalToShaderNodeOperation;
 import com.ss.editor.shader.nodes.editor.operation.attach.AttachUniformToShaderNodeOperation;
 import com.ss.editor.shader.nodes.editor.operation.attach.AttachVarToShaderNodeOperation;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.editor.shader.node.ShaderNodeElement;
+import com.ss.editor.shader.nodes.editor.shader.node.global.InputGlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.InputShaderNodeParameter;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.OutputShaderNodeParameter;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.ShaderNodeParameter;
@@ -87,7 +89,9 @@ public class MainShaderNodeElement extends ShaderNodeElement<ShaderNode> {
 
         final ShaderNodesChangeConsumer changeConsumer = getContainer().getChangeConsumer();
 
-        if (nodeElement instanceof AttributeShaderNodeElement) {
+        if (nodeElement instanceof InputGlobalShaderNodeElement) {
+            changeConsumer.execute(new AttachGlobalToShaderNodeOperation(shaderNode, newMapping, currentMapping));
+        } else if (nodeElement instanceof AttributeShaderNodeElement) {
             changeConsumer.execute(new AttachAttributeToShaderNodeOperation(shaderNode, newMapping, currentMapping));
             return;
         }
@@ -96,9 +100,12 @@ public class MainShaderNodeElement extends ShaderNodeElement<ShaderNode> {
         final TechniqueDef techniqueDef = container.getTechniqueDef();
 
         if (nodeElement instanceof MainShaderNodeElement) {
+
             final ShaderNode outShaderNode = ((MainShaderNodeElement) nodeElement).getObject();
-            changeConsumer.execute(new AttachVarToShaderNodeOperation(shaderNode, newMapping, currentMapping,
-                    techniqueDef, outShaderNode));
+
+            changeConsumer.execute(new AttachVarToShaderNodeOperation(shaderNode, newMapping,
+                    currentMapping, techniqueDef, outShaderNode));
+
         } else if (nodeElement instanceof MaterialShaderNodeElement || nodeElement instanceof WorldShaderNodeElement) {
 
             final Shader.ShaderType type = shaderNode.getDefinition().getType();

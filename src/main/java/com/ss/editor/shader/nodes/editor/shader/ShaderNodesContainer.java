@@ -328,7 +328,7 @@ public class ShaderNodesContainer extends ScrollPane {
             final Menu menu = new Menu("Add");
             menu.getItems().addAll(new AddMaterialParamShaderNodeAction(this, materialDef, location),
                     new AddMaterialTextureParamShaderNodeAction(this, materialDef, location),
-                    new AddWorldParameterShaderNodeAction(this, techniqueDef, location),
+                    new AddWorldParamShaderNodeAction(this, techniqueDef, location),
                     new AddAttributeShaderNodeAction(this, techniqueDef, location),
                     new AddNodeShaderNodeAction(this, techniqueDef, location));
 
@@ -589,8 +589,6 @@ public class ShaderNodesContainer extends ScrollPane {
 
     @FXThread
     private void addNodeElement(@NotNull final ShaderNodeElement<?> nodeElement, @NotNull final Vector2f location) {
-        nodeElement.setLayoutX(location.getX());
-        nodeElement.setLayoutY(location.getY());
 
         final ObservableList<Node> children = root.getChildren();
         children.add(nodeElement);
@@ -600,12 +598,12 @@ public class ShaderNodesContainer extends ScrollPane {
 
         refreshLines();
 
-        nodeElement.resetLayout();
-
-        EXECUTOR_MANAGER.addFXTask(() -> {
-            nodeElement.resetLayout();
-            EXECUTOR_MANAGER.addFXTask(nodeElement::resetLayout);
-        });
+        EXECUTOR_MANAGER.schedule(() -> {
+            EXECUTOR_MANAGER.addFXTask(() -> {
+                nodeElement.setLayoutX(location.getX());
+                nodeElement.setLayoutY(location.getY());
+            });
+        }, 50);
     }
 
     @FXThread

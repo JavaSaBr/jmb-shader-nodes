@@ -1,9 +1,14 @@
 package com.ss.editor.shader.nodes.editor.shader.node.main;
 
+import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.UniformBinding;
+import com.ss.editor.annotation.FXThread;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
+import com.ss.editor.shader.nodes.editor.shader.node.action.RemoveWorldParamShaderNodeAction;
+import com.ss.editor.shader.nodes.editor.shader.node.action.ShaderNodeAction;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The implementation of node element to present world parameters.
@@ -39,5 +44,12 @@ public class WorldShaderNodeElement extends OutputVariableShaderNodeElement {
     @Override
     protected @NotNull String getNameSpace() {
         return NAMESPACE;
+    }
+
+    @Override
+    @FXThread
+    public @Nullable ShaderNodeAction<?> getDeleteAction() {
+        return new RemoveWorldParamShaderNodeAction(getContainer(), getObject(),
+                new Vector2f((float) getLayoutX(), (float) getLayoutY()));
     }
 }

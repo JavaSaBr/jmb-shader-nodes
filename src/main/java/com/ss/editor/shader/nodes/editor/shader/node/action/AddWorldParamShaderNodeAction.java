@@ -19,7 +19,7 @@ import java.util.List;
  *
  * @author JavaSaBr
  */
-public class AddWorldParameterShaderNodeAction extends AddTechniqueDefParameterShaderNodeAction {
+public class AddWorldParamShaderNodeAction extends AddTechniqueDefParameterShaderNodeAction {
 
     @NotNull
     private static final Array<String> WORLD_VARIABLES = ArrayFactory.newArray(String.class);
@@ -29,8 +29,9 @@ public class AddWorldParameterShaderNodeAction extends AddTechniqueDefParameterS
             WORLD_VARIABLES.add(binding.name());
         }
     }
-    public AddWorldParameterShaderNodeAction(@NotNull final ShaderNodesContainer container,
-                                             @NotNull final TechniqueDef techniqueDef, @NotNull final Vector2f location) {
+
+    public AddWorldParamShaderNodeAction(@NotNull final ShaderNodesContainer container,
+                                         @NotNull final TechniqueDef techniqueDef, @NotNull final Vector2f location) {
         super(container, techniqueDef, location);
 
         final List<UniformBinding> worldBindings = techniqueDef.getWorldBindings();
