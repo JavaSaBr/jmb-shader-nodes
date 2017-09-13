@@ -124,10 +124,8 @@ public class ShaderNodesContainer extends ScrollPane {
         this.zoomNode.setOnScroll(this::handleScrollEvent);
         this.scaleValue = 1;
         this.contextMenu = new ContextMenu();
-
         this.root.setOnContextMenuRequested(this::handleContextMenuEvent);
-        this.root.widthProperty().addListener((observable, oldValue, newValue) ->
-                EXECUTOR_MANAGER.addFXTask(this::invalidateSizes));
+        this.root.widthProperty().addListener((observable, oldValue, newValue) -> resetLayout());
 
         FXUtils.addClassTo(root, SHADER_NODES_ROOT);
 
@@ -162,48 +160,75 @@ public class ShaderNodesContainer extends ScrollPane {
     /**
      * Reset all layouts.
      */
+    @FXThread
     private void invalidateSizes() {
 
+        final ShaderNodesChangeConsumer consumer = getChangeConsumer();
         final Array<ShaderNodeElement<?>> nodeElements = getNodeElements();
-        final double[] widths = new double[0];
 
-        for (int i = 0; i < nodeElements.size(); i++) {
+        for (final ShaderNodeElement<?> nodeElement : nodeElements) {
+            nodeElement.resetLayout();
 
-            final ShaderNodeElement<?> node = nodeElements.get(i);
-            node.resetLayout();
+            final Object object = nodeElement.getObject();
+            final double width;
 
-            if (widths.length <= i) {
+            if (object instanceof ShaderNode) {
+                width = consumer.getWidth((ShaderNode) object);
+            } else if (object instanceof ShaderNodeVariable) {
+                width = consumer.getWidth((ShaderNodeVariable) object);
+            } else {
+                width = 0D;
+            }
+
+            if (width == 0D) {
                 continue;
             }
 
-            node.setPrefWidth(widths[i]);
+            nodeElement.setPrefWidth(width);
         }
 
         EXECUTOR_MANAGER.addFXTask(this::invalidateLayout);
     }
 
     /**
-     * Reset all layouts.
+     * Update all layouts.
      */
+    @FXThread
     private void invalidateLayout() {
 
+        final ShaderNodesChangeConsumer consumer = getChangeConsumer();
         final Array<ShaderNodeElement<?>> nodeElements = getNodeElements();
-        final Vector2f[] locations = new Vector2f[0];
 
-        for (int i = 0; i < nodeElements.size(); i++) {
+        for (final ShaderNodeElement<?> nodeElement : nodeElements) {
+            nodeElement.resetLayout();
 
-            final ShaderNodeElement<?> node = nodeElements.get(i);
-            node.resetLayout();
+            final Object object = nodeElement.getObject();
+            final Vector2f location;
 
-            if (locations.length <= i) {
-                node.setLayoutX(10D);
-                node.setLayoutY(10D);
+            if (object instanceof ShaderNode) {
+                location = consumer.getLocation((ShaderNode) object);
+            } else if (object instanceof ShaderNodeVariable) {
+                location = consumer.getLocation((ShaderNodeVariable) object);
             } else {
-                final Vector2f location = locations[i];
-                node.setLayoutX(location.getX());
-                node.setLayoutY(location.getY());
+                location = null;
             }
+
+            if (location == null) {
+                continue;
+            }
+
+            nodeElement.setLayoutX(location.getX());
+            nodeElement.setLayoutY(location.getY());
         }
+    }
+
+    /**
+     * Reset all layouts.
+     */
+    @FXThread
+    private void resetLayout() {
+        final Array<ShaderNodeElement<?>> nodeElements = getNodeElements();
+        nodeElements.forEach(ShaderNodeElement::resetLayout);
     }
 
     /**
@@ -402,9 +427,9 @@ public class ShaderNodesContainer extends ScrollPane {
         }
 
         nodeElements.forEach(root.getChildren(), (nodeElement, nodes) -> nodes.add(nodeElement));
-        nodeElements.sort(ShaderNodeElement.TITLE_COMPARATOR);
-
         refreshLines();
+
+        EXECUTOR_MANAGER.addFXTask(this::invalidateSizes);
     }
 
     /**
@@ -538,7 +563,6 @@ public class ShaderNodesContainer extends ScrollPane {
 
         final Array<ShaderNodeElement<?>> nodeElements = getNodeElements();
         nodeElements.add(nodeElement);
-        nodeElements.sort(ShaderNodeElement.TITLE_COMPARATOR);
     }
 
     @FXThread
@@ -601,7 +625,6 @@ public class ShaderNodesContainer extends ScrollPane {
         }
         return nodeElement;
     }
-
 
     /**
      * Get the current technique.
@@ -714,5 +737,36 @@ public class ShaderNodesContainer extends ScrollPane {
         setVvalue((valY + adjustment.getY()) / (updatedInnerBounds.getHeight() - viewportBounds.getHeight()));
 
         event.consume();
+    }
+
+    /**
+     * Notify about moved node element.
+     *
+     * @param nodeElement the node element.
+     */
+    @FXThread
+    public void notifyMoved(@NotNull final ShaderNodeElement<?> nodeElement) {
+        notifyResized(nodeElement);
+    }
+
+    /**
+     * Notify about resized node element.
+     *
+     * @param nodeElement the node element.
+     */
+    @FXThread
+    public void notifyResized(@NotNull final ShaderNodeElement<?> nodeElement) {
+
+        final Object object = nodeElement.getObject();
+        final ShaderNodesChangeConsumer consumer = getChangeConsumer();
+        final double width = nodeElement.getPrefWidth();
+
+        final Vector2f location = new Vector2f((float) nodeElement.getLayoutX(), (float) nodeElement.getLayoutY());
+
+        if (object instanceof ShaderNode) {
+            consumer.notifyChangeState((ShaderNode) object, location, width);
+        } else if (object instanceof ShaderNodeVariable) {
+            consumer.notifyChangeState((ShaderNodeVariable) object, location, width);
+        }
     }
 }

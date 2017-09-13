@@ -10,6 +10,7 @@ import com.jme3.shader.VariableMapping;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author JavaSaBr
@@ -54,4 +55,22 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
 
     @FXThread
     void notifyRemovedRemovedShaderNode(@NotNull final ShaderNode shaderNode);
+
+    @FXThread
+    void notifyChangeState(@NotNull final ShaderNodeVariable variable, @NotNull final Vector2f location, final double width);
+
+    @FXThread
+    void notifyChangeState(@NotNull final ShaderNode shaderNode, @NotNull final Vector2f location, final double width);
+
+    @FXThread
+    @Nullable Vector2f getLocation(@NotNull final ShaderNode shaderNode);
+
+    @FXThread
+    @Nullable Vector2f getLocation(@NotNull final ShaderNodeVariable variable);
+
+    @FXThread
+    double getWidth(@NotNull final ShaderNode shaderNode);
+
+    @FXThread
+    double getWidth(@NotNull final ShaderNodeVariable variable);
 }

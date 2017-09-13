@@ -3,6 +3,7 @@ package com.ss.editor.shader.nodes.editor.state;
 import com.jme3.material.MatParam;
 import com.jme3.material.MaterialDef;
 import com.jme3.material.TechniqueDef;
+import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.UniformBinding;
@@ -13,10 +14,12 @@ import com.ss.editor.shader.nodes.editor.shader.node.main.WorldShaderNodeElement
 import com.ss.editor.shader.nodes.util.ShaderNodeUtils;
 import com.ss.editor.ui.component.editor.state.impl.AbstractEditorState;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * The implementation of storing state of {@link com.jme3.material.TechniqueDef}.
@@ -106,6 +109,86 @@ public class TechniqueDefState extends AbstractEditorState {
                 notifyChange();
             }
         }
+    }
+
+    /**
+     * Notify about changed variable.
+     *
+     * @param variable the variable.
+     * @param location the location.
+     * @param width the width.
+     */
+    @FXThread
+    public void notifyChange(@NotNull final ShaderNodeVariable variable, @NotNull final Vector2f location,
+                             final double width) {
+
+        final Optional<ShaderNodeVariableState> state = shaderVariableStates.stream()
+                .filter(variableState -> variableState.getNameSpace().equals(variable.getNameSpace()))
+                .filter(variableState -> variableState.getName().equals(variable.getName()))
+                .findAny();
+
+        if (state.isPresent()) {
+            final ShaderNodeVariableState variableState = state.get();
+            variableState.setLocation(location);
+            variableState.setWidth((int) width);
+        } else {
+            shaderVariableStates.add(new ShaderNodeVariableState(variable.getName(),
+                    variable.getNameSpace(), location, (int) width));
+        }
+
+        notifyChange();
+    }
+
+    /**
+     * Notify about changes the shader node.
+     *
+     * @param shaderNode the shader node.
+     * @param location the location.
+     * @param width the width.
+     */
+    @FXThread
+    public void notifyChange(@NotNull final ShaderNode shaderNode, @NotNull final Vector2f location,
+                             final double width) {
+
+        final Optional<ShaderNodeState> state = shaderNodeStates.stream()
+                .filter(variableState -> variableState.getName().equals(shaderNode.getName()))
+                .findAny();
+
+        if (state.isPresent()) {
+            final ShaderNodeState nodeState = state.get();
+            nodeState.setLocation(location);
+            nodeState.setWidth((int) width);
+        } else {
+            shaderNodeStates.add(new ShaderNodeState(shaderNode.getName(), location, (int) width));
+        }
+
+        notifyChange();
+    }
+
+    /**
+     * Find a state of the shader node.
+     *
+     * @param shaderNode the shader node.
+     * @return the state or null.
+     */
+    @FXThread
+    public @Nullable ShaderNodeState getState(@NotNull final ShaderNode shaderNode) {
+        return shaderNodeStates.stream().filter(variableState -> variableState.getName().equals(shaderNode.getName()))
+                .findAny().orElse(null);
+    }
+
+    /**
+     * Find a state of the shader node variable.
+     *
+     * @param variable the shader node variable.
+     * @return the state or null.
+     */
+    @FXThread
+    public @Nullable ShaderNodeVariableState getState(@Nullable final ShaderNodeVariable variable) {
+        return shaderVariableStates.stream()
+                .filter(variableState -> variableState.getNameSpace().equals(variable.getNameSpace()))
+                .filter(variableState -> variableState.getName().equals(variable.getName()))
+                .findAny().orElse(null);
     }
 
     /**

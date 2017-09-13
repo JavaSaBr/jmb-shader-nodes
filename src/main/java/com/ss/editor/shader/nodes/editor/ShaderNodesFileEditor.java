@@ -21,7 +21,10 @@ import com.ss.editor.model.node.material.RootMaterialSettings;
 import com.ss.editor.plugin.api.editor.material.BaseMaterialFileEditor;
 import com.ss.editor.shader.nodes.ShaderNodesEditorPlugin;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
+import com.ss.editor.shader.nodes.editor.state.ShaderNodeState;
+import com.ss.editor.shader.nodes.editor.state.ShaderNodeVariableState;
 import com.ss.editor.shader.nodes.editor.state.ShaderNodesEditorState;
+import com.ss.editor.shader.nodes.editor.state.TechniqueDefState;
 import com.ss.editor.shader.nodes.model.ShaderNodesProject;
 import com.ss.editor.ui.component.editor.EditorDescription;
 import com.ss.editor.ui.component.editor.state.EditorState;
@@ -148,7 +151,7 @@ public class ShaderNodesFileEditor extends
         final ShaderNodesEditor3DState editor3DState = getEditor3DState();
         editor3DState.changeMode(ShaderNodesEditor3DState.ModelType.BOX);
 
-        buildMaterial();
+        EXECUTOR_MANAGER.addFXTask(this::buildMaterial);
     }
 
     @Override
@@ -387,25 +390,6 @@ public class ShaderNodesFileEditor extends
 
     @Override
     @FXThread
-    public void notifyClosed() {
-
-        final ShaderNodesEditorState editorState = getEditorState();
-        if (editorState == null) return;
-
-        final ComboBox<String> techniqueComboBox = getTechniqueComboBox();
-        final String currentTech = techniqueComboBox.getSelectionModel().getSelectedItem();
-
-        if (currentTech == null) {
-            return;
-        }
-
-        //TODO
-
-        super.notifyClosed();
-    }
-
-    @Override
-    @FXThread
     public void notifyAddedMapping(@NotNull final ShaderNode shaderNode, @NotNull final VariableMapping mapping) {
         buildMaterial();
         final ShaderNodesContainer container = getShaderNodesContainer();
@@ -485,5 +469,79 @@ public class ShaderNodesFileEditor extends
     public void notifyRemovedRemovedShaderNode(@NotNull final ShaderNode shaderNode) {
         final ShaderNodesContainer container = getShaderNodesContainer();
         container.removeShaderNode(shaderNode);
+    }
+
+    @Override
+    @FXThread
+    public void notifyChangeState(@NotNull final ShaderNode shaderNode, @NotNull final Vector2f location,
+                                  final double width) {
+
+        final TechniqueDefState state = getTechniqueDefState();
+        if (state == null) return;
+        state.notifyChange(shaderNode, location, width);
+    }
+
+    @Override
+    @FXThread
+    public void notifyChangeState(@NotNull final ShaderNodeVariable variable, @NotNull final Vector2f location,
+                                  final double width) {
+
+        final TechniqueDefState state = getTechniqueDefState();
+        if (state == null) return;
+        state.notifyChange(variable, location, width);
+    }
+
+    @Override
+    @FXThread
+    public @Nullable Vector2f getLocation(@NotNull final ShaderNode shaderNode) {
+        final TechniqueDefState state = getTechniqueDefState();
+        if (state == null) return null;
+        final ShaderNodeState nodeState = state.getState(shaderNode);
+        return nodeState == null ? null : nodeState.getLocation();
+    }
+
+    @Override
+    @FXThread
+    public @Nullable Vector2f getLocation(@NotNull final ShaderNodeVariable variable) {
+        final TechniqueDefState state = getTechniqueDefState();
+        if (state == null) return null;
+        final ShaderNodeVariableState variableState = state.getState(variable);
+        return variableState == null ? null : variableState.getLocation();
+    }
+
+    @Override
+    @FXThread
+    public double getWidth(@NotNull final ShaderNode shaderNode) {
+        final TechniqueDefState state = getTechniqueDefState();
+        if (state == null) return 0D;
+        final ShaderNodeState nodeState = state.getState(shaderNode);
+        return nodeState == null ? 0D : nodeState.getWidth();
+    }
+
+    @Override
+    @FXThread
+    public double getWidth(@NotNull final ShaderNodeVariable variable) {
+        final TechniqueDefState state = getTechniqueDefState();
+        if (state == null) return 0D;
+        final ShaderNodeVariableState variableState = state.getState(variable);
+        return variableState == null ? 0D : variableState.getWidth();
+    }
+
+    /**
+     * Get the current technique definition state.
+     *
+     * @return the current technique definition state.
+     */
+    private @Nullable TechniqueDefState getTechniqueDefState() {
+
+        final ShaderNodesEditorState editorState = getEditorState();
+        final ComboBox<String> techniqueComboBox = getTechniqueComboBox();
+        final String currentTech = techniqueComboBox.getSelectionModel().getSelectedItem();
+
+        if (currentTech == null || editorState == null) {
+            return null;
+        }
+
+        return editorState.getState(currentTech);
     }
 }

@@ -39,21 +39,21 @@ public class ShaderNodesEditorState extends EditorMaterialEditorState {
     /**
      * Get the state of the technique definition.
      *
-     * @param techniqueDef the technique definition.
+     * @param techniqueDefName the name of a technique definition.
      * @return the state.
      */
     @FXThread
-    public @NotNull TechniqueDefState getState(@NotNull final TechniqueDef techniqueDef) {
+    public @NotNull TechniqueDefState getState(@NotNull final String techniqueDefName) {
 
         final Optional<TechniqueDefState> result = techniqueDefStates.stream()
-                .filter(state -> state.getName().equals(techniqueDef.getName()))
+                .filter(state -> state.getName().equals(techniqueDefName))
                 .findAny();
 
         if(result.isPresent()) {
             return result.get();
         }
 
-        final TechniqueDefState newState = new TechniqueDefState(techniqueDef.getName());
+        final TechniqueDefState newState = new TechniqueDefState(techniqueDefName);
         newState.setChangeHandler(notNull(getChangeHandler()));
 
         techniqueDefStates.add(newState);
