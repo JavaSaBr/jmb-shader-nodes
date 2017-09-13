@@ -1,9 +1,12 @@
 package com.ss.editor.shader.nodes.util;
 
+import com.jme3.material.MatParam;
+import com.jme3.material.MaterialDef;
 import com.jme3.material.TechniqueDef;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
+import com.jme3.shader.UniformBinding;
 import com.jme3.shader.VariableMapping;
 import com.ss.editor.shader.nodes.editor.shader.node.ShaderNodeElement;
 import com.ss.editor.shader.nodes.editor.shader.node.global.OutputGlobalShaderNodeElement;
@@ -23,6 +26,51 @@ import java.util.Collection;
 public class ShaderNodeUtils {
 
     /**
+     * Find a material parameter with the name.
+     *
+     * @param materialDef the technique definition.
+     * @param name         the name.
+     * @return the shader node or null.
+     */
+    public static @Nullable MatParam findMatParameterByName(@NotNull final MaterialDef materialDef,
+                                                            @NotNull final String name) {
+        return materialDef.getMaterialParams().stream()
+                .filter(matParam -> matParam.getName().equals(name))
+                .findAny().orElse(null);
+
+    }
+
+    /**
+     * Find a world binding with the name.
+     *
+     * @param techniqueDef the technique definition.
+     * @param name         the name.
+     * @return the shader node or null.
+     */
+    public static @Nullable UniformBinding findWorldBindingByName(@NotNull final TechniqueDef techniqueDef,
+                                                                  @NotNull final String name) {
+        return techniqueDef.getWorldBindings().stream()
+                .filter(binding -> binding.name().equals(name))
+                .findAny().orElse(null);
+
+    }
+
+    /**
+     * Find an attribute with the name.
+     *
+     * @param techniqueDef the technique definition.
+     * @param name         the name.
+     * @return the shader node or null.
+     */
+    public static @Nullable ShaderNodeVariable findAttributeByName(@NotNull final TechniqueDef techniqueDef,
+                                                                   @NotNull final String name) {
+        return techniqueDef.getShaderGenerationInfo().getAttributes().stream()
+                .filter(variable -> variable.getName().equals(name))
+                .findAny().orElse(null);
+
+    }
+
+    /**
      * Find a shader node with the name.
      *
      * @param techniqueDef the technique definition.
@@ -36,6 +84,7 @@ public class ShaderNodeUtils {
                 .findAny().orElse(null);
 
     }
+
     /**
      * Compare two variables by name and namespace.
      *

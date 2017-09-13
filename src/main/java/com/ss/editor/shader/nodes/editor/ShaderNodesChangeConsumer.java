@@ -8,7 +8,6 @@ import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.UniformBinding;
 import com.jme3.shader.VariableMapping;
 import com.ss.editor.annotation.FXThread;
-import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,22 +15,6 @@ import org.jetbrains.annotations.NotNull;
  * @author JavaSaBr
  */
 public interface ShaderNodesChangeConsumer extends ChangeConsumer {
-
-    /**
-     * Get the saved node element locations.
-     *
-     * @return the saved node element locations.
-     */
-    @FromAnyThread
-    @NotNull Vector2f[] getNodeElementLocations();
-
-    /**
-     * Get the saved node element widths.
-     *
-     * @return the saved node element widths.
-     */
-    @FromAnyThread
-    @NotNull double[] getNodeElementWidths();
 
     /**
      * @return the edited material definition.

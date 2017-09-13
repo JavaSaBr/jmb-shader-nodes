@@ -5,6 +5,7 @@ import com.jme3.asset.AssetManager;
 import com.jme3.asset.StreamAssetInfo;
 import com.jme3.export.binary.BinaryExporter;
 import com.jme3.material.MaterialDef;
+import com.jme3.material.plugin.export.materialdef.J3mdExporter;
 import com.jme3.material.plugins.J3MLoader;
 import com.ss.editor.annotation.BackgroundThread;
 import com.ss.editor.annotation.FromAnyThread;
@@ -15,6 +16,7 @@ import com.ss.editor.ui.component.creator.FileCreatorDescription;
 import com.ss.rlib.util.VarTable;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -61,15 +63,21 @@ public class ShaderNodesProjectFileCreator extends GenericFileCreator {
 
         final InputStream in = getClass().getResourceAsStream(MD_TEMPLATE);
         final AssetManager assetManager = EDITOR.getAssetManager();
-        final AssetKey<MaterialDef> assetKey = new AssetKey<>("memory:" + System.currentTimeMillis());
+        final AssetKey<MaterialDef> assetKey = new AssetKey<>("tempMatDef");
         final StreamAssetInfo assetInfo = new StreamAssetInfo(assetManager, assetKey, in);
 
         final J3MLoader loader = new J3MLoader();
         final MaterialDef materialDef = (MaterialDef) loader.load(assetInfo);
-        materialDef.setAssetName(null);
+
+        final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+
+        final J3mdExporter materialExporter = new J3mdExporter();
+        materialExporter.save(materialDef, bout);
+
+        final String materialDefContent = new String(bout.toByteArray(), "UTF-8");
 
         final ShaderNodesProject project = new ShaderNodesProject();
-        project.setMaterialDef(materialDef);
+        project.setMaterialDefContent(materialDefContent);
 
         final BinaryExporter exporter = BinaryExporter.getInstance();
 

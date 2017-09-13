@@ -1,18 +1,19 @@
 package com.ss.editor.shader.nodes.editor;
 
 import static com.ss.rlib.util.ObjectUtils.notNull;
+import com.jme3.asset.AssetKey;
+import com.jme3.asset.AssetManager;
+import com.jme3.asset.StreamAssetInfo;
 import com.jme3.export.binary.BinaryExporter;
 import com.jme3.export.binary.BinaryImporter;
-import com.jme3.material.MatParam;
-import com.jme3.material.Material;
-import com.jme3.material.MaterialDef;
-import com.jme3.material.TechniqueDef;
+import com.jme3.material.*;
+import com.jme3.material.plugin.export.materialdef.J3mdExporter;
+import com.jme3.material.plugins.J3MLoader;
 import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.UniformBinding;
 import com.jme3.shader.VariableMapping;
-import com.jme3.util.clone.Cloner;
 import com.ss.editor.annotation.BackgroundThread;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
@@ -20,12 +21,14 @@ import com.ss.editor.model.node.material.RootMaterialSettings;
 import com.ss.editor.plugin.api.editor.material.BaseMaterialFileEditor;
 import com.ss.editor.shader.nodes.ShaderNodesEditorPlugin;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
+import com.ss.editor.shader.nodes.editor.state.ShaderNodesEditorState;
 import com.ss.editor.shader.nodes.model.ShaderNodesProject;
 import com.ss.editor.ui.component.editor.EditorDescription;
 import com.ss.editor.ui.component.editor.state.EditorState;
 import com.ss.editor.ui.css.CSSClasses;
 import com.ss.editor.util.MaterialUtils;
 import com.ss.rlib.ui.util.FXUtils;
+import com.ss.rlib.util.Utils;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -33,14 +36,11 @@ import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -82,6 +82,18 @@ public class ShaderNodesFileEditor extends
     private ShaderNodesContainer shaderNodesContainer;
 
     /**
+     * The current material definition.
+     */
+    @Nullable
+    private MaterialDef materialDef;
+
+    /**
+     * The current material.
+     */
+    @Nullable
+    private Material currentMaterial;
+
+    /**
      * The project file.
      */
     @Nullable
@@ -109,14 +121,29 @@ public class ShaderNodesFileEditor extends
     protected void doOpenFile(@NotNull final Path file) throws IOException {
         super.doOpenFile(file);
 
+        final AssetManager assetManager = EDITOR.getAssetManager();
         final BinaryImporter importer = BinaryImporter.getInstance();
-        importer.setAssetManager(EDITOR.getAssetManager());
+        importer.setAssetManager(assetManager);
 
         try (final InputStream in = Files.newInputStream(file)) {
             setProject((ShaderNodesProject) importer.load(in));
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
+
+        final ShaderNodesProject project = getProject();
+        final String materialDefContent = project.getMaterialDefContent();
+
+        final ByteArrayInputStream materialDefStream =
+                new ByteArrayInputStream(materialDefContent.getBytes("UTF-8"));
+
+        final AssetKey<MaterialDef> tempKey = new AssetKey<>("tempMatDef");
+        final StreamAssetInfo assetInfo = new StreamAssetInfo(assetManager, tempKey, materialDefStream);
+
+        final J3MLoader loader = new J3MLoader();
+        final MaterialDef materialDef = (MaterialDef) loader.load(assetInfo);
+
+        setMaterialDef(materialDef);
 
         final ShaderNodesEditor3DState editor3DState = getEditor3DState();
         editor3DState.changeMode(ShaderNodesEditor3DState.ModelType.BOX);
@@ -131,12 +158,29 @@ public class ShaderNodesFileEditor extends
 
         final BinaryExporter exporter = BinaryExporter.getInstance();
 
+        final MaterialDef materialDef = getMaterialDef();
+        final Material currentMaterial = getCurrentMaterial();
+        final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+
+        final J3mdExporter materialExporter = new J3mdExporter();
+        materialExporter.save(materialDef, bout);
+
+        final String materialDefContent = new String(bout.toByteArray(), "UTF-8");
+
+        final ShaderNodesProject project = getProject();
+        project.setMaterialDefContent(materialDefContent);
+
+        if (currentMaterial != null) {
+            project.setMatParams(currentMaterial.getParams());
+        }
+
         try (final OutputStream out = Files.newOutputStream(toStore)) {
-            exporter.save(getProject(), out);
+            exporter.save(project, out);
         }
     }
 
     @Override
+    @FXThread
     protected void createEditorAreaPane() {
         super.createEditorAreaPane();
 
@@ -173,8 +217,8 @@ public class ShaderNodesFileEditor extends
         return notNull(shaderNodesContainer);
     }
 
-    @FXThread
     @Override
+    @FXThread
     protected void createToolbar(@NotNull final HBox container) {
         super.createToolbar(container);
 
@@ -236,14 +280,14 @@ public class ShaderNodesFileEditor extends
      * @return the current built material.
      */
     private @Nullable Material getCurrentMaterial() {
-        return getProject().getMaterial();
+        return currentMaterial;
     }
 
     /**
      * @param currentMaterial the current built material.
      */
     private void setCurrentMaterial(@Nullable final Material currentMaterial) {
-        getProject().setMaterial(currentMaterial);
+        this.currentMaterial = currentMaterial;
     }
 
     /**
@@ -252,13 +296,12 @@ public class ShaderNodesFileEditor extends
      * @param materialDef the current edited material definition.
      */
     private void setMaterialDef(@NotNull final MaterialDef materialDef) {
-        getProject().setMaterialDef(materialDef);
-
+        this.materialDef = materialDef;
     }
 
     @Override
     public @NotNull MaterialDef getMaterialDef() {
-        return notNull(getProject().getMaterialDef());
+        return notNull(materialDef);
     }
 
     /**
@@ -271,8 +314,21 @@ public class ShaderNodesFileEditor extends
 
         final Material newMaterial = new Material(clone(materialDef));
 
-        if(currentMaterial != null) {
+        if (currentMaterial != null) {
             MaterialUtils.migrateTo(newMaterial, currentMaterial);
+        } else {
+
+            final ShaderNodesProject project = getProject();
+            final List<MatParam> matParams = project.getMatParams();
+
+            for (final MatParam matParam : matParams) {
+                if (matParam instanceof MatParamTexture) {
+                    final MatParamTexture paramTexture = (MatParamTexture) matParam;
+                    newMaterial.setTextureParam(matParam.getName(), matParam.getVarType(), paramTexture.getTextureValue());
+                } else {
+                    newMaterial.setParam(matParam.getName(), matParam.getVarType(), matParam.getValue());
+                }
+            }
         }
 
         final ComboBox<String> techniqueComboBox = getTechniqueComboBox();
@@ -297,8 +353,30 @@ public class ShaderNodesFileEditor extends
     }
 
     private @NotNull MaterialDef clone(@NotNull final MaterialDef materialDef) {
-        final Cloner cloner = new Cloner();
-        return cloner.clone(materialDef);
+
+        final Collection<MatParam> materialParams = materialDef.getMaterialParams();
+        final Collection<String> techniqueDefsNames = materialDef.getTechniqueDefsNames();
+
+        final MaterialDef newMaterialDef = new MaterialDef(EDITOR.getAssetManager(), materialDef.getAssetName());
+
+        materialParams.stream()
+                .filter(MatParamTexture.class::isInstance)
+                .map(MatParamTexture.class::cast)
+                .forEach(param -> newMaterialDef.addMaterialParamTexture(param.getVarType(), param.getName(), param.getColorSpace()));
+        materialParams.stream()
+                .filter(param -> !(param instanceof MatParamTexture))
+                .forEach(param -> newMaterialDef.addMaterialParam(param.getVarType(), param.getName(), param.getValue()));
+
+        for (final String defsName : techniqueDefsNames) {
+
+            final List<TechniqueDef> techniqueDefs = materialDef.getTechniqueDefs(defsName);
+
+            for (final TechniqueDef techniqueDef : techniqueDefs) {
+                newMaterialDef.addTechniqueDef(notNull(Utils.get(techniqueDef, TechniqueDef::clone)));
+            }
+        }
+
+        return newMaterialDef;
     }
 
     @Override
@@ -321,43 +399,9 @@ public class ShaderNodesFileEditor extends
             return;
         }
 
-        final ShaderNodesContainer shaderNodesContainer = getShaderNodesContainer();
-        final Vector2f[] locations = shaderNodesContainer.getNodeElements()
-                .stream().map(element -> new Vector2f((float) element.getLayoutX(), (float) element.getLayoutY()))
-                .toArray(Vector2f[]::new);
-
-        final double[] widths = shaderNodesContainer.getNodeElements()
-                .stream().mapToDouble(Region::getPrefWidth)
-                .toArray();
-
-        editorState.updateNodeElementLocations(currentTech, locations);
-        editorState.updateNodeElementWidths(currentTech, widths);
+        //TODO
 
         super.notifyClosed();
-    }
-
-    @Override
-    public @NotNull Vector2f[] getNodeElementLocations() {
-
-        final ShaderNodesEditorState editorState = getEditorState();
-        if (editorState == null) return new Vector2f[0];
-
-        final ComboBox<String> techniqueComboBox = getTechniqueComboBox();
-        final String currentTech = techniqueComboBox.getSelectionModel().getSelectedItem();
-
-        return editorState.getNodeElementLocations(currentTech);
-    }
-
-    @Override
-    public @NotNull double[] getNodeElementWidths() {
-
-        final ShaderNodesEditorState editorState = getEditorState();
-        if (editorState == null) return new double[0];
-
-        final ComboBox<String> techniqueComboBox = getTechniqueComboBox();
-        final String currentTech = techniqueComboBox.getSelectionModel().getSelectedItem();
-
-        return editorState.getNodeElementWidths(currentTech);
     }
 
     @Override

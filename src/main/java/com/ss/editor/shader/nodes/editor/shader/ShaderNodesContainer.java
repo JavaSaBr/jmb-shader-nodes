@@ -165,7 +165,7 @@ public class ShaderNodesContainer extends ScrollPane {
     private void invalidateSizes() {
 
         final Array<ShaderNodeElement<?>> nodeElements = getNodeElements();
-        final double[] widths = changeConsumer.getNodeElementWidths();
+        final double[] widths = new double[0];
 
         for (int i = 0; i < nodeElements.size(); i++) {
 
@@ -188,7 +188,7 @@ public class ShaderNodesContainer extends ScrollPane {
     private void invalidateLayout() {
 
         final Array<ShaderNodeElement<?>> nodeElements = getNodeElements();
-        final Vector2f[] locations = changeConsumer.getNodeElementLocations();
+        final Vector2f[] locations = new Vector2f[0];
 
         for (int i = 0; i < nodeElements.size(); i++) {
 
