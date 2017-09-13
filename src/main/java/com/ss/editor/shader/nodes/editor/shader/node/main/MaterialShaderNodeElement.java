@@ -1,10 +1,15 @@
 package com.ss.editor.shader.nodes.editor.shader.node.main;
 
 import com.jme3.material.MatParam;
+import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.VarType;
+import com.ss.editor.annotation.FXThread;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
+import com.ss.editor.shader.nodes.editor.shader.node.action.RemoveMaterialParamShaderNodeAction;
+import com.ss.editor.shader.nodes.editor.shader.node.action.ShaderNodeAction;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The implementation of node element to present material parameters.
@@ -41,5 +46,12 @@ public class MaterialShaderNodeElement extends OutputVariableShaderNodeElement {
     @Override
     protected @NotNull String getNameSpace() {
         return NAMESPACE;
+    }
+
+    @Override
+    @FXThread
+    public @Nullable ShaderNodeAction<?> getDeleteAction() {
+        return new RemoveMaterialParamShaderNodeAction(getContainer(), getObject(),
+                new Vector2f((float) getLayoutX(), (float) getLayoutY()));
     }
 }

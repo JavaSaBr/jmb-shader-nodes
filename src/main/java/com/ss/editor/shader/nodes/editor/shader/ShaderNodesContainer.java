@@ -589,7 +589,6 @@ public class ShaderNodesContainer extends ScrollPane {
 
     @FXThread
     private void addNodeElement(@NotNull final ShaderNodeElement<?> nodeElement, @NotNull final Vector2f location) {
-
         nodeElement.setLayoutX(location.getX());
         nodeElement.setLayoutY(location.getY());
 
@@ -598,6 +597,15 @@ public class ShaderNodesContainer extends ScrollPane {
 
         final Array<ShaderNodeElement<?>> nodeElements = getNodeElements();
         nodeElements.add(nodeElement);
+
+        refreshLines();
+
+        nodeElement.resetLayout();
+
+        EXECUTOR_MANAGER.addFXTask(() -> {
+            nodeElement.resetLayout();
+            EXECUTOR_MANAGER.addFXTask(nodeElement::resetLayout);
+        });
     }
 
     @FXThread
@@ -662,12 +670,23 @@ public class ShaderNodesContainer extends ScrollPane {
     }
 
     /**
-     * Get the current technique.
+     * Get the current technique definition.
      *
-     * @return the current technique.
+     * @return the current technique definition.
      */
+    @FXThread
     public @NotNull TechniqueDef getTechniqueDef() {
         return notNull(techniqueDef);
+    }
+
+    /**
+     * Get the current material definition.
+     *
+     * @return the current material definition.
+     */
+    @FXThread
+    public @NotNull MaterialDef getMaterialDef() {
+        return getChangeConsumer().getMaterialDef();
     }
 
     /**
@@ -696,6 +715,7 @@ public class ShaderNodesContainer extends ScrollPane {
         final List<Node> toBack = children.stream()
                 .filter(VariableLine.class::isInstance)
                 .collect(toList());
+
         toBack.forEach(Node::toBack);
     }
 
