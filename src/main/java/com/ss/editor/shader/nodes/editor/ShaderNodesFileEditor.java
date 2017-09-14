@@ -18,6 +18,7 @@ import com.ss.editor.FileExtensions;
 import com.ss.editor.annotation.BackgroundThread;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
+import com.ss.editor.manager.ResourceManager;
 import com.ss.editor.plugin.api.editor.material.BaseMaterialFileEditor;
 import com.ss.editor.shader.nodes.ShaderNodesEditorPlugin;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
@@ -40,6 +41,7 @@ import com.ss.editor.util.EditorUtil;
 import com.ss.editor.util.MaterialUtils;
 import com.ss.rlib.ui.util.FXUtils;
 import com.ss.rlib.util.Utils;
+import com.ss.rlib.util.array.Array;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -255,10 +257,15 @@ public class ShaderNodesFileEditor extends
         exportAction.setOnAction(event -> export());
         exportAction.setGraphic(new ImageView(Icons.EXPORT_16));
 
-        FXUtils.addToPane(exportAction, container);
+        final Button importAction = new Button();
+        importAction.setTooltip(new Tooltip("Import a j3md file"));
+        importAction.setOnAction(event -> importMatDef());
+        importAction.setGraphic(new ImageView(Icons.IMPORT_16));
 
-        FXUtils.addClassesTo(exportAction, CSSClasses.FLAT_BUTTON, CSSClasses.FILE_EDITOR_TOOLBAR_BUTTON);
-        DynamicIconSupport.addSupport(exportAction);
+        FXUtils.addToPane(exportAction, importAction, container);
+
+        FXUtils.addClassesTo(exportAction, importAction, CSSClasses.FLAT_BUTTON, CSSClasses.FILE_EDITOR_TOOLBAR_BUTTON);
+        DynamicIconSupport.addSupport(exportAction, importAction);
     }
 
     @Override
@@ -280,13 +287,26 @@ public class ShaderNodesFileEditor extends
         FXUtils.addClassTo(techniqueComboBox, CSSClasses.FILE_EDITOR_TOOLBAR_FIELD);
     }
 
+    /**
+     * Export the result material definition as a file.
+     */
     @FXThread
     private void export() {
         UIUtils.openSaveAsDialog(this::export, FileExtensions.JME_MATERIAL_DEFINITION, ACTION_TESTER);
     }
 
     /**
-     * Export the shader node material to the file.
+     * Import other material definition file to this project.
+     */
+    @FXThread
+    private void importMatDef() {
+        final ResourceManager resourceManager = ResourceManager.getInstance();
+        final Array<String> resources = resourceManager.getAvailableResources(FileExtensions.JME_MATERIAL_DEFINITION);
+        UIUtils.openResourceAssetDialog(this::importMatDef, resources);
+    }
+
+    /**
+     * Export the result material definition as a file.
      *
      * @param path the file.
      */
@@ -301,6 +321,21 @@ public class ShaderNodesFileEditor extends
         } catch (final IOException e) {
             EditorUtil.handleException(LOGGER, this, e);
         }
+    }
+
+    /**
+     * Import other material definition file to this project.
+     *
+     * @param resource the resource.
+     */
+    @FXThread
+    private void importMatDef(@NotNull final String resource) {
+
+        final AssetManager assetManager = EDITOR.getAssetManager();
+        final MaterialDef matDef = (MaterialDef) assetManager.loadAsset(resource);
+
+        setMaterialDef(matDef);
+        buildMaterial();
     }
 
     /**
@@ -374,6 +409,7 @@ public class ShaderNodesFileEditor extends
     /**
      * Build material for shader nodes.
      */
+    @FXThread
     private void buildMaterial() {
 
         final Material currentMaterial = getCurrentMaterial();
