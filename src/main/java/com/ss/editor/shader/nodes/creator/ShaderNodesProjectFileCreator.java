@@ -47,7 +47,7 @@ public class ShaderNodesProjectFileCreator extends GenericFileCreator {
     @Override
     @FromAnyThread
     protected @NotNull String getTitleText() {
-        return super.getTitleText();
+        return "Creating new shader node material project";
     }
 
     @Override

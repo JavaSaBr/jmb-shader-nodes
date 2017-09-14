@@ -14,6 +14,7 @@ import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.UniformBinding;
 import com.jme3.shader.VariableMapping;
+import com.ss.editor.FileExtensions;
 import com.ss.editor.annotation.BackgroundThread;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
@@ -26,17 +27,22 @@ import com.ss.editor.shader.nodes.editor.state.ShaderNodesEditorState;
 import com.ss.editor.shader.nodes.editor.state.TechniqueDefState;
 import com.ss.editor.shader.nodes.model.PreviewMaterialSettings;
 import com.ss.editor.shader.nodes.model.ShaderNodesProject;
+import com.ss.editor.ui.Icons;
+import com.ss.editor.ui.component.asset.tree.context.menu.action.DeleteFileAction;
+import com.ss.editor.ui.component.asset.tree.context.menu.action.NewFileAction;
+import com.ss.editor.ui.component.asset.tree.context.menu.action.RenameFileAction;
 import com.ss.editor.ui.component.editor.EditorDescription;
 import com.ss.editor.ui.component.editor.state.EditorState;
 import com.ss.editor.ui.css.CSSClasses;
+import com.ss.editor.ui.util.DynamicIconSupport;
+import com.ss.editor.ui.util.UIUtils;
+import com.ss.editor.util.EditorUtil;
 import com.ss.editor.util.MaterialUtils;
 import com.ss.rlib.ui.util.FXUtils;
 import com.ss.rlib.util.Utils;
 import javafx.collections.ObservableList;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.SingleSelectionModel;
-import javafx.scene.control.SplitPane;
+import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -48,6 +54,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -58,6 +65,11 @@ import java.util.function.Supplier;
 public class ShaderNodesFileEditor extends
         BaseMaterialFileEditor<ShaderNodesEditor3DState, ShaderNodesEditorState, ShaderNodesChangeConsumer> implements
         ShaderNodesChangeConsumer {
+
+    @NotNull
+    private static final Predicate<Class<?>> ACTION_TESTER = type -> type == NewFileAction.class ||
+            type == DeleteFileAction.class || type == RenameFileAction.class;
+
 
     /**
      * The description of this editor.
@@ -235,6 +247,22 @@ public class ShaderNodesFileEditor extends
 
     @Override
     @FXThread
+    protected void createActions(@NotNull final HBox container) {
+        super.createActions(container);
+
+        final Button exportAction = new Button();
+        exportAction.setTooltip(new Tooltip("Save as j3md"));
+        exportAction.setOnAction(event -> export());
+        exportAction.setGraphic(new ImageView(Icons.EXPORT_16));
+
+        FXUtils.addToPane(exportAction, container);
+
+        FXUtils.addClassesTo(exportAction, CSSClasses.FLAT_BUTTON, CSSClasses.FILE_EDITOR_TOOLBAR_BUTTON);
+        DynamicIconSupport.addSupport(exportAction);
+    }
+
+    @Override
+    @FXThread
     protected void createToolbar(@NotNull final HBox container) {
         super.createToolbar(container);
 
@@ -250,6 +278,29 @@ public class ShaderNodesFileEditor extends
 
         FXUtils.addClassTo(techniqueLabel, CSSClasses.FILE_EDITOR_TOOLBAR_LABEL);
         FXUtils.addClassTo(techniqueComboBox, CSSClasses.FILE_EDITOR_TOOLBAR_FIELD);
+    }
+
+    @FXThread
+    private void export() {
+        UIUtils.openSaveAsDialog(this::export, FileExtensions.JME_MATERIAL_DEFINITION, ACTION_TESTER);
+    }
+
+    /**
+     * Export the shader node material to the file.
+     *
+     * @param path the file.
+     */
+    @FXThread
+    private void export(@NotNull final Path path) {
+
+        final J3mdExporter exporter = new J3mdExporter();
+        final MaterialDef materialDef = getMaterialDef();
+
+        try (final OutputStream out = Files.newOutputStream(path)) {
+            exporter.save(materialDef, out);
+        } catch (final IOException e) {
+            EditorUtil.handleException(LOGGER, this, e);
+        }
     }
 
     /**
