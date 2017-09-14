@@ -143,11 +143,22 @@ public class ShaderNodesContainer extends ScrollPane {
     }
 
     /**
+     * Notify about changed preview material.
+     */
+    @FXThread
+    public void notifyChangedMaterial() {
+        getNodeElements().stream()
+                .filter(MaterialShaderNodeElement.class::isInstance)
+                .map(MaterialShaderNodeElement.class::cast)
+                .forEach(MaterialShaderNodeElement::notifyChangedMaterial);
+    }
+
+    /**
      * Get all current node elements.
      *
      * @return all current node elements.
      */
-    public @NotNull Array<ShaderNodeElement<?>> getNodeElements() {
+    private @NotNull Array<ShaderNodeElement<?>> getNodeElements() {
         return nodeElements;
     }
 

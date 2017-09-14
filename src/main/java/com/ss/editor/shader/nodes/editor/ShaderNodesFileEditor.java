@@ -18,6 +18,7 @@ import com.ss.editor.FileExtensions;
 import com.ss.editor.annotation.BackgroundThread;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
+import com.ss.editor.extension.property.SimpleProperty;
 import com.ss.editor.manager.ResourceManager;
 import com.ss.editor.plugin.api.editor.material.BaseMaterialFileEditor;
 import com.ss.editor.shader.nodes.ShaderNodesEditorPlugin;
@@ -34,6 +35,7 @@ import com.ss.editor.ui.component.asset.tree.context.menu.action.NewFileAction;
 import com.ss.editor.ui.component.asset.tree.context.menu.action.RenameFileAction;
 import com.ss.editor.ui.component.editor.EditorDescription;
 import com.ss.editor.ui.component.editor.state.EditorState;
+import com.ss.editor.ui.control.property.PropertyEditor;
 import com.ss.editor.ui.css.CSSClasses;
 import com.ss.editor.ui.util.DynamicIconSupport;
 import com.ss.editor.ui.util.UIUtils;
@@ -355,6 +357,7 @@ public class ShaderNodesFileEditor extends
 
         final ShaderNodesContainer container = getShaderNodesContainer();
         container.show(techniqueDef);
+        container.notifyChangedMaterial();
 
         final ShaderNodesEditorState editorState = getEditorState();
         if (editorState != null) {
@@ -402,8 +405,15 @@ public class ShaderNodesFileEditor extends
     }
 
     @Override
+    @FromAnyThread
     public @NotNull MaterialDef getMaterialDef() {
         return notNull(materialDef);
+    }
+
+    @Override
+    @FromAnyThread
+    public @Nullable Material getPreviewMaterial() {
+        return currentMaterial;
     }
 
     /**
@@ -444,6 +454,7 @@ public class ShaderNodesFileEditor extends
         items.addAll(defsNames);
 
         setCurrentMaterial(newMaterial);
+        getShaderNodesContainer().notifyChangedMaterial();
         getEditor3DState().updateMaterial(newMaterial);
 
         if (items.contains(currentTechnique)) {
@@ -681,5 +692,18 @@ public class ShaderNodesFileEditor extends
         }
 
         return editorState.getState(currentTech);
+    }
+
+    @Override
+    @FXThread
+    public void notifyFXChangeProperty(@NotNull final Object object, @NotNull final String propertyName) {
+        super.notifyFXChangeProperty(object, propertyName);
+
+        if (object instanceof SimpleProperty) {
+            getShaderNodesContainer().notifyChangedMaterial();
+        } else if (object instanceof MatParam) {
+            final PropertyEditor<ShaderNodesChangeConsumer> propertyEditor = getPropertyEditor();
+            propertyEditor.refresh();
+        }
     }
 }

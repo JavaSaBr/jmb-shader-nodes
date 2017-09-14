@@ -42,6 +42,7 @@ public class MainShaderNodeElement extends ShaderNodeElement<ShaderNode> {
     }
 
 
+    @FXThread
     @Override
     public @Nullable ShaderNodeParameter parameterFor(@NotNull final ShaderNodeVariable variable,
                                                       final boolean fromOutputMapping, final boolean input) {
@@ -54,6 +55,7 @@ public class MainShaderNodeElement extends ShaderNodeElement<ShaderNode> {
         return super.parameterFor(variable, fromOutputMapping, input);
     }
 
+    @FXThread
     @Override
     protected void fillParameters(@NotNull final VBox container) {
         super.fillParameters(container);

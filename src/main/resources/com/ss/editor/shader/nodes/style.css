@@ -47,6 +47,10 @@
     -fx-padding: 0px -4px 0px 0px;
 }
 
+.shader-node-material-output-parameter {
+    -fx-padding: 3px -4px 1px 3px;
+}
+
 .shader-node-parameter > .label {
     -fx-min-height: 20px;
 }

@@ -2,6 +2,7 @@ package com.ss.editor.shader.nodes.editor.shader.node.global;
 
 import com.jme3.material.ShaderGenerationInfo;
 import com.jme3.shader.ShaderNodeVariable;
+import com.ss.editor.annotation.FXThread;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.OutputShaderNodeParameter;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.ShaderNodeParameter;
@@ -28,6 +29,7 @@ public class InputGlobalShaderNodeElement extends GlobalShaderNodeElement {
         return "Global inputs";
     }
 
+    @FXThread
     @Override
     public @Nullable ShaderNodeParameter parameterFor(final @NotNull ShaderNodeVariable variable,
                                                       final boolean fromOutputMapping, final boolean input) {
@@ -36,6 +38,7 @@ public class InputGlobalShaderNodeElement extends GlobalShaderNodeElement {
     }
 
     @Override
+    @FXThread
     protected void fillParameters(@NotNull final VBox container) {
         super.fillParameters(container);
 

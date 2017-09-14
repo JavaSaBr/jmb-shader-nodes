@@ -119,6 +119,16 @@ public class ShaderNodeElement<T> extends VBox {
         FXUtils.addClassTo(this, SHADER_NODE);
     }
 
+    /**
+     * Get the container of node parameters.
+     *
+     * @return the container of node parameters.
+     */
+    @FXThread
+    protected @NotNull VBox getParametersContainer() {
+        return parametersContainer;
+    }
+
     @FXThread
     private void handleContextMenuRequested(@NotNull final ContextMenuEvent event) {
         final ShaderNodesContainer container = getContainer();

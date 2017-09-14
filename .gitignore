@@ -3,3 +3,5 @@
 /build/
 /embedded-plugins/
 /out/
+*.iml
+*.so

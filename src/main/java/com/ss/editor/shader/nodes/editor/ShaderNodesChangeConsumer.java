@@ -1,6 +1,7 @@
 package com.ss.editor.shader.nodes.editor;
 
 import com.jme3.material.MatParam;
+import com.jme3.material.Material;
 import com.jme3.material.MaterialDef;
 import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNode;
@@ -8,6 +9,7 @@ import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.UniformBinding;
 import com.jme3.shader.VariableMapping;
 import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +22,11 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
     /**
      * @return the edited material definition.
      */
+    @FromAnyThread
     @NotNull MaterialDef getMaterialDef();
+
+    @FromAnyThread
+    @Nullable Material getPreviewMaterial();
 
     @FXThread
     void notifyAddedMapping(@NotNull final ShaderNode shaderNode, @NotNull final VariableMapping mapping);

@@ -1,6 +1,7 @@
 package com.ss.editor.shader.nodes.editor.shader.node.main;
 
 import com.jme3.shader.ShaderNodeVariable;
+import com.ss.editor.annotation.FXThread;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.editor.shader.node.parameter.OutputShaderNodeParameter;
 import com.ss.rlib.ui.util.FXUtils;
@@ -20,8 +21,19 @@ public class OutputVariableShaderNodeElement extends VariableShaderNodeElement {
     }
 
     @Override
+    @FXThread
     protected void fillParameters(@NotNull final VBox container) {
         super.fillParameters(container);
-        FXUtils.addToPane(new OutputShaderNodeParameter(this, getObject()), container);
+        FXUtils.addToPane(newParameter(), container);
+    }
+
+    /**
+     * Create a new output parameter.
+     *
+     * @return the output parameter.
+     */
+    @FXThread
+    protected @NotNull OutputShaderNodeParameter newParameter() {
+        return new OutputShaderNodeParameter(this, getObject());
     }
 }

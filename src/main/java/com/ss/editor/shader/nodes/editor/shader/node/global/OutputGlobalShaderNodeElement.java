@@ -7,6 +7,7 @@ import com.jme3.material.ShaderGenerationInfo;
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.VariableMapping;
+import com.ss.editor.annotation.FXThread;
 import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.editor.operation.attach.AttachVarToGlobalNodeOperation;
 import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
@@ -40,6 +41,7 @@ public class OutputGlobalShaderNodeElement extends GlobalShaderNodeElement {
         return "Global outputs";
     }
 
+    @FXThread
     @Override
     public @Nullable ShaderNodeParameter parameterFor(final @NotNull ShaderNodeVariable variable,
                                                       final boolean fromOutputMapping, final boolean input) {
@@ -47,6 +49,7 @@ public class OutputGlobalShaderNodeElement extends GlobalShaderNodeElement {
         return super.parameterFor(variable, fromOutputMapping, input);
     }
 
+    @FXThread
     @Override
     protected void fillParameters(@NotNull final VBox container) {
         super.fillParameters(container);
