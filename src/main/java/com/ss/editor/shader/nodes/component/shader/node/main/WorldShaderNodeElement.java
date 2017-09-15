@@ -37,11 +37,13 @@ public class WorldShaderNodeElement extends OutputVariableShaderNodeElement {
     }
 
     @Override
+    @FXThread
     protected @NotNull String getTitleText() {
         return "World parameter";
     }
 
     @Override
+    @FXThread
     protected @NotNull String getNameSpace() {
         return NAMESPACE;
     }

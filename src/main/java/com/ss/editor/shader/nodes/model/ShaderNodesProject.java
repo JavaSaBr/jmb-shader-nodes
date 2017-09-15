@@ -5,6 +5,7 @@ import com.jme3.material.MatParam;
 import com.jme3.util.clone.Cloner;
 import com.jme3.util.clone.JmeCloneable;
 import com.ss.editor.annotation.FromAnyThread;
+import com.ss.editor.annotation.JMEThread;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,6 +78,7 @@ public class ShaderNodesProject implements JmeCloneable, Savable {
     }
 
     @Override
+    @JMEThread
     public ShaderNodesProject jmeClone() {
         try {
             return (ShaderNodesProject) super.clone();
@@ -86,11 +88,13 @@ public class ShaderNodesProject implements JmeCloneable, Savable {
     }
 
     @Override
+    @JMEThread
     public void cloneFields(@NotNull final Cloner cloner, @NotNull final Object original) {
         matParams = cloner.clone(matParams);
     }
 
     @Override
+    @JMEThread
     public void write(@NotNull final JmeExporter ex) throws IOException {
         final OutputCapsule out = ex.getCapsule(this);
         out.writeSavableArrayList(matParams, "matParams", null);
@@ -98,6 +102,7 @@ public class ShaderNodesProject implements JmeCloneable, Savable {
     }
 
     @Override
+    @JMEThread
     public void read(@NotNull final JmeImporter im) throws IOException {
         final InputCapsule in = im.getCapsule(this);
         matParams = in.readSavableArrayList("matParams", new ArrayList<>());

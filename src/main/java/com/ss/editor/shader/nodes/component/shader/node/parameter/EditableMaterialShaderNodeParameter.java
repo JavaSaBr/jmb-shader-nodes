@@ -47,11 +47,13 @@ public class EditableMaterialShaderNodeParameter extends OutputShaderNodeParamet
     }
 
     @Override
+    @FXThread
     protected @NotNull SocketElement createSocket() {
         return new OutputSocketElement(this);
     }
 
     @Override
+    @FXThread
     protected void createContent() {
     }
 }

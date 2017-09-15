@@ -1,6 +1,7 @@
 package com.ss.editor.shader.nodes.component.shader.node.parameter.socket;
 
 import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE_PARAMETER_INPUT_SOCKET;
+import com.ss.editor.annotation.FXThread;
 import com.ss.editor.shader.nodes.component.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.component.shader.node.ShaderNodeElement;
 import com.ss.editor.shader.nodes.component.shader.node.parameter.InputShaderNodeParameter;
@@ -60,6 +61,7 @@ public class InputSocketElement extends SocketElement {
      *
      * @param dragEvent the drag event.
      */
+    @FXThread
     private void handleDragExited(@NotNull final DragEvent dragEvent) {
         droppable.setValue(false);
     }
@@ -69,6 +71,7 @@ public class InputSocketElement extends SocketElement {
      *
      * @param dragEvent the drag event.
      */
+    @FXThread
     private void handleDragDropped(@NotNull final DragEvent dragEvent) {
         droppable.setValue(false);
 
@@ -95,6 +98,7 @@ public class InputSocketElement extends SocketElement {
      *
      * @param dragEvent the drag event.
      */
+    @FXThread
     private void handleDragOver(@NotNull final DragEvent dragEvent) {
 
         final InputShaderNodeParameter parameter = (InputShaderNodeParameter) getParameter();

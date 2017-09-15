@@ -52,8 +52,8 @@ public class MaterialShaderNodeElement extends OutputVariableShaderNodeElement {
         super(container, variable);
     }
 
-    @FXThread
     @Override
+    @FXThread
     protected @NotNull OutputShaderNodeParameter newParameter() {
 
         final ShaderNodeVariable variable = getObject();
@@ -162,11 +162,13 @@ public class MaterialShaderNodeElement extends OutputVariableShaderNodeElement {
     }
 
     @Override
+    @FXThread
     protected @NotNull String getTitleText() {
         return "Material parameter";
     }
 
     @Override
+    @FXThread
     protected @NotNull String getNameSpace() {
         return NAMESPACE;
     }

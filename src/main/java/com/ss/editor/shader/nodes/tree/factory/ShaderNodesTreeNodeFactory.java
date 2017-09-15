@@ -1,6 +1,7 @@
 package com.ss.editor.shader.nodes.tree.factory;
 
 import static com.ss.rlib.util.ClassUtils.unsafeCast;
+import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.shader.nodes.model.PreviewMaterialSettings;
 import com.ss.editor.shader.nodes.tree.node.PreviewMaterialSettingsTreeNode;
@@ -24,6 +25,7 @@ public class ShaderNodesTreeNodeFactory implements TreeNodeFactory {
     }
 
     @Override
+    @FXThread
     public <T, V extends TreeNode<T>> @Nullable V createFor(@Nullable final T element, final long objectId) {
 
         if (element instanceof PreviewMaterialSettings) {
@@ -34,6 +36,7 @@ public class ShaderNodesTreeNodeFactory implements TreeNodeFactory {
     }
 
     @Override
+    @FXThread
     public int getOrder() {
         return 5;
     }

@@ -25,12 +25,13 @@ public class InputGlobalShaderNodeElement extends GlobalShaderNodeElement {
     }
 
     @Override
+    @FXThread
     protected @NotNull String getTitleText() {
         return "Global inputs";
     }
 
-    @FXThread
     @Override
+    @FXThread
     public @Nullable ShaderNodeParameter parameterFor(final @NotNull ShaderNodeVariable variable,
                                                       final boolean fromOutputMapping, final boolean input) {
         if (fromOutputMapping) return null;

@@ -37,20 +37,21 @@ public class OutputGlobalShaderNodeElement extends GlobalShaderNodeElement {
     }
 
     @Override
+    @FXThread
     protected @NotNull String getTitleText() {
         return "Global outputs";
     }
 
-    @FXThread
     @Override
+    @FXThread
     public @Nullable ShaderNodeParameter parameterFor(final @NotNull ShaderNodeVariable variable,
                                                       final boolean fromOutputMapping, final boolean input) {
         if (!fromOutputMapping) return null;
         return super.parameterFor(variable, fromOutputMapping, input);
     }
 
-    @FXThread
     @Override
+    @FXThread
     protected void fillParameters(@NotNull final VBox container) {
         super.fillParameters(container);
 
@@ -66,6 +67,7 @@ public class OutputGlobalShaderNodeElement extends GlobalShaderNodeElement {
     }
 
     @Override
+    @FXThread
     public boolean canAttach(@NotNull final InputShaderNodeParameter inputParameter,
                              @NotNull final OutputShaderNodeParameter outputParameter) {
 
@@ -86,6 +88,7 @@ public class OutputGlobalShaderNodeElement extends GlobalShaderNodeElement {
     }
 
     @Override
+    @FXThread
     public void attach(@NotNull final InputShaderNodeParameter inputParameter,
                        @NotNull final OutputShaderNodeParameter outputParameter) {
         super.attach(inputParameter, outputParameter);

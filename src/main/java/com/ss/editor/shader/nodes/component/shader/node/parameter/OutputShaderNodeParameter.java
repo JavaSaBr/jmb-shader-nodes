@@ -2,6 +2,7 @@ package com.ss.editor.shader.nodes.component.shader.node.parameter;
 
 import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE_OUTPUT_PARAMETER;
 import com.jme3.shader.ShaderNodeVariable;
+import com.ss.editor.annotation.FXThread;
 import com.ss.editor.shader.nodes.component.shader.node.ShaderNodeElement;
 import com.ss.editor.shader.nodes.component.shader.node.parameter.socket.OutputSocketElement;
 import com.ss.editor.shader.nodes.component.shader.node.parameter.socket.SocketElement;
@@ -22,11 +23,13 @@ public class OutputShaderNodeParameter extends ShaderNodeParameter {
     }
 
     @Override
+    @FXThread
     protected @NotNull SocketElement createSocket() {
         return new OutputSocketElement(this);
     }
 
     @Override
+    @FXThread
     protected void createContent() {
         super.createContent();
 

@@ -23,8 +23,8 @@ public class GlobalShaderNodeElement extends ShaderNodeElement<ShaderGenerationI
         super(container, object);
     }
 
-    @FXThread
     @Override
+    @FXThread
     public @Nullable ShaderNodeParameter parameterFor(@NotNull final ShaderNodeVariable variable,
                                                       final boolean fromOutputMapping, final boolean input) {
         if (!NAMESPACE.equals(variable.getNameSpace())) return null;

@@ -13,7 +13,6 @@ import com.jme3.math.Vector2f;
 import com.jme3.shader.*;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.manager.ExecutorManager;
-import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.component.shader.node.ShaderNodeElement;
 import com.ss.editor.shader.nodes.component.shader.node.action.ShaderNodeAction;
 import com.ss.editor.shader.nodes.component.shader.node.action.add.*;
@@ -24,6 +23,7 @@ import com.ss.editor.shader.nodes.component.shader.node.line.VariableLine;
 import com.ss.editor.shader.nodes.component.shader.node.main.*;
 import com.ss.editor.shader.nodes.component.shader.node.parameter.ShaderNodeParameter;
 import com.ss.editor.shader.nodes.component.shader.node.parameter.socket.SocketElement;
+import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.util.MaterialDefUtils;
 import com.ss.rlib.logging.Logger;
 import com.ss.rlib.logging.LoggerManager;
@@ -158,6 +158,7 @@ public class ShaderNodesContainer extends ScrollPane {
      *
      * @return all current node elements.
      */
+    @FXThread
     private @NotNull Array<ShaderNodeElement<?>> getNodeElements() {
         return nodeElements;
     }
@@ -165,6 +166,7 @@ public class ShaderNodesContainer extends ScrollPane {
     /**
      * @return the change consumer.
      */
+    @FXThread
     public @NotNull ShaderNodesChangeConsumer getChangeConsumer() {
         return changeConsumer;
     }
@@ -257,6 +259,7 @@ public class ShaderNodesContainer extends ScrollPane {
      *
      * @return the temp line to show a process of binding variables.
      */
+    @FXThread
     private @Nullable TempLine getTempLine() {
         return tempLine;
     }
@@ -266,6 +269,7 @@ public class ShaderNodesContainer extends ScrollPane {
      *
      * @param tempLine the temp line to show a process of binding variables.
      */
+    @FXThread
     private void setTempLine(@Nullable final TempLine tempLine) {
         this.tempLine = tempLine;
     }
@@ -275,6 +279,7 @@ public class ShaderNodesContainer extends ScrollPane {
      *
      * @param sourceSocket the source socket.
      */
+    @FXThread
     public void startAttaching(@NotNull final SocketElement sourceSocket) {
 
         TempLine tempLine = getTempLine();
@@ -295,6 +300,7 @@ public class ShaderNodesContainer extends ScrollPane {
      *
      * @param dragEvent the drag over event.
      */
+    @FXThread
     private void handleDragOver(@NotNull final DragEvent dragEvent) {
         if (dragEvent.getGestureSource() instanceof SocketElement) {
             updateAttaching(dragEvent.getSceneX(), dragEvent.getSceneY());
@@ -307,6 +313,7 @@ public class ShaderNodesContainer extends ScrollPane {
      *
      * @param event the mouse event.
      */
+    @FXThread
     private void handleMouseClicked(@NotNull final MouseEvent event) {
         if (event.getButton() == MouseButton.PRIMARY && contextMenu.isShowing()) {
             contextMenu.hide();
@@ -374,6 +381,7 @@ public class ShaderNodesContainer extends ScrollPane {
      * @param sceneX the sceneX.
      * @param sceneY the sceneY.
      */
+    @FXThread
     public void updateAttaching(final double sceneX, final double sceneY) {
 
         final TempLine tempLine = getTempLine();
@@ -383,6 +391,10 @@ public class ShaderNodesContainer extends ScrollPane {
         tempLine.updateEnd(localCoords.getX(), localCoords.getY());
     }
 
+    /**
+     * Handle finish the process of attaching.
+     */
+    @FXThread
     public void finishAttaching() {
 
         final TempLine tempLine = getTempLine();
@@ -397,6 +409,7 @@ public class ShaderNodesContainer extends ScrollPane {
      *
      * @param requester the node to select.
      */
+    @FXThread
     public void requestSelect(@NotNull final ShaderNodeElement<?> requester) {
 
         final ObservableList<Node> children = root.getChildren();
@@ -413,6 +426,7 @@ public class ShaderNodesContainer extends ScrollPane {
      *
      * @return the root component to place all nodes.
      */
+    @FXThread
     private @NotNull Pane getRoot() {
         return root;
     }
@@ -422,6 +436,7 @@ public class ShaderNodesContainer extends ScrollPane {
      *
      * @param techniqueDef the technique.
      */
+    @FXThread
     public void show(@NotNull final TechniqueDef techniqueDef) {
         if (techniqueDef.equals(this.techniqueDef)) return;
 
@@ -550,6 +565,7 @@ public class ShaderNodesContainer extends ScrollPane {
      * @param input             true if the variable is input variable.
      * @return the parameter or null.
      */
+    @FXThread
     private @Nullable ShaderNodeParameter findByVariable(@NotNull final ShaderNodeVariable variable,
                                                          final boolean fromOutputMapping, final boolean input) {
         return root.getChildren().stream()
@@ -560,16 +576,34 @@ public class ShaderNodesContainer extends ScrollPane {
                 .findAny().orElse(null);
     }
 
+    /**
+     * Add the new material parameter.
+     *
+     * @param matParam the new material parameter.
+     * @param location the location.
+     */
     @FXThread
     public void addMatParam(@NotNull final MatParam matParam, @NotNull final Vector2f location) {
         addNodeElement(MaterialShaderNodeElement.toVariable(matParam), location);
     }
 
+    /**
+     * Add the new world parameter.
+     *
+     * @param binding  the binding.
+     * @param location the location.
+     */
     @FXThread
     public void addWorldParam(@NotNull final UniformBinding binding, @NotNull final Vector2f location) {
         addNodeElement(WorldShaderNodeElement.toVariable(binding), location);
     }
 
+    /**
+     * Add the new shader node.
+     *
+     * @param shaderNode the new shader node.
+     * @param location   the location.
+     */
     @FXThread
     public void addShaderNode(@NotNull final ShaderNode shaderNode, @NotNull final Vector2f location) {
 
@@ -587,6 +621,12 @@ public class ShaderNodesContainer extends ScrollPane {
         addNodeElement(nodeElement, location);
     }
 
+    /**
+     * Add the new node element.
+     *
+     * @param variable the new shader node variable.
+     * @param location the location.
+     */
     @FXThread
     public void addNodeElement(@NotNull final ShaderNodeVariable variable, @NotNull final Vector2f location) {
 
@@ -598,6 +638,12 @@ public class ShaderNodesContainer extends ScrollPane {
         addNodeElement(nodeElement, location);
     }
 
+    /**
+     * Add the new shader node element.
+     *
+     * @param nodeElement the new node element.
+     * @param location    the location.
+     */
     @FXThread
     private void addNodeElement(@NotNull final ShaderNodeElement<?> nodeElement, @NotNull final Vector2f location) {
 
@@ -617,16 +663,31 @@ public class ShaderNodesContainer extends ScrollPane {
         }, 50);
     }
 
+    /**
+     * Remove the material parameter.
+     *
+     * @param matParam the material parameter.
+     */
     @FXThread
     public void removeMatParam(@NotNull final MatParam matParam) {
         removeNodeElement(MaterialShaderNodeElement.toVariable(matParam));
     }
 
+    /**
+     * Remove the world parameter.
+     *
+     * @param binding the world parameter.
+     */
     @FXThread
     public void removeWorldParam(@NotNull final UniformBinding binding) {
         removeNodeElement(WorldShaderNodeElement.toVariable(binding));
     }
 
+    /**
+     * Remove the shader node.
+     *
+     * @param shaderNode the shader node.
+     */
     @FXThread
     public void removeShaderNode(@NotNull final ShaderNode shaderNode) {
         final ShaderNodeElement<?> nodeElement = findNodeElementByObject(shaderNode);
@@ -635,7 +696,7 @@ public class ShaderNodesContainer extends ScrollPane {
     }
 
     /**
-     * Remove an element of the variable.
+     * Remove the element of the variable.
      *
      * @param variable the variable.
      */
@@ -650,6 +711,11 @@ public class ShaderNodesContainer extends ScrollPane {
         removeNodeElement(nodeElement);
     }
 
+    /**
+     * Remove the node element.
+     *
+     * @param nodeElement the node element.
+     */
     @FXThread
     private void removeNodeElement(@NotNull final ShaderNodeElement<?> nodeElement) {
         root.getChildren().remove(nodeElement);
@@ -663,6 +729,7 @@ public class ShaderNodesContainer extends ScrollPane {
      * @param variable the variable.
      * @return the node element.
      */
+    @FXThread
     private @Nullable ShaderNodeElement<?> createNodeElement(@NotNull ShaderNodeVariable variable) {
 
         ShaderNodeElement<?> nodeElement = null;
@@ -701,6 +768,7 @@ public class ShaderNodesContainer extends ScrollPane {
     /**
      * Refresh all lines.
      */
+    @FXThread
     public void refreshLines() {
 
         final ObservableList<Node> children = root.getChildren();
@@ -735,6 +803,7 @@ public class ShaderNodesContainer extends ScrollPane {
      * @param mappings          the mappings.
      * @param fromOutputMapping true if it's from output mapping.
      */
+    @FXThread
     private void buildLines(@NotNull final ObservableList<Node> children, @NotNull final List<VariableMapping> mappings,
                             final boolean fromOutputMapping) {
 
@@ -758,6 +827,7 @@ public class ShaderNodesContainer extends ScrollPane {
     /**
      * Update scale value.
      */
+    @FXThread
     private void updateScale() {
         root.setScaleX(scaleValue);
         root.setScaleY(scaleValue);
@@ -768,6 +838,7 @@ public class ShaderNodesContainer extends ScrollPane {
      *
      * @param event the scroll event.
      */
+    @FXThread
     private void handleScrollEvent(@NotNull final ScrollEvent event) {
 
         double zoomFactor = event.getDeltaY() * ZOOM_INTENSITY;

@@ -25,11 +25,13 @@ public class AttributeShaderNodeElement extends OutputVariableShaderNodeElement 
     }
 
     @Override
+    @FXThread
     protected @NotNull String getTitleText() {
         return "Attribute";
     }
 
     @Override
+    @FXThread
     protected @NotNull String getNameSpace() {
         return NAMESPACE;
     }

@@ -1,5 +1,6 @@
 package com.ss.editor.shader.nodes.component.shader.node.parameter.socket;
 
+import com.ss.editor.annotation.FXThread;
 import com.ss.editor.shader.nodes.component.shader.node.ShaderNodeElement;
 import com.ss.editor.shader.nodes.component.shader.node.parameter.ShaderNodeParameter;
 import javafx.beans.property.DoubleProperty;
@@ -52,6 +53,7 @@ public class SocketElement extends Pane {
      *
      * @return the node parameter element.
      */
+    @FXThread
     protected @NotNull ShaderNodeParameter getParameter() {
         return parameter;
     }
@@ -63,6 +65,7 @@ public class SocketElement extends Pane {
      * @param oldValue   the old value.
      * @param newValue   the new value.
      */
+    @FXThread
     private void updateCenterCoords(@Nullable final ObservableValue<? extends Number> observable,
                                     @Nullable final Number oldValue, @Nullable final Number newValue) {
 
@@ -84,6 +87,7 @@ public class SocketElement extends Pane {
     /**
      * @return the center X property.
      */
+    @FXThread
     public @NotNull ReadOnlyDoubleProperty centerXPropertyProperty() {
         return centerXProperty;
     }
@@ -91,6 +95,7 @@ public class SocketElement extends Pane {
     /**
      * @return the center Y property.
      */
+    @FXThread
     public @NotNull ReadOnlyDoubleProperty centerYPropertyProperty() {
         return centerYProperty;
     }

@@ -3,6 +3,7 @@ package com.ss.editor.shader.nodes.component.shader.node.parameter;
 import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE_PARAMETER;
 import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE_PARAMETER_SOCKET;
 import com.jme3.shader.ShaderNodeVariable;
+import com.ss.editor.annotation.FXThread;
 import com.ss.editor.shader.nodes.component.shader.node.ShaderNodeElement;
 import com.ss.editor.shader.nodes.component.shader.node.parameter.socket.SocketElement;
 import com.ss.rlib.ui.util.FXUtils;
@@ -64,6 +65,7 @@ public class ShaderNodeParameter extends HBox {
      *
      * @return the shader node element.
      */
+    @FXThread
     public @NotNull ShaderNodeElement<?> getNodeElement() {
         return nodeElement;
     }
@@ -73,6 +75,7 @@ public class ShaderNodeParameter extends HBox {
      *
      * @return the socket element.
      */
+    @FXThread
     protected @NotNull SocketElement createSocket() {
         return new SocketElement(this);
     }
@@ -80,6 +83,7 @@ public class ShaderNodeParameter extends HBox {
     /**
      * @return the type label.
      */
+    @FXThread
     protected @NotNull Label getTypeLabel() {
         return typeLabel;
     }
@@ -87,6 +91,7 @@ public class ShaderNodeParameter extends HBox {
     /**
      * @return the name label.
      */
+    @FXThread
     protected @NotNull Label getNameLabel() {
         return nameLabel;
     }
@@ -94,6 +99,7 @@ public class ShaderNodeParameter extends HBox {
     /**
      * @return the socket.
      */
+    @FXThread
     public @NotNull SocketElement getSocket() {
         return socket;
     }
@@ -101,6 +107,7 @@ public class ShaderNodeParameter extends HBox {
     /**
      * @return the variable.
      */
+    @FXThread
     public @NotNull ShaderNodeVariable getVariable() {
         return variable;
     }
@@ -108,6 +115,7 @@ public class ShaderNodeParameter extends HBox {
     /**
      * Create content of this parameter.
      */
+    @FXThread
     protected void createContent() {
 
         final ShaderNodeVariable variable = getVariable();

@@ -4,6 +4,7 @@ import static com.ss.rlib.util.ObjectUtils.notNull;
 import static com.ss.rlib.util.ReflectionUtils.getFieldValue;
 import com.jme3.material.MatParam;
 import com.jme3.material.MaterialDef;
+import com.ss.editor.annotation.FromAnyThread;
 import com.ss.rlib.util.ReflectionUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,6 +31,7 @@ public class MaterialDefUtils {
      * @param def the material definition.
      * @return the mat params.
      */
+    @FromAnyThread
     public static @NotNull Map<String, MatParam> getMatParams(@NotNull final MaterialDef def) {
         return notNull(getFieldValue(def, MAT_PARAMS_FIELD));
     }

@@ -40,7 +40,7 @@ public class ShaderNodesProjectFileCreator extends GenericFileCreator {
     public static final FileCreatorDescription DESCRIPTION = new FileCreatorDescription();
 
     static {
-        DESCRIPTION.setFileDescription("Create shader nodes project file");
+        DESCRIPTION.setFileDescription("Shader nodes project file");
         DESCRIPTION.setConstructor(ShaderNodesProjectFileCreator::new);
     }
 

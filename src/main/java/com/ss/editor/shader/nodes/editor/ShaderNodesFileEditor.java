@@ -79,7 +79,6 @@ public class ShaderNodesFileEditor extends
     private static final Predicate<Class<?>> ACTION_TESTER = type -> type == NewFileAction.class ||
             type == DeleteFileAction.class || type == RenameFileAction.class;
 
-
     /**
      * The description of this editor.
      */
@@ -154,6 +153,7 @@ public class ShaderNodesFileEditor extends
     }
 
     @Override
+    @FXThread
     protected @Nullable Supplier<EditorState> getEditorStateFactory() {
         return ShaderNodesEditorState::new;
     }
@@ -445,6 +445,7 @@ public class ShaderNodesFileEditor extends
     /**
      * @return the project file.
      */
+    @FXThread
     private @NotNull ShaderNodesProject getProject() {
         return notNull(project);
     }
@@ -452,6 +453,7 @@ public class ShaderNodesFileEditor extends
     /**
      * @param project the project file.
      */
+    @FXThread
     private void setProject(@NotNull final ShaderNodesProject project) {
         this.project = project;
     }
@@ -459,6 +461,7 @@ public class ShaderNodesFileEditor extends
     /**
      * @return the current built material.
      */
+    @FXThread
     private @Nullable Material getCurrentMaterial() {
         return currentMaterial;
     }
@@ -466,6 +469,7 @@ public class ShaderNodesFileEditor extends
     /**
      * @param currentMaterial the current built material.
      */
+    @FXThread
     private void setCurrentMaterial(@Nullable final Material currentMaterial) {
         this.currentMaterial = currentMaterial;
     }
@@ -475,6 +479,7 @@ public class ShaderNodesFileEditor extends
      *
      * @param materialDef the current edited material definition.
      */
+    @FXThread
     private void setMaterialDef(@NotNull final MaterialDef materialDef) {
         this.materialDef = materialDef;
     }
@@ -764,6 +769,7 @@ public class ShaderNodesFileEditor extends
      *
      * @return the current technique definition state.
      */
+    @FXThread
     private @Nullable TechniqueDefState getTechniqueDefState() {
 
         final ShaderNodesEditorState editorState = getEditorState();

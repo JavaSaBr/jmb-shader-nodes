@@ -1,5 +1,6 @@
 package com.ss.editor.shader.nodes.editor.state;
 
+import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.*;
 import com.jme3.material.MatParam;
 import com.jme3.material.MaterialDef;
 import com.jme3.material.TechniqueDef;
@@ -11,7 +12,6 @@ import com.ss.editor.annotation.FXThread;
 import com.ss.editor.shader.nodes.component.shader.node.main.AttributeShaderNodeElement;
 import com.ss.editor.shader.nodes.component.shader.node.main.MaterialShaderNodeElement;
 import com.ss.editor.shader.nodes.component.shader.node.main.WorldShaderNodeElement;
-import com.ss.editor.shader.nodes.util.ShaderNodeUtils;
 import com.ss.editor.ui.component.editor.state.impl.AbstractEditorState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -96,7 +96,7 @@ public class TechniqueDefState extends AbstractEditorState {
 
             if (MaterialShaderNodeElement.NAMESPACE.equals(state.getNameSpace())) {
 
-                final MatParam parameter = ShaderNodeUtils.findMatParameterByName(materialDef, state.getName());
+                final MatParam parameter = findMatParameterByName(materialDef, state.getName());
 
                 if (parameter == null) {
                     iterator.remove();
@@ -105,7 +105,7 @@ public class TechniqueDefState extends AbstractEditorState {
 
             } else if (WorldShaderNodeElement.NAMESPACE.equals(state.getNameSpace())) {
 
-                final UniformBinding binding = ShaderNodeUtils.findWorldBindingByName(techniqueDef, state.getName());
+                final UniformBinding binding = findWorldBindingByName(techniqueDef, state.getName());
 
                 if (binding == null) {
                     iterator.remove();
@@ -114,7 +114,7 @@ public class TechniqueDefState extends AbstractEditorState {
 
             } else if (AttributeShaderNodeElement.NAMESPACE.equals(state.getNameSpace())) {
 
-                final ShaderNodeVariable attribute = ShaderNodeUtils.findAttributeByName(techniqueDef, state.getName());
+                final ShaderNodeVariable attribute = findAttributeByName(techniqueDef, state.getName());
 
                 if (attribute == null) {
                     iterator.remove();
@@ -126,7 +126,7 @@ public class TechniqueDefState extends AbstractEditorState {
         for (Iterator<ShaderNodeState> iterator = shaderNodeStates.iterator(); iterator.hasNext(); ) {
 
             final ShaderNodeState state = iterator.next();
-            final ShaderNode shaderNode = ShaderNodeUtils.findByName(techniqueDef, state.getName());
+            final ShaderNode shaderNode = findByName(techniqueDef, state.getName());
 
             if (shaderNode == null) {
                 iterator.remove();

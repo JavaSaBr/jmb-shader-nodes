@@ -28,6 +28,12 @@ public class VariableShaderNodeElement extends ShaderNodeElement<ShaderNodeVaria
         return super.parameterFor(variable, fromOutputMapping, input);
     }
 
+    /**
+     * Get the namespace.
+     *
+     * @return the namespace.
+     */
+    @FXThread
     protected @NotNull String getNameSpace() {
         return "unknown";
     }

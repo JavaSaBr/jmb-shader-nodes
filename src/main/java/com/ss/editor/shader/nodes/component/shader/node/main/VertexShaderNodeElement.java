@@ -2,6 +2,7 @@ package com.ss.editor.shader.nodes.component.shader.node.main;
 
 import com.jme3.material.ShaderGenerationInfo;
 import com.jme3.shader.ShaderNode;
+import com.ss.editor.annotation.FXThread;
 import com.ss.editor.shader.nodes.component.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.component.shader.node.ShaderNodeElement;
 import com.ss.editor.shader.nodes.component.shader.node.global.InputGlobalShaderNodeElement;
@@ -21,6 +22,7 @@ public class VertexShaderNodeElement extends MainShaderNodeElement {
     }
 
     @Override
+    @FXThread
     public boolean canAttach(@NotNull final InputShaderNodeParameter inputParameter,
                              @NotNull final OutputShaderNodeParameter outputParameter) {
 
@@ -39,11 +41,5 @@ public class VertexShaderNodeElement extends MainShaderNodeElement {
                 sourceElement instanceof AttributeShaderNodeElement ||
                 sourceElement instanceof VertexShaderNodeElement ||
                 sourceElement instanceof WorldShaderNodeElement;
-    }
-
-    @Override
-    public void attach(@NotNull final InputShaderNodeParameter inputParameter,
-                       @NotNull final OutputShaderNodeParameter outputParameter) {
-        super.attach(inputParameter, outputParameter);
     }
 }

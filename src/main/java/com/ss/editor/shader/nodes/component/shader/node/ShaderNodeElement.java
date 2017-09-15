@@ -129,6 +129,11 @@ public class ShaderNodeElement<T> extends VBox {
         return parametersContainer;
     }
 
+    /**
+     * Handle the context menu requested events.
+     *
+     * @param event the context menu requested event.
+     */
     @FXThread
     private void handleContextMenuRequested(@NotNull final ContextMenuEvent event) {
         final ShaderNodesContainer container = getContainer();

@@ -1,6 +1,7 @@
 package com.ss.editor.shader.nodes.editor.state;
 
 import com.jme3.math.Vector2f;
+import com.ss.editor.annotation.FXThread;
 import com.ss.editor.ui.component.editor.state.impl.AbstractEditorState;
 import org.jetbrains.annotations.NotNull;
 
@@ -58,6 +59,7 @@ public class ShaderNodeVariableState extends AbstractEditorState {
      *
      * @return the name of a variable.
      */
+    @FXThread
     public @NotNull String getName() {
         return name;
     }
@@ -67,6 +69,7 @@ public class ShaderNodeVariableState extends AbstractEditorState {
      *
      * @param name th name of a variable.
      */
+    @FXThread
     public void setName(@NotNull final String name) {
         this.name = name;
     }
@@ -76,6 +79,7 @@ public class ShaderNodeVariableState extends AbstractEditorState {
      *
      * @return the namespace of a variable.
      */
+    @FXThread
     public @NotNull String getNameSpace() {
         return nameSpace;
     }
@@ -85,6 +89,7 @@ public class ShaderNodeVariableState extends AbstractEditorState {
      *
      * @param nameSpace the namespace of a variable.
      */
+    @FXThread
     public void setNameSpace(@NotNull final String nameSpace) {
         this.nameSpace = nameSpace;
     }
@@ -94,6 +99,7 @@ public class ShaderNodeVariableState extends AbstractEditorState {
      *
      * @return the location of a variable.
      */
+    @FXThread
     public @NotNull Vector2f getLocation() {
         return location;
     }
@@ -103,6 +109,7 @@ public class ShaderNodeVariableState extends AbstractEditorState {
      *
      * @param location the location of a variable.
      */
+    @FXThread
     public void setLocation(@NotNull final Vector2f location) {
         this.location = location;
     }
@@ -112,6 +119,7 @@ public class ShaderNodeVariableState extends AbstractEditorState {
      *
      * @return the width of a variable.
      */
+    @FXThread
     public int getWidth() {
         return width;
     }
@@ -121,6 +129,7 @@ public class ShaderNodeVariableState extends AbstractEditorState {
      *
      * @param width the width of a variable.
      */
+    @FXThread
     public void setWidth(final int width) {
         this.width = width;
     }
