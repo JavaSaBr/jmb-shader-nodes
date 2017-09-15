@@ -97,3 +97,18 @@
     -fx-stroke: -fx-focus-color;
     -fx-fill: transparent;
 }
+
+.shader-code-preview-component {
+
+}
+
+.shader-code-preview-component > .hbox {
+    -fx-padding: 3px;
+    -fx-spacing: 2px;
+    -fx-alignment: center;
+}
+
+.shader-code-preview-component > .hbox > .label {
+    -fx-alignment: center-right;
+    -fx-text-alignment: right;
+}

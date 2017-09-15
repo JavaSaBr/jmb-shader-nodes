@@ -22,7 +22,11 @@ import com.ss.editor.extension.property.SimpleProperty;
 import com.ss.editor.manager.ResourceManager;
 import com.ss.editor.plugin.api.editor.material.BaseMaterialFileEditor;
 import com.ss.editor.shader.nodes.ShaderNodesEditorPlugin;
-import com.ss.editor.shader.nodes.editor.shader.ShaderNodesContainer;
+import com.ss.editor.shader.nodes.component.FragmentShaderCodePreviewComponent;
+import com.ss.editor.shader.nodes.component.MaterialDefCodePreviewComponent;
+import com.ss.editor.shader.nodes.component.ShaderCodePreviewComponent;
+import com.ss.editor.shader.nodes.component.VertexShaderCodePreviewComponent;
+import com.ss.editor.shader.nodes.component.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.editor.state.ShaderNodeState;
 import com.ss.editor.shader.nodes.editor.state.ShaderNodeVariableState;
 import com.ss.editor.shader.nodes.editor.state.ShaderNodesEditorState;
@@ -35,6 +39,7 @@ import com.ss.editor.ui.component.asset.tree.context.menu.action.NewFileAction;
 import com.ss.editor.ui.component.asset.tree.context.menu.action.RenameFileAction;
 import com.ss.editor.ui.component.editor.EditorDescription;
 import com.ss.editor.ui.component.editor.state.EditorState;
+import com.ss.editor.ui.component.tab.EditorToolComponent;
 import com.ss.editor.ui.control.property.PropertyEditor;
 import com.ss.editor.ui.css.CSSClasses;
 import com.ss.editor.ui.util.DynamicIconSupport;
@@ -99,6 +104,24 @@ public class ShaderNodesFileEditor extends
      */
     @Nullable
     private ShaderNodesContainer shaderNodesContainer;
+
+    /**
+     * The fragment preview component.
+     */
+    @Nullable
+    private ShaderCodePreviewComponent fragmentPreview;
+
+    /**
+     * The vertex preview component.
+     */
+    @Nullable
+    private ShaderCodePreviewComponent vertexPreview;
+
+    /**
+     * The material definition preview component.
+     */
+    @Nullable
+    private MaterialDefCodePreviewComponent matDefPreview;
 
     /**
      * The current material definition.
@@ -233,6 +256,25 @@ public class ShaderNodesFileEditor extends
         FXUtils.addClassTo(splitPanel, CSSClasses.FILE_EDITOR_TOOL_SPLIT_PANE);
     }
 
+    @Override
+    @FXThread
+    protected void createToolComponents(@NotNull final EditorToolComponent container, @NotNull final StackPane root) {
+        super.createToolComponents(container, root);
+
+        fragmentPreview = new FragmentShaderCodePreviewComponent(EDITOR.getAssetManager(), EDITOR.getRenderManager());
+        fragmentPreview.prefHeightProperty().bind(root.heightProperty());
+
+        vertexPreview = new VertexShaderCodePreviewComponent(EDITOR.getAssetManager(), EDITOR.getRenderManager());
+        vertexPreview.prefHeightProperty().bind(root.heightProperty());
+
+        matDefPreview = new MaterialDefCodePreviewComponent(EDITOR.getAssetManager(), EDITOR.getRenderManager());
+        matDefPreview.prefHeightProperty().bind(root.heightProperty());
+
+        container.addComponent(vertexPreview, "Vertex");
+        container.addComponent(fragmentPreview, "Fragment");
+        container.addComponent(matDefPreview, "Material definition");
+    }
+
     /**
      * @return The list of available techniques.
      */
@@ -247,6 +289,36 @@ public class ShaderNodesFileEditor extends
     @FromAnyThread
     private @NotNull ShaderNodesContainer getShaderNodesContainer() {
         return notNull(shaderNodesContainer);
+    }
+
+    /**
+     * Get the fragment preview component.
+     *
+     * @return the fragment preview component.
+     */
+    @FXThread
+    private @NotNull ShaderCodePreviewComponent getFragmentPreview() {
+        return notNull(fragmentPreview);
+    }
+
+    /**
+     * Get the vertex preview component.
+     *
+     * @return the vertex preview component.
+     */
+    @FXThread
+    private @NotNull ShaderCodePreviewComponent getVertexPreview() {
+        return notNull(vertexPreview);
+    }
+
+    /**
+     * Get the material definition preview component.
+     *
+     * @return the material definition preview component.
+     */
+    @FXThread
+    private @NotNull MaterialDefCodePreviewComponent getMatDefPreview() {
+        return notNull(matDefPreview);
     }
 
     @Override
@@ -364,6 +436,9 @@ public class ShaderNodesFileEditor extends
             //FIXME
         }
 
+        getFragmentPreview().load(techniqueDef);
+        getVertexPreview().load(techniqueDef);
+
         EXECUTOR_MANAGER.addJMETask(() -> currentMaterial.selectTechnique(newValue, EDITOR.getRenderManager()));
     }
 
@@ -456,6 +531,7 @@ public class ShaderNodesFileEditor extends
         setCurrentMaterial(newMaterial);
         getShaderNodesContainer().notifyChangedMaterial();
         getEditor3DState().updateMaterial(newMaterial);
+        getMatDefPreview().load(newMaterial.getMaterialDef());
 
         if (items.contains(currentTechnique)) {
             selectionModel.select(currentTechnique);
@@ -466,6 +542,13 @@ public class ShaderNodesFileEditor extends
         getSettingsTree().fill(new PreviewMaterialSettings(newMaterial));
     }
 
+    /**
+     * Clone the material definition.
+     *
+     * @param materialDef the material definition.
+     * @return the cloned.
+     */
+    @FromAnyThread
     private @NotNull MaterialDef clone(@NotNull final MaterialDef materialDef) {
 
         final Collection<MatParam> materialParams = materialDef.getMaterialParams();

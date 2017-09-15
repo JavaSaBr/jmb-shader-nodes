@@ -20,4 +20,7 @@ public interface PluginCSSClasses {
     @NotNull String SHADER_NODE_PARAMETER_OUTPUT_SOCKET = "shader-node-parameter-output-socket";
     @NotNull String SHADER_NODE_LINE = "shader-node-line";
     @NotNull String SHADER_NODE_TEMP_LINE = "shader-node-temp-line";
+    @NotNull String SHADER_CODE_PREVIEW_CONTAINER = "shader-code-preview-component";
+
+
 }
