@@ -410,6 +410,34 @@ public class ShaderNodeUtils {
     }
 
     /**
+     * Check is the in type accessible for the out type.
+     *
+     * @param inType  the in type.
+     * @param outType the out type.
+     * @return true if these types are accessible.
+     */
+    @FromAnyThread
+    public static boolean isAccessibleType(@NotNull final String inType, @NotNull final String outType) {
+
+        if (!inType.contains("|") && !outType.contains("|")) {
+            return inType.equals(outType);
+        }
+
+        final String[] inTypes = inType.split("[|]");
+        final String[] outTypes = outType.split("[|]");
+
+        for (final String subInType : inTypes) {
+            for (final String subOutType : outTypes) {
+                if (subInType.equals(subOutType)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Try to calculate a right swizzling for the mapping.
      *
      * @param leftVar  the left variable.

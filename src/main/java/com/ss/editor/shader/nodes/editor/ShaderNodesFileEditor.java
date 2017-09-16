@@ -20,7 +20,6 @@ import com.ss.editor.FileExtensions;
 import com.ss.editor.annotation.BackgroundThread;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
-import com.ss.editor.extension.property.SimpleProperty;
 import com.ss.editor.manager.ResourceManager;
 import com.ss.editor.plugin.api.dialog.GenericFactoryDialog;
 import com.ss.editor.plugin.api.editor.material.BaseMaterialFileEditor;
@@ -864,11 +863,11 @@ public class ShaderNodesFileEditor extends
     public void notifyFXChangeProperty(@NotNull final Object object, @NotNull final String propertyName) {
         super.notifyFXChangeProperty(object, propertyName);
 
-        if (object instanceof SimpleProperty) {
-            getShaderNodesContainer().notifyChangedMaterial();
-        } else if (object instanceof MatParam) {
+        if (object instanceof MatParam) {
             final PropertyEditor<ShaderNodesChangeConsumer> propertyEditor = getPropertyEditor();
             propertyEditor.refresh();
         }
+
+        getShaderNodesContainer().notifyChangedMaterial();
     }
 }

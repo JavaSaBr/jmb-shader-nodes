@@ -13,12 +13,12 @@ import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.annotation.JMEThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
-import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.component.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.component.shader.node.action.ShaderNodeAction;
 import com.ss.editor.shader.nodes.component.shader.node.action.remove.RemoveMaterialParamShaderNodeAction;
 import com.ss.editor.shader.nodes.component.shader.node.parameter.EditableMaterialShaderNodeParameter;
 import com.ss.editor.shader.nodes.component.shader.node.parameter.OutputShaderNodeParameter;
+import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.ui.control.property.PropertyControl;
 import com.ss.editor.ui.control.property.impl.*;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +43,9 @@ public class MaterialShaderNodeElement extends OutputVariableShaderNodeElement {
     @FromAnyThread
     public static @NotNull ShaderNodeVariable toVariable(@NotNull final MatParam matParam) {
         final VarType type = matParam.getVarType();
-        return new ShaderNodeVariable(type.getGlslType(), NAMESPACE, matParam.getName(),
+        final String glslType = type.getGlslType();
+        final String resultType = glslType.contains("|") ? glslType.split("[|]")[0] : glslType;
+        return new ShaderNodeVariable(resultType, NAMESPACE, matParam.getName(),
                 null, "m_");
     }
 
@@ -158,7 +160,11 @@ public class MaterialShaderNodeElement extends OutputVariableShaderNodeElement {
             return;
         }
 
-        material.setParam(matParam.getName(), matParam.getVarType(), value);
+        if (value == null) {
+            material.clearParam(matParam.getName());
+        } else {
+            material.setParam(matParam.getName(), matParam.getVarType(), value);
+        }
     }
 
     @Override

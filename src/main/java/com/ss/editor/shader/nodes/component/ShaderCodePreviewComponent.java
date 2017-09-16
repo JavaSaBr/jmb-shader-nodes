@@ -10,6 +10,9 @@ import com.jme3.renderer.Renderer;
 import com.jme3.shader.Shader;
 import com.jme3.shader.ShaderGenerator;
 import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FromAnyThread;
+import com.ss.editor.annotation.JMEThread;
+import com.ss.editor.manager.ExecutorManager;
 import com.ss.editor.ui.control.code.BaseCodeArea;
 import com.ss.editor.ui.control.code.GLSLCodeArea;
 import com.ss.editor.ui.css.CSSClasses;
@@ -41,7 +44,7 @@ public abstract class ShaderCodePreviewComponent extends CodePreviewComponent {
      * The current shader.
      */
     @Nullable
-    private Shader shader;
+    private volatile Shader shader;
 
     public ShaderCodePreviewComponent(@NotNull final AssetManager assetManager,
                                       @NotNull final RenderManager renderManager) {
@@ -118,8 +121,19 @@ public abstract class ShaderCodePreviewComponent extends CodePreviewComponent {
      *
      * @param techniqueDef the technique definition.
      */
-    @FXThread
+    @FromAnyThread
     public void load(@NotNull final TechniqueDef techniqueDef) {
+        final ExecutorManager executorManager = ExecutorManager.getInstance();
+        executorManager.addJMETask(() -> generateShader(techniqueDef));
+    }
+
+    /**
+     * Generate shader from the technique definition.
+     *
+     * @param techniqueDef the technique definition.
+     */
+    @JMEThread
+    private void generateShader(@NotNull final TechniqueDef techniqueDef) {
 
         final Renderer renderer = getRenderManager().getRenderer();
         final EnumSet<Caps> caps = renderer.getCaps();
@@ -127,6 +141,16 @@ public abstract class ShaderCodePreviewComponent extends CodePreviewComponent {
         shaderGenerator.initialize(techniqueDef);
 
         this.shader = shaderGenerator.generateShader("");
+
+        final ExecutorManager executorManager = ExecutorManager.getInstance();
+        executorManager.addFXTask(this::loadShader);
+    }
+
+    /**
+     * Load languages from the generated shader.
+     */
+    @FXThread
+    private void loadShader() {
 
         final ComboBox<String> languageBox = getLanguageBox();
         final ObservableList<String> items = languageBox.getItems();

@@ -28,6 +28,7 @@ import com.ss.editor.shader.nodes.util.MaterialDefUtils;
 import com.ss.rlib.logging.Logger;
 import com.ss.rlib.logging.LoggerManager;
 import com.ss.rlib.ui.util.FXUtils;
+import com.ss.rlib.util.StringUtils;
 import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayFactory;
 import javafx.collections.ObservableList;
@@ -50,6 +51,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 /**
  * The container of all shader nodes.
@@ -218,6 +220,8 @@ public class ShaderNodesContainer extends ScrollPane {
         final ShaderNodesChangeConsumer consumer = getChangeConsumer();
         final Array<ShaderNodeElement<?>> nodeElements = getNodeElements();
 
+        int skipped = 0;
+
         for (final ShaderNodeElement<?> nodeElement : nodeElements) {
             nodeElement.resetLayout();
 
@@ -237,11 +241,134 @@ public class ShaderNodesContainer extends ScrollPane {
             }
 
             if (location == null) {
+                skipped++;
                 continue;
             }
 
             nodeElement.setLayoutX(location.getX());
             nodeElement.setLayoutY(location.getY());
+        }
+
+        if (skipped < 1) {
+            return;
+        }
+
+        layoutNodes();
+    }
+
+    /**
+     * Layout nodes.
+     */
+    @FXThread
+    private void layoutNodes() {
+
+        final Array<ShaderNodeElement<?>> nodeElements = getNodeElements();
+        final ShaderNodeElement<?> inputElement = nodeElements.stream()
+                .filter(InputGlobalShaderNodeElement.class::isInstance)
+                .findAny().orElse(null);
+
+        final ShaderNodeElement<?> outputElement = nodeElements.stream()
+                .filter(OutputGlobalShaderNodeElement.class::isInstance)
+                .findAny().orElse(null);
+
+        Predicate<ShaderNodeElement<?>> isInput = AttributeShaderNodeElement.class::isInstance;
+        isInput = isInput.or(MaterialShaderNodeElement.class::isInstance)
+                .or(WorldShaderNodeElement.class::isInstance);
+
+        final List<ShaderNodeElement<?>> inputNodes = nodeElements.stream()
+                .filter(isInput)
+                .sorted((first, second) -> StringUtils.compare(first.getClass().getName(), second.getClass().getName()))
+                .collect(toList());
+
+        final List<ShaderNodeElement<?>> vertexNodes = nodeElements.stream()
+                .filter(VertexShaderNodeElement.class::isInstance)
+                .collect(toList());
+
+        final List<ShaderNodeElement<?>> fragmentNodes = nodeElements.stream()
+                .filter(FragmentShaderNodeElement.class::isInstance)
+                .collect(toList());
+
+        float inputElementStartX = 10F;
+        float inputElementStartY = 10F;
+        float inputElementEndY = inputElementStartY;
+
+        if (inputElement != null) {
+            inputElement.autosize();
+            inputElement.setLayoutX(inputElementStartX);
+            inputElement.setLayoutY(inputElementStartY);
+
+            notifyMoved(inputElement);
+            notifyResized(inputElement);
+
+            inputElementEndY = (float) (inputElementStartY + inputElement.getHeight() + 30F);
+        }
+
+        float inputNodeStartY = inputElementEndY;
+        float maxInputParameterWidth = 0;
+
+        for (final ShaderNodeElement<?> inNode : inputNodes) {
+
+            inNode.autosize();
+            inNode.setLayoutX(inputElementStartX);
+            inNode.setLayoutY(inputNodeStartY);
+
+            notifyMoved(inNode);
+            notifyResized(inNode);
+
+            inputNodeStartY += inNode.getHeight() + 30F;
+            maxInputParameterWidth = (float) Math.max(maxInputParameterWidth, inNode.getWidth() + 80D);
+        }
+
+        float vertexNodeStartX = inputElementStartX + maxInputParameterWidth;
+        float vertexNodeStartY = inputElementEndY - 10F;
+        float maxVertexNodeWidth = 0F;
+        float maxVertexHeight = 0F;
+
+        for (final ShaderNodeElement<?> vertexNode : vertexNodes) {
+
+            vertexNode.autosize();
+            vertexNode.setLayoutX(vertexNodeStartX);
+            vertexNode.setLayoutY(vertexNodeStartY);
+
+            notifyMoved(vertexNode);
+            notifyResized(vertexNode);
+
+            vertexNodeStartX += vertexNode.getWidth() + 50F;
+            maxVertexNodeWidth = (float) Math.max(maxVertexNodeWidth, vertexNode.getWidth() + 10D);
+            maxVertexHeight = (float) Math.max(maxVertexHeight, vertexNode.getHeight() + 10D);
+        }
+
+        float fragmentNodeStartX = inputElementStartX + maxInputParameterWidth + 40F;
+        float fragmentNodeStartY = inputElementEndY + 70F + maxVertexHeight;
+        float maxFragmentNodeWidth = 0F;
+        float maxFragmentHeight = 0F;
+
+        for (final ShaderNodeElement<?> fragmentNode : fragmentNodes) {
+
+            fragmentNode.autosize();
+            fragmentNode.setLayoutX(fragmentNodeStartX);
+            fragmentNode.setLayoutY(fragmentNodeStartY);
+
+            notifyMoved(fragmentNode);
+            notifyResized(fragmentNode);
+
+            fragmentNodeStartX += fragmentNode.getWidth() + 50F;
+            maxFragmentNodeWidth = (float) Math.max(maxFragmentNodeWidth, fragmentNode.getWidth() + 10D);
+            maxFragmentHeight = (float) Math.max(maxFragmentHeight, fragmentNode.getHeight() + 10D);
+        }
+
+        float outputStartX = Math.max(fragmentNodeStartX, vertexNodeStartX);
+        outputStartX += 10D;
+
+        float outputStartY = vertexNodeStartY + maxVertexHeight;
+
+        if (outputElement != null) {
+            outputElement.autosize();
+            outputElement.setLayoutX(outputStartX);
+            outputElement.setLayoutY(outputStartY);
+
+            notifyMoved(outputElement);
+            notifyResized(outputElement);
         }
     }
 
