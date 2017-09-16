@@ -1,5 +1,6 @@
 package com.ss.editor.shader.nodes.editor;
 
+import static com.ss.editor.extension.property.EditablePropertyType.STRING;
 import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.jme3.asset.AssetKey;
 import com.jme3.asset.AssetManager;
@@ -7,6 +8,7 @@ import com.jme3.asset.StreamAssetInfo;
 import com.jme3.export.binary.BinaryExporter;
 import com.jme3.export.binary.BinaryImporter;
 import com.jme3.material.*;
+import com.jme3.material.logic.DefaultTechniqueDefLogic;
 import com.jme3.material.plugin.export.materialdef.J3mdExporter;
 import com.jme3.material.plugins.J3MLoader;
 import com.jme3.math.Vector2f;
@@ -20,13 +22,16 @@ import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.extension.property.SimpleProperty;
 import com.ss.editor.manager.ResourceManager;
+import com.ss.editor.plugin.api.dialog.GenericFactoryDialog;
 import com.ss.editor.plugin.api.editor.material.BaseMaterialFileEditor;
+import com.ss.editor.plugin.api.property.PropertyDefinition;
 import com.ss.editor.shader.nodes.ShaderNodesEditorPlugin;
 import com.ss.editor.shader.nodes.component.FragmentShaderCodePreviewComponent;
 import com.ss.editor.shader.nodes.component.MaterialDefCodePreviewComponent;
 import com.ss.editor.shader.nodes.component.ShaderCodePreviewComponent;
 import com.ss.editor.shader.nodes.component.VertexShaderCodePreviewComponent;
 import com.ss.editor.shader.nodes.component.shader.ShaderNodesContainer;
+import com.ss.editor.shader.nodes.component.shader.node.operation.add.AddTechniqueOperation;
 import com.ss.editor.shader.nodes.editor.state.ShaderNodeState;
 import com.ss.editor.shader.nodes.editor.state.ShaderNodeVariableState;
 import com.ss.editor.shader.nodes.editor.state.ShaderNodesEditorState;
@@ -48,7 +53,9 @@ import com.ss.editor.util.EditorUtil;
 import com.ss.editor.util.MaterialUtils;
 import com.ss.rlib.ui.util.FXUtils;
 import com.ss.rlib.util.Utils;
+import com.ss.rlib.util.VarTable;
 import com.ss.rlib.util.array.Array;
+import com.ss.rlib.util.array.ArrayFactory;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -61,6 +68,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
@@ -84,6 +92,7 @@ public class ShaderNodesFileEditor extends
      */
     @NotNull
     public static final EditorDescription DESCRIPTION = new EditorDescription();
+    public static final String PROP_TECHNIQUE_NAME = "name";
 
     static {
         DESCRIPTION.setConstructor(ShaderNodesFileEditor::new);
@@ -354,11 +363,67 @@ public class ShaderNodesFileEditor extends
                 .selectedItemProperty()
                 .addListener((observable, oldValue, newValue) -> changeTechnique(newValue));
 
-        FXUtils.addToPane(techniqueLabel, container);
-        FXUtils.addToPane(techniqueComboBox, container);
+        final Button addTechnique = new Button();
+        addTechnique.setTooltip(new Tooltip("Add new technique"));
+        addTechnique.setOnAction(event -> addTechnique());
+        addTechnique.setGraphic(new ImageView(Icons.ADD_16));
 
+        DynamicIconSupport.addSupport(addTechnique);
+
+        FXUtils.addToPane(techniqueLabel, techniqueComboBox, addTechnique, container);
         FXUtils.addClassTo(techniqueLabel, CSSClasses.FILE_EDITOR_TOOLBAR_LABEL);
         FXUtils.addClassTo(techniqueComboBox, CSSClasses.FILE_EDITOR_TOOLBAR_FIELD);
+        FXUtils.addClassesTo(addTechnique, CSSClasses.FLAT_BUTTON, CSSClasses.FILE_EDITOR_TOOLBAR_BUTTON);
+    }
+
+    /**
+     * Add new technique.
+     */
+    @FXThread
+    private void addTechnique() {
+
+        final Array<PropertyDefinition> definitions = ArrayFactory.newArray(PropertyDefinition.class);
+        definitions.add(new PropertyDefinition(STRING, "name", PROP_TECHNIQUE_NAME, "NewTechnique"));
+
+        final GenericFactoryDialog dialog = new GenericFactoryDialog(definitions, this::addTechnique, this::validateTechnique);
+        dialog.show();
+    }
+
+    @FXThread
+    private boolean validateTechnique(@NotNull final VarTable vars) {
+        final String name = vars.getString(PROP_TECHNIQUE_NAME);
+        final MaterialDef materialDef = getMaterialDef();
+        final List<TechniqueDef> techniqueDefs = materialDef.getTechniqueDefs(name);
+        return techniqueDefs == null && !name.isEmpty();
+    }
+
+    @FXThread
+    private void addTechnique(@NotNull final VarTable vars) {
+
+        final ShaderNodeVariable vertexGlobal = new ShaderNodeVariable("vec4", "Global", "position", null, "");
+        vertexGlobal.setShaderOutput(true);
+
+        final ShaderNodeVariable fragmentGlobal = new ShaderNodeVariable("vec4", "Global", "color", null, "");
+        fragmentGlobal.setShaderOutput(true);
+        fragmentGlobal.setCondition(null);
+        fragmentGlobal.setMultiplicity(null);
+
+        final ShaderGenerationInfo generationInfo = new ShaderGenerationInfo();
+        generationInfo.setVertexGlobal(vertexGlobal);
+        generationInfo.getFragmentGlobals().add(fragmentGlobal);
+
+        final String name = vars.getString(PROP_TECHNIQUE_NAME);
+        final TechniqueDef techniqueDef = new TechniqueDef(name, 0);
+        techniqueDef.setShaderPrologue("");
+        techniqueDef.setLogic(new DefaultTechniqueDefLogic(techniqueDef));
+        techniqueDef.setShaderNodes(new ArrayList<>());
+        techniqueDef.setLightMode(TechniqueDef.LightMode.Disable);
+        techniqueDef.setShaderGenerationInfo(generationInfo);
+        techniqueDef.addWorldParam("");
+        techniqueDef.setShaderFile(techniqueDef.hashCode() + "", techniqueDef.hashCode() + "",
+                "GLSL100", "GLSL100");
+
+        execute(new AddTechniqueOperation(getMaterialDef(), techniqueDef));
     }
 
     /**
@@ -438,8 +503,7 @@ public class ShaderNodesFileEditor extends
 
         getFragmentPreview().load(techniqueDef);
         getVertexPreview().load(techniqueDef);
-
-        EXECUTOR_MANAGER.addJMETask(() -> currentMaterial.selectTechnique(newValue, EDITOR.getRenderManager()));
+        getEditor3DState().selectTechnique(currentMaterial, newValue);
     }
 
     /**
@@ -746,6 +810,18 @@ public class ShaderNodesFileEditor extends
         final TechniqueDefState state = getTechniqueDefState();
         if (state == null) return 0D;
         return input ? state.getInputNodeWidth() : state.getOutputNodeWidth();
+    }
+
+    @Override
+    @FXThread
+    public void notifyAddedTechnique(@NotNull final TechniqueDef techniqueDef) {
+        buildMaterial();
+    }
+
+    @Override
+    @FXThread
+    public void notifyRemovedTechnique(@NotNull final TechniqueDef techniqueDef) {
+        buildMaterial();
     }
 
     @Override

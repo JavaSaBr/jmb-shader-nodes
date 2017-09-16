@@ -3,6 +3,7 @@ package com.ss.editor.shader.nodes.editor;
 import com.jme3.material.MatParam;
 import com.jme3.material.Material;
 import com.jme3.material.MaterialDef;
+import com.jme3.material.TechniqueDef;
 import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
@@ -214,4 +215,20 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
      */
     @FXThread
     double getGlobalNodeWidth(final boolean input);
+
+    /**
+     * Notify about added the technique definition.
+     *
+     * @param techniqueDef the technique definition.
+     */
+    @FXThread
+    void notifyAddedTechnique(@NotNull final TechniqueDef techniqueDef);
+
+    /**
+     * Notify about removed the technique definition.
+     *
+     * @param techniqueDef the technique definition.
+     */
+    @FXThread
+    void notifyRemovedTechnique(@NotNull final TechniqueDef techniqueDef);
 }

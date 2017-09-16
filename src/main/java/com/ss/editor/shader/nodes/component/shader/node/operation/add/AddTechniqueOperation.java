@@ -1,23 +1,21 @@
 package com.ss.editor.shader.nodes.component.shader.node.operation.add;
 
-import static com.ss.editor.shader.nodes.util.MaterialDefUtils.getMatParams;
-import com.jme3.material.MatParam;
 import com.jme3.material.MaterialDef;
-import com.jme3.math.Vector2f;
+import com.jme3.material.TechniqueDef;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.JMEThread;
-import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.component.shader.node.operation.ShaderNodeOperation;
+import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
+import java.util.List;
 
 /**
- * The implementation of adding new material parameter.
+ * The implementation of adding new technique.
  *
  * @author JavaSaBr
  */
-public class AddMaterialParameterOperation extends ShaderNodeOperation {
+public class AddTechniqueOperation extends ShaderNodeOperation {
 
     /**
      * The material definition.
@@ -26,54 +24,43 @@ public class AddMaterialParameterOperation extends ShaderNodeOperation {
     private final MaterialDef materialDef;
 
     /**
-     * The material parameter.
+     * The technique definition.
      */
     @NotNull
-    private final MatParam matParam;
+    private final TechniqueDef techniqueDef;
 
-    /**
-     * The location.
-     */
-    @NotNull
-    private final Vector2f location;
-
-    public AddMaterialParameterOperation(@NotNull final MaterialDef materialDef, @NotNull final MatParam matParam,
-                                         @NotNull final Vector2f location) {
+    public AddTechniqueOperation(@NotNull final MaterialDef materialDef, @NotNull final TechniqueDef techniqueDef) {
         this.materialDef = materialDef;
-        this.matParam = matParam;
-        this.location = location;
+        this.techniqueDef = techniqueDef;
     }
 
     @Override
     @JMEThread
     protected void redoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
         super.redoImplInJMEThread(editor);
-
-        final Map<String, MatParam> matParams = getMatParams(materialDef);
-        matParams.put(matParam.getName(), matParam);
+        materialDef.addTechniqueDef(techniqueDef);
     }
 
     @Override
     @FXThread
     protected void redoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
         super.redoImplInFXThread(editor);
-        editor.notifyAddedMatParameter(matParam, location);
+        editor.notifyAddedTechnique(techniqueDef);
     }
-
 
     @Override
     @JMEThread
     protected void undoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
         super.undoImplInJMEThread(editor);
 
-        final Map<String, MatParam> matParams = getMatParams(materialDef);
-        matParams.remove(matParam.getName());
+        final List<TechniqueDef> techniqueDefs = materialDef.getTechniqueDefs(techniqueDef.getName());
+        techniqueDefs.remove(techniqueDef);
     }
 
     @Override
     @FXThread
     protected void undoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
         super.undoImplInFXThread(editor);
-        editor.notifyRemovedMatParameter(matParam);
+        editor.notifyRemovedTechnique(techniqueDef);
     }
 }

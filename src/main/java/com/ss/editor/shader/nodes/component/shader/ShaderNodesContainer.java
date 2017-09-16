@@ -444,6 +444,7 @@ public class ShaderNodesContainer extends ScrollPane {
 
         final ShaderGenerationInfo shaderGenerationInfo = techniqueDef.getShaderGenerationInfo();
         final Pane root = getRoot();
+        root.getChildren().clear();
 
         final Array<ShaderNodeElement<?>> nodeElements = getNodeElements();
         nodeElements.clear();

@@ -48,7 +48,7 @@ public class AddShaderNodeOperation extends ShaderNodeOperation {
         super.redoImplInJMEThread(editor);
         techniqueDef.getShaderNodes().add(shaderNode);
         final ShaderGenerationInfo info = techniqueDef.getShaderGenerationInfo();
-        //info.getUnusedNodes().add(shaderNode.getName());
+        //FIXME info.getUnusedNodes().add(shaderNode.getName());
     }
 
     @Override
@@ -64,7 +64,7 @@ public class AddShaderNodeOperation extends ShaderNodeOperation {
         super.undoImplInJMEThread(editor);
         techniqueDef.getShaderNodes().remove(shaderNode);
         final ShaderGenerationInfo info = techniqueDef.getShaderGenerationInfo();
-        //info.getUnusedNodes().remove(shaderNode.getName());
+        //FIXME info.getUnusedNodes().remove(shaderNode.getName());
     }
 
     @Override
