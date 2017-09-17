@@ -11,6 +11,7 @@ import com.ss.editor.shader.nodes.component.shader.node.operation.remove.RemoveS
 import com.ss.editor.shader.nodes.component.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.component.shader.node.action.ShaderNodeAction;
 import com.ss.editor.shader.nodes.component.shader.node.main.MainShaderNodeElement;
+import com.ss.rlib.util.Utils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -49,7 +50,9 @@ public class RemoveShaderNodeAction extends ShaderNodeAction<ShaderNode> {
         final List<ShaderNodeVariable> outputs = definition.getOutputs();
 
         for (final ShaderNodeVariable outVar : outputs) {
-            usingNodes.addAll(container.findWithRightInputVar(outVar, MainShaderNodeElement.class));
+            final ShaderNodeVariable toFind = Utils.get(outVar::clone);
+            toFind.setNameSpace(shaderNode.getName());
+            usingNodes.addAll(container.findWithRightInputVar(toFind, MainShaderNodeElement.class));
         }
 
         final ShaderNodesChangeConsumer consumer = container.getChangeConsumer();

@@ -188,8 +188,8 @@ public class ShaderNodeUtils {
                                                                             @NotNull final ShaderNodeVariable variable,
                                                                             @NotNull final String nameSpace) {
         return shaderNode.getInputMapping().stream()
-                .filter(mapping -> equalsByName(mapping.getLeftVariable(), variable))
-                .filter(mapping -> mapping.getLeftVariable().getNameSpace().equals(nameSpace))
+                .filter(mapping -> equalsByName(mapping.getRightVariable(), variable))
+                .filter(mapping -> mapping.getRightVariable().getNameSpace().equals(nameSpace))
                 .collect(toList());
     }
 

@@ -137,8 +137,8 @@ public class ShaderNodesContainer extends ScrollPane {
         centered.setAlignment(Pos.CENTER);
 
         setPannable(true);
-        //setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        //setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         setContent(centered);
         setFitToHeight(true);
         setFitToWidth(true);
