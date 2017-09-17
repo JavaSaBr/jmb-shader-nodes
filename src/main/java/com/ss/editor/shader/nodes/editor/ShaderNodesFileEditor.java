@@ -469,7 +469,32 @@ public class ShaderNodesFileEditor extends
     private void importMatDef() {
         final ResourceManager resourceManager = ResourceManager.getInstance();
         final Array<String> resources = resourceManager.getAvailableResources(FileExtensions.JME_MATERIAL_DEFINITION);
-        UIUtils.openResourceAssetDialog(this::importMatDef, resources);
+        UIUtils.openResourceAssetDialog(this::importMatDef, this::validateMatDef, resources);
+    }
+
+    /**
+     * Validate the selected material definition.
+     *
+     * @param assetPath the asset path.
+     * @return the message or null if it's ok.
+     */
+    @FXThread
+    private String validateMatDef(@NotNull final String assetPath) {
+
+        final AssetManager assetManager = EDITOR.getAssetManager();
+        final MaterialDef materialDef = (MaterialDef) assetManager.loadAsset(assetPath);
+        final Collection<String> techniqueDefsNames = materialDef.getTechniqueDefsNames();
+
+        for (final String techniqueDefsName : techniqueDefsNames) {
+            final List<TechniqueDef> techniqueDefs = materialDef.getTechniqueDefs(techniqueDefsName);
+            for (final TechniqueDef techniqueDef : techniqueDefs) {
+                if (!techniqueDef.isUsingShaderNodes()) {
+                    return "The material definition doesn't use shader nodes.";
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
