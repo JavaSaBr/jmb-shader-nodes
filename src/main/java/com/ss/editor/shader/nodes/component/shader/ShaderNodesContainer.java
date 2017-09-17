@@ -473,7 +473,7 @@ public class ShaderNodesContainer extends ScrollPane {
 
             final Menu menu = new Menu("Add");
             menu.getItems().addAll(new AddMaterialParamShaderNodeAction(this, materialDef, location),
-                    new AddMaterialTextureParamShaderNodeAction(this, materialDef, location),
+                    new AddMaterialTextureShaderNodeAction(this, materialDef, location),
                     new AddWorldParamShaderNodeAction(this, techniqueDef, location),
                     new AddAttributeShaderNodeAction(this, techniqueDef, location),
                     new AddNodeShaderNodeAction(this, techniqueDef, location));

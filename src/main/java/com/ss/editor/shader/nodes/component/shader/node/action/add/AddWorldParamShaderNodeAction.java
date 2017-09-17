@@ -4,6 +4,7 @@ import com.jme3.material.TechniqueDef;
 import com.jme3.math.Vector2f;
 import com.jme3.shader.UniformBinding;
 import com.ss.editor.annotation.FXThread;
+import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.component.shader.node.operation.add.AddWorldParameterOperation;
 import com.ss.editor.shader.nodes.component.shader.ShaderNodesContainer;
@@ -44,7 +45,13 @@ public class AddWorldParamShaderNodeAction extends AddTechniqueDefParameterShade
     @Override
     @FXThread
     protected @NotNull String getName() {
-        return "World parameter";
+        return PluginMessages.WORLD_PARAMETER;
+    }
+
+    @Override
+    @FXThread
+    protected @NotNull String getDialogTitle() {
+        return PluginMessages.ACTION_ADD_WORLD_PARAMETER_TITLE;
     }
 
     @Override

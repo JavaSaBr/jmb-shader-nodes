@@ -3,6 +3,7 @@ package com.ss.editor.shader.nodes.component.shader.node.action.add;
 import static com.ss.editor.extension.property.EditablePropertyType.STRING_FROM_LIST;
 import com.jme3.material.TechniqueDef;
 import com.jme3.math.Vector2f;
+import com.ss.editor.Messages;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.plugin.api.dialog.GenericFactoryDialog;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
@@ -49,10 +50,21 @@ public abstract class AddTechniqueDefParameterShaderNodeAction extends ShaderNod
         super.process();
 
         final Array<PropertyDefinition> definitions = ArrayFactory.newArray(PropertyDefinition.class);
-        definitions.add(new PropertyDefinition(STRING_FROM_LIST, "name", PROP_NAME, available.first(), available));
+        definitions.add(new PropertyDefinition(STRING_FROM_LIST, Messages.MODEL_PROPERTY_NAME, PROP_NAME, available.first(), available));
 
         final GenericFactoryDialog dialog = new GenericFactoryDialog(definitions, this::addParameter, this::validate);
+        dialog.setTitle(getDialogTitle());
         dialog.show();
+    }
+
+    /**
+     * Get the dialog title.
+     *
+     * @return the dialog title.
+     */
+    @FXThread
+    protected @NotNull String getDialogTitle() {
+        throw new RuntimeException("unsupported");
     }
 
     /**

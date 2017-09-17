@@ -8,6 +8,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.annotation.FXThread;
+import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.component.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.component.shader.node.operation.add.AddAttributeOperation;
 import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
@@ -53,7 +54,13 @@ public class AddAttributeShaderNodeAction extends AddTechniqueDefParameterShader
     @Override
     @FXThread
     protected @NotNull String getName() {
-        return "Vertex Attribute";
+        return PluginMessages.VERTEX_ATTRIBUTE;
+    }
+
+    @Override
+    @FXThread
+    protected @NotNull String getDialogTitle() {
+        return PluginMessages.ACTION_ADD_VERTEX_ATTRIBUTE_TITLE;
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.UniformBinding;
 import com.ss.editor.annotation.FXThread;
+import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.component.shader.node.operation.remove.RemoveWorldParameterVariableOperation;
 import com.ss.editor.shader.nodes.component.shader.ShaderNodesContainer;
@@ -31,7 +32,7 @@ public class RemoveWorldParamShaderNodeAction extends ShaderNodeAction<ShaderNod
     @Override
     @FXThread
     protected @NotNull String getName() {
-        return "Delete";
+        return PluginMessages.ACTION_DELETE;
     }
 
     @Override

@@ -9,6 +9,7 @@ import com.jme3.texture.image.ColorSpace;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
+import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.component.shader.node.operation.add.AddMaterialParameterOperation;
 import com.ss.editor.shader.nodes.component.shader.ShaderNodesContainer;
@@ -22,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author JavaSaBr
  */
-public class AddMaterialTextureParamShaderNodeAction extends AddMaterialParamShaderNodeAction {
+public class AddMaterialTextureShaderNodeAction extends AddMaterialParamShaderNodeAction {
 
     @NotNull
     private static final String PROP_COLOR_SPACE = "colorSpace";
@@ -36,9 +37,9 @@ public class AddMaterialTextureParamShaderNodeAction extends AddMaterialParamSha
         }
     }
 
-    public AddMaterialTextureParamShaderNodeAction(@NotNull final ShaderNodesContainer container,
-                                                   @NotNull final MaterialDef materialDef,
-                                                   @NotNull final Vector2f location) {
+    public AddMaterialTextureShaderNodeAction(@NotNull final ShaderNodesContainer container,
+                                              @NotNull final MaterialDef materialDef,
+                                              @NotNull final Vector2f location) {
         super(container, materialDef, location);
     }
 
@@ -50,14 +51,14 @@ public class AddMaterialTextureParamShaderNodeAction extends AddMaterialParamSha
     @Override
     @FXThread
     protected @NotNull String getName() {
-        return "Material texture parameter";
+        return PluginMessages.MATERIAL_TEXTURE;
     }
 
     @Override
     @FXThread
     protected @NotNull Array<PropertyDefinition> getDefinitions() {
         final Array<PropertyDefinition> definitions = super.getDefinitions();
-        definitions.add(new PropertyDefinition(ENUM, "Color space", PROP_COLOR_SPACE, ColorSpace.Linear));
+        definitions.add(new PropertyDefinition(ENUM, PluginMessages.COLOR_SPACE, PROP_COLOR_SPACE, ColorSpace.Linear));
         return definitions;
     }
 

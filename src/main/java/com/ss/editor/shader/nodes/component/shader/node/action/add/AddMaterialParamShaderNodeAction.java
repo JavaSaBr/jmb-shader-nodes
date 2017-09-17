@@ -8,10 +8,12 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.math.Vector4f;
 import com.jme3.shader.VarType;
+import com.ss.editor.Messages;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.plugin.api.dialog.GenericFactoryDialog;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
+import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.component.shader.node.operation.add.AddMaterialParameterOperation;
 import com.ss.editor.shader.nodes.component.shader.ShaderNodesContainer;
@@ -65,7 +67,7 @@ public class AddMaterialParamShaderNodeAction extends ShaderNodeAction<MaterialD
     @Override
     @FXThread
     protected @NotNull String getName() {
-        return "Material parameter";
+        return PluginMessages.MATERIAL_PARAMETER;
     }
 
     @Override
@@ -76,6 +78,7 @@ public class AddMaterialParamShaderNodeAction extends ShaderNodeAction<MaterialD
         final Array<PropertyDefinition> definitions = getDefinitions();
 
         final GenericFactoryDialog dialog = new GenericFactoryDialog(definitions, this::addParam, this::validate);
+        dialog.setTitle(PluginMessages.ACTION_ADD_MATERIAL_PARAMETER_TITLE);
         dialog.show();
     }
 
@@ -89,11 +92,11 @@ public class AddMaterialParamShaderNodeAction extends ShaderNodeAction<MaterialD
 
         final Array<String> varTypes = getVarTypes();
         final Array<PropertyDefinition> definitions = ArrayFactory.newArray(PropertyDefinition.class);
-        definitions.add(new PropertyDefinition(STRING, "name", PROP_NAME, getNewParameterName()));
-        definitions.add(new PropertyDefinition(STRING_FROM_LIST, "type", PROP_TYPE, varTypes.first(), varTypes));
+        definitions.add(new PropertyDefinition(STRING, Messages.MODEL_PROPERTY_NAME, PROP_NAME, getNewParameterName()));
+        definitions.add(new PropertyDefinition(STRING_FROM_LIST, Messages.MODEL_PROPERTY_TYPE, PROP_TYPE, varTypes.first(), varTypes));
 
         if (needDefaultValue()) {
-            definitions.add(new PropertyDefinition(STRING, "default", PROP_DEFAULT, ""));
+            definitions.add(new PropertyDefinition(STRING, PluginMessages.PROPERTY_DEFAULT, PROP_DEFAULT, ""));
         }
 
         return definitions;

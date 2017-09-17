@@ -10,6 +10,7 @@ import com.jme3.material.plugins.J3MLoader;
 import com.ss.editor.annotation.BackgroundThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.plugin.api.file.creator.GenericFileCreator;
+import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.ShaderNodesEditorPlugin;
 import com.ss.editor.shader.nodes.model.ShaderNodesProject;
 import com.ss.editor.ui.component.creator.FileCreatorDescription;
@@ -40,14 +41,14 @@ public class ShaderNodesProjectFileCreator extends GenericFileCreator {
     public static final FileCreatorDescription DESCRIPTION = new FileCreatorDescription();
 
     static {
-        DESCRIPTION.setFileDescription("Shader nodes project file");
+        DESCRIPTION.setFileDescription(PluginMessages.SN_CREATOR_DESCRIPTION);
         DESCRIPTION.setConstructor(ShaderNodesProjectFileCreator::new);
     }
 
     @Override
     @FromAnyThread
     protected @NotNull String getTitleText() {
-        return "Creating new shader node material project";
+        return PluginMessages.SN_CREATOR_TITLE;
     }
 
     @Override

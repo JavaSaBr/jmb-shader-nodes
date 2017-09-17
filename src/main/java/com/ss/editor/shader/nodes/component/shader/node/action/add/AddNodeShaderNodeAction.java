@@ -11,6 +11,7 @@ import com.ss.editor.Editor;
 import com.ss.editor.FileExtensions;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.manager.ResourceManager;
+import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.component.shader.node.operation.add.AddShaderNodeOperation;
 import com.ss.editor.shader.nodes.component.shader.ShaderNodesContainer;
@@ -42,7 +43,7 @@ public class AddNodeShaderNodeAction extends ShaderNodeAction<TechniqueDef> {
     @Override
     @FXThread
     protected @NotNull String getName() {
-        return "Shader Node";
+        return PluginMessages.SHADER_NODE;
     }
 
     @Override

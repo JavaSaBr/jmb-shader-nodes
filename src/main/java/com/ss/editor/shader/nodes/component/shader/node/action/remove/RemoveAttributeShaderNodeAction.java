@@ -5,6 +5,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.annotation.FXThread;
+import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.component.shader.node.operation.remove.RemoveAttributeVariableOperation;
 import com.ss.editor.shader.nodes.component.shader.ShaderNodesContainer;
@@ -30,7 +31,7 @@ public class RemoveAttributeShaderNodeAction extends ShaderNodeAction<ShaderNode
     @Override
     @FXThread
     protected @NotNull String getName() {
-        return "Delete";
+        return PluginMessages.ACTION_DELETE;
     }
 
     @Override
