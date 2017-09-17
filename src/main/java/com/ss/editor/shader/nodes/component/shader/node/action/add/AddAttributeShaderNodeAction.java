@@ -8,9 +8,9 @@ import com.jme3.math.Vector2f;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.annotation.FXThread;
-import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
-import com.ss.editor.shader.nodes.component.shader.node.operation.add.AddAttributeOperation;
 import com.ss.editor.shader.nodes.component.shader.ShaderNodesContainer;
+import com.ss.editor.shader.nodes.component.shader.node.operation.add.AddAttributeOperation;
+import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import com.ss.rlib.util.VarTable;
 import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayFactory;
@@ -30,7 +30,12 @@ public class AddAttributeShaderNodeAction extends AddTechniqueDefParameterShader
 
     static {
         for (final VertexBuffer.Type attribute : VertexBuffer.Type.values()) {
-            ATTRIBUTE_TYPES.add(attribute.name());
+
+            if (attribute == VertexBuffer.Type.Position) {
+                continue;
+            }
+
+            ATTRIBUTE_TYPES.add("in" + attribute.name());
         }
     }
     public AddAttributeShaderNodeAction(@NotNull final ShaderNodesContainer container,
@@ -60,9 +65,9 @@ public class AddAttributeShaderNodeAction extends AddTechniqueDefParameterShader
         final TechniqueDef techniqueDef = getObject();
 
         final String name = vars.getString(PROP_NAME);
-        final String attributeUIType = getAttributeUIType(VertexBuffer.Type.valueOf(name));
+        final String attributeUIType = getAttributeUIType(VertexBuffer.Type.valueOf(name.substring(2, name.length())));
         final String glslType = uiTypeToType(attributeUIType);
-        final ShaderNodeVariable variable = new ShaderNodeVariable(glslType, NAMESPACE, name, null, "in");
+        final ShaderNodeVariable variable = new ShaderNodeVariable(glslType, NAMESPACE, name, null, "");
 
         changeConsumer.execute(new AddAttributeOperation(techniqueDef, variable, getLocation()));
     }
