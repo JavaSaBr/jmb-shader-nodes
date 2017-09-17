@@ -13,6 +13,7 @@ import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,6 +40,12 @@ public class AttachVarToShaderNodeOperation extends AttachShaderNodeOperation {
      */
     @Nullable
     private VariableMapping toRevertOutput;
+
+    /**
+     * The previous order of shader nodes.
+     */
+    @Nullable
+    private List<ShaderNode> previousShaderOrder;
 
     /**
      * True if source variable was added to varyings.
@@ -85,6 +92,13 @@ public class AttachVarToShaderNodeOperation extends AttachShaderNodeOperation {
             toRevertOutput.getLeftVariable().setShaderOutput(true);
         }
 
+        final List<ShaderNode> shaderNodes = techniqueDef.getShaderNodes();
+        if (shaderNodes.indexOf(outShaderNode) > shaderNodes.indexOf(shaderNode)) {
+            previousShaderOrder = new ArrayList<>(shaderNodes);
+            shaderNodes.remove(shaderNode);
+            shaderNodes.add(shaderNode);
+        }
+
         final List<VariableMapping> inputMapping = shaderNode.getInputMapping();
 
         if (getOldMapping() != null) {
@@ -113,6 +127,13 @@ public class AttachVarToShaderNodeOperation extends AttachShaderNodeOperation {
         if (toRevertOutput != null) {
             toRevertOutput.getLeftVariable().setShaderOutput(false);
             toRevertOutput = null;
+        }
+
+        if (previousShaderOrder != null) {
+            final List<ShaderNode> shaderNodes = techniqueDef.getShaderNodes();
+            shaderNodes.clear();
+            shaderNodes.addAll(previousShaderOrder);
+            previousShaderOrder = null;
         }
 
         final List<VariableMapping> inputMapping = getShaderNode().getInputMapping();
