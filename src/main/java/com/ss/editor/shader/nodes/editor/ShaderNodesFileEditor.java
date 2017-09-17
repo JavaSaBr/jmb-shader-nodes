@@ -1,5 +1,6 @@
 package com.ss.editor.shader.nodes.editor;
 
+import static com.ss.editor.extension.property.EditablePropertyType.ENUM;
 import static com.ss.editor.extension.property.EditablePropertyType.STRING;
 import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.jme3.asset.AssetKey;
@@ -8,7 +9,7 @@ import com.jme3.asset.StreamAssetInfo;
 import com.jme3.export.binary.BinaryExporter;
 import com.jme3.export.binary.BinaryImporter;
 import com.jme3.material.*;
-import com.jme3.material.logic.DefaultTechniqueDefLogic;
+import com.jme3.material.logic.*;
 import com.jme3.material.plugin.export.materialdef.J3mdExporter;
 import com.jme3.material.plugins.J3MLoader;
 import com.jme3.math.Vector2f;
@@ -91,7 +92,12 @@ public class ShaderNodesFileEditor extends
      */
     @NotNull
     public static final EditorDescription DESCRIPTION = new EditorDescription();
-    public static final String PROP_TECHNIQUE_NAME = "name";
+
+    @NotNull
+    private static final String PROP_TECHNIQUE_NAME = "name";
+
+    @NotNull
+    private static final String PROP_TECHNIQUE_LIGHT_MODE = "lightMode";
 
     static {
         DESCRIPTION.setConstructor(ShaderNodesFileEditor::new);
@@ -383,6 +389,7 @@ public class ShaderNodesFileEditor extends
 
         final Array<PropertyDefinition> definitions = ArrayFactory.newArray(PropertyDefinition.class);
         definitions.add(new PropertyDefinition(STRING, "name", PROP_TECHNIQUE_NAME, "NewTechnique"));
+        definitions.add(new PropertyDefinition(ENUM, "Light mode", PROP_TECHNIQUE_LIGHT_MODE, TechniqueDef.LightMode.SinglePassAndImageBased));
 
         final GenericFactoryDialog dialog = new GenericFactoryDialog(definitions, this::addTechnique, this::validateTechnique);
         dialog.show();
@@ -412,15 +419,37 @@ public class ShaderNodesFileEditor extends
         generationInfo.getFragmentGlobals().add(fragmentGlobal);
 
         final String name = vars.getString(PROP_TECHNIQUE_NAME);
+        final TechniqueDef.LightMode lightMode = vars.getEnum(PROP_TECHNIQUE_LIGHT_MODE, TechniqueDef.LightMode.class);
+
         final TechniqueDef techniqueDef = new TechniqueDef(name, 0);
         techniqueDef.setShaderPrologue("");
-        techniqueDef.setLogic(new DefaultTechniqueDefLogic(techniqueDef));
         techniqueDef.setShaderNodes(new ArrayList<>());
-        techniqueDef.setLightMode(TechniqueDef.LightMode.Disable);
         techniqueDef.setShaderGenerationInfo(generationInfo);
         techniqueDef.addWorldParam("");
         techniqueDef.setShaderFile(techniqueDef.hashCode() + "", techniqueDef.hashCode() + "",
                 "GLSL100", "GLSL100");
+
+        switch (lightMode) {
+            case SinglePass: {
+                techniqueDef.setLogic(new SinglePassLightingLogic(techniqueDef));
+                break;
+            }
+            case SinglePassAndImageBased: {
+                techniqueDef.setLogic(new SinglePassAndImageBasedLightingLogic(techniqueDef));
+                break;
+            }
+            case StaticPass: {
+                techniqueDef.setLogic(new StaticPassLightingLogic(techniqueDef));
+                break;
+            }
+            case MultiPass: {
+                techniqueDef.setLogic(new MultiPassLightingLogic(techniqueDef));
+                break;
+            }
+            case Disable: {
+                techniqueDef.setLogic(new DefaultTechniqueDefLogic(techniqueDef));
+            }
+        }
 
         execute(new AddTechniqueOperation(getMaterialDef(), techniqueDef));
     }

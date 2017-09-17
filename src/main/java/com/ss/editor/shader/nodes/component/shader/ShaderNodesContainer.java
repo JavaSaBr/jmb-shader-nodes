@@ -43,6 +43,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -136,8 +137,8 @@ public class ShaderNodesContainer extends ScrollPane {
         centered.setAlignment(Pos.CENTER);
 
         setPannable(true);
-        setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        //setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        //setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         setContent(centered);
         setFitToHeight(true);
         setFitToWidth(true);
@@ -969,36 +970,33 @@ public class ShaderNodesContainer extends ScrollPane {
     @FXThread
     private void handleScrollEvent(@NotNull final ScrollEvent event) {
 
-        double zoomFactor = event.getDeltaY() * ZOOM_INTENSITY;
-
-        final Bounds innerBounds = zoomNode.getLayoutBounds();
-        final Bounds viewportBounds = getViewportBounds();
-
-        // calculate pixel offsets from [0, 1] range
-        double valX = getHvalue() * (innerBounds.getWidth() - viewportBounds.getWidth());
-        double valY = getVvalue() * (innerBounds.getHeight() - viewportBounds.getHeight());
-
+        final double zoomFactor = event.getDeltaY() * ZOOM_INTENSITY;
         final double newScale = scaleValue + zoomFactor;
 
+        final Region content = (Region) getContent();
+        final Point2D positionInRoot = root.sceneToLocal(event.getSceneX(), event.getSceneY());
+        final Point2D positionInContent = content.sceneToLocal(root.localToScene(positionInRoot));
+
         scaleValue = Math.min(Math.max(newScale, 0.2F), 1F);
-
         updateScale();
-
-        // refresh ScrollPane scroll positions & target bounds
+        requestLayout();
         layout();
 
-        // convert target coordinates to zoomTarget coordinates
-        final Point2D posInZoomTarget = root.parentToLocal(zoomNode.parentToLocal(new Point2D(event.getX(), event.getY())));
-        // calculate adjustment of scroll position (pixels)
-        final Point2D adjustment = root.getLocalToParentTransform().deltaTransform(posInZoomTarget.multiply(zoomFactor - 1));
+        final Point2D newPositionInContent = content.sceneToLocal(root.localToScene(positionInRoot));
+        final Point2D diff = newPositionInContent.subtract(positionInContent);
 
-        // convert back to [0, 1] range
-        // (too large/small values are automatically corrected by ScrollPane)
-        final Bounds updatedInnerBounds = zoomNode.getBoundsInLocal();
+        final Bounds viewport = getViewportBounds();
+        final Bounds contentBounds = content.getLayoutBounds();
 
-        setHvalue((valX + adjustment.getX()) / (updatedInnerBounds.getWidth() - viewportBounds.getWidth()));
-        setVvalue((valY + adjustment.getY()) / (updatedInnerBounds.getHeight() - viewportBounds.getHeight()));
+        final double viewScaleX = viewport.getWidth() / contentBounds.getWidth();
+        final double viewScaleY = viewport.getHeight() / contentBounds.getHeight();
+        final double viewX = diff.getX() * viewScaleX;
+        final double viewY = diff.getY() * viewScaleY;
+        final double newHValue = viewX / viewport.getWidth();
+        final double newYValue = viewY / viewport.getHeight();
 
+        setHvalue(getHvalue() + newHValue);
+        setVvalue(getVvalue() + newYValue);
         event.consume();
     }
 
