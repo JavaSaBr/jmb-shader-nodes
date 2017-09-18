@@ -13,6 +13,7 @@ import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.annotation.JMEThread;
 import com.ss.editor.manager.ExecutorManager;
+import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.ui.control.code.BaseCodeArea;
 import com.ss.editor.ui.control.code.GLSLCodeArea;
 import com.ss.editor.ui.css.CSSClasses;
@@ -56,7 +57,7 @@ public abstract class ShaderCodePreviewComponent extends CodePreviewComponent {
     @FXThread
     protected void createComponents() {
 
-        final Label languageLabel  = new Label("Language:");
+        final Label languageLabel  = new Label(PluginMessages.SHADER_PREVIEW_LANGUAGE + ":");
         languageLabel.minWidthProperty().bind(widthProperty().multiply(0.5));
 
         languageBox = new ComboBox<>();

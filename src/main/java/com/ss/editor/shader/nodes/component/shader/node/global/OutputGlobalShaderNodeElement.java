@@ -8,6 +8,7 @@ import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.VariableMapping;
 import com.ss.editor.annotation.FXThread;
+import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.component.shader.node.operation.attach.AttachVarToGlobalNodeOperation;
 import com.ss.editor.shader.nodes.component.shader.ShaderNodesContainer;
@@ -39,7 +40,7 @@ public class OutputGlobalShaderNodeElement extends GlobalShaderNodeElement {
     @Override
     @FXThread
     protected @NotNull String getTitleText() {
-        return "Global outputs";
+        return PluginMessages.NODE_ELEMENT_GLOBAL_OUTPUT;
     }
 
     @Override

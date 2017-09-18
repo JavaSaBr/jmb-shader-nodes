@@ -3,6 +3,7 @@ package com.ss.editor.shader.nodes.component.shader.node.global;
 import com.jme3.material.ShaderGenerationInfo;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.annotation.FXThread;
+import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.component.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.component.shader.node.parameter.OutputShaderNodeParameter;
 import com.ss.editor.shader.nodes.component.shader.node.parameter.ShaderNodeParameter;
@@ -27,7 +28,7 @@ public class InputGlobalShaderNodeElement extends GlobalShaderNodeElement {
     @Override
     @FXThread
     protected @NotNull String getTitleText() {
-        return "Global inputs";
+        return PluginMessages.NODE_ELEMENT_GLOBAL_INPUT;
     }
 
     @Override

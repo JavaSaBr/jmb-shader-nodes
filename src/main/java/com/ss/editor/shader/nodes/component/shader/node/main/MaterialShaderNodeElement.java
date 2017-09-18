@@ -13,6 +13,7 @@ import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.annotation.JMEThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
+import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.component.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.component.shader.node.action.ShaderNodeAction;
 import com.ss.editor.shader.nodes.component.shader.node.action.remove.RemoveMaterialParamShaderNodeAction;
@@ -170,7 +171,7 @@ public class MaterialShaderNodeElement extends OutputVariableShaderNodeElement {
     @Override
     @FXThread
     protected @NotNull String getTitleText() {
-        return "Material parameter";
+        return PluginMessages.NODE_ELEMENT_MATERIAL_PARAMETER;
     }
 
     @Override

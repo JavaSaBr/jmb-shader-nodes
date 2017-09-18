@@ -9,6 +9,7 @@ import com.jme3.asset.StreamAssetInfo;
 import com.jme3.export.binary.BinaryExporter;
 import com.jme3.export.binary.BinaryImporter;
 import com.jme3.material.*;
+import com.jme3.material.TechniqueDef.LightMode;
 import com.jme3.material.logic.*;
 import com.jme3.material.plugin.export.materialdef.J3mdExporter;
 import com.jme3.material.plugins.J3MLoader;
@@ -18,13 +19,16 @@ import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.UniformBinding;
 import com.jme3.shader.VariableMapping;
 import com.ss.editor.FileExtensions;
+import com.ss.editor.Messages;
 import com.ss.editor.annotation.BackgroundThread;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.manager.ResourceManager;
 import com.ss.editor.plugin.api.dialog.GenericFactoryDialog;
+import com.ss.editor.plugin.api.editor.material.BaseMaterialEditor3DState.ModelType;
 import com.ss.editor.plugin.api.editor.material.BaseMaterialFileEditor;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
+import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.ShaderNodesEditorPlugin;
 import com.ss.editor.shader.nodes.component.FragmentShaderCodePreviewComponent;
 import com.ss.editor.shader.nodes.component.MaterialDefCodePreviewComponent;
@@ -47,6 +51,7 @@ import com.ss.editor.ui.component.editor.state.EditorState;
 import com.ss.editor.ui.component.tab.EditorToolComponent;
 import com.ss.editor.ui.control.property.PropertyEditor;
 import com.ss.editor.ui.css.CSSClasses;
+import com.ss.editor.ui.dialog.asset.virtual.StringVirtualAssetEditorDialog;
 import com.ss.editor.ui.util.DynamicIconSupport;
 import com.ss.editor.ui.util.UIUtils;
 import com.ss.editor.util.EditorUtil;
@@ -101,7 +106,7 @@ public class ShaderNodesFileEditor extends
 
     static {
         DESCRIPTION.setConstructor(ShaderNodesFileEditor::new);
-        DESCRIPTION.setEditorName("Shader Nodes Editor");
+        DESCRIPTION.setEditorName(PluginMessages.SNS_EDITOR_NAME);
         DESCRIPTION.setEditorId(ShaderNodesFileEditor.class.getSimpleName());
         DESCRIPTION.addExtension(ShaderNodesEditorPlugin.PROJECT_FILE_EXTENSION);
     }
@@ -203,7 +208,7 @@ public class ShaderNodesFileEditor extends
         getEditor3DState().updateMaterial(EDITOR.getDefaultMaterial());
 
         final ShaderNodesEditor3DState editor3DState = getEditor3DState();
-        editor3DState.changeMode(ShaderNodesEditor3DState.ModelType.BOX);
+        editor3DState.changeMode(ModelType.BOX);
     }
 
     @Override
@@ -284,9 +289,9 @@ public class ShaderNodesFileEditor extends
         matDefPreview = new MaterialDefCodePreviewComponent(EDITOR.getAssetManager(), EDITOR.getRenderManager());
         matDefPreview.prefHeightProperty().bind(root.heightProperty());
 
-        container.addComponent(vertexPreview, "Vertex");
-        container.addComponent(fragmentPreview, "Fragment");
-        container.addComponent(matDefPreview, "Material definition");
+        container.addComponent(vertexPreview, PluginMessages.SNS_EDITOR_TOOL_VERTEX);
+        container.addComponent(fragmentPreview, PluginMessages.SNS_EDITOR_TOOL_FRAGMENT);
+        container.addComponent(matDefPreview, PluginMessages.SNS_EDITOR_TOOL_MD);
     }
 
     /**
@@ -341,12 +346,12 @@ public class ShaderNodesFileEditor extends
         super.createActions(container);
 
         final Button exportAction = new Button();
-        exportAction.setTooltip(new Tooltip("Save as j3md"));
+        exportAction.setTooltip(new Tooltip(PluginMessages.SNS_EDITOR_ACTION_EXPORT));
         exportAction.setOnAction(event -> export());
         exportAction.setGraphic(new ImageView(Icons.EXPORT_16));
 
         final Button importAction = new Button();
-        importAction.setTooltip(new Tooltip("Import a j3md file"));
+        importAction.setTooltip(new Tooltip(PluginMessages.SNS_EDITOR_ACTION_IMPORT));
         importAction.setOnAction(event -> importMatDef());
         importAction.setGraphic(new ImageView(Icons.IMPORT_16));
 
@@ -361,7 +366,7 @@ public class ShaderNodesFileEditor extends
     protected void createToolbar(@NotNull final HBox container) {
         super.createToolbar(container);
 
-        final Label techniqueLabel = new Label("Technique:");
+        final Label techniqueLabel = new Label(PluginMessages.SNS_EDITOR_LABEL_TECHNIQUE + ":");
 
         techniqueComboBox = new ComboBox<>();
         techniqueComboBox.getSelectionModel()
@@ -369,7 +374,7 @@ public class ShaderNodesFileEditor extends
                 .addListener((observable, oldValue, newValue) -> changeTechnique(newValue));
 
         final Button addTechnique = new Button();
-        addTechnique.setTooltip(new Tooltip("Add new technique"));
+        addTechnique.setTooltip(new Tooltip(PluginMessages.SNS_EDITOR_ACTION_ADD_TECHNIQUE));
         addTechnique.setOnAction(event -> addTechnique());
         addTechnique.setGraphic(new ImageView(Icons.ADD_16));
 
@@ -388,8 +393,8 @@ public class ShaderNodesFileEditor extends
     private void addTechnique() {
 
         final Array<PropertyDefinition> definitions = ArrayFactory.newArray(PropertyDefinition.class);
-        definitions.add(new PropertyDefinition(STRING, "name", PROP_TECHNIQUE_NAME, "NewTechnique"));
-        definitions.add(new PropertyDefinition(ENUM, "Light mode", PROP_TECHNIQUE_LIGHT_MODE, TechniqueDef.LightMode.SinglePassAndImageBased));
+        definitions.add(new PropertyDefinition(STRING, Messages.MODEL_PROPERTY_NAME, PROP_TECHNIQUE_NAME, "NewTechnique"));
+        definitions.add(new PropertyDefinition(ENUM, PluginMessages.LIGHT_MODE, PROP_TECHNIQUE_LIGHT_MODE, LightMode.SinglePassAndImageBased));
 
         final GenericFactoryDialog dialog = new GenericFactoryDialog(definitions, this::addTechnique, this::validateTechnique);
         dialog.show();
@@ -419,7 +424,7 @@ public class ShaderNodesFileEditor extends
         generationInfo.getFragmentGlobals().add(fragmentGlobal);
 
         final String name = vars.getString(PROP_TECHNIQUE_NAME);
-        final TechniqueDef.LightMode lightMode = vars.getEnum(PROP_TECHNIQUE_LIGHT_MODE, TechniqueDef.LightMode.class);
+        final LightMode lightMode = vars.getEnum(PROP_TECHNIQUE_LIGHT_MODE, LightMode.class);
 
         final TechniqueDef techniqueDef = new TechniqueDef(name, 0);
         techniqueDef.setShaderPrologue("");
@@ -481,6 +486,11 @@ public class ShaderNodesFileEditor extends
     @FXThread
     private String validateMatDef(@NotNull final String assetPath) {
 
+        final String message = StringVirtualAssetEditorDialog.DEFAULT_VALIDATOR.apply(assetPath);
+        if (message != null) {
+            return message;
+        }
+
         final AssetManager assetManager = EDITOR.getAssetManager();
         final MaterialDef materialDef = (MaterialDef) assetManager.loadAsset(assetPath);
         final Collection<String> techniqueDefsNames = materialDef.getTechniqueDefsNames();
@@ -489,7 +499,7 @@ public class ShaderNodesFileEditor extends
             final List<TechniqueDef> techniqueDefs = materialDef.getTechniqueDefs(techniqueDefsName);
             for (final TechniqueDef techniqueDef : techniqueDefs) {
                 if (!techniqueDef.isUsingShaderNodes()) {
-                    return "The material definition doesn't use shader nodes.";
+                    return PluginMessages.SNS_EDITOR_LABEL_INCORRECT_MD_TO_IMPORT;
                 }
             }
         }
@@ -507,9 +517,11 @@ public class ShaderNodesFileEditor extends
 
         final J3mdExporter exporter = new J3mdExporter();
         final MaterialDef materialDef = getMaterialDef();
+        final MaterialDef clone = clone(materialDef);
+        clone.setAssetName(getFileName());
 
         try (final OutputStream out = Files.newOutputStream(path)) {
-            exporter.save(materialDef, out);
+            exporter.save(clone, out);
         } catch (final IOException e) {
             EditorUtil.handleException(LOGGER, this, e);
         }

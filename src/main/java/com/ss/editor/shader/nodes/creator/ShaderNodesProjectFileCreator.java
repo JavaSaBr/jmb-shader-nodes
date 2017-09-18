@@ -41,14 +41,14 @@ public class ShaderNodesProjectFileCreator extends GenericFileCreator {
     public static final FileCreatorDescription DESCRIPTION = new FileCreatorDescription();
 
     static {
-        DESCRIPTION.setFileDescription(PluginMessages.SN_CREATOR_DESCRIPTION);
+        DESCRIPTION.setFileDescription(PluginMessages.SNS_CREATOR_DESCRIPTION);
         DESCRIPTION.setConstructor(ShaderNodesProjectFileCreator::new);
     }
 
     @Override
     @FromAnyThread
     protected @NotNull String getTitleText() {
-        return PluginMessages.SN_CREATOR_TITLE;
+        return PluginMessages.SNS_CREATOR_TITLE;
     }
 
     @Override

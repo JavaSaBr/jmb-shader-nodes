@@ -1,6 +1,7 @@
 package com.ss.editor.shader.nodes.tree.node;
 
 import com.ss.editor.model.node.material.RootMaterialSettings;
+import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.ui.control.material.tree.node.RootMaterialSettingsTreeNode;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,6 +18,6 @@ public class PreviewMaterialSettingsTreeNode extends RootMaterialSettingsTreeNod
 
     @Override
     public @NotNull String getName() {
-        return "Preview material settings";
+        return PluginMessages.TREE_NODE_PREVIEW_MATERIAL_SETTINGS;
     }
 }

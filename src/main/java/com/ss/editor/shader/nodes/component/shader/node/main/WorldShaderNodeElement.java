@@ -4,6 +4,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.UniformBinding;
 import com.ss.editor.annotation.FXThread;
+import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.component.shader.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.component.shader.node.action.remove.RemoveWorldParamShaderNodeAction;
 import com.ss.editor.shader.nodes.component.shader.node.action.ShaderNodeAction;
@@ -39,7 +40,7 @@ public class WorldShaderNodeElement extends OutputVariableShaderNodeElement {
     @Override
     @FXThread
     protected @NotNull String getTitleText() {
-        return "World parameter";
+        return PluginMessages.NODE_ELEMENT_WORLD_PARAMETER;
     }
 
     @Override
