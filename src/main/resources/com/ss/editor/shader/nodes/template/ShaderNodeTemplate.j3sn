@@ -1,0 +1,6 @@
+ShaderNodeDefinitions {
+    ShaderNodeDefinition ${name} {
+        Type: ${type}
+        Shader ${glsl}: ${shader_path}
+    }
+}

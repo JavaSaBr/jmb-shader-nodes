@@ -6,6 +6,7 @@ import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.manager.FileIconManager;
 import com.ss.editor.manager.ResourceManager;
 import com.ss.editor.plugin.EditorPlugin;
+import com.ss.editor.shader.nodes.creator.ShaderNodeFileCreator;
 import com.ss.editor.shader.nodes.creator.ShaderNodesProjectFileCreator;
 import com.ss.editor.shader.nodes.editor.ShaderNodesFileEditor;
 import com.ss.editor.shader.nodes.tree.factory.ShaderNodesTreeNodeFactory;
@@ -59,6 +60,7 @@ public class ShaderNodesEditorPlugin extends EditorPlugin {
     public void register(@NotNull final FileCreatorRegistry registry) {
         super.register(registry);
         registry.register(ShaderNodesProjectFileCreator.DESCRIPTION);
+        registry.register(ShaderNodeFileCreator.DESCRIPTION);
     }
 
     @Override
