@@ -27,8 +27,8 @@ import org.jetbrains.annotations.NotNull;
         id = "com.ss.editor.shader.nodes",
         version = "1.0.0",
         minAppVersion = "1.2.0",
-        name = "Shader Nodes",
-        description = "A plugin with an Editor to work with Shader Nodes."
+        name = "Shader Nodes Tools",
+        description = "A plugin with supporting to work with shader nodes materials."
 )
 public class ShaderNodesEditorPlugin extends EditorPlugin {
 
@@ -51,7 +51,7 @@ public class ShaderNodesEditorPlugin extends EditorPlugin {
     @FromAnyThread
     public void register(@NotNull final CSSRegistry registry) {
         super.register(registry);
-        registry.register("com/ss/editor/shader/nodes/style.css");
+        registry.register("com/ss/editor/shader/nodes/style.css", getClassLoader());
     }
 
     @Override

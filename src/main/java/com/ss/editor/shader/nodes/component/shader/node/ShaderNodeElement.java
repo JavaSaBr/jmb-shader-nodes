@@ -439,6 +439,7 @@ public class ShaderNodeElement<T> extends VBox {
     /**
      * Get an action to detach the relation.
      *
+     * @param line the line.
      * @return the action or null.
      */
     @FXThread
