@@ -6,6 +6,8 @@ import com.jme3.util.clone.Cloner;
 import com.jme3.util.clone.JmeCloneable;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.annotation.JMEThread;
+import com.ss.editor.shader.nodes.editor.state.TechniqueDefState;
+import com.ss.editor.util.EditorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,6 +24,12 @@ import java.util.List;
 public class ShaderNodesProject implements JmeCloneable, Savable {
 
     /**
+     * The state of technique definitions.
+     */
+    @NotNull
+    private ArrayList<TechniqueDefState> techniqueDefStates;
+
+    /**
      * The settings list of preview material.
      */
     @NotNull
@@ -35,6 +43,27 @@ public class ShaderNodesProject implements JmeCloneable, Savable {
 
     public ShaderNodesProject() {
         this.matParams = new ArrayList<>();
+        this.techniqueDefStates = new ArrayList<>();
+    }
+
+    /**
+     * Updated the states of technique definitions of this project.
+     *
+     * @param techniqueDefStates the states of technique definitions of this project.
+     */
+    @FromAnyThread
+    public void updateTechniqueDefStates(@NotNull final List<TechniqueDefState> techniqueDefStates) {
+        this.techniqueDefStates = new ArrayList<>(techniqueDefStates);
+    }
+
+    /**
+     * Get the states of technique definitions of this project.
+     *
+     * @return the states of technique definitions of this project.
+     */
+    @FromAnyThread
+    public @NotNull List<TechniqueDefState> getTechniqueDefStates() {
+        return techniqueDefStates;
     }
 
     /**
@@ -96,16 +125,31 @@ public class ShaderNodesProject implements JmeCloneable, Savable {
     @Override
     @JMEThread
     public void write(@NotNull final JmeExporter ex) throws IOException {
+
+        final byte[] techStates = EditorUtil.serialize(techniqueDefStates);
+
         final OutputCapsule out = ex.getCapsule(this);
         out.writeSavableArrayList(matParams, "matParams", null);
         out.write(materialDefContent, "materialDefContent", null);
+        out.write(techStates, "techniqueDefStates", null);
     }
 
     @Override
     @JMEThread
     public void read(@NotNull final JmeImporter im) throws IOException {
+
         final InputCapsule in = im.getCapsule(this);
         matParams = in.readSavableArrayList("matParams", new ArrayList<>());
         materialDefContent = in.readString("materialDefContent", null);
+
+        final byte[] techStates = in.readByteArray("techniqueDefStates", null);
+
+        if (techStates != null) {
+            try {
+                techniqueDefStates = EditorUtil.deserialize(techStates);
+            } catch (final RuntimeException e) {
+                // we can skip it
+            }
+        }
     }
 }

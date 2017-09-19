@@ -32,6 +32,16 @@ public class ShaderNodesEditorState extends EditorMaterialEditorState {
         this.techniqueDefStates = new ArrayList<>();
     }
 
+    /**
+     * Get the states of technique definitions.
+     *
+     * @return the states of technique definitions.
+     */
+    @FXThread
+    public @NotNull List<TechniqueDefState> getTechniqueDefStates() {
+        return techniqueDefStates;
+    }
+
     @Override
     @FXThread
     public void setChangeHandler(@NotNull final Runnable changeHandler) {

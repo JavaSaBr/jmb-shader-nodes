@@ -219,9 +219,16 @@ public class ShaderNodesFileEditor extends
         EXECUTOR_MANAGER.addFXTask(this::buildMaterial);
 
         final ShaderNodesEditorState editorState = getEditorState();
+        if (editorState == null) {
+            return;
+        }
 
-        if (editorState != null) {
-            editorState.cleanUp(getMaterialDef());
+        editorState.cleanUp(getMaterialDef());
+
+        final List<TechniqueDefState> defStates = editorState.getTechniqueDefStates();
+
+        if (defStates.isEmpty()) {
+            defStates.addAll(getProject().getTechniqueDefStates());
         }
     }
 
@@ -236,6 +243,9 @@ public class ShaderNodesFileEditor extends
         final Material currentMaterial = getCurrentMaterial();
         final ByteArrayOutputStream bout = new ByteArrayOutputStream();
 
+        final ShaderNodesEditorState editorState = notNull(getEditorState());
+        final List<TechniqueDefState> defStates = editorState.getTechniqueDefStates();
+
         final J3mdExporter materialExporter = new J3mdExporter();
         materialExporter.save(materialDef, bout);
 
@@ -243,6 +253,7 @@ public class ShaderNodesFileEditor extends
 
         final ShaderNodesProject project = getProject();
         project.setMaterialDefContent(materialDefContent);
+        project.updateTechniqueDefStates(defStates);
 
         if (currentMaterial != null) {
             project.setMatParams(currentMaterial.getParams());
