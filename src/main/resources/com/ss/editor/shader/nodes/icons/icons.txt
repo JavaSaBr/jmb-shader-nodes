@@ -2,3 +2,4 @@ com/ss/editor/shader/nodes/icons/vector.svg icon made by https://www.flaticon.co
 com/ss/editor/shader/nodes/icons/list.svg icon made by https://www.flaticon.com/authors/chanut-is-industries from www.flaticon.com
 com/ss/editor/shader/nodes/icons/arrow-pointing-to-right.svg icon made by https://www.flaticon.com/authors/freepik from www.flaticon.com
 com/ss/editor/shader/nodes/icons/left-arrow.svg icon made by https://www.flaticon.com/authors/freepik from www.flaticon.com
+com/ss/editor/shader/nodes/icons/code.svg icon made by https://www.flaticon.com/authors/dave-gandy from www.flaticon.com
