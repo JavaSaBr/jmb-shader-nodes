@@ -9,9 +9,9 @@ import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.UniformBinding;
 import com.ss.editor.annotation.FXThread;
-import com.ss.editor.shader.nodes.component.shader.node.main.AttributeShaderNodeElement;
-import com.ss.editor.shader.nodes.component.shader.node.main.MaterialShaderNodeElement;
-import com.ss.editor.shader.nodes.component.shader.node.main.WorldShaderNodeElement;
+import com.ss.editor.shader.nodes.component.shader.nodes.main.AttributeShaderNodeElement;
+import com.ss.editor.shader.nodes.component.shader.nodes.main.MaterialShaderNodeElement;
+import com.ss.editor.shader.nodes.component.shader.nodes.main.WorldShaderNodeElement;
 import com.ss.editor.ui.component.editor.state.impl.AbstractEditorState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +40,7 @@ public class TechniqueDefState extends AbstractEditorState {
     private String name;
 
     /**
-     * The list of shader node states.
+     * The list of shader nodes states.
      */
     @NotNull
     private List<ShaderNodeState> shaderNodeStates;
@@ -52,24 +52,24 @@ public class TechniqueDefState extends AbstractEditorState {
     private List<ShaderNodeVariableState> shaderVariableStates;
 
     /**
-     * The location of output node.
+     * The location of output nodes.
      */
     @NotNull
     private Vector2f outputNodeLocation;
 
     /**
-     * The location of input node.
+     * The location of input nodes.
      */
     @NotNull
     private Vector2f inputNodeLocation;
 
     /**
-     * The width of output node.
+     * The width of output nodes.
      */
     private int outputNodeWidth;
 
     /**
-     * The width of input node.
+     * The width of input nodes.
      */
     private int inputNodeWidth;
 
@@ -164,9 +164,9 @@ public class TechniqueDefState extends AbstractEditorState {
     }
 
     /**
-     * Notify about changes the shader node.
+     * Notify about changes the shader nodes.
      *
-     * @param shaderNode the shader node.
+     * @param shaderNode the shader nodes.
      * @param location the location.
      * @param width the width.
      */
@@ -190,9 +190,9 @@ public class TechniqueDefState extends AbstractEditorState {
     }
 
     /**
-     * Find a state of the shader node.
+     * Find a state of the shader nodes.
      *
-     * @param shaderNode the shader node.
+     * @param shaderNode the shader nodes.
      * @return the state or null.
      */
     @FXThread
@@ -202,9 +202,9 @@ public class TechniqueDefState extends AbstractEditorState {
     }
 
     /**
-     * Find a state of the shader node variable.
+     * Find a state of the shader nodes variable.
      *
-     * @param variable the shader node variable.
+     * @param variable the shader nodes variable.
      * @return the state or null.
      */
     @FXThread
@@ -226,9 +226,9 @@ public class TechniqueDefState extends AbstractEditorState {
     }
 
     /**
-     * Get the location of input node.
+     * Get the location of input nodes.
      *
-     * @return the location of input node.
+     * @return the location of input nodes.
      */
     @FXThread
     public @NotNull Vector2f getInputNodeLocation() {
@@ -236,9 +236,9 @@ public class TechniqueDefState extends AbstractEditorState {
     }
 
     /**
-     * Get the location of output node.
+     * Get the location of output nodes.
      *
-     * @return the location of output node.
+     * @return the location of output nodes.
      */
     @FXThread
     public @NotNull Vector2f getOutputNodeLocation() {
@@ -246,9 +246,9 @@ public class TechniqueDefState extends AbstractEditorState {
     }
 
     /**
-     * Set the location of input node.
+     * Set the location of input nodes.
      *
-     * @param inputNodeLocation the location of input node.
+     * @param inputNodeLocation the location of input nodes.
      */
     @FXThread
     public void setInputNodeLocation(@NotNull final Vector2f inputNodeLocation) {
@@ -258,9 +258,9 @@ public class TechniqueDefState extends AbstractEditorState {
     }
 
     /**
-     * Set the location of output node.
+     * Set the location of output nodes.
      *
-     * @param outputNodeLocation the location of output node.
+     * @param outputNodeLocation the location of output nodes.
      */
     @FXThread
     public void setOutputNodeLocation(@NotNull final Vector2f outputNodeLocation) {
@@ -270,9 +270,9 @@ public class TechniqueDefState extends AbstractEditorState {
     }
 
     /**
-     * Get the width of output node.
+     * Get the width of output nodes.
      *
-     * @return the width of output node.
+     * @return the width of output nodes.
      */
     @FXThread
     public int getOutputNodeWidth() {
@@ -280,9 +280,9 @@ public class TechniqueDefState extends AbstractEditorState {
     }
 
     /**
-     * Get the width of input node.
+     * Get the width of input nodes.
      *
-     * @return the width of input node.
+     * @return the width of input nodes.
      */
     @FXThread
     public int getInputNodeWidth() {
@@ -290,9 +290,9 @@ public class TechniqueDefState extends AbstractEditorState {
     }
 
     /**
-     * Set the width of output node.
+     * Set the width of output nodes.
      *
-     * @param outputNodeWidth the width of output node.
+     * @param outputNodeWidth the width of output nodes.
      */
     @FXThread
     public void setOutputNodeWidth(final int outputNodeWidth) {
@@ -302,9 +302,9 @@ public class TechniqueDefState extends AbstractEditorState {
     }
 
     /**
-     * Set the width of input node.
+     * Set the width of input nodes.
      *
-     * @param inputNodeWidth the width of input node.
+     * @param inputNodeWidth the width of input nodes.
      */
     @FXThread
     public void setInputNodeWidth(final int inputNodeWidth) {

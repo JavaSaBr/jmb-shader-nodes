@@ -6,7 +6,7 @@ import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.plugin.api.file.creator.GenericFileCreator;
 import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.ShaderNodesEditorPlugin;
-import com.ss.editor.shader.nodes.model.ShaderNodesProject;
+import com.ss.editor.shader.nodes.model.shader.nodes.ShaderNodesProject;
 import com.ss.editor.ui.component.creator.FileCreatorDescription;
 import com.ss.rlib.util.FileUtils;
 import com.ss.rlib.util.VarTable;

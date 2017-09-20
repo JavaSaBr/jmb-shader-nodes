@@ -6,7 +6,7 @@ import com.ss.editor.ui.control.material.tree.node.RootMaterialSettingsTreeNode;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The implementation fo tree node to present settings of preview material.
+ * The implementation fo tree nodes to present settings of preview material.
  *
  * @author JavaSaBr
  */

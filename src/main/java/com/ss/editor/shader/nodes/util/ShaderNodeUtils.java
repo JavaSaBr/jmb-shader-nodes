@@ -10,10 +10,10 @@ import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.UniformBinding;
 import com.jme3.shader.VariableMapping;
 import com.ss.editor.annotation.FromAnyThread;
-import com.ss.editor.shader.nodes.component.shader.node.ShaderNodeElement;
-import com.ss.editor.shader.nodes.component.shader.node.global.OutputGlobalShaderNodeElement;
-import com.ss.editor.shader.nodes.component.shader.node.parameter.InputShaderNodeParameter;
-import com.ss.editor.shader.nodes.component.shader.node.parameter.OutputShaderNodeParameter;
+import com.ss.editor.shader.nodes.component.shader.nodes.ShaderNodeElement;
+import com.ss.editor.shader.nodes.component.shader.nodes.global.OutputGlobalShaderNodeElement;
+import com.ss.editor.shader.nodes.component.shader.nodes.parameter.InputShaderNodeParameter;
+import com.ss.editor.shader.nodes.component.shader.nodes.parameter.OutputShaderNodeParameter;
 import com.ss.rlib.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +33,7 @@ public class ShaderNodeUtils {
      *
      * @param materialDef the technique definition.
      * @param name         the name.
-     * @return the shader node or null.
+     * @return the shader nodes or null.
      */
     @FromAnyThread
     public static @Nullable MatParam findMatParameterByName(@NotNull final MaterialDef materialDef,
@@ -48,7 +48,7 @@ public class ShaderNodeUtils {
      *
      * @param techniqueDef the technique definition.
      * @param name         the name.
-     * @return the shader node or null.
+     * @return the shader nodes or null.
      */
     @FromAnyThread
     public static @Nullable UniformBinding findWorldBindingByName(@NotNull final TechniqueDef techniqueDef,
@@ -63,7 +63,7 @@ public class ShaderNodeUtils {
      *
      * @param techniqueDef the technique definition.
      * @param name         the name.
-     * @return the shader node or null.
+     * @return the shader nodes or null.
      */
     @FromAnyThread
     public static @Nullable ShaderNodeVariable findAttributeByName(@NotNull final TechniqueDef techniqueDef,
@@ -74,11 +74,11 @@ public class ShaderNodeUtils {
     }
 
     /**
-     * Find a shader node with the name.
+     * Find a shader nodes with the name.
      *
      * @param techniqueDef the technique definition.
      * @param name         the name.
-     * @return the shader node or null.
+     * @return the shader nodes or null.
      */
     @FromAnyThread
     public static @Nullable ShaderNode findByName(@NotNull final TechniqueDef techniqueDef,
@@ -118,7 +118,7 @@ public class ShaderNodeUtils {
     /**
      * Find an output mapping with the left variable by name and namespace.
      *
-     * @param shaderNode the shader node.
+     * @param shaderNode the shader nodes.
      * @param variable   the left variable.
      * @return the mapping or null.
      */
@@ -133,7 +133,7 @@ public class ShaderNodeUtils {
     /**
      * Find an input mapping with the left variable by the name.
      *
-     * @param shaderNode the shader node.
+     * @param shaderNode the shader nodes.
      * @param variable   the left variable.
      * @return the mapping or null.
      */
@@ -148,7 +148,7 @@ public class ShaderNodeUtils {
     /**
      * Find an input mapping with the right variable by the name and the namespace.
      *
-     * @param shaderNode the shader node.
+     * @param shaderNode the shader nodes.
      * @param variable   the right variable.
      * @return the mapping or null.
      */
@@ -163,7 +163,7 @@ public class ShaderNodeUtils {
     /**
      * Find input mappings with the right variable by the name and the namespace.
      *
-     * @param shaderNode the shader node.
+     * @param shaderNode the shader nodes.
      * @param variable   the right variable.
      * @return the mapping or null.
      */
@@ -178,7 +178,7 @@ public class ShaderNodeUtils {
     /**
      * Find input mappings with the right variable by the name and the namespace.
      *
-     * @param shaderNode the shader node.
+     * @param shaderNode the shader nodes.
      * @param variable   the right variable.
      * @param nameSpace  the name space.
      * @return the mapping or null.
@@ -196,7 +196,7 @@ public class ShaderNodeUtils {
     /**
      * Find an input mapping with the left variable by the name and the namespace.
      *
-     * @param shaderNode the shader node.
+     * @param shaderNode the shader nodes.
      * @param variable   the left variable.
      * @return the mapping or null.
      */
@@ -211,7 +211,7 @@ public class ShaderNodeUtils {
     /**
      * Find an input mapping with the left variable by the name and the namespace.
      *
-     * @param shaderNode the shader node.
+     * @param shaderNode the shader nodes.
      * @param variable   the left variable.
      * @param nameSpace  the name space.
      * @return the mapping or null.
@@ -227,11 +227,11 @@ public class ShaderNodeUtils {
     }
 
     /**
-     * Check the shader node.
+     * Check the shader nodes.
      *
-     * @param shaderNode the shader node.
+     * @param shaderNode the shader nodes.
      * @param variable   the left variable.
-     * @return true if the shader node has the output mapping with the left variable.
+     * @return true if the shader nodes has the output mapping with the left variable.
      */
     @FromAnyThread
     public static boolean hasOutMappingByLeftVar(@NotNull final ShaderNode shaderNode,
@@ -241,11 +241,11 @@ public class ShaderNodeUtils {
     }
 
     /**
-     * Check the shader node.
+     * Check the shader nodes.
      *
-     * @param shaderNode the shader node.
+     * @param shaderNode the shader nodes.
      * @param variable   the right variable.
-     * @return true if the shader node has the input mapping with the right variable.
+     * @return true if the shader nodes has the input mapping with the right variable.
      */
     @FromAnyThread
     public static boolean hasInMappingByRightVar(@NotNull final ShaderNode shaderNode,

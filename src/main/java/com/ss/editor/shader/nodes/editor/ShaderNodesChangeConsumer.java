@@ -37,7 +37,7 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
     /**
      * Notify about added the variable mapping.
      *
-     * @param shaderNode the shader node.
+     * @param shaderNode the shader nodes.
      * @param mapping    the variable mapping.
      */
     @FXThread
@@ -46,7 +46,7 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
     /**
      * Notify about removed the variable mapping.
      *
-     * @param shaderNode the shader node.
+     * @param shaderNode the shader nodes.
      * @param mapping    the variable mapping.
      */
     @FXThread
@@ -55,7 +55,7 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
     /**
      * Notify about replaced the variable mapping.
      *
-     * @param shaderNode the shader node.
+     * @param shaderNode the shader nodes.
      * @param oldMapping the old variable mapping.
      * @param newMapping the new variable mapping.
      */
@@ -115,24 +115,24 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
     void notifyRemovedWorldParameter(@NotNull final UniformBinding binding);
 
     /**
-     * Notify about added the shader node.
+     * Notify about added the shader nodes.
      *
-     * @param shaderNode the shader node.
+     * @param shaderNode the shader nodes.
      * @param location   the location.
      */
     @FXThread
     void notifyAddedShaderNode(@NotNull final ShaderNode shaderNode, @NotNull Vector2f location);
 
     /**
-     * Notify about removed the shader node.
+     * Notify about removed the shader nodes.
      *
-     * @param shaderNode the shader node.
+     * @param shaderNode the shader nodes.
      */
     @FXThread
     void notifyRemovedRemovedShaderNode(@NotNull final ShaderNode shaderNode);
 
     /**
-     * Notify about changed state of the shader node variable.
+     * Notify about changed state of the shader nodes variable.
      *
      * @param variable the variable.
      * @param location the location.
@@ -143,9 +143,9 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
                            final double width);
 
     /**
-     * Notify about changed state of the shader node.
+     * Notify about changed state of the shader nodes.
      *
-     * @param shaderNode the shader node.
+     * @param shaderNode the shader nodes.
      * @param location   the location.
      * @param width      the width.
      */
@@ -153,9 +153,9 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
     void notifyChangeState(@NotNull final ShaderNode shaderNode, @NotNull final Vector2f location, final double width);
 
     /**
-     * Notify about changed state of the global node.
+     * Notify about changed state of the global nodes.
      *
-     * @param input    true of it's input global node.
+     * @param input    true of it's input global nodes.
      * @param location the location.
      * @param width    the width.
      */
@@ -163,54 +163,54 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
     void notifyChangeGlobalNodeState(final boolean input, @NotNull final Vector2f location, final double width);
 
     /**
-     * Get saved location of the shader node.
+     * Get saved location of the shader nodes.
      *
-     * @param shaderNode the shader node.
+     * @param shaderNode the shader nodes.
      * @return the location or null.
      */
     @FXThread
     @Nullable Vector2f getLocation(@NotNull final ShaderNode shaderNode);
 
     /**
-     * Get saved location of the shader node variable.
+     * Get saved location of the shader nodes variable.
      *
-     * @param variable the shader node variable.
+     * @param variable the shader nodes variable.
      * @return the location or null.
      */
     @FXThread
     @Nullable Vector2f getLocation(@NotNull final ShaderNodeVariable variable);
 
     /**
-     * Get saved location of the global node.
+     * Get saved location of the global nodes.
      *
-     * @param input true if it's input global node.
+     * @param input true if it's input global nodes.
      * @return the location or null.
      */
     @FXThread
     @Nullable Vector2f getGlobalNodeLocation(final boolean input);
 
     /**
-     * Get saved width of the shader node.
+     * Get saved width of the shader nodes.
      *
-     * @param shaderNode the shader node.
+     * @param shaderNode the shader nodes.
      * @return the width or 0.
      */
     @FXThread
     double getWidth(@NotNull final ShaderNode shaderNode);
 
     /**
-     * Get saved width of the shader node variable.
+     * Get saved width of the shader nodes variable.
      *
-     * @param variable the shader node variable.
+     * @param variable the shader nodes variable.
      * @return the width or null.
      */
     @FXThread
     double getWidth(@NotNull final ShaderNodeVariable variable);
 
     /**
-     * Get saved width of the global node.
+     * Get saved width of the global nodes.
      *
-     * @param input true if it's input global node.
+     * @param input true if it's input global nodes.
      * @return the width or null.
      */
     @FXThread

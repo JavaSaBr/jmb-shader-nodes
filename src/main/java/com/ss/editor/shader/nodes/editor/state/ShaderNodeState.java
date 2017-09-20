@@ -18,19 +18,19 @@ public class ShaderNodeState extends AbstractEditorState {
     public static final long serialVersionUID = 1;
 
     /**
-     * The name of a shader node.
+     * The name of a shader nodes.
      */
     @NotNull
     private String name;
 
     /**
-     * The location of a shader node.
+     * The location of a shader nodes.
      */
     @NotNull
     private Vector2f location;
 
     /**
-     * The width of a shader node.
+     * The width of a shader nodes.
      */
     private int width;
 
@@ -46,9 +46,9 @@ public class ShaderNodeState extends AbstractEditorState {
     }
 
     /**
-     * Get the name of a shader node.
+     * Get the name of a shader nodes.
      *
-     * @return the name of a shader node.
+     * @return the name of a shader nodes.
      */
     @FXThread
     public @NotNull String getName() {
@@ -56,9 +56,9 @@ public class ShaderNodeState extends AbstractEditorState {
     }
 
     /**
-     * Set the name of a shader node.
+     * Set the name of a shader nodes.
      *
-     * @param name the name of a shader node.
+     * @param name the name of a shader nodes.
      */
     @FXThread
     public void setName(@NotNull final String name) {
@@ -66,9 +66,9 @@ public class ShaderNodeState extends AbstractEditorState {
     }
 
     /**
-     * Get the location of a shader node.
+     * Get the location of a shader nodes.
      *
-     * @return the location of a shader node.
+     * @return the location of a shader nodes.
      */
     @FXThread
     public @NotNull Vector2f getLocation() {
@@ -76,9 +76,9 @@ public class ShaderNodeState extends AbstractEditorState {
     }
 
     /**
-     * Set the location of a shader node.
+     * Set the location of a shader nodes.
      *
-     * @param location the location of a shader node.
+     * @param location the location of a shader nodes.
      */
     @FXThread
     public void setLocation(@NotNull final Vector2f location) {
@@ -86,9 +86,9 @@ public class ShaderNodeState extends AbstractEditorState {
     }
 
     /**
-     * Get the width of a shader node.
+     * Get the width of a shader nodes.
      *
-     * @return the width of a shader node.
+     * @return the width of a shader nodes.
      */
     @FXThread
     public int getWidth() {
@@ -96,9 +96,9 @@ public class ShaderNodeState extends AbstractEditorState {
     }
 
     /**
-     * Set the width of a shader node.
+     * Set the width of a shader nodes.
      *
-     * @param width the width of a shader node.
+     * @param width the width of a shader nodes.
      */
     @FXThread
     public void setWidth(final int width) {

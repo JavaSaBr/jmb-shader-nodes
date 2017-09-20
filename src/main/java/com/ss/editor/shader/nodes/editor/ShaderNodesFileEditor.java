@@ -30,18 +30,18 @@ import com.ss.editor.plugin.api.editor.material.BaseMaterialFileEditor;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
 import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.ShaderNodesEditorPlugin;
-import com.ss.editor.shader.nodes.component.FragmentShaderCodePreviewComponent;
-import com.ss.editor.shader.nodes.component.MaterialDefCodePreviewComponent;
-import com.ss.editor.shader.nodes.component.ShaderCodePreviewComponent;
-import com.ss.editor.shader.nodes.component.VertexShaderCodePreviewComponent;
-import com.ss.editor.shader.nodes.component.shader.ShaderNodesContainer;
-import com.ss.editor.shader.nodes.component.shader.node.operation.add.AddTechniqueOperation;
+import com.ss.editor.shader.nodes.component.preview.shader.FragmentShaderCodePreviewComponent;
+import com.ss.editor.shader.nodes.component.preview.material.definition.MaterialDefCodePreviewComponent;
+import com.ss.editor.shader.nodes.component.preview.shader.ShaderCodePreviewComponent;
+import com.ss.editor.shader.nodes.component.preview.shader.VertexShaderCodePreviewComponent;
+import com.ss.editor.shader.nodes.component.shader.nodes.ShaderNodesContainer;
+import com.ss.editor.shader.nodes.component.shader.nodes.operation.add.AddTechniqueOperation;
 import com.ss.editor.shader.nodes.editor.state.ShaderNodeState;
 import com.ss.editor.shader.nodes.editor.state.ShaderNodeVariableState;
 import com.ss.editor.shader.nodes.editor.state.ShaderNodesEditorState;
 import com.ss.editor.shader.nodes.editor.state.TechniqueDefState;
 import com.ss.editor.shader.nodes.model.PreviewMaterialSettings;
-import com.ss.editor.shader.nodes.model.ShaderNodesProject;
+import com.ss.editor.shader.nodes.model.shader.nodes.ShaderNodesProject;
 import com.ss.editor.ui.Icons;
 import com.ss.editor.ui.component.asset.tree.context.menu.action.DeleteFileAction;
 import com.ss.editor.ui.component.asset.tree.context.menu.action.NewFileAction;
@@ -193,7 +193,7 @@ public class ShaderNodesFileEditor extends
         }
 
         final ShaderNodesProject project = getProject();
-        final String materialDefContent = project.getMaterialDefContent();
+        final String materialDefContent = notNull(project.getMaterialDefContent());
 
         final ByteArrayInputStream materialDefStream =
                 new ByteArrayInputStream(materialDefContent.getBytes("UTF-8"));
