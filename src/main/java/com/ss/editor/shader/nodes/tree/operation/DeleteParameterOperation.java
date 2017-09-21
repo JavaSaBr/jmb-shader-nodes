@@ -10,11 +10,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * The operation to add a parameter.
+ * The operation to delete a parameter.
  *
  * @author JavaSaBr
  */
-public class AddParameterOperation extends AbstractEditorOperation<ChangeConsumer> {
+public class DeleteParameterOperation extends AbstractEditorOperation<ChangeConsumer> {
 
     /**
      * The definition parameters.
@@ -23,13 +23,18 @@ public class AddParameterOperation extends AbstractEditorOperation<ChangeConsume
     private final ShaderNodeParameters parameters;
 
     /**
-     * The added parameter.
+     * The deleted parameter.
      */
     @NotNull
     private final ShaderNodeVariable variable;
 
-    public AddParameterOperation(@NotNull final ShaderNodeParameters parameters,
-                                 @NotNull final ShaderNodeVariable variable) {
+    /**
+     * The index of deleted parameter.
+     */
+    private int index;
+
+    public DeleteParameterOperation(@NotNull final ShaderNodeParameters parameters,
+                                    @NotNull final ShaderNodeVariable variable) {
         this.parameters = parameters;
         this.variable = variable;
     }
@@ -38,15 +43,16 @@ public class AddParameterOperation extends AbstractEditorOperation<ChangeConsume
     @FXThread
     protected void redoImpl(@NotNull final ChangeConsumer editor) {
         final List<ShaderNodeVariable> parameterList = parameters.getParameters();
-        parameterList.add(variable);
-        editor.notifyFXAddedChild(parameters, variable, -1, true);
+        index = parameterList.indexOf(variable);
+        parameterList.remove(variable);
+        editor.notifyFXRemovedChild(parameters, variable);
     }
 
     @Override
     @FXThread
     protected void undoImpl(@NotNull final ChangeConsumer editor) {
         final List<ShaderNodeVariable> parameterList = parameters.getParameters();
-        parameterList.remove(variable);
-        editor.notifyFXRemovedChild(parameters, variable);
+        parameterList.add(index, variable);
+        editor.notifyFXAddedChild(parameters, variable, index, false);
     }
 }
