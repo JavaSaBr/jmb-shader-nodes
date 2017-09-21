@@ -8,11 +8,10 @@ import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.shader.nodes.model.PreviewMaterialSettings;
 import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionList;
 import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeParameters;
+import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeShaderSource;
+import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeShaderSources;
 import com.ss.editor.shader.nodes.tree.node.PreviewMaterialSettingsTreeNode;
-import com.ss.editor.shader.nodes.tree.node.definition.ShaderNodeDefinitionListTreeNode;
-import com.ss.editor.shader.nodes.tree.node.definition.ShaderNodeDefinitionTreeNode;
-import com.ss.editor.shader.nodes.tree.node.definition.ShaderNodeParameterTreeNode;
-import com.ss.editor.shader.nodes.tree.node.definition.ShaderNodeParametersTreeNode;
+import com.ss.editor.shader.nodes.tree.node.definition.*;
 import com.ss.editor.ui.control.tree.node.TreeNode;
 import com.ss.editor.ui.control.tree.node.TreeNodeFactory;
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +47,10 @@ public class ShaderNodesTreeNodeFactory implements TreeNodeFactory {
             return unsafeCast(new ShaderNodeParametersTreeNode((ShaderNodeParameters) element, objectId));
         } else if (element instanceof ShaderNodeVariable) {
             return unsafeCast(new ShaderNodeParameterTreeNode((ShaderNodeVariable) element, objectId));
+        } else if (element instanceof ShaderNodeShaderSources) {
+            return unsafeCast(new ShaderNodeShaderSourcesTreeNode((ShaderNodeShaderSources) element, objectId));
+        } else if (element instanceof ShaderNodeShaderSource) {
+            return unsafeCast(new ShaderNodeShaderSourceTreeNode((ShaderNodeShaderSource) element, objectId));
         }
 
         return null;

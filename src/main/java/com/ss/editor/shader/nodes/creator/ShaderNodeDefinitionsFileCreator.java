@@ -42,7 +42,7 @@ public class ShaderNodeDefinitionsFileCreator extends GenericFileCreator {
     private static final String PROP_TYPE = "type";
 
     @NotNull
-    private static final String PROP_GLSL_VERSION = "glslVersion";
+    private static final String PROP_LANGUAGE = "language";
 
     @NotNull
     private static final String PROP_DEFINITION_NAME = "definitionName";
@@ -62,13 +62,13 @@ public class ShaderNodeDefinitionsFileCreator extends GenericFileCreator {
      * The list of available GLSL languages.
      */
     @NotNull
-    private static final Array<String> AVAILABLE_GLSL;
+    public static final Array<String> AVAILABLE_GLSL;
 
     /**
      * The list of available shader nodes types.
      */
     @NotNull
-    private static final Array<String> AVAILABLE_TYPES;
+    public static final Array<String> AVAILABLE_TYPES;
 
     /**
      * The template of shader nodes file.
@@ -106,7 +106,7 @@ public class ShaderNodeDefinitionsFileCreator extends GenericFileCreator {
         result.add(new PropertyDefinition(EditablePropertyType.STRING_FROM_LIST,
                 "Type", PROP_TYPE, ShaderType.Vertex.name(), AVAILABLE_TYPES));
         result.add(new PropertyDefinition(EditablePropertyType.STRING_FROM_LIST,
-                "Language", PROP_GLSL_VERSION, Caps.GLSL150.name(), AVAILABLE_GLSL));
+                "Language", PROP_LANGUAGE, Caps.GLSL150.name(), AVAILABLE_GLSL));
 
         return result;
     }
@@ -132,17 +132,17 @@ public class ShaderNodeDefinitionsFileCreator extends GenericFileCreator {
         final Path folder = shaderNodeFile.getParent();
 
         final VarTable vars = getVars();
-        final String shaderNodeName = vars.getString(PROP_DEFINITION_NAME);
-        final Caps glslVersion = vars.getEnum(PROP_GLSL_VERSION, Caps.class);
+        final String definitionName = vars.getString(PROP_DEFINITION_NAME);
+        final Caps language = vars.getEnum(PROP_LANGUAGE, Caps.class);
         final ShaderType type = vars.getEnum(PROP_TYPE, ShaderType.class);
 
-        final Path shaderFile = folder.resolve(shaderNodeName + "." + type.getExtension());
+        final Path shaderFile = folder.resolve(definitionName + "." + type.getExtension());
         final Path assetShaderFile = notNull(getAssetFile(shaderFile));
         final String assetShaderPath = toAssetPath(assetShaderFile);
 
-        String result = SN_TEMPLATE.replace("${name}", shaderNodeName);
+        String result = SN_TEMPLATE.replace("${name}", definitionName);
         result = result.replace("${type}", type.name());
-        result = result.replace("${glsl}", glslVersion.name());
+        result = result.replace("${glsl}", language.name());
         result = result.replace("${shader_path}", assetShaderPath);
 
         try (final PrintWriter out = new PrintWriter(Files.newOutputStream(shaderNodeFile, WRITE, TRUNCATE_EXISTING, CREATE))) {

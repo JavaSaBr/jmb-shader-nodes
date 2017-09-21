@@ -16,4 +16,7 @@ public interface PluginIcons {
     @NotNull Image ARROW_LEFT_16 = ICON_MANAGER.getImage("/com/ss/editor/shader/nodes/icons/left-arrow.svg");
     @NotNull Image ARROW_RIGHT_16 = ICON_MANAGER.getImage("/com/ss/editor/shader/nodes/icons/arrow-pointing-to-right.svg");
     @NotNull Image LIST_16 = ICON_MANAGER.getImage("/com/ss/editor/shader/nodes/icons/list.svg");
+    @NotNull Image CODE_16 = ICON_MANAGER.getImage("/com/ss/editor/shader/nodes/icons/code.svg");
+    @NotNull Image FRAGMENT_16 = ICON_MANAGER.getImage("/com/ss/editor/shader/nodes/icons/grid-pixel.svg");
+    @NotNull Image VARIABLE_16 = ICON_MANAGER.getImage("/com/ss/editor/shader/nodes/icons/square-root-of-x-math-formula.svg");
 }
