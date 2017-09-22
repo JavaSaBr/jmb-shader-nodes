@@ -4,6 +4,7 @@ import com.jme3.shader.ShaderNodeDefinition;
 import com.ss.editor.annotation.FromAnyThread;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,103 @@ public class ShaderNodeShaderSources {
         }
 
         return result;
+    }
+
+    /**
+     * Get the list of shader sources.
+     *
+     * @return the list of shader sources.
+     */
+    @FromAnyThread
+    public @NotNull List<ShaderNodeShaderSource> getShadeSources() {
+
+        final List<String> shadersPath = definition.getShadersPath();
+        final List<String> shadersLanguage = definition.getShadersLanguage();
+
+        final List<ShaderNodeShaderSource> result = new ArrayList<>();
+
+        for (int i = 0; i < shadersPath.size(); i++) {
+            result.add(new ShaderNodeShaderSource(definition, shadersPath.get(i), shadersLanguage.get(i)));
+        }
+
+        return result;
+    }
+
+    /**
+     * Add the shader source to sources of this definition.
+     *
+     * @param shaderSource the new shader source.
+     */
+    @FromAnyThread
+    public void add(@NotNull final ShaderNodeShaderSource shaderSource) {
+
+        final List<String> shadersPath = definition.getShadersPath();
+        final List<String> shadersLanguage = definition.getShadersLanguage();
+
+        shadersPath.add(shaderSource.getShaderPath());
+        shadersLanguage.add(shaderSource.getLanguage());
+    }
+
+    /**
+     * Add the shader source to sources of this definition.
+     *
+     * @param index        the position of the shader source.
+     * @param shaderSource the new shader source.
+     */
+    @FromAnyThread
+    public void add(final int index, @NotNull final ShaderNodeShaderSource shaderSource) {
+
+        final List<String> shadersPath = definition.getShadersPath();
+        final List<String> shadersLanguage = definition.getShadersLanguage();
+
+        shadersPath.add(index, shaderSource.getShaderPath());
+        shadersLanguage.add(index, shaderSource.getLanguage());
+    }
+
+    /**
+     * Remove the shader source from this definition.
+     *
+     * @param shaderSource the shader source.
+     */
+    @FromAnyThread
+    public void remove(@NotNull final ShaderNodeShaderSource shaderSource) {
+
+        final List<String> shadersPath = definition.getShadersPath();
+        final List<String> shadersLanguage = definition.getShadersLanguage();
+
+        final int index = indexOf(shaderSource);
+
+        if (index == -1) {
+            throw new IllegalArgumentException("not found the shader source " + shaderSource);
+        }
+
+        shadersPath.remove(index);
+        shadersLanguage.remove(index);
+    }
+
+    /**
+     * Get the position of the shader source in this definition.
+     *
+     * @param shaderSource the shader source.
+     * @return the position or -1.
+     */
+    @FromAnyThread
+    public int indexOf(@NotNull final ShaderNodeShaderSource shaderSource) {
+
+        final List<String> shadersPath = definition.getShadersPath();
+        final List<String> shadersLanguage = definition.getShadersLanguage();
+
+        for (int i = 0; i < shadersPath.size(); i++) {
+
+            final String path = shadersPath.get(i);
+            final String language = shadersLanguage.get(i);
+
+            if (path.equals(shaderSource.getShaderPath()) && language.equals(shaderSource.getLanguage())) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     /**
