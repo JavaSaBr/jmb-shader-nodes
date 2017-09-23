@@ -1,16 +1,21 @@
 package com.ss.editor.shader.nodes.tree.node.definition;
 
+import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.jme3.shader.ShaderNodeDefinition;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
+import com.ss.editor.model.undo.editor.ChangeConsumer;
+import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionList;
 import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeInputParameters;
 import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeOutputParameters;
 import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeShaderSources;
 import com.ss.editor.shader.nodes.tree.action.DeleteShaderNodeDefinitionAction;
+import com.ss.editor.shader.nodes.tree.operation.RenameShaderNodeDefinitionOperation;
 import com.ss.editor.shader.nodes.ui.PluginIcons;
 import com.ss.editor.ui.Icons;
 import com.ss.editor.ui.control.tree.NodeTree;
 import com.ss.editor.ui.control.tree.node.TreeNode;
+import com.ss.rlib.util.StringUtils;
 import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayFactory;
 import javafx.collections.ObservableList;
@@ -52,8 +57,17 @@ public class ShaderNodeDefinitionTreeNode extends TreeNode<ShaderNodeDefinition>
 
     @Override
     @FXThread
-    public void setName(@NotNull final String name) {
-        getElement().setName(name);
+    public void changeName(@NotNull final NodeTree<?> nodeTree, @NotNull final String newName) {
+        if (StringUtils.equals(getName(), newName)) return;
+
+        super.changeName(nodeTree, newName);
+
+        final TreeNode<?> parent = notNull(getParent());
+        final ShaderNodeDefinitionList definitionList = (ShaderNodeDefinitionList) parent.getElement();
+
+        final ShaderNodeDefinition definition = getElement();
+        final ChangeConsumer consumer = notNull(nodeTree.getChangeConsumer());
+        consumer.execute(new RenameShaderNodeDefinitionOperation(definition.getName(), newName, definitionList, definition));
     }
 
     @Override

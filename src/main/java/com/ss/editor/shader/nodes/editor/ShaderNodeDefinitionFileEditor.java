@@ -296,4 +296,14 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
     public void notifyFXRemovedChild(@NotNull final Object parent, @NotNull final Object removed) {
         getStructureTree().notifyRemoved(parent, removed);
     }
+
+    @Override
+    @FXThread
+    public void notifyFXChangeProperty(@Nullable final Object parent, @NotNull final Object object,
+                                       @NotNull final String propertyName) {
+        super.notifyFXChangeProperty(parent, object, propertyName);
+
+        final NodeTree<ChangeConsumer> structureTree = getStructureTree();
+        structureTree.notifyChanged(parent, object);
+    }
 }
