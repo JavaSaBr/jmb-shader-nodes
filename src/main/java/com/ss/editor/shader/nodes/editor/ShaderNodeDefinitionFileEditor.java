@@ -97,6 +97,11 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
     @Nullable
     private List<ShaderNodeDefinition> definitionList;
 
+    /**
+     * The flag to ignore GLSL code changes.
+     */
+    private boolean ignoreCodeChanges;
+
     public ShaderNodeDefinitionFileEditor() {
         this.glslChangedContent = DictionaryFactory.newObjectDictionary();
         this.glslOriginalContent = DictionaryFactory.newObjectDictionary();
@@ -125,6 +130,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
 
         codeArea = new GLSLCodeArea();
         codeArea.loadContent("");
+        codeArea.textProperty().addListener((observable, oldValue, newValue) -> changeGLSLCode(newValue));
 
         FXUtils.addToPane(codeArea, editorAreaPane);
     }
@@ -139,8 +145,14 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
         return notNull(codeArea);
     }
 
+    /**
+     * Handle selected object from the structure tree.
+     *
+     * @param object the selected object.
+     */
     @FXThread
     private void selectFromTree(@Nullable final Object object) {
+        setEditedShader(null);
 
         final GLSLCodeArea codeArea = getCodeArea();
         codeArea.setEditable(false);
@@ -161,9 +173,15 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
 
             final ShaderNodeShaderSource shaderSource = (ShaderNodeShaderSource) element;
             final String code = getGLSLCode(shaderSource.getShaderPath());
-            codeArea.reloadContent(code);
 
-            editedShader = shaderSource.getShaderPath();
+            setEditedShader(shaderSource.getShaderPath());
+            setIgnoreCodeChanges(true);
+            try {
+                codeArea.reloadContent(code, true);
+                codeArea.setEditable(true);
+            } finally {
+                setIgnoreCodeChanges(false);
+            }
         }
 
         getPropertyEditor().buildFor(element, parent);
@@ -190,6 +208,67 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
     }
 
     /**
+     * Get the current edited shader.
+     *
+     * @return the current edited shader.
+     */
+    @FXThread
+    private @Nullable String getEditedShader() {
+        return editedShader;
+    }
+
+    /**
+     * Set the current edited shader.
+     *
+     * @param editedShader the current edited shader.
+     */
+    @FXThread
+    private void setEditedShader(@Nullable final String editedShader) {
+        this.editedShader = editedShader;
+    }
+
+    /**
+     * @return true if need to ignore GLSL code changes.
+     */
+    @FXThread
+    private boolean isIgnoreCodeChanges() {
+        return ignoreCodeChanges;
+    }
+
+    /**
+     * @param ignoreCodeChanges true if need to ignore GLSL code changes.
+     */
+    @FXThread
+    private void setIgnoreCodeChanges(final boolean ignoreCodeChanges) {
+        this.ignoreCodeChanges = ignoreCodeChanges;
+    }
+
+    /**
+     * Handle changes of GLSL code.
+     *
+     * @param glslCode the new GLSL code.
+     */
+    @FXThread
+    private void changeGLSLCode(@NotNull final String glslCode) {
+        if (isIgnoreCodeChanges()) return;
+
+        final String editedShader = getEditedShader();
+        if (editedShader == null) {
+            return;
+        }
+
+        final ObjectDictionary<String, String> glslOriginalContent = getGlslOriginalContent();
+        final String originalCode = glslOriginalContent.get(editedShader);
+
+        if (!glslCode.equals(originalCode)) {
+            incrementChange();
+        }
+
+        final ObjectDictionary<String, String> glslChangedContent = getGlslChangedContent();
+        glslChangedContent.put(editedShader, glslCode);
+    }
+
+    /**
      * Get GLSL code of the shader by the path.
      *
      * @param shaderPath the shader path.
@@ -199,7 +278,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
     private @NotNull String getGLSLCode(@NotNull final String shaderPath) {
 
         final ObjectDictionary<String, String> glslChangedContent = getGlslChangedContent();
-        final String glslCode = glslOriginalContent.get(shaderPath);
+        final String glslCode = glslChangedContent.get(shaderPath);
 
         if (glslCode != null) {
             return glslCode;

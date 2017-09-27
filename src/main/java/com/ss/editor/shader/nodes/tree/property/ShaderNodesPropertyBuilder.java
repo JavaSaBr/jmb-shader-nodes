@@ -3,6 +3,7 @@ package com.ss.editor.shader.nodes.tree.property;
 import static com.ss.editor.extension.property.EditablePropertyType.READ_ONLY_STRING;
 import com.jme3.shader.ShaderNodeDefinition;
 import com.jme3.shader.ShaderNodeVariable;
+import com.ss.editor.Messages;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.extension.property.EditableProperty;
 import com.ss.editor.extension.property.SimpleProperty;
@@ -57,14 +58,14 @@ public class ShaderNodesPropertyBuilder extends EditableObjectPropertyBuilder<Ch
         if (object instanceof ShaderNodeDefinition) {
 
             final ShaderNodeDefinition definition = (ShaderNodeDefinition) object;
-            result.add(new SimpleProperty<Object, ShaderNodeDefinition>(READ_ONLY_STRING, "Type", definition,
+            result.add(new SimpleProperty<Object, ShaderNodeDefinition>(READ_ONLY_STRING, Messages.MODEL_PROPERTY_TYPE, definition,
                     def -> def.getType().name()));
 
         } else if (object instanceof ShaderNodeVariable) {
 
             final ShaderNodeVariable variable = (ShaderNodeVariable) object;
 
-            result.add(new SimpleProperty<Object, ShaderNodeVariable>(READ_ONLY_STRING, "Type", variable,
+            result.add(new SimpleProperty<Object, ShaderNodeVariable>(READ_ONLY_STRING, Messages.MODEL_PROPERTY_TYPE, variable,
                     var -> GLSLType.ofRawType(var.getType()).getUiName()));
         }
 
