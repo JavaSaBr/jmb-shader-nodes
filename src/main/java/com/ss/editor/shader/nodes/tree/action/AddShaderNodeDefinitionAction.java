@@ -4,12 +4,14 @@ import static com.ss.editor.extension.property.EditablePropertyType.STRING;
 import static com.ss.editor.extension.property.EditablePropertyType.STRING_FROM_LIST;
 import static com.ss.editor.shader.nodes.creator.ShaderNodeDefinitionsFileCreator.AVAILABLE_TYPES;
 import static com.ss.rlib.util.ObjectUtils.notNull;
-import com.jme3.shader.Shader;
+import com.jme3.shader.Shader.ShaderType;
 import com.jme3.shader.ShaderNodeDefinition;
+import com.ss.editor.Messages;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.plugin.api.dialog.GenericFactoryDialog;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
+import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionList;
 import com.ss.editor.shader.nodes.tree.operation.AddShaderNodeDefinitionOperation;
 import com.ss.editor.ui.Icons;
@@ -45,7 +47,7 @@ public class AddShaderNodeDefinitionAction extends AbstractNodeAction<ChangeCons
     @Override
     @FXThread
     protected @NotNull String getName() {
-        return "Add shader node";
+        return PluginMessages.ACTION_ADD_SHADER_NODE_DEFINITION;
     }
 
     @Override
@@ -60,8 +62,9 @@ public class AddShaderNodeDefinitionAction extends AbstractNodeAction<ChangeCons
         super.process();
 
         final Array<PropertyDefinition> definitions = ArrayFactory.newArray(PropertyDefinition.class);
-        definitions.add(new PropertyDefinition(STRING, "Name", PROP_NAME, "newDefinition"));
-        definitions.add(new PropertyDefinition(STRING_FROM_LIST, "Type", PROP_TYPE, Shader.ShaderType.Vertex.name(), AVAILABLE_TYPES));
+        definitions.add(new PropertyDefinition(STRING, Messages.MODEL_PROPERTY_NAME, PROP_NAME, "newDefinition"));
+        definitions.add(new PropertyDefinition(STRING_FROM_LIST, Messages.MODEL_PROPERTY_TYPE, PROP_TYPE,
+                ShaderType.Vertex.name(), AVAILABLE_TYPES));
 
         final GenericFactoryDialog dialog = new GenericFactoryDialog(definitions, this::addDefinition, this::validate);
         dialog.show();
@@ -93,7 +96,7 @@ public class AddShaderNodeDefinitionAction extends AbstractNodeAction<ChangeCons
     private void addDefinition(@NotNull final VarTable vars) {
 
         final String definitionName = vars.getString(PROP_NAME);
-        final Shader.ShaderType type = vars.getEnum(PROP_TYPE, Shader.ShaderType.class);
+        final ShaderType type = vars.getEnum(PROP_TYPE, ShaderType.class);
 
         final TreeNode<?> node = getNode();
         final ShaderNodeDefinitionList element = (ShaderNodeDefinitionList) node.getElement();

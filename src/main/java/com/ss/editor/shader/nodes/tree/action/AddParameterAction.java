@@ -5,10 +5,12 @@ import static com.ss.editor.extension.property.EditablePropertyType.STRING;
 import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.jme3.shader.ShaderNodeDefinition;
 import com.jme3.shader.ShaderNodeVariable;
+import com.ss.editor.Messages;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.plugin.api.dialog.GenericFactoryDialog;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
+import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeParameters;
 import com.ss.editor.shader.nodes.tree.operation.AddParameterOperation;
 import com.ss.editor.ui.Icons;
@@ -47,7 +49,7 @@ public abstract class AddParameterAction extends AbstractNodeAction<ChangeConsum
     @Override
     @FXThread
     protected @NotNull String getName() {
-        return "Add parameter";
+        return PluginMessages.ACTION_ADD_SND_PARAMETER;
     }
 
     @Override
@@ -82,8 +84,8 @@ public abstract class AddParameterAction extends AbstractNodeAction<ChangeConsum
         super.process();
 
         final Array<PropertyDefinition> definitions = ArrayFactory.newArray(PropertyDefinition.class);
-        definitions.add(new PropertyDefinition(STRING, "Name", PROP_NAME, "newVar"));
-        definitions.add(new PropertyDefinition(ENUM, "Type", PROP_TYPE, GLSLType.FLOAT));
+        definitions.add(new PropertyDefinition(STRING, Messages.MODEL_PROPERTY_NAME, PROP_NAME, "newVar"));
+        definitions.add(new PropertyDefinition(ENUM, Messages.MODEL_PROPERTY_TYPE, PROP_TYPE, GLSLType.FLOAT));
 
         final GenericFactoryDialog dialog = new GenericFactoryDialog(definitions, this::addParameter, this::validate);
         dialog.show();

@@ -10,11 +10,13 @@ import com.jme3.renderer.Caps;
 import com.jme3.renderer.Renderer;
 import com.jme3.shader.Shader.ShaderType;
 import com.ss.editor.FileExtensions;
+import com.ss.editor.Messages;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.extension.property.EditablePropertyType;
 import com.ss.editor.plugin.api.file.creator.GenericFileCreator;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
+import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.ui.component.creator.FileCreatorDescription;
 import com.ss.editor.util.EditorUtil;
 import com.ss.rlib.util.FileUtils;
@@ -54,7 +56,7 @@ public class ShaderNodeDefinitionsFileCreator extends GenericFileCreator {
     public static final FileCreatorDescription DESCRIPTION = new FileCreatorDescription();
 
     static {
-        DESCRIPTION.setFileDescription("New shader node definitions file");
+        DESCRIPTION.setFileDescription(PluginMessages.SND_CREATOR_DESCRIPTION);
         DESCRIPTION.setConstructor(ShaderNodeDefinitionsFileCreator::new);
     }
 
@@ -102,11 +104,11 @@ public class ShaderNodeDefinitionsFileCreator extends GenericFileCreator {
 
         final Array<PropertyDefinition> result = ArrayFactory.newArray(PropertyDefinition.class);
         result.add(new PropertyDefinition(EditablePropertyType.STRING,
-                "Definition name", PROP_DEFINITION_NAME, "newShaderNode"));
+                PluginMessages.SND_CREATOR_DEFINITION_NAME, PROP_DEFINITION_NAME, "newShaderNode"));
         result.add(new PropertyDefinition(EditablePropertyType.STRING_FROM_LIST,
-                "Type", PROP_TYPE, ShaderType.Vertex.name(), AVAILABLE_TYPES));
+                Messages.MODEL_PROPERTY_TYPE, PROP_TYPE, ShaderType.Vertex.name(), AVAILABLE_TYPES));
         result.add(new PropertyDefinition(EditablePropertyType.STRING_FROM_LIST,
-                "Language", PROP_LANGUAGE, Caps.GLSL150.name(), AVAILABLE_GLSL));
+                PluginMessages.SND_CREATOR_LANGUAGE, PROP_LANGUAGE, Caps.GLSL150.name(), AVAILABLE_GLSL));
 
         return result;
     }
@@ -120,7 +122,7 @@ public class ShaderNodeDefinitionsFileCreator extends GenericFileCreator {
     @Override
     @FromAnyThread
     protected @NotNull String getTitleText() {
-        return "Creating shader node definitions file";
+        return PluginMessages.SND_CREATOR_TITLE;
     }
 
     @Override

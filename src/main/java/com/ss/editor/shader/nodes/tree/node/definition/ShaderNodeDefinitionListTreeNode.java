@@ -3,6 +3,7 @@ package com.ss.editor.shader.nodes.tree.node.definition;
 import com.jme3.shader.ShaderNodeDefinition;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
+import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionList;
 import com.ss.editor.shader.nodes.tree.action.AddShaderNodeDefinitionAction;
 import com.ss.editor.shader.nodes.ui.PluginIcons;
@@ -45,7 +46,7 @@ public class ShaderNodeDefinitionListTreeNode extends TreeNode<ShaderNodeDefinit
     @Override
     @FromAnyThread
     public @NotNull String getName() {
-        return "Definitions";
+        return PluginMessages.TREE_NODE_SHADER_NODE_DEFINITIONS;
     }
 
     @Override

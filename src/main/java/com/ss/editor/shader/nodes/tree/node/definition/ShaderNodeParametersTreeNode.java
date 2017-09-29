@@ -3,6 +3,7 @@ package com.ss.editor.shader.nodes.tree.node.definition;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
+import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeInputParameters;
 import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeOutputParameters;
 import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeParameters;
@@ -35,7 +36,8 @@ public class ShaderNodeParametersTreeNode extends TreeNode<ShaderNodeParameters>
     @Override
     @FromAnyThread
     public @NotNull String getName() {
-        return getElement() instanceof ShaderNodeInputParameters ? "Input parameters" : "Output parameters";
+        return getElement() instanceof ShaderNodeInputParameters ?
+                PluginMessages.TREE_NODE_SHADER_NODE_INPUT_PARAMETERS : PluginMessages.TREE_NODE_SHADER_NODE_OUTPUT_PARAMETERS;
     }
 
     @Override

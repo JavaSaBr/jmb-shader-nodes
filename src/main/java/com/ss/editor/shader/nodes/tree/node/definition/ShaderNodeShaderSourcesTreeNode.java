@@ -2,6 +2,7 @@ package com.ss.editor.shader.nodes.tree.node.definition;
 
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
+import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeShaderSource;
 import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeShaderSources;
 import com.ss.editor.shader.nodes.tree.action.AddShaderSourceAction;
@@ -32,7 +33,7 @@ public class ShaderNodeShaderSourcesTreeNode extends TreeNode<ShaderNodeShaderSo
     @Override
     @FromAnyThread
     public @NotNull String getName() {
-        return "Shader sources";
+        return PluginMessages.TREE_NODE_SHADER_NODE_SOURCES;
     }
 
     @Override

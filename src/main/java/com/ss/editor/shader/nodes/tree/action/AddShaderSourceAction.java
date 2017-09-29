@@ -12,6 +12,7 @@ import com.ss.editor.annotation.FXThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.plugin.api.dialog.GenericFactoryDialog;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
+import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeShaderSource;
 import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeShaderSources;
 import com.ss.editor.shader.nodes.tree.operation.AddShaderSourceOperation;
@@ -48,7 +49,7 @@ public class AddShaderSourceAction extends AbstractNodeAction<ChangeConsumer> {
     @Override
     @FXThread
     protected @NotNull String getName() {
-        return "Add shader source";
+        return PluginMessages.ACTION_ADD_SHADER_NODE_SOURCE;
     }
 
     @Override
@@ -68,8 +69,10 @@ public class AddShaderSourceAction extends AbstractNodeAction<ChangeConsumer> {
         final Shader.ShaderType type = definition.getType();
 
         final Array<PropertyDefinition> definitions = ArrayFactory.newArray(PropertyDefinition.class);
-        definitions.add(new PropertyDefinition(STRING_FROM_LIST, "Language", PROP_LANGUAGE, Caps.GLSL150.name(), AVAILABLE_GLSL));
-        definitions.add(new PropertyDefinition(FILE_FROM_ASSET_FOLDER, "File", PROP_SHADER_RESOURCE, null, type.getExtension()));
+        definitions.add(new PropertyDefinition(STRING_FROM_LIST, PluginMessages.SND_CREATOR_LANGUAGE, PROP_LANGUAGE,
+                Caps.GLSL150.name(), AVAILABLE_GLSL));
+        definitions.add(new PropertyDefinition(FILE_FROM_ASSET_FOLDER, PluginMessages.SND_CREATOR_SOURCE_FILE,
+                PROP_SHADER_RESOURCE, null, type.getExtension()));
 
         final GenericFactoryDialog dialog = new GenericFactoryDialog(definitions, this::addShaderSource, this::validate);
         dialog.show();

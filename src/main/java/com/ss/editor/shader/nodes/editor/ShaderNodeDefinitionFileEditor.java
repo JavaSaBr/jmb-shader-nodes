@@ -6,12 +6,15 @@ import com.jme3.asset.AssetManager;
 import com.jme3.asset.ShaderNodeDefinitionKey;
 import com.jme3.shader.ShaderNodeDefinition;
 import com.ss.editor.FileExtensions;
+import com.ss.editor.annotation.BackgroundThread;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.plugin.api.editor.BaseFileEditorWithSplitRightTool;
+import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionList;
 import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeShaderSource;
+import com.ss.editor.shader.nodes.util.J3snExporter;
 import com.ss.editor.ui.component.editor.EditorDescription;
 import com.ss.editor.ui.component.editor.state.EditorState;
 import com.ss.editor.ui.component.editor.state.impl.EditorWithEditorToolEditorState;
@@ -23,6 +26,7 @@ import com.ss.editor.ui.control.tree.node.TreeNode;
 import com.ss.editor.ui.css.CSSClasses;
 import com.ss.rlib.ui.util.FXUtils;
 import com.ss.rlib.util.FileUtils;
+import com.ss.rlib.util.StringUtils;
 import com.ss.rlib.util.dictionary.DictionaryFactory;
 import com.ss.rlib.util.dictionary.ObjectDictionary;
 import javafx.scene.layout.HBox;
@@ -31,6 +35,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Supplier;
@@ -50,7 +57,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
 
     static {
         DESCRIPTION.setConstructor(ShaderNodeDefinitionFileEditor::new);
-        DESCRIPTION.setEditorName("Shader node definitions editor");
+        DESCRIPTION.setEditorName(PluginMessages.SND_EDITOR_NAME);
         DESCRIPTION.setEditorId(ShaderNodeDefinitionFileEditor.class.getSimpleName());
         DESCRIPTION.addExtension(FileExtensions.JME_SHADER_NODE);
     }
@@ -116,7 +123,8 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
         propertyEditor = new PropertyEditor<>(this);
         propertyEditor.prefHeightProperty().bind(root.heightProperty());
 
-        container.addComponent(buildSplitComponent(structureTree, propertyEditor, root), "Structure");
+        container.addComponent(buildSplitComponent(structureTree, propertyEditor, root),
+                PluginMessages.SND_EDITOR_TOOL_STRUCTURE);
 
         FXUtils.addClassTo(structureTree.getTreeView(), CSSClasses.TRANSPARENT_TREE_VIEW);
     }
@@ -289,8 +297,14 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
 
         final String readGLSLCode = FileUtils.read(realFile);
 
-        glslChangedContent.put(shaderPath, readGLSLCode);
         glslOriginalContent.put(shaderPath, readGLSLCode);
+
+        if (readGLSLCode.isEmpty()) {
+            glslChangedContent.put(shaderPath, "void main() {\n\n}");
+            return "void main() {\n\n}";
+        }
+
+        glslChangedContent.put(shaderPath, readGLSLCode);
 
         return readGLSLCode;
     }
@@ -310,6 +324,50 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
         definitionList = assetManager.loadAsset(key);
 
         getStructureTree().fill(new ShaderNodeDefinitionList(definitionList));
+    }
+
+    /**
+     * Get the definitions list.
+     *
+     * @return the definitions list.
+     */
+    @FromAnyThread
+    private @NotNull List<ShaderNodeDefinition> getDefinitionList() {
+        return notNull(definitionList);
+    }
+
+    @Override
+    @BackgroundThread
+    protected void doSave(@NotNull final Path toStore) throws IOException {
+        super.doSave(toStore);
+
+        final J3snExporter exporter = J3snExporter.getInstance();
+
+        try (OutputStream out = Files.newOutputStream(toStore)) {
+            exporter.export(getDefinitionList(), out);
+        }
+
+        final ObjectDictionary<String, String> glslChangedContent = getGlslChangedContent();
+        final ObjectDictionary<String, String> glslOriginalContent = getGlslOriginalContent();
+
+        glslChangedContent.forEach((path, content) -> {
+
+            final String original = glslOriginalContent.get(path);
+
+            if (StringUtils.equals(content, original)) {
+                return;
+            }
+
+            final Path realFile = notNull(getRealFile(path));
+
+            try (PrintStream out = new PrintStream(Files.newOutputStream(realFile))) {
+                out.print(content);
+            } catch (final IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            glslOriginalContent.put(path, content);
+        });
     }
 
     /**

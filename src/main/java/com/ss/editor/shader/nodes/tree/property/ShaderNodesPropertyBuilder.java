@@ -66,7 +66,7 @@ public class ShaderNodesPropertyBuilder extends EditableObjectPropertyBuilder<Ch
             final ShaderNodeVariable variable = (ShaderNodeVariable) object;
 
             result.add(new SimpleProperty<Object, ShaderNodeVariable>(READ_ONLY_STRING, Messages.MODEL_PROPERTY_TYPE, variable,
-                    var -> GLSLType.ofRawType(var.getType()).getUiName()));
+                    var -> GLSLType.ofRawType(var.getType()).getUIName()));
         }
 
         return result;
