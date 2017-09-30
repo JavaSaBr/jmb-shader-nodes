@@ -88,6 +88,7 @@ public abstract class AddParameterAction extends AbstractNodeAction<ChangeConsum
         definitions.add(new PropertyDefinition(ENUM, Messages.MODEL_PROPERTY_TYPE, PROP_TYPE, GLSLType.FLOAT));
 
         final GenericFactoryDialog dialog = new GenericFactoryDialog(definitions, this::addParameter, this::validate);
+        dialog.setTitle(getName());
         dialog.show();
     }
 

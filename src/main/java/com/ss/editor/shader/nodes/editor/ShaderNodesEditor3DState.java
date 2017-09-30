@@ -39,4 +39,9 @@ public class ShaderNodesEditor3DState extends BaseMaterialEditor3DState<ShaderNo
         material.selectTechnique(name, EDITOR.getRenderManager());
         updateMaterialImpl(material);
     }
+
+    @Override
+    protected void handleMaterialException(@NotNull final RuntimeException exception) {
+        LOGGER.warning(this, exception);
+    }
 }

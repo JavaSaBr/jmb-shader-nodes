@@ -67,6 +67,7 @@ public class AddShaderNodeDefinitionAction extends AbstractNodeAction<ChangeCons
                 ShaderType.Vertex.name(), AVAILABLE_TYPES));
 
         final GenericFactoryDialog dialog = new GenericFactoryDialog(definitions, this::addDefinition, this::validate);
+        dialog.setTitle(getName());
         dialog.show();
     }
 

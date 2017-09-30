@@ -75,6 +75,7 @@ public class AddShaderSourceAction extends AbstractNodeAction<ChangeConsumer> {
                 PROP_SHADER_RESOURCE, null, type.getExtension()));
 
         final GenericFactoryDialog dialog = new GenericFactoryDialog(definitions, this::addShaderSource, this::validate);
+        dialog.setTitle(getName());
         dialog.show();
     }
 
