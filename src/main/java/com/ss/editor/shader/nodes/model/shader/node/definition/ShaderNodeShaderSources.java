@@ -27,7 +27,7 @@ public class ShaderNodeShaderSources {
     }
 
     /**
-     * Get the shader sources map where shader path -> shader language.
+     * Get the shader sources map where shader path - shader language.
      *
      * @return the shader sources map.
      */
