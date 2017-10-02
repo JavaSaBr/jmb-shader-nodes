@@ -8,11 +8,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * The class to present parameters of a shader node.
+ * The class to present parameters of a shader node definition.
  *
  * @author JavaSaBr
  */
-public abstract class ShaderNodeParameters {
+public abstract class ShaderNodeDefinitionParameters {
 
     /**
      * The definition.
@@ -20,14 +20,14 @@ public abstract class ShaderNodeParameters {
     @NotNull
     private final ShaderNodeDefinition definition;
 
-    protected ShaderNodeParameters(@NotNull final ShaderNodeDefinition definition) {
+    protected ShaderNodeDefinitionParameters(@NotNull final ShaderNodeDefinition definition) {
         this.definition = definition;
     }
 
     /**
-     * Get the list of parameters of this shader node.
+     * Get the list of parameters of this definition.
      *
-     * @return the list of parameters of this shader node.
+     * @return the list of parameters of this definition.
      */
     @FromAnyThread
     public abstract @NotNull List<ShaderNodeVariable> getParameters();
@@ -46,7 +46,7 @@ public abstract class ShaderNodeParameters {
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final ShaderNodeParameters that = (ShaderNodeParameters) o;
+        final ShaderNodeDefinitionParameters that = (ShaderNodeDefinitionParameters) o;
         return definition.equals(that.definition);
     }
 

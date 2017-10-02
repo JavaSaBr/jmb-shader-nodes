@@ -49,6 +49,7 @@ public class ShaderNodesEditorPlugin extends EditorPlugin {
         super.onBeforeCreateJavaFXContext(pluginSystem);
         final ResourceManager resourceManager = ResourceManager.getInstance();
         resourceManager.registerInterestedFileType(FileExtensions.JME_SHADER_NODE);
+        resourceManager.registerInterestedFileType(FileExtensions.GLSL_LIB);
     }
 
     @Override

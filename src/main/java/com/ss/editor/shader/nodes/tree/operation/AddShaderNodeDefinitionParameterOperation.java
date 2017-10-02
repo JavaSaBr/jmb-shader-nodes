@@ -4,7 +4,7 @@ import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.model.undo.impl.AbstractEditorOperation;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeParameters;
+import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionParameters;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -14,13 +14,13 @@ import java.util.List;
  *
  * @author JavaSaBr
  */
-public class AddParameterOperation extends AbstractEditorOperation<ChangeConsumer> {
+public class AddShaderNodeDefinitionParameterOperation extends AbstractEditorOperation<ChangeConsumer> {
 
     /**
      * The definition parameters.
      */
     @NotNull
-    private final ShaderNodeParameters parameters;
+    private final ShaderNodeDefinitionParameters parameters;
 
     /**
      * The added parameter.
@@ -28,8 +28,8 @@ public class AddParameterOperation extends AbstractEditorOperation<ChangeConsume
     @NotNull
     private final ShaderNodeVariable variable;
 
-    public AddParameterOperation(@NotNull final ShaderNodeParameters parameters,
-                                 @NotNull final ShaderNodeVariable variable) {
+    public AddShaderNodeDefinitionParameterOperation(@NotNull final ShaderNodeDefinitionParameters parameters,
+                                                     @NotNull final ShaderNodeVariable variable) {
         this.parameters = parameters;
         this.variable = variable;
     }

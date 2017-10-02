@@ -1,14 +1,14 @@
 package com.ss.editor.shader.nodes.tree.node.definition;
 
 import static com.ss.rlib.util.ObjectUtils.notNull;
-import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeParameters;
-import com.ss.editor.shader.nodes.tree.action.DeleteParameterAction;
-import com.ss.editor.shader.nodes.tree.operation.RenameParameterOperation;
-import com.ss.editor.shader.nodes.ui.PluginIcons;
+import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionDefine;
+import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionDefines;
+import com.ss.editor.shader.nodes.tree.action.DeleteShaderNodeDefinitionDefineAction;
+import com.ss.editor.shader.nodes.tree.operation.RenameShaderNodeDefinitionDefineOperation;
+import com.ss.editor.ui.Icons;
 import com.ss.editor.ui.control.tree.NodeTree;
 import com.ss.editor.ui.control.tree.node.TreeNode;
 import com.ss.rlib.util.StringUtils;
@@ -19,13 +19,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * The node to present shader node parameter.
+ * The node to present a define of a shader node definition.
  *
  * @author JavaSaBr
  */
-public class ShaderNodeParameterTreeNode extends TreeNode<ShaderNodeVariable> {
+public class ShaderNodeDefinitionDefineTreeNode extends TreeNode<ShaderNodeDefinitionDefine> {
 
-    public ShaderNodeParameterTreeNode(@NotNull final ShaderNodeVariable element, final long objectId) {
+    public ShaderNodeDefinitionDefineTreeNode(@NotNull final ShaderNodeDefinitionDefine element, final long objectId) {
         super(element, objectId);
     }
 
@@ -33,7 +33,7 @@ public class ShaderNodeParameterTreeNode extends TreeNode<ShaderNodeVariable> {
     @FXThread
     public void fillContextMenu(@NotNull final NodeTree<?> nodeTree, @NotNull final ObservableList<MenuItem> items) {
         super.fillContextMenu(nodeTree, items);
-        items.add(new DeleteParameterAction(nodeTree, this));
+        items.add(new DeleteShaderNodeDefinitionDefineAction(nodeTree, this));
     }
 
     @FXThread
@@ -44,23 +44,23 @@ public class ShaderNodeParameterTreeNode extends TreeNode<ShaderNodeVariable> {
         super.changeName(nodeTree, newName);
 
         final TreeNode<?> parent = notNull(getParent());
-        final ShaderNodeParameters parameters = (ShaderNodeParameters) parent.getElement();
-        final ShaderNodeVariable variable = getElement();
+        final ShaderNodeDefinitionDefines defines = (ShaderNodeDefinitionDefines) parent.getElement();
+        final ShaderNodeDefinitionDefine define = getElement();
 
         final ChangeConsumer changeConsumer = notNull(nodeTree.getChangeConsumer());
-        changeConsumer.execute(new RenameParameterOperation(variable.getName(), newName, parameters, variable));
+        changeConsumer.execute(new RenameShaderNodeDefinitionDefineOperation(define.getDefine(), newName, defines, define));
     }
 
     @Override
     @FXThread
     public @Nullable Image getIcon() {
-        return PluginIcons.VARIABLE_16;
+        return Icons.ATOM_16;
     }
 
     @Override
     @FromAnyThread
     public @NotNull String getName() {
-        return getElement().getName();
+        return getElement().getDefine();
     }
 
     @Override

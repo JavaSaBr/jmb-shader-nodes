@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author JavaSaBr
  */
-public class ShaderNodeShaderSource {
+public class ShaderNodeDefinitionShaderSource {
 
     /**
      * The definition.
@@ -29,8 +29,8 @@ public class ShaderNodeShaderSource {
     @NotNull
     private final String shaderPath;
 
-    public ShaderNodeShaderSource(@NotNull final ShaderNodeDefinition definition, @NotNull final String language,
-                                  @NotNull final String shaderPath) {
+    public ShaderNodeDefinitionShaderSource(@NotNull final ShaderNodeDefinition definition, @NotNull final String language,
+                                            @NotNull final String shaderPath) {
         this.definition = definition;
         this.language = language;
         this.shaderPath = shaderPath;
@@ -70,7 +70,7 @@ public class ShaderNodeShaderSource {
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final ShaderNodeShaderSource that = (ShaderNodeShaderSource) o;
+        final ShaderNodeDefinitionShaderSource that = (ShaderNodeDefinitionShaderSource) o;
         if (!definition.equals(that.definition)) return false;
         if (!language.equals(that.language)) return false;
         return shaderPath.equals(that.shaderPath);

@@ -8,19 +8,19 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * The class to present output parameters of a shader node.
+ * The class to present input parameters of a shader node.
  *
  * @author JavaSaBr
  */
-public class ShaderNodeOutputParameters extends ShaderNodeParameters {
+public class ShaderNodeInputDefinitionParameters extends ShaderNodeDefinitionParameters {
 
-    public ShaderNodeOutputParameters(@NotNull final ShaderNodeDefinition definition) {
+    public ShaderNodeInputDefinitionParameters(@NotNull final ShaderNodeDefinition definition) {
         super(definition);
     }
 
     @Override
     @FromAnyThread
     public @NotNull List<ShaderNodeVariable> getParameters() {
-        return getDefinition().getOutputs();
+        return getDefinition().getInputs();
     }
 }

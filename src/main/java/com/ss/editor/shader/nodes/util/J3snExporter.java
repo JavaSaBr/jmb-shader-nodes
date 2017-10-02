@@ -68,6 +68,8 @@ public class J3snExporter {
         final List<ShaderNodeVariable> inputs = definition.getInputs();
         final List<ShaderNodeVariable> outputs = definition.getOutputs();
 
+        final List<String> defines = definition.getDefines();
+
         indent(builder, 2);
 
         builder.append("Type: ")
@@ -96,6 +98,11 @@ public class J3snExporter {
             builder.append(documentation);
             indent(builder, 2);
             builder.append("}\n");
+        }
+
+        if (!defines.isEmpty()) {
+            builder.append('\n');
+            writeStrings(defines, builder, "Defines");
         }
 
         if (!inputs.isEmpty()) {
@@ -131,6 +138,28 @@ public class J3snExporter {
                     .append(' ')
                     .append(variable.getName())
                     .append('\n');
+        }
+
+        indent(builder, 2);
+        builder.append("}\n");
+    }
+
+    /**
+     * Write the list of string values.
+     *
+     * @param values  the list of string values.
+     * @param builder the builder.
+     * @param name    the name of node.
+     */
+    private void writeStrings(@NotNull final List<String> values, @NotNull final StringBuilder builder,
+                              @NotNull final String name) {
+
+        indent(builder, 2);
+        builder.append(name).append(" {\n");
+
+        for (final String value : values) {
+            indent(builder, 3);
+            builder.append(value).append('\n');
         }
 
         indent(builder, 2);

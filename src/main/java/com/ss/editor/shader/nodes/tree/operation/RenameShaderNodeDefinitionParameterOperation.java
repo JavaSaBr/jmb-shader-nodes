@@ -5,7 +5,7 @@ import com.ss.editor.Messages;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.model.undo.impl.AbstractEditorOperation;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeParameters;
+import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionParameters;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author JavaSaBr
  */
-public class RenameParameterOperation extends AbstractEditorOperation<ChangeConsumer> {
+public class RenameShaderNodeDefinitionParameterOperation extends AbstractEditorOperation<ChangeConsumer> {
 
     /**
      * The old name.
@@ -31,7 +31,7 @@ public class RenameParameterOperation extends AbstractEditorOperation<ChangeCons
      * The list of parameters.
      */
     @NotNull
-    private final ShaderNodeParameters parameters;
+    private final ShaderNodeDefinitionParameters parameters;
 
     /**
      * The parameter.
@@ -39,9 +39,9 @@ public class RenameParameterOperation extends AbstractEditorOperation<ChangeCons
     @NotNull
     private final ShaderNodeVariable variable;
 
-    public RenameParameterOperation(@NotNull final String oldName, @NotNull final String newName,
-                                    @NotNull final ShaderNodeParameters parameters,
-                                    @NotNull final ShaderNodeVariable variable) {
+    public RenameShaderNodeDefinitionParameterOperation(@NotNull final String oldName, @NotNull final String newName,
+                                                        @NotNull final ShaderNodeDefinitionParameters parameters,
+                                                        @NotNull final ShaderNodeVariable variable) {
         this.oldName = oldName;
         this.newName = newName;
         this.parameters = parameters;

@@ -5,10 +5,7 @@ import com.jme3.shader.ShaderNodeDefinition;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionList;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeInputParameters;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeOutputParameters;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeShaderSources;
+import com.ss.editor.shader.nodes.model.shader.node.definition.*;
 import com.ss.editor.shader.nodes.tree.action.DeleteShaderNodeDefinitionAction;
 import com.ss.editor.shader.nodes.tree.operation.RenameShaderNodeDefinitionOperation;
 import com.ss.editor.shader.nodes.ui.PluginIcons;
@@ -89,9 +86,10 @@ public class ShaderNodeDefinitionTreeNode extends TreeNode<ShaderNodeDefinition>
         final ShaderNodeDefinition definition = getElement();
 
         final Array<TreeNode<?>> children = ArrayFactory.newArray(TreeNode.class, 2);
-        children.add(FACTORY_REGISTRY.createFor(new ShaderNodeInputParameters(definition)));
-        children.add(FACTORY_REGISTRY.createFor(new ShaderNodeOutputParameters(definition)));
-        children.add(FACTORY_REGISTRY.createFor(new ShaderNodeShaderSources(definition)));
+        children.add(FACTORY_REGISTRY.createFor(new ShaderNodeDefinitionDefines(definition)));
+        children.add(FACTORY_REGISTRY.createFor(new ShaderNodeInputDefinitionParameters(definition)));
+        children.add(FACTORY_REGISTRY.createFor(new ShaderNodeOutputDefinitionParameters(definition)));
+        children.add(FACTORY_REGISTRY.createFor(new ShaderNodeDefinitionShaderSources(definition)));
 
         return children;
     }

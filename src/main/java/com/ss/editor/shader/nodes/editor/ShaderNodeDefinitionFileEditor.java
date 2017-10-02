@@ -13,7 +13,7 @@ import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.plugin.api.editor.BaseFileEditorWithSplitRightTool;
 import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionList;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeShaderSource;
+import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionShaderSource;
 import com.ss.editor.shader.nodes.util.J3snExporter;
 import com.ss.editor.ui.component.editor.EditorDescription;
 import com.ss.editor.ui.component.editor.state.EditorState;
@@ -177,9 +177,9 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
             element = object;
         }
 
-        if (element instanceof ShaderNodeShaderSource) {
+        if (element instanceof ShaderNodeDefinitionShaderSource) {
 
-            final ShaderNodeShaderSource shaderSource = (ShaderNodeShaderSource) element;
+            final ShaderNodeDefinitionShaderSource shaderSource = (ShaderNodeDefinitionShaderSource) element;
             final String code = getGLSLCode(shaderSource.getShaderPath());
 
             setEditedShader(shaderSource.getShaderPath());

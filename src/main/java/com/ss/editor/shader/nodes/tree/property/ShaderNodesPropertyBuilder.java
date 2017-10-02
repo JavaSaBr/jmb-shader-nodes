@@ -4,6 +4,7 @@ import static com.ss.editor.extension.property.EditablePropertyType.READ_ONLY_ST
 import com.jme3.shader.ShaderNodeDefinition;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.Messages;
+import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.extension.property.EditableProperty;
 import com.ss.editor.extension.property.SimpleProperty;
@@ -44,8 +45,8 @@ public class ShaderNodesPropertyBuilder extends EditableObjectPropertyBuilder<Ch
         super(ChangeConsumer.class);
     }
 
-
     @Override
+    @FXThread
     protected @Nullable List<EditableProperty<?, ?>> getProperties(@NotNull final Object object) {
 
         if (!(object instanceof ShaderNodeDefinition || object instanceof ShaderNodeVariable)) {
