@@ -75,6 +75,10 @@ public class ASTNode {
         children.add(child);
     }
 
+    public void removeChild(final ASTNode child) {
+        children.remove(child);
+    }
+
     public void setLength(final int length) {
         this.length = length;
     }
