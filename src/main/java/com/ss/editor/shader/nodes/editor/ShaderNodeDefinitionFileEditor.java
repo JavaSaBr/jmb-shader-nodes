@@ -5,6 +5,7 @@ import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.ShaderNodeDefinitionKey;
 import com.jme3.shader.ShaderNodeDefinition;
+import com.jme3.shader.glsl.parser.GLSLParser;
 import com.ss.editor.FileExtensions;
 import com.ss.editor.annotation.BackgroundThread;
 import com.ss.editor.annotation.FXThread;
@@ -181,6 +182,15 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
 
             final ShaderNodeDefinitionShaderSource shaderSource = (ShaderNodeDefinitionShaderSource) element;
             final String code = getGLSLCode(shaderSource.getShaderPath());
+
+            EXECUTOR_MANAGER.schedule(() -> {
+                try {
+                    //FIXME to delete
+                    GLSLParser.newInstance().parseFile(shaderSource.getShaderPath(), code);
+                } catch (final Throwable e) {
+
+                }
+            }, 1000);
 
             setEditedShader(shaderSource.getShaderPath());
             setIgnoreCodeChanges(true);

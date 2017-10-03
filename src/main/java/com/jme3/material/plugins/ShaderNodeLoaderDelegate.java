@@ -157,7 +157,9 @@ public class ShaderNodeLoaderDelegate {
      * @throws IOException
      */
     protected void readShaderNodeDefinition(List<Statement> statements, ShaderNodeDefinitionKey key) throws IOException {
-        boolean isLoadDoc = key instanceof ShaderNodeDefinitionKey && ((ShaderNodeDefinitionKey) key).isLoadDocumentation();
+
+        boolean isLoadDoc = key != null && key.isLoadDocumentation();
+
         for (Statement statement : statements) {
             try {
                 String[] split = statement.getLine().split("[ \\{]");
@@ -200,8 +202,17 @@ public class ShaderNodeLoaderDelegate {
                             throw new MatParseException(e.getMessage(), statement1, e);
                         }
                     }
+                }  else if (line.startsWith("Defines")) {
+                    for (Statement statement1 : statement.getContents()) {
+                        try {
+                            final String[] values = statement1.getLine().split("[ \\{]");
+                            shaderNodeDefinition.getDefines().add(values[0]);
+                        } catch (RuntimeException e) {
+                            throw new MatParseException(e.getMessage(), statement1, e);
+                        }
+                    }
                 } else {
-                    throw new MatParseException("one of Type, Shader, Documentation, Input, Output", split[0], statement);
+                    throw new MatParseException("one of Type, Shader, Documentation, Input, Output, Defines", split[0], statement);
                 }
             } catch (RuntimeException e) {
                 throw new MatParseException(e.getMessage(), statement, e);
