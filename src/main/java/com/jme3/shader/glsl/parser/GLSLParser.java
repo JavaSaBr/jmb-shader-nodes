@@ -1,11 +1,12 @@
 package com.jme3.shader.glsl.parser;
 
-import com.jme3.shader.glsl.parser.ast.ASTNode;
-import com.jme3.shader.glsl.parser.ast.FileASTNode;
-import com.jme3.shader.glsl.parser.ast.ImportASTNode;
-import com.jme3.shader.glsl.parser.ast.StringASTNode;
+import com.jme3.shader.glsl.parser.ast.*;
+import com.jme3.shader.glsl.parser.ast.FieldASTNode.FieldType;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The parser of GLSL code.
@@ -16,17 +17,35 @@ public class GLSLParser {
 
     private static final int TOKEN_DEFINE = 2;
     private static final int TOKEN_STRING = 3;
+    private static final int TOKEN_KEYWORD = 4;
+    private static final int TOKEN_WORD = 5;
+
+    private static final Set<String> KEYWORDS = new HashSet<>();
+
+    static {
+        KEYWORDS.add("uniform");
+        KEYWORDS.add("in");
+        KEYWORDS.add("out");
+        KEYWORDS.add("varying");
+        KEYWORDS.add("attribute");
+        KEYWORDS.add("discard");
+        KEYWORDS.add("if");
+        KEYWORDS.add("endif");
+        KEYWORDS.add("defined");
+        KEYWORDS.add("else");
+        KEYWORDS.add("ifdef");
+    }
 
     private static final Set<Character> STRING_END_CHARS = new HashSet<>();
     private static final Set<Character> DEFINE_END_CHARS = new HashSet<>();
 
     private static final Set<Character> SPLIT_CHARS = new HashSet<>();
-    private static final Map<Character, Integer> CHAR_TO_TOKEN_TYPE = new HashMap<>();
 
     static {
         SPLIT_CHARS.add(' ');
         SPLIT_CHARS.add('\n');
         SPLIT_CHARS.add('\t');
+        SPLIT_CHARS.add(';');
         STRING_END_CHARS.add('"');
         DEFINE_END_CHARS.addAll(SPLIT_CHARS);
         DEFINE_END_CHARS.add('(');
@@ -39,7 +58,7 @@ public class GLSLParser {
     /**
      * The stack of ast nodes.
      */
-    private Deque<ASTNode> nodeStack;
+    private final Deque<ASTNode> nodeStack;
 
     private Set<Character> currentEndChars;
 
@@ -89,6 +108,10 @@ public class GLSLParser {
 
             if(token.getType() == TOKEN_DEFINE) {
                 parseDefine(token, content);
+            }
+            // if it's field declaration
+            else if(token.getType() == TOKEN_KEYWORD && FieldType.forKeyWord(token.getText()) != null) {
+                parseField(token, content);
             }
 
         } while (token != Token.EOF_TOKEN);
@@ -140,6 +163,83 @@ public class GLSLParser {
     }
 
     /**
+     * Parse a field AST node.
+     *
+     * @param keyWordToken the key word token.
+     * @param content the content.
+     */
+    private void parseField(final Token keyWordToken, final char[] content) {
+
+        final Token typeToken = findToken(content, TOKEN_WORD);
+        final Token nameToken = findToken(content, TOKEN_WORD);
+
+        if (typeToken.getType() == Token.EOF || nameToken.getType() == Token.EOF) {
+            throw new RuntimeException("unexpected EOF token");
+        }
+
+        final ASTNode parent = nodeStack.getLast();
+        final FieldASTNode fieldASTNode = new FieldASTNode();
+        fieldASTNode.setParent(parent);
+        fieldASTNode.setLine(keyWordToken.getLine());
+        fieldASTNode.setOffset(keyWordToken.getOffset());
+        fieldASTNode.setLength(nameToken.getOffset() + nameToken.getLength() - keyWordToken.getOffset());
+        fieldASTNode.setText(new String(content, fieldASTNode.getOffset(), fieldASTNode.getLength()));
+        fieldASTNode.setFieldType(FieldType.forKeyWord(keyWordToken.getText()));
+
+        nodeStack.addLast(fieldASTNode);
+        try {
+            fieldASTNode.setType(parseType(typeToken));
+            fieldASTNode.setName(parseName(nameToken));
+        } finally {
+            nodeStack.removeLast();
+        }
+    }
+
+    /**
+     * Parse a type AST node.
+     *
+     * @param typeToken the type token.
+     */
+    private TypeASTNode parseType(final Token typeToken) {
+
+        final String text = typeToken.getText();
+        final ASTNode parent = nodeStack.getLast();
+        final TypeASTNode typeASTNode = new TypeASTNode();
+        typeASTNode.setParent(parent);
+        typeASTNode.setLine(typeToken.getLine());
+        typeASTNode.setOffset(typeToken.getOffset());
+        typeASTNode.setLength(typeToken.getLength());
+        typeASTNode.setText(text);
+        typeASTNode.setName(text);
+
+        parent.getChildren().add(typeASTNode);
+
+        return typeASTNode;
+    }
+
+    /**
+     * Parse a name AST node.
+     *
+     * @param nameToken the name token.
+     */
+    private NameASTNode parseName(final Token nameToken) {
+
+        final String text = nameToken.getText();
+        final ASTNode parent = nodeStack.getLast();
+        final NameASTNode nameASTNode = new NameASTNode();
+        nameASTNode.setParent(parent);
+        nameASTNode.setLine(nameToken.getLine());
+        nameASTNode.setOffset(nameToken.getOffset());
+        nameASTNode.setLength(nameToken.getLength());
+        nameASTNode.setText(text);
+        nameASTNode.setName(text);
+
+        parent.getChildren().add(nameASTNode);
+
+        return nameASTNode;
+    }
+
+    /**
      * Parse a string AST node.
      *
      * @param stringToken the string token.
@@ -184,13 +284,7 @@ public class GLSLParser {
 
         Token token;
         do {
-
             token = readToken(content);
-
-            if(token.getType() == TOKEN_DEFINE) {
-
-            }
-
         } while (token.getType() != type);
 
         return token;
@@ -200,13 +294,7 @@ public class GLSLParser {
 
         Token token;
         do {
-
             token = readToken(content);
-
-            if(token.getType() == TOKEN_DEFINE) {
-
-            }
-
         } while (token.getType() != firstType && token.getType() != secondType);
 
         return token;
@@ -236,6 +324,9 @@ public class GLSLParser {
                     token.setText(getText(text));
                     token.setLength(offset - token.getOffset());
                     return token;
+                } else if (isWord(text)) {
+                    offset--;
+                    return new Token(TOKEN_WORD, offset - text.length(), line, text);
                 }
 
                 if(ch == '\n') {
@@ -276,10 +367,26 @@ public class GLSLParser {
                 continue;
             }
 
-            if("#import".equals(text)) {
-
+            if (KEYWORDS.contains(text)) {
+                return new Token(TOKEN_KEYWORD, offset - text.length(), line, text);
             }
         }
+    }
+
+    private boolean isWord(final String text) {
+
+        if (text == null || text.isEmpty()) {
+            return false;
+        }
+
+        for (int i = 0, length = text.length(); i < length; i++) {
+            final char ch = text.charAt(i);
+            if (!Character.isLetterOrDigit(ch) && ch != '_') {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private String getText(final String text) {

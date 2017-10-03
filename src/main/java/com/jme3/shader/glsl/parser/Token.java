@@ -17,23 +17,28 @@ public class Token {
     private int line;
     private int type;
 
-    public Token(final int type, final int line, final int offset) {
-        this.offset = offset;
-        this.line = line;
-        this.type = type;
+    private Token() {
+        this(0, "INVALID");
     }
 
-    public Token(int type, String text) {
-        this(type, -1, -1);
-        this.text = text;
-    }
-
-    public Token(int type) {
+    public Token(final int type) {
         this(type, null);
     }
 
-    private Token() {
-        this(0, "INVALID");
+    public Token(final int type, final String text) {
+        this(type, -1, -1, text);
+    }
+
+    public Token(final int type, final int line, final int offset) {
+        this(type, offset, line, null);
+    }
+
+    public Token(final int type, final int offset, final int line, final String text) {
+        this.text = text;
+        this.offset = offset;
+        this.length = text == null ? -1 : text.length();
+        this.line = line;
+        this.type = type;
     }
 
     public String getText() {
