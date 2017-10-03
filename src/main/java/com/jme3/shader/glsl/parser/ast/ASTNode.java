@@ -71,6 +71,10 @@ public class ASTNode {
         return children;
     }
 
+    public void addChild(final ASTNode child) {
+        children.add(child);
+    }
+
     public void setLength(final int length) {
         this.length = length;
     }
