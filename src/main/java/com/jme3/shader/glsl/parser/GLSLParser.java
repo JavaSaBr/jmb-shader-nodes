@@ -179,7 +179,19 @@ public class GLSLParser {
                 if (level == LEVEL_FILE) {
                     parseMethodDeclaration(token, content);
                 } else if(level == LEVEL_METHOD) {
-                    parseLocalVarDeclaration(token, content);
+
+                    Token secondToken;
+
+                    saveState();
+                    try {
+                        secondToken = findToken(content, TOKEN_ASSIGN, TOKEN_WORD);
+                    } finally {
+                        restoreState();
+                    }
+
+                    if (secondToken.getType() == TOKEN_WORD) {
+                        parseLocalVarDeclaration(token, content);
+                    }
                 }
             }
 
