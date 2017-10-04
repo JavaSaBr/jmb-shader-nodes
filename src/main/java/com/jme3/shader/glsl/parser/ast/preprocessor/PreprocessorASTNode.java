@@ -1,4 +1,6 @@
-package com.jme3.shader.glsl.parser.ast;
+package com.jme3.shader.glsl.parser.ast.preprocessor;
+
+import com.jme3.shader.glsl.parser.ast.ASTNode;
 
 public class PreprocessorASTNode extends ASTNode {
 

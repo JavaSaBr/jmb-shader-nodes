@@ -188,7 +188,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
                     //FIXME to delete
                     GLSLParser.newInstance().parseFile(shaderSource.getShaderPath(), code);
                 } catch (final Throwable e) {
-
+                    e.printStackTrace();
                 }
             }, 1000);
 

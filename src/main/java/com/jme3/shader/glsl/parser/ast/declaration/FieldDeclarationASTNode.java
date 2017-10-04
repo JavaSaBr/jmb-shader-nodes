@@ -1,11 +1,13 @@
-package com.jme3.shader.glsl.parser.ast;
+package com.jme3.shader.glsl.parser.ast.declaration;
 
 import static java.util.Arrays.asList;
+import com.jme3.shader.glsl.parser.ast.NameASTNode;
+import com.jme3.shader.glsl.parser.ast.TypeASTNode;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class FieldASTNode extends ASTNode {
+public class FieldDeclarationASTNode extends DeclarationASTNode {
 
     public enum FieldType {
         UNIFORM("uniform"),

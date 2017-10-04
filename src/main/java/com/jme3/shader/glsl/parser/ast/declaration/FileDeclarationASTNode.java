@@ -1,11 +1,11 @@
-package com.jme3.shader.glsl.parser.ast;
+package com.jme3.shader.glsl.parser.ast.declaration;
 
 /**
  * The AST node to present a file.
  *
  * @author JavaSaBr
  */
-public class FileASTNode extends ASTNode {
+public class FileDeclarationASTNode extends DeclarationASTNode {
 
     /**
      * The path to the file.

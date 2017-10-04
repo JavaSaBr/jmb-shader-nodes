@@ -1,4 +1,6 @@
-package com.jme3.shader.glsl.parser.ast;
+package com.jme3.shader.glsl.parser.ast.branching.condition;
+
+import com.jme3.shader.glsl.parser.ast.ASTNode;
 
 import java.util.ArrayList;
 import java.util.List;
