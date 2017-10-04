@@ -1,13 +1,14 @@
 package com.jme3.shader.glsl.parser.ast.preprocessor;
 
 import com.jme3.shader.glsl.parser.ast.ASTNode;
+import com.jme3.shader.glsl.parser.ast.BodyASTNode;
 import com.jme3.shader.glsl.parser.ast.branching.condition.ConditionASTNode;
 
 public class ConditionalPreprocessorASTNode extends PreprocessorASTNode {
 
     private ConditionASTNode condition;
 
-    private PreprocessorBodyASTNode body;
+    private BodyASTNode body;
 
     private ASTNode elseNode;
 
@@ -19,11 +20,11 @@ public class ConditionalPreprocessorASTNode extends PreprocessorASTNode {
         this.condition = condition;
     }
 
-    public PreprocessorBodyASTNode getBody() {
+    public BodyASTNode getBody() {
         return body;
     }
 
-    public void setBody(final PreprocessorBodyASTNode body) {
+    public void setBody(final BodyASTNode body) {
         this.body = body;
     }
 

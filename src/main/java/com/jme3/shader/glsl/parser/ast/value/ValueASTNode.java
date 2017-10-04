@@ -1,4 +1,6 @@
-package com.jme3.shader.glsl.parser.ast;
+package com.jme3.shader.glsl.parser.ast.value;
+
+import com.jme3.shader.glsl.parser.ast.ASTNode;
 
 public class ValueASTNode extends ASTNode {
 
