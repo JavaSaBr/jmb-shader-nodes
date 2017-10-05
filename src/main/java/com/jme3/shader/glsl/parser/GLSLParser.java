@@ -52,6 +52,11 @@ public class GLSLParser {
         SPLIT_CHARS.add('\t');
     }
 
+    /**
+     * Creates a new instance of this parser.
+     *
+     * @return the new instance of this parser.
+     */
     public static GLSLParser newInstance() {
         return new GLSLParser();
     }
@@ -61,14 +66,29 @@ public class GLSLParser {
      */
     private final Deque<ASTNode> nodeStack;
 
+    /**
+     * The current token.
+     */
     private Token currentToken;
 
+    /**
+     * The current line.
+     */
     private int line;
 
+    /**
+     * The current offset.
+     */
     private int offset;
 
+    /**
+     * The saved line.
+     */
     private int savedLine;
 
+    /**
+     * The saved offset.
+     */
     private int savedOffset;
 
     private GLSLParser() {
@@ -97,6 +117,8 @@ public class GLSLParser {
         } finally {
             nodeStack.removeLast();
         }
+
+        System.out.println(node.toString());
 
         return node;
     }
@@ -151,6 +173,8 @@ public class GLSLParser {
 
                     if (secondToken.getType() == TOKEN_WORD) {
                         parseLocalVarDeclaration(token, content);
+                    } else if (secondToken.getType() == TOKEN_ASSIGN) {
+                        parseAssignExpression(token, content);
                     }
                 }
             }
@@ -310,7 +334,7 @@ public class GLSLParser {
      */
     private ConditionASTNode parseCondition(final String preprocessorType, final char[] content) {
 
-        if ("ifdef".equals(preprocessorType) || "ifndef".equals(preprocessorType)) {
+        if (GLSLLang.PR_TYPE_IFDEF.equals(preprocessorType) || GLSLLang.PR_TYPE_IFNDEF.equals(preprocessorType)) {
             return parseSimpleDefPreprocessorCondition(content);
         }
 
@@ -667,6 +691,40 @@ public class GLSLParser {
     }
 
     /**
+     * Parse an assign expression AST node.
+     *
+     * @param firstToken the first token.
+     * @param content    the content.
+     * @return the assign expression AST node.
+     */
+    private AssignExpressionASTNode parseAssignExpression(final Token firstToken, final char[] content) {
+
+        final Token assignToken = findToken(content, TOKEN_ASSIGN);
+        final Token endToken = findToken(content, TOKEN_SEMICOLON);
+
+        final ASTNode parent = nodeStack.getLast();
+        final AssignExpressionASTNode node = new AssignExpressionASTNode();
+        node.setParent(parent);
+        node.setLine(firstToken.getLine());
+        node.setOffset(firstToken.getOffset());
+
+        nodeStack.addLast(node);
+        try {
+            parseName(firstToken);
+            parseSymbol(assignToken);
+            parseSymbol(endToken);
+        } finally {
+            nodeStack.removeLast();
+        }
+
+        ASTUtils.updateLengthAndText(node, content);
+
+        parent.addChild(node);
+
+        return node;
+    }
+
+    /**
      * Parse a define value AST node.
      *
      * @param token the define value token.
@@ -779,14 +837,32 @@ public class GLSLParser {
         return node;
     }
 
+    /**
+     * Gets the current token.
+     *
+     * @return the current token.
+     */
     private Token getCurrentToken() {
         return currentToken;
     }
 
+    /**
+     * Sets the current token.
+     *
+     * @param currentToken the current token.
+     */
     private void setCurrentToken(final Token currentToken) {
         this.currentToken = currentToken;
     }
 
+    /**
+     * Finds a token by the type.
+     *
+     * @param content the content.
+     * @param type    the type.
+     * @return the found token.
+     * @throws RuntimeException when we didn't find a token with the type.
+     */
     private Token findToken(final char[] content, final int type) {
 
         Token token;
@@ -801,6 +877,15 @@ public class GLSLParser {
         return token;
     }
 
+    /**
+     * Finds a token by the types.
+     *
+     * @param content    the content.
+     * @param firstType  the first type.
+     * @param secondType the second type.
+     * @return the found token.
+     * @throws RuntimeException when we didn't find a token with the types.
+     */
     private Token findToken(final char[] content, final int firstType, final int secondType) {
 
         Token token;
@@ -815,6 +900,16 @@ public class GLSLParser {
         return token;
     }
 
+    /**
+     * Finds a token by the types.
+     *
+     * @param content    the content.
+     * @param firstType  the first type.
+     * @param secondType the second type.
+     * @param thirdType  the third type.
+     * @return the found token.
+     * @throws RuntimeException when we didn't find a token with the types.
+     */
     private Token findToken(final char[] content, final int firstType, final int secondType, final int thirdType) {
 
         Token token;
@@ -830,6 +925,17 @@ public class GLSLParser {
         return token;
     }
 
+    /**
+     * Finds a token by the types.
+     *
+     * @param content    the content.
+     * @param firstType  the first type.
+     * @param secondType the second type.
+     * @param thirdType  the third type.
+     * @param fourthType the fourth type.
+     * @return the found token.
+     * @throws RuntimeException when we didn't find a token with the types.
+     */
     private Token findToken(final char[] content, final int firstType, final int secondType, final int thirdType,
                             final int fourthType) {
 
@@ -846,6 +952,18 @@ public class GLSLParser {
         return token;
     }
 
+    /**
+     * Finds a token by the types.
+     *
+     * @param content    the content.
+     * @param firstType  the first type.
+     * @param secondType the second type.
+     * @param thirdType  the third type.
+     * @param fourthType the fourth type.
+     * @param fifthType  the fifth type.
+     * @return the found token.
+     * @throws RuntimeException when we didn't find a token with the types.
+     */
     private Token findToken(final char[] content, final int firstType, final int secondType, final int thirdType,
                             final int fourthType, final int fifthType) {
 
@@ -862,6 +980,12 @@ public class GLSLParser {
         return token;
     }
 
+    /**
+     * Reads a next token.
+     *
+     * @param content the content.
+     * @return the next token.
+     */
     private Token readToken(final char[] content) {
 
         String text = null;
@@ -960,6 +1084,14 @@ public class GLSLParser {
         }
     }
 
+    /**
+     * Build a char token.
+     *
+     * @param text          the text of this token.
+     * @param ch            the symbol of this token.
+     * @param charTokenType the type of this token.
+     * @return the new token.
+     */
     private Token handleCharToken(final String text, final char ch, final int charTokenType) {
 
         if (isWord(text)) {
@@ -970,10 +1102,22 @@ public class GLSLParser {
         return new Token(charTokenType, offset - 1, line, Character.toString(ch));
     }
 
+    /**
+     * Checks the text.
+     *
+     * @param text the text.
+     * @return true if the text is number or is word.
+     */
     private boolean isWord(final String text) {
 
         if (text == null || text.isEmpty()) {
             return false;
+        }
+
+        try {
+            Double.parseDouble(text);
+            return true;
+        } catch (final NumberFormatException e) {
         }
 
         for (int i = 0, length = text.length(); i < length; i++) {
@@ -990,11 +1134,17 @@ public class GLSLParser {
         return text == null ? "" : text;
     }
 
+    /**
+     * Save the current state of the parser.
+     */
     private void saveState() {
         savedLine = line;
         savedOffset = offset;
     }
 
+    /**
+     * Restore the saved state of this parser.
+     */
     private void restoreState() {
         line = savedLine;
         offset = savedOffset;

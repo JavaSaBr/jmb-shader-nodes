@@ -29,4 +29,9 @@ public class FileDeclarationASTNode extends DeclarationASTNode {
     public void setPath(final String path) {
         this.path = path;
     }
+
+    @Override
+    protected String getStringAttributes() {
+        return getPath();
+    }
 }

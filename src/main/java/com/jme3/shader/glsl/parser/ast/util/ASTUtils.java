@@ -117,4 +117,27 @@ public class ASTUtils {
     public static void updateText(final ASTNode node, final char[] content) {
         node.setText(String.valueOf(content, node.getOffset(), node.getLength()));
     }
+
+    public static String getIndent(final ASTNode node) {
+
+        int count = 0;
+
+        ASTNode parent = node.getParent();
+        while (parent != null) {
+            count++;
+            parent = parent.getParent();
+        }
+
+        return getIndent(count);
+    }
+
+    public static String getIndent(final int level) {
+
+        final char[] result = new char[level * 2];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = ' ';
+        }
+
+        return String.valueOf(result);
+    }
 }

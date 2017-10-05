@@ -1,14 +1,37 @@
 package com.jme3.shader.glsl.parser.ast;
 
+/**
+ * The node to present a name.
+ *
+ * @author JavaSaBr
+ */
 public class NameASTNode extends ASTNode {
 
+    /**
+     * The name.
+     */
     private String name;
 
+    /**
+     * Gets the name.
+     *
+     * @return the name.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets the name.
+     *
+     * @param name the name.
+     */
     public void setName(final String name) {
         this.name = name;
+    }
+
+    @Override
+    protected String getStringAttributes() {
+        return getName();
     }
 }

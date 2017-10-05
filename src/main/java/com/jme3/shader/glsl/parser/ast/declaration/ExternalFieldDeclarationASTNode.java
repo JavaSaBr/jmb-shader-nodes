@@ -5,6 +5,11 @@ import static java.util.Arrays.asList;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * The node to present an external field declaration in the code.
+ *
+ * @author JavaSaBr
+ */
 public class ExternalFieldDeclarationASTNode extends FieldDeclarationASTNode {
 
     public enum ExternalFieldType {
@@ -31,13 +36,31 @@ public class ExternalFieldDeclarationASTNode extends FieldDeclarationASTNode {
         }
     }
 
+    /**
+     * The field type.
+     */
     private ExternalFieldType fieldType;
 
+    /**
+     * Gets the field type.
+     *
+     * @return the field type.
+     */
     public ExternalFieldType getFieldType() {
         return fieldType;
     }
 
+    /**
+     * Sets the field type.
+     *
+     * @param fieldType the field type.
+     */
     public void setFieldType(final ExternalFieldType fieldType) {
         this.fieldType = fieldType;
+    }
+
+    @Override
+    protected String getStringAttributes() {
+        return getFieldType().name();
     }
 }
