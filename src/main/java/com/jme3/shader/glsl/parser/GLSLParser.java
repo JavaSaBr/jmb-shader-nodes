@@ -1,17 +1,23 @@
 package com.jme3.shader.glsl.parser;
 
+import static com.jme3.shader.glsl.parser.GLSLLang.KEYWORDS;
+import static com.jme3.shader.glsl.parser.GLSLLang.PREPROCESSOR_WITH_CONDITION;
 import static java.util.Objects.requireNonNull;
 import com.jme3.shader.glsl.parser.ast.*;
 import com.jme3.shader.glsl.parser.ast.branching.condition.*;
 import com.jme3.shader.glsl.parser.ast.declaration.*;
 import com.jme3.shader.glsl.parser.ast.declaration.ExternalFieldDeclarationASTNode.ExternalFieldType;
 import com.jme3.shader.glsl.parser.ast.preprocessor.ConditionalPreprocessorASTNode;
+import com.jme3.shader.glsl.parser.ast.preprocessor.PreprocessorASTNode;
 import com.jme3.shader.glsl.parser.ast.util.ASTUtils;
 import com.jme3.shader.glsl.parser.ast.util.Predicate;
 import com.jme3.shader.glsl.parser.ast.value.DefineValueASTNode;
 import com.jme3.shader.glsl.parser.ast.value.StringValueASTNode;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The parser of GLSL code.
@@ -37,52 +43,6 @@ public class GLSLParser {
     public static final int LEVEL_FILE = 1;
     public static final int LEVEL_STRUCT = 2;
     public static final int LEVEL_METHOD = 3;
-
-    private static final Set<String> KEYWORDS = new HashSet<>();
-
-    static {
-        KEYWORDS.add("uniform");
-        KEYWORDS.add("in");
-        KEYWORDS.add("out");
-        KEYWORDS.add("varying");
-        KEYWORDS.add("attribute");
-        KEYWORDS.add("discard");
-        KEYWORDS.add("if");
-        KEYWORDS.add("endif");
-        KEYWORDS.add("defined");
-        KEYWORDS.add("else");
-        KEYWORDS.add("ifdef");
-        KEYWORDS.add("ifndef");
-        KEYWORDS.add("const");
-        KEYWORDS.add("break");
-        KEYWORDS.add("continue");
-        KEYWORDS.add("do");
-        KEYWORDS.add("for");
-        KEYWORDS.add("while");
-        KEYWORDS.add("inout");
-        KEYWORDS.add("struct");
-    }
-
-    private static final Set<String> PREPROCESSOR = new HashSet<>();
-    private static final Set<String> PREPROCESSOR_WITH_CONDITION = new HashSet<>();
-
-    static {
-        PREPROCESSOR_WITH_CONDITION.add("if");
-        PREPROCESSOR_WITH_CONDITION.add("ifdef");
-        PREPROCESSOR_WITH_CONDITION.add("ifndef");
-        PREPROCESSOR_WITH_CONDITION.add("elif");
-
-        PREPROCESSOR.addAll(PREPROCESSOR_WITH_CONDITION);
-        PREPROCESSOR.add("define");
-        PREPROCESSOR.add("undef");
-        PREPROCESSOR.add("else");
-        PREPROCESSOR.add("endif");
-        PREPROCESSOR.add("error");
-        PREPROCESSOR.add("pragma");
-        PREPROCESSOR.add("extension");
-        PREPROCESSOR.add("version");
-        PREPROCESSOR.add("line");
-    }
 
     private static final Set<Character> SPLIT_CHARS = new HashSet<>();
 
@@ -199,25 +159,63 @@ public class GLSLParser {
     }
 
     /**
-     * Parse a define AST node.
+     * Parse a preprocessor AST node.
      *
-     * @param token   the define token.
+     * @param token   the preprocessor token.
      * @param content the content.
+     * @return the preprocessor AST node.
      */
-    private void parsePreprocessor(final Token token, final char[] content) {
+    private PreprocessorASTNode parsePreprocessor(final Token token, final char[] content) {
 
         final String text = token.getText();
 
         if (text.startsWith("#import")) {
             parseImportDeclaration(content, token);
-            return;
+            return null;
         }
 
         final String type = text.substring(1, text.length());
 
         if (!PREPROCESSOR_WITH_CONDITION.contains(type)) {
-            return;
+            return parsePreprocessor(token, type);
         }
+
+        return parseConditionalPreprocessor(token, content, type);
+    }
+
+    /**
+     * Parse a preprocessor AST node.
+     *
+     * @param token the preprocessor token.
+     * @param type  the type of the preprocessor.
+     * @return the preprocessor AST node.
+     */
+    private PreprocessorASTNode parsePreprocessor(final Token token, final String type) {
+
+        final ASTNode parent = nodeStack.getLast();
+        final PreprocessorASTNode node = new PreprocessorASTNode();
+        node.setParent(parent);
+        node.setType(type);
+        node.setLine(token.getLine());
+        node.setOffset(token.getOffset());
+        node.setLength(token.getLength());
+        node.setText(token.getText());
+
+        parent.addChild(node);
+
+        return node;
+    }
+
+    /**
+     * Parse a conditional preprocessor AST node.
+     *
+     * @param token   the conditional preprocessor token.
+     * @param content the content.
+     * @param type    the type of the preprocessor.
+     * @return the conditional preprocessor AST node.
+     */
+    private ConditionalPreprocessorASTNode parseConditionalPreprocessor(final Token token, final char[] content,
+                                                                        final String type) {
 
         final ASTNode parent = nodeStack.getLast();
         final ConditionalPreprocessorASTNode node = new ConditionalPreprocessorASTNode();
@@ -228,8 +226,43 @@ public class GLSLParser {
 
         nodeStack.addLast(node);
         try {
+
             node.setCondition(parseCondition(type, content));
-            node.setBody(parseBody(content, ASTUtils.END_IF));
+            node.setBody(parseBody(content, ASTUtils.END_IF_OR_ELSE_OR_ELSE_IF));
+
+            final Token nextDefine = findToken(content, TOKEN_DEFINE);
+            final String nextTokenText = nextDefine.getText();
+
+            if (GLSLLang.PR_ENDIF.equals(nextTokenText)) {
+                node.setEndNode(parsePreprocessor(nextDefine, content));
+            } else if (GLSLLang.PR_ELSE.equals(nextTokenText)) {
+                node.setElseNode(parsePreprocessor(nextDefine, content));
+                node.setElseBody(parseBody(content, ASTUtils.END_IF));
+                node.setEndNode(parsePreprocessor(findToken(content, TOKEN_DEFINE), content));
+            } else if (GLSLLang.PR_ELIF.equals(nextTokenText)) {
+
+                final BodyASTNode body = new BodyASTNode();
+                body.setParent(node);
+
+                nodeStack.addLast(body);
+                try {
+                    parsePreprocessor(nextDefine, content);
+                } finally {
+                    nodeStack.removeLast();
+                }
+
+                ASTUtils.updateOffsetAndLengthAndText(body, content);
+
+                node.addChild(body);
+                node.setElseBody(body);
+
+                final ConditionalPreprocessorASTNode lastNode = node.getLastNode(ConditionalPreprocessorASTNode.class);
+                final PreprocessorASTNode endNode = lastNode.getEndNode();
+                final Token endToken = new Token(TOKEN_DEFINE, endNode.getOffset(), endNode.getLine(), endNode.getText());
+
+                node.setEndNode(parsePreprocessor(endToken, content));
+            }
+
         } finally {
             nodeStack.removeLast();
         }
@@ -237,6 +270,8 @@ public class GLSLParser {
         ASTUtils.updateLengthAndText(node, content);
 
         parent.addChild(node);
+
+        return node;
     }
 
     /**
@@ -259,16 +294,7 @@ public class GLSLParser {
             nodeStack.removeLast();
         }
 
-        final List<ASTNode> children = node.getChildren();
-        if (!children.isEmpty()) {
-
-            final ASTNode first = children.get(0);
-            final ASTNode last = children.get(children.size() - 1);
-
-            node.setOffset(first.getOffset());
-            node.setLength(last.getOffset() + last.getLength() - first.getOffset());
-            node.setText(new String(content, node.getOffset(), node.getLength()));
-        }
+        ASTUtils.updateOffsetAndLengthAndText(node, content);
 
         parent.addChild(node);
 

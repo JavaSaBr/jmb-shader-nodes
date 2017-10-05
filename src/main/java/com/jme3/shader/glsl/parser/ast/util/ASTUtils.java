@@ -1,5 +1,6 @@
 package com.jme3.shader.glsl.parser.ast.util;
 
+import com.jme3.shader.glsl.parser.GLSLLang;
 import com.jme3.shader.glsl.parser.GLSLParser;
 import com.jme3.shader.glsl.parser.Token;
 import com.jme3.shader.glsl.parser.ast.ASTNode;
@@ -24,7 +25,20 @@ public class ASTUtils {
     public static final Predicate<Token> END_IF = new Predicate<Token>() {
         @Override
         public boolean test(final Token token) {
-            return token.getType() == GLSLParser.TOKEN_DEFINE && token.getText().equals("#endif");
+            return token.getType() == GLSLParser.TOKEN_DEFINE && token.getText().equals(GLSLLang.PR_ENDIF);
+        }
+    };
+
+    public static final Predicate<Token> END_IF_OR_ELSE_OR_ELSE_IF = new Predicate<Token>() {
+        @Override
+        public boolean test(final Token token) {
+
+            if (token.getType() != GLSLParser.TOKEN_DEFINE) {
+                return false;
+            }
+
+            final String text = token.getText();
+            return text.equals(GLSLLang.PR_ENDIF) || text.equals(GLSLLang.PR_ELSE) || text.equals(GLSLLang.PR_ELIF);
         }
     };
 
@@ -68,6 +82,21 @@ public class ASTUtils {
         }
 
         return false;
+    }
+
+    public static void updateOffsetAndLengthAndText(final ASTNode node, final char[] content) {
+
+        final List<ASTNode> children = node.getChildren();
+        if (children.isEmpty()) {
+            node.setOffset(0);
+            updateLengthAndText(node, content);
+            return;
+        }
+
+        final ASTNode first = children.get(0);
+        node.setOffset(first.getOffset());
+
+        updateLengthAndText(node, content);
     }
 
     public static void updateLengthAndText(final ASTNode node, final char[] content) {

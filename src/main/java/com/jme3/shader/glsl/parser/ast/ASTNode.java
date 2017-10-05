@@ -110,4 +110,22 @@ public class ASTNode {
     public String getText() {
         return text;
     }
+
+    public <T extends ASTNode> T getLastNode(final Class<T> type) {
+
+        final List<ASTNode> children = getChildren();
+        for (int i = children.size() - 1; i >= 0; i--) {
+
+            final ASTNode child = children.get(i);
+            final T lastNode = child.getLastNode(type);
+
+            if (lastNode != null) {
+                return lastNode;
+            } else if (type.isInstance(child)) {
+                return type.cast(child);
+            }
+        }
+
+        return null;
+    }
 }
