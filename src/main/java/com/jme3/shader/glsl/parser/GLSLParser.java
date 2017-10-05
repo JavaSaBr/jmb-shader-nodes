@@ -346,44 +346,13 @@ public class GLSLParser {
             }
             case TOKEN_KEYWORD: {
 
-                final ConditionASTNode firstCondition = parseDefinePreprocessorCondition(content, token);
+                final ConditionASTNode node = parseDefinePreprocessorCondition(content, token);
 
                 if (isLastConditionPart(content)) {
-                    return firstCondition;
+                    return node;
                 }
 
-                final Token logicToken = findToken(content, TOKEN_OR, TOKEN_AND);
-
-                final ASTNode parent = firstCondition.getParent();
-                parent.removeChild(firstCondition);
-
-                final MultiConditionASTNode conditionsNode =
-                        logicToken.getType() == TOKEN_AND ? new ConditionAndASTNode() : new ConditionOrASTNode();
-                conditionsNode.setParent(parent);
-                conditionsNode.addChild(firstCondition);
-                conditionsNode.addExpression(firstCondition);
-                conditionsNode.setLine(firstCondition.getLine());
-                conditionsNode.setOffset(firstCondition.getOffset());
-
-                firstCondition.setParent(conditionsNode);
-
-                nodeStack.addLast(conditionsNode);
-                try {
-
-                    conditionsNode.addExpression(parseSymbol(logicToken));
-
-                    final ConditionASTNode secondCondition = requireNonNull(parseCondition(null, content));
-                    conditionsNode.addExpression(secondCondition);
-
-                } finally {
-                    nodeStack.removeLast();
-                }
-
-                ASTUtils.updateLengthAndText(conditionsNode, content);
-
-                parent.addChild(conditionsNode);
-
-                return conditionsNode;
+                return appendCondition(content, node);
             }
             case TOKEN_LEFT_PARENTHESIS: {
 
@@ -406,11 +375,58 @@ public class GLSLParser {
 
                 parent.addChild(node);
 
-                return node;
+                if (isLastConditionPart(content)) {
+                    return node;
+                }
+
+                return appendCondition(content, node);
             }
         }
 
         return null;
+    }
+
+    /**
+     * Append an additional condition.
+     *
+     * @param content        the content.
+     * @param firstCondition the first condition.
+     * @return the result condition.
+     */
+    private ConditionASTNode appendCondition(final char[] content, final ConditionASTNode firstCondition) {
+
+        final Token logicToken = findToken(content, TOKEN_OR, TOKEN_AND);
+
+        final ASTNode parent = firstCondition.getParent();
+        parent.removeChild(firstCondition);
+
+        final MultiConditionASTNode conditionsNode =
+                logicToken.getType() == TOKEN_AND ? new ConditionAndASTNode() : new ConditionOrASTNode();
+        conditionsNode.setParent(parent);
+        conditionsNode.addChild(firstCondition);
+        conditionsNode.addExpression(firstCondition);
+        conditionsNode.setLine(firstCondition.getLine());
+        conditionsNode.setOffset(firstCondition.getOffset());
+
+        firstCondition.setParent(conditionsNode);
+
+        nodeStack.addLast(conditionsNode);
+        try {
+
+            conditionsNode.addExpression(parseSymbol(logicToken));
+
+            final ConditionASTNode secondCondition = requireNonNull(parseCondition(null, content));
+            conditionsNode.addExpression(secondCondition);
+
+        } finally {
+            nodeStack.removeLast();
+        }
+
+        ASTUtils.updateLengthAndText(conditionsNode, content);
+
+        parent.addChild(conditionsNode);
+
+        return conditionsNode;
     }
 
     /**
@@ -455,7 +471,7 @@ public class GLSLParser {
         final Token rightToken = findToken(content, TOKEN_RIGHT_PARENTHESIS);
 
         final ASTNode parent = nodeStack.getLast();
-        final ConditionIsASTNode node = new ConditionIsASTNode();
+        final DefineConditionIsASTNode node = new DefineConditionIsASTNode();
         node.setParent(parent);
         node.setLine(token.getLine());
         node.setOffset(token.getOffset());
