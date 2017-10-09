@@ -1,8 +1,10 @@
 package com.jme3.shader.glsl.parser.ast;
 
 import com.jme3.shader.glsl.parser.ast.util.ASTUtils;
+import com.jme3.shader.glsl.parser.ast.util.Predicate;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -11,6 +13,8 @@ import java.util.List;
  * @author JavaSaBr
  */
 public class ASTNode {
+
+    private static final List<ASTNode> EMPTY_LIST = Collections.emptyList();
 
     /**
      * THe parent AST node.
@@ -43,7 +47,7 @@ public class ASTNode {
     private int length;
 
     public ASTNode() {
-        this.children = new ArrayList<>();
+        this.children = EMPTY_LIST;
     }
 
     /**
@@ -79,6 +83,11 @@ public class ASTNode {
      * @param child the new child.
      */
     public void addChild(final ASTNode child) {
+
+        if (children == EMPTY_LIST) {
+            children = new ArrayList<>(5);
+        }
+
         children.add(child);
     }
 
@@ -161,6 +170,26 @@ public class ASTNode {
      */
     public String getText() {
         return text;
+    }
+
+    /**
+     * Visit all AST nodes.
+     *
+     * @param visitor the visitor.
+     */
+    public void visit(final Predicate<ASTNode> visitor) {
+
+        final List<ASTNode> children = getChildren();
+        if (children.isEmpty()) {
+            return;
+        }
+
+        for (int i = 0; i < children.size(); i++) {
+            final ASTNode child = children.get(i);
+            if (visitor.test(child)) {
+                child.visit(visitor);
+            }
+        }
     }
 
     /**

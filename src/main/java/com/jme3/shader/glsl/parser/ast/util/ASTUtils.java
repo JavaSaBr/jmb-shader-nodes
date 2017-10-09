@@ -6,6 +6,7 @@ import com.jme3.shader.glsl.parser.Token;
 import com.jme3.shader.glsl.parser.ast.ASTNode;
 import com.jme3.shader.glsl.parser.ast.declaration.MethodDeclarationASTNode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,7 +26,7 @@ public class ASTUtils {
     public static final Predicate<Token> END_IF = new Predicate<Token>() {
         @Override
         public boolean test(final Token token) {
-            return token.getType() == GLSLParser.TOKEN_DEFINE && token.getText().equals(GLSLLang.PR_ENDIF);
+            return token.getType() == GLSLParser.TOKEN_PREPROCESSOR && token.getText().equals(GLSLLang.PR_ENDIF);
         }
     };
 
@@ -33,7 +34,7 @@ public class ASTUtils {
         @Override
         public boolean test(final Token token) {
 
-            if (token.getType() != GLSLParser.TOKEN_DEFINE) {
+            if (token.getType() != GLSLParser.TOKEN_PREPROCESSOR) {
                 return false;
             }
 
@@ -48,6 +49,32 @@ public class ASTUtils {
             return token.getType() == GLSLParser.TOKEN_RIGHT_BRACE;
         }
     };
+
+    /**
+     * Find all existing nodes.
+     *
+     * @param node the node.
+     * @param type the type.
+     * @param <T>  the type.
+     * @return the list of all found nodes.
+     */
+    public <T extends ASTNode> List<T> findAllByType(final ASTNode node, final Class<T> type) {
+
+        final List<T> result = new ArrayList<>();
+
+        node.visit(new Predicate<ASTNode>() {
+
+            @Override
+            public boolean test(final ASTNode node) {
+                if (type.isInstance(node)) {
+                    result.add(type.cast(node));
+                }
+                return true;
+            }
+        });
+
+        return result;
+    }
 
     /**
      * Get parse level of the node.
@@ -84,6 +111,12 @@ public class ASTUtils {
         return false;
     }
 
+    /**
+     * Updates offset, length and text of the node.
+     *
+     * @param node    the node.
+     * @param content the content.
+     */
     public static void updateOffsetAndLengthAndText(final ASTNode node, final char[] content) {
 
         final List<ASTNode> children = node.getChildren();
@@ -99,6 +132,12 @@ public class ASTUtils {
         updateLengthAndText(node, content);
     }
 
+    /**
+     * Updates length and text of the node.
+     *
+     * @param node    the node.
+     * @param content the content.
+     */
     public static void updateLengthAndText(final ASTNode node, final char[] content) {
 
         final List<ASTNode> children = node.getChildren();
@@ -114,10 +153,22 @@ public class ASTUtils {
         updateText(node, content);
     }
 
+    /**
+     * Updates text of the node.
+     *
+     * @param node    the node.
+     * @param content the content.
+     */
     public static void updateText(final ASTNode node, final char[] content) {
         node.setText(String.valueOf(content, node.getOffset(), node.getLength()));
     }
 
+    /**
+     * Gets indent of the node.
+     *
+     * @param node the node.
+     * @return the indent.
+     */
     public static String getIndent(final ASTNode node) {
 
         int count = 0;
@@ -131,6 +182,12 @@ public class ASTUtils {
         return getIndent(count);
     }
 
+    /**
+     * Gets indent of the level.
+     *
+     * @param level the level.
+     * @return the indent.
+     */
     public static String getIndent(final int level) {
 
         final char[] result = new char[level * 2];

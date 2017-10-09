@@ -5,14 +5,18 @@ import static com.jme3.shader.glsl.parser.GLSLLang.PREPROCESSOR_WITH_CONDITION;
 import static java.util.Objects.requireNonNull;
 import com.jme3.shader.glsl.parser.ast.*;
 import com.jme3.shader.glsl.parser.ast.branching.condition.*;
-import com.jme3.shader.glsl.parser.ast.declaration.*;
+import com.jme3.shader.glsl.parser.ast.declaration.ExternalFieldDeclarationASTNode;
 import com.jme3.shader.glsl.parser.ast.declaration.ExternalFieldDeclarationASTNode.ExternalFieldType;
-import com.jme3.shader.glsl.parser.ast.preprocessor.ConditionalPreprocessorASTNode;
-import com.jme3.shader.glsl.parser.ast.preprocessor.PreprocessorASTNode;
+import com.jme3.shader.glsl.parser.ast.declaration.FileDeclarationASTNode;
+import com.jme3.shader.glsl.parser.ast.declaration.LocalVarDeclarationASTNode;
+import com.jme3.shader.glsl.parser.ast.declaration.MethodDeclarationASTNode;
+import com.jme3.shader.glsl.parser.ast.preprocessor.*;
 import com.jme3.shader.glsl.parser.ast.util.ASTUtils;
 import com.jme3.shader.glsl.parser.ast.util.Predicate;
 import com.jme3.shader.glsl.parser.ast.value.DefineValueASTNode;
+import com.jme3.shader.glsl.parser.ast.value.ExtensionStatusValueASTNode;
 import com.jme3.shader.glsl.parser.ast.value.StringValueASTNode;
+import com.jme3.shader.glsl.parser.ast.value.ValueASTNode;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -26,7 +30,7 @@ import java.util.Set;
  */
 public class GLSLParser {
 
-    public static final int TOKEN_DEFINE = 2;
+    public static final int TOKEN_PREPROCESSOR = 2;
     public static final int TOKEN_STRING = 3;
     public static final int TOKEN_KEYWORD = 4;
     public static final int TOKEN_WORD = 5;
@@ -39,6 +43,7 @@ public class GLSLParser {
     public static final int TOKEN_LEFT_BRACE = 12;
     public static final int TOKEN_RIGHT_BRACE = 13;
     public static final int TOKEN_ASSIGN = 14;
+    public static final int TOKEN_COLON = 15;
 
     public static final int LEVEL_FILE = 1;
     public static final int LEVEL_STRUCT = 2;
@@ -148,7 +153,7 @@ public class GLSLParser {
                 return;
             }
 
-            if (token.getType() == TOKEN_DEFINE) {
+            if (token.getType() == TOKEN_PREPROCESSOR) {
                 parsePreprocessor(token, content);
             } else if (token.getType() == TOKEN_KEYWORD) {
 
@@ -160,7 +165,7 @@ public class GLSLParser {
 
                 if (level == LEVEL_FILE) {
                     parseMethodDeclaration(token, content);
-                } else if(level == LEVEL_METHOD) {
+                } else if (level == LEVEL_METHOD) {
 
                     Token secondToken;
 
@@ -193,9 +198,12 @@ public class GLSLParser {
 
         final String text = token.getText();
 
-        if (text.startsWith("#import")) {
-            parseImportDeclaration(content, token);
-            return null;
+        if (text.startsWith(GLSLLang.PR_IMPORT)) {
+            return parseImportPreprocessor(content, token);
+        } else if (text.startsWith(GLSLLang.PR_EXTENSION)) {
+            return parseExtensionPreprocessor(content, token);
+        } else if (text.startsWith(GLSLLang.PR_DEFINE)) {
+            return parseDefinePreprocessor(content, token);
         }
 
         final String type = text.substring(1, text.length());
@@ -254,7 +262,7 @@ public class GLSLParser {
             node.setCondition(parseCondition(type, content));
             node.setBody(parseBody(content, ASTUtils.END_IF_OR_ELSE_OR_ELSE_IF));
 
-            final Token nextDefine = findToken(content, TOKEN_DEFINE);
+            final Token nextDefine = findToken(content, TOKEN_PREPROCESSOR);
             final String nextTokenText = nextDefine.getText();
 
             if (GLSLLang.PR_ENDIF.equals(nextTokenText)) {
@@ -262,7 +270,7 @@ public class GLSLParser {
             } else if (GLSLLang.PR_ELSE.equals(nextTokenText)) {
                 node.setElseNode(parsePreprocessor(nextDefine, content));
                 node.setElseBody(parseBody(content, ASTUtils.END_IF));
-                node.setEndNode(parsePreprocessor(findToken(content, TOKEN_DEFINE), content));
+                node.setEndNode(parsePreprocessor(findToken(content, TOKEN_PREPROCESSOR), content));
             } else if (GLSLLang.PR_ELIF.equals(nextTokenText)) {
 
                 final BodyASTNode body = new BodyASTNode();
@@ -282,7 +290,7 @@ public class GLSLParser {
 
                 final ConditionalPreprocessorASTNode lastNode = node.getLastNode(ConditionalPreprocessorASTNode.class);
                 final PreprocessorASTNode endNode = lastNode.getEndNode();
-                final Token endToken = new Token(TOKEN_DEFINE, endNode.getOffset(), endNode.getLine(), endNode.getText());
+                final Token endToken = new Token(TOKEN_PREPROCESSOR, endNode.getOffset(), endNode.getLine(), endNode.getText());
 
                 node.setEndNode(parsePreprocessor(endToken, content));
             }
@@ -329,7 +337,7 @@ public class GLSLParser {
      * Parse conditions.
      *
      * @param preprocessorType the type of a preprocessor or null.
-     * @param content the content.
+     * @param content          the content.
      * @return the condition AST node or null.
      */
     private ConditionASTNode parseCondition(final String preprocessorType, final char[] content) {
@@ -440,8 +448,7 @@ public class GLSLParser {
         saveState();
         try {
 
-            final Token check = findToken(content, TOKEN_KEYWORD, TOKEN_WORD, TOKEN_OR, TOKEN_AND,
-                    TOKEN_RIGHT_PARENTHESIS);
+            final Token check = findToken(content, TOKEN_KEYWORD, TOKEN_WORD, TOKEN_OR, TOKEN_AND, TOKEN_RIGHT_PARENTHESIS);
 
             if (check.getType() == TOKEN_WORD || check.getType() == TOKEN_KEYWORD ||
                     check.getType() == TOKEN_RIGHT_PARENTHESIS) {
@@ -552,25 +559,93 @@ public class GLSLParser {
     }
 
     /**
-     * Parse an import declaration AST node.
+     * Parse an import preprocessor AST node.
      *
-     * @param content     the content.
-     * @param defineToken the define token.
-     * @return the import declaration AST node.
+     * @param content the content.
+     * @param token   the token.
+     * @return the import preprocessor AST node.
      */
-    private ImportDeclarationASTNode parseImportDeclaration(final char[] content, final Token defineToken) {
+    private ImportPreprocessorASTNode parseImportPreprocessor(final char[] content, final Token token) {
 
-        final Token token = findToken(content, TOKEN_STRING);
+        final Token valueToken = findToken(content, TOKEN_STRING);
 
         final ASTNode parent = nodeStack.getLast();
-        final ImportDeclarationASTNode node = new ImportDeclarationASTNode();
+        final ImportPreprocessorASTNode node = new ImportPreprocessorASTNode();
         node.setParent(parent);
-        node.setLine(defineToken.getLine());
-        node.setOffset(defineToken.getOffset());
+        node.setLine(token.getLine());
+        node.setOffset(token.getOffset());
 
         nodeStack.addLast(node);
         try {
-            parseStringValue(token);
+            node.setValue(parseStringValue(valueToken));
+        } finally {
+            nodeStack.removeLast();
+        }
+
+        ASTUtils.updateLengthAndText(node, content);
+
+        parent.addChild(node);
+
+        return node;
+    }
+
+    /**
+     * Parse an extension preprocessor AST node.
+     *
+     * @param content the content.
+     * @param token   the token.
+     * @return the extension preprocessor AST node.
+     */
+    private ExtensionPreprocessorASTNode parseExtensionPreprocessor(final char[] content, final Token token) {
+
+        final Token extensionToken = findToken(content, TOKEN_WORD);
+        final Token splitToken = findToken(content, TOKEN_COLON);
+        final Token statusToken = findToken(content, TOKEN_WORD);
+
+        final ASTNode parent = nodeStack.getLast();
+        final ExtensionPreprocessorASTNode node = new ExtensionPreprocessorASTNode();
+        node.setParent(parent);
+        node.setLine(token.getLine());
+        node.setOffset(token.getOffset());
+
+        nodeStack.addLast(node);
+        try {
+            node.setExtension(parseName(extensionToken));
+            parseSymbol(splitToken);
+            node.setStatus(parseExtensionStatusValue(statusToken));
+        } finally {
+            nodeStack.removeLast();
+        }
+
+        ASTUtils.updateLengthAndText(node, content);
+
+        parent.addChild(node);
+
+        return node;
+    }
+
+    /**
+     * Parse a define preprocessor AST node.
+     *
+     * @param content the content.
+     * @param token   the token.
+     * @return the define preprocessor AST node.
+     */
+    private DefinePreprocessorASTNode parseDefinePreprocessor(final char[] content, final Token token) {
+
+        final Token nameToken = findToken(content, TOKEN_WORD);
+        final Token valueToken = findToken(content, TOKEN_WORD);
+
+        final ASTNode parent = nodeStack.getLast();
+        final DefinePreprocessorASTNode node = new DefinePreprocessorASTNode();
+        node.setParent(parent);
+        node.setLine(token.getLine());
+        node.setOffset(token.getOffset());
+
+        nodeStack.addLast(node);
+        try {
+            node.setName(parseName(nameToken));
+            node.setValue(parseValue(valueToken));
         } finally {
             nodeStack.removeLast();
         }
@@ -807,19 +882,43 @@ public class GLSLParser {
     }
 
     /**
-     * Parse a string AST node.
+     * Parse a value AST node.
      *
-     * @param stringToken the string token.
+     * @param token the token.
+     * @return the value AST node.
      */
-    private void parseStringValue(final Token stringToken) {
+    private ValueASTNode parseValue(final Token token) {
 
-        final String text = stringToken.getText();
+        final String text = token.getText();
+        final ASTNode parent = nodeStack.getLast();
+        final ValueASTNode node = new ValueASTNode();
+        node.setParent(parent);
+        node.setLine(token.getLine());
+        node.setOffset(token.getOffset());
+        node.setLength(token.getLength());
+        node.setText(text);
+        node.setValue(text);
+
+        parent.addChild(node);
+
+        return node;
+    }
+
+    /**
+     * Parse a string value AST node.
+     *
+     * @param token the token.
+     * @return the string value AST node.
+     */
+    private StringValueASTNode parseStringValue(final Token token) {
+
+        final String text = token.getText();
         final ASTNode parent = nodeStack.getLast();
         final StringValueASTNode node = new StringValueASTNode();
         node.setParent(parent);
-        node.setLine(stringToken.getLine());
-        node.setOffset(stringToken.getOffset());
-        node.setLength(stringToken.getLength());
+        node.setLine(token.getLine());
+        node.setOffset(token.getOffset());
+        node.setLength(token.getLength());
         node.setText(text);
 
         if (text.equals("\"\"")) {
@@ -829,13 +928,39 @@ public class GLSLParser {
         }
 
         parent.addChild(node);
+
+        return node;
+    }
+
+    /**
+     * Parse an extension status value AST node.
+     *
+     * @param token the token.
+     * @return the extension status value AST node.
+     */
+    private ExtensionStatusValueASTNode parseExtensionStatusValue(final Token token) {
+
+        final String text = token.getText();
+        final ASTNode parent = nodeStack.getLast();
+        final ExtensionStatusValueASTNode node = new ExtensionStatusValueASTNode();
+        node.setParent(parent);
+        node.setLine(token.getLine());
+        node.setOffset(token.getOffset());
+        node.setLength(token.getLength());
+        node.setValue(text);
+        node.setText(text);
+        node.setEnabled("enable".equals(text));
+
+        parent.addChild(node);
+
+        return node;
     }
 
     /**
      * Parse a symbol AST node.
      *
      * @param symbolToken the symbol token.
-     * @return the node.
+     * @return the symbol AST node.
      */
     private SymbolASTNode parseSymbol(final Token symbolToken) {
 
@@ -1058,6 +1183,9 @@ public class GLSLParser {
                 case '=': {
                     return handleCharToken(text, ch, TOKEN_ASSIGN);
                 }
+                case ':': {
+                    return handleCharToken(text, ch, TOKEN_COLON);
+                }
             }
 
             if (text == null) {
@@ -1081,7 +1209,7 @@ public class GLSLParser {
                     continue;
                 }
                 case '#': {
-                    setCurrentToken(new Token(TOKEN_DEFINE, line, offset - 1));
+                    setCurrentToken(new Token(TOKEN_PREPROCESSOR, line, offset - 1));
                     continue;
                 }
             }

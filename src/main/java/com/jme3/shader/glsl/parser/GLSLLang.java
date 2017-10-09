@@ -22,6 +22,7 @@ public class GLSLLang {
     public static final String PR_TYPE_ERROR = "error";
     public static final String PR_TYPE_PRAGMA = "pragma";
     public static final String PR_TYPE_EXTENSION = "extension";
+    public static final String PR_TYPE_IMPORT = "import";
     public static final String PR_TYPE_VERSION = "version";
     public static final String PR_TYPE_LINE = "line";
 
@@ -31,6 +32,9 @@ public class GLSLLang {
     public static final String PR_ELIF = "#" + PR_TYPE_ELIF;
     public static final String PR_ELSE = "#" + PR_TYPE_ELSE;
     public static final String PR_ENDIF = "#" + PR_TYPE_ENDIF;
+    public static final String PR_DEFINE = "#" + PR_TYPE_DEFINE;
+    public static final String PR_EXTENSION = "#" + PR_TYPE_EXTENSION;
+    public static final String PR_IMPORT = "#" + PR_TYPE_IMPORT;
 
     public static final Set<String> KEYWORDS = new HashSet<>();
 
