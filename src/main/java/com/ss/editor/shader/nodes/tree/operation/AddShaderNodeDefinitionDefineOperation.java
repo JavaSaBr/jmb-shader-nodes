@@ -8,20 +8,20 @@ import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinit
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The operation to add a local variable.
+ * The operation to add a definition.
  *
  * @author JavaSaBr
  */
 public class AddShaderNodeDefinitionDefineOperation extends AbstractEditorOperation<ChangeConsumer> {
 
     /**
-     * The shader node local variables.
+     * The shader node defines.
      */
     @NotNull
     private final ShaderNodeDefinitionDefines defines;
 
     /**
-     * The shader node local variable.
+     * The shader node define.
      */
     @NotNull
     private final ShaderNodeDefinitionDefine define;

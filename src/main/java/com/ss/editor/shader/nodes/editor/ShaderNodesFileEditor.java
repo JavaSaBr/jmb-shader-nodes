@@ -405,7 +405,7 @@ public class ShaderNodesFileEditor extends
 
         final Array<PropertyDefinition> definitions = ArrayFactory.newArray(PropertyDefinition.class);
         definitions.add(new PropertyDefinition(STRING, Messages.MODEL_PROPERTY_NAME, PROP_TECHNIQUE_NAME, "NewTechnique"));
-        definitions.add(new PropertyDefinition(ENUM, PluginMessages.LIGHT_MODE, PROP_TECHNIQUE_LIGHT_MODE, LightMode.SinglePassAndImageBased));
+        definitions.add(new PropertyDefinition(ENUM, Messages.MODEL_PROPERTY_LIGHT_MODE, PROP_TECHNIQUE_LIGHT_MODE, LightMode.SinglePassAndImageBased));
 
         final GenericFactoryDialog dialog = new GenericFactoryDialog(definitions, this::addTechnique, this::validateTechnique);
         dialog.show();

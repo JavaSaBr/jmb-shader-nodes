@@ -5,13 +5,13 @@ import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.UniformBinding;
+import com.ss.editor.Messages;
 import com.ss.editor.annotation.FXThread;
-import com.ss.editor.shader.nodes.PluginMessages;
-import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
-import com.ss.editor.shader.nodes.component.shader.nodes.operation.remove.RemoveWorldParameterVariableOperation;
 import com.ss.editor.shader.nodes.component.shader.nodes.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.component.shader.nodes.action.ShaderNodeAction;
 import com.ss.editor.shader.nodes.component.shader.nodes.main.MainShaderNodeElement;
+import com.ss.editor.shader.nodes.component.shader.nodes.operation.remove.RemoveWorldParameterVariableOperation;
+import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public class RemoveWorldParamShaderNodeAction extends ShaderNodeAction<ShaderNod
     @Override
     @FXThread
     protected @NotNull String getName() {
-        return PluginMessages.ACTION_DELETE;
+        return Messages.MODEL_NODE_TREE_ACTION_REMOVE;
     }
 
     @Override

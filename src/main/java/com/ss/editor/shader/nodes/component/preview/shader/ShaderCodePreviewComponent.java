@@ -9,11 +9,11 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.Renderer;
 import com.jme3.shader.Shader;
 import com.jme3.shader.ShaderGenerator;
+import com.ss.editor.Messages;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.annotation.JMEThread;
 import com.ss.editor.manager.ExecutorManager;
-import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.component.preview.CodePreviewComponent;
 import com.ss.editor.ui.control.code.BaseCodeArea;
 import com.ss.editor.ui.control.code.GLSLCodeArea;
@@ -58,7 +58,7 @@ public abstract class ShaderCodePreviewComponent extends CodePreviewComponent {
     @FXThread
     protected void createComponents() {
 
-        final Label languageLabel  = new Label(PluginMessages.SHADER_PREVIEW_LANGUAGE + ":");
+        final Label languageLabel  = new Label(Messages.MODEL_PROPERTY_LANGUAGE + ":");
         languageLabel.minWidthProperty().bind(widthProperty().multiply(0.5));
 
         languageBox = new ComboBox<>();
@@ -139,10 +139,10 @@ public abstract class ShaderCodePreviewComponent extends CodePreviewComponent {
 
         final Renderer renderer = getRenderManager().getRenderer();
         final EnumSet<Caps> caps = renderer.getCaps();
-        final ShaderGenerator shaderGenerator = getAssetManager().getShaderGenerator(caps);
-        shaderGenerator.initialize(techniqueDef);
+        final ShaderGenerator abstractShaderGenerator = getAssetManager().getShaderGenerator(caps);
+        abstractShaderGenerator.initialize(techniqueDef);
 
-        this.shader = shaderGenerator.generateShader("");
+        this.shader = abstractShaderGenerator.generateShader("");
 
         final ExecutorManager executorManager = ExecutorManager.getInstance();
         executorManager.addFXTask(this::loadShader);

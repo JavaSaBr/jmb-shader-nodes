@@ -96,7 +96,7 @@ public class AddMaterialParamShaderNodeAction extends ShaderNodeAction<MaterialD
         definitions.add(new PropertyDefinition(STRING_FROM_LIST, Messages.MODEL_PROPERTY_TYPE, PROP_TYPE, varTypes.first(), varTypes));
 
         if (needDefaultValue()) {
-            definitions.add(new PropertyDefinition(STRING, PluginMessages.PROPERTY_DEFAULT, PROP_DEFAULT, ""));
+            definitions.add(new PropertyDefinition(STRING, Messages.MODEL_PROPERTY_DEFAULT_VALUE, PROP_DEFAULT, ""));
         }
 
         return definitions;

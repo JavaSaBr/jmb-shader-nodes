@@ -30,7 +30,7 @@ public class ShaderNodeDefinitionDefines {
      * @return the list of defines of this definition.
      */
     @FromAnyThread
-    public @NotNull List<ShaderNodeDefinitionDefine> getLocalVariables() {
+    public @NotNull List<ShaderNodeDefinitionDefine> getDefines() {
         return definition.getDefines().stream()
                 .map(name -> new ShaderNodeDefinitionDefine(getDefinition(), name))
                 .collect(toList());

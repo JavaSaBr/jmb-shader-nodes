@@ -4,13 +4,13 @@ import com.jme3.material.TechniqueDef;
 import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
+import com.ss.editor.Messages;
 import com.ss.editor.annotation.FXThread;
-import com.ss.editor.shader.nodes.PluginMessages;
-import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
-import com.ss.editor.shader.nodes.component.shader.nodes.operation.remove.RemoveAttributeVariableOperation;
 import com.ss.editor.shader.nodes.component.shader.nodes.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.component.shader.nodes.action.ShaderNodeAction;
 import com.ss.editor.shader.nodes.component.shader.nodes.main.MainShaderNodeElement;
+import com.ss.editor.shader.nodes.component.shader.nodes.operation.remove.RemoveAttributeVariableOperation;
+import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public class RemoveAttributeShaderNodeAction extends ShaderNodeAction<ShaderNode
     @Override
     @FXThread
     protected @NotNull String getName() {
-        return PluginMessages.ACTION_DELETE;
+        return Messages.MODEL_NODE_TREE_ACTION_REMOVE;
     }
 
     @Override

@@ -1,5 +1,8 @@
 package com.ss.editor.shader.nodes;
 
+import com.jme3.asset.AssetManager;
+import com.jme3.shader.glsl.ASTGlsl150ShaderGenerator;
+import com.ss.editor.Editor;
 import com.ss.editor.FileExtensions;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
@@ -30,9 +33,9 @@ import org.jetbrains.annotations.NotNull;
 @PluginDescription(
         id = "com.ss.editor.shader.nodes",
         version = "1.0.0",
-        minAppVersion = "1.2.0",
+        minAppVersion = "1.3.0",
         name = "Shader Nodes Tools",
-        description = "A plugin with supporting to work with shader nodes materials."
+        description = "A plugin with supporting to work with shader node materials."
 )
 public class ShaderNodesEditorPlugin extends EditorPlugin {
 
@@ -41,6 +44,13 @@ public class ShaderNodesEditorPlugin extends EditorPlugin {
 
     public ShaderNodesEditorPlugin(@NotNull final PluginContainer pluginContainer) {
         super(pluginContainer);
+    }
+
+    @Override
+    public void onAfterCreateJMEContext(@NotNull final PluginSystem pluginSystem) {
+        super.onAfterCreateJMEContext(pluginSystem);
+        final AssetManager assetManager = Editor.getInstance().getAssetManager();
+        assetManager.setShaderGenerator(new ASTGlsl150ShaderGenerator(assetManager));
     }
 
     @FXThread

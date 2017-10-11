@@ -36,15 +36,11 @@ public interface PluginMessages {
     @NotNull String SNS_EDITOR_LABEL_TECHNIQUE = RESOURCE_BUNDLE.getString("SNSEditorLabelTechnique");
     @NotNull String SNS_EDITOR_LABEL_INCORRECT_MD_TO_IMPORT = RESOURCE_BUNDLE.getString("SNSEditorLabelIncorrectMDToImport");
 
-    @NotNull String PROPERTY_DEFAULT = RESOURCE_BUNDLE.getString("PropertyDefault");
-
     @NotNull String VERTEX_ATTRIBUTE = RESOURCE_BUNDLE.getString("VertexAttribute");
     @NotNull String MATERIAL_PARAMETER = RESOURCE_BUNDLE.getString("MaterialParameter");
     @NotNull String MATERIAL_TEXTURE = RESOURCE_BUNDLE.getString("MaterialTexture");
     @NotNull String WORLD_PARAMETER = RESOURCE_BUNDLE.getString("WorldParameter");
     @NotNull String SHADER_NODE = RESOURCE_BUNDLE.getString("ShaderNode");
-    @NotNull String COLOR_SPACE = RESOURCE_BUNDLE.getString("ColorSpace");
-    @NotNull String LIGHT_MODE = RESOURCE_BUNDLE.getString("LightMode");
 
     @NotNull String ACTION_ADD_VERTEX_ATTRIBUTE_TITLE = RESOURCE_BUNDLE.getString("ActionAddVertexAttributeTitle");
     @NotNull String ACTION_ADD_WORLD_PARAMETER_TITLE = RESOURCE_BUNDLE.getString("ActionAddWorldParameterTitle");
@@ -52,8 +48,6 @@ public interface PluginMessages {
     @NotNull String ACTION_ADD_SND_PARAMETER = RESOURCE_BUNDLE.getString("ActionAddSNDParameter");
     @NotNull String ACTION_ADD_SHADER_NODE_DEFINITION = RESOURCE_BUNDLE.getString("ActionAddShaderNodeDefinition");
     @NotNull String ACTION_ADD_SHADER_NODE_SOURCE = RESOURCE_BUNDLE.getString("ActionAddShaderNodeSource");
-
-    @NotNull String ACTION_DELETE = RESOURCE_BUNDLE.getString("ActionDelete");
 
     @NotNull String NODE_ELEMENT_GLOBAL_INPUT = RESOURCE_BUNDLE.getString("NodeElementGlobalInput");
     @NotNull String NODE_ELEMENT_GLOBAL_OUTPUT = RESOURCE_BUNDLE.getString("NodeElementGlobalOutput");
@@ -66,7 +60,5 @@ public interface PluginMessages {
     @NotNull String TREE_NODE_SHADER_NODE_INPUT_PARAMETERS = RESOURCE_BUNDLE.getString("TreeNodeShaderNodeInputParameters");
     @NotNull String TREE_NODE_SHADER_NODE_OUTPUT_PARAMETERS = RESOURCE_BUNDLE.getString("TreeNodeShaderNodeOutputParameters");
     @NotNull String TREE_NODE_SHADER_NODE_SOURCES = RESOURCE_BUNDLE.getString("TreeNodeShaderNodeSources");
-
-    @NotNull String SHADER_PREVIEW_LANGUAGE = RESOURCE_BUNDLE.getString("ShaderPreviewLanguage");
 
 }

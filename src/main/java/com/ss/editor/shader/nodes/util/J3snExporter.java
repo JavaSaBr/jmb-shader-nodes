@@ -69,6 +69,7 @@ public class J3snExporter {
         final List<ShaderNodeVariable> outputs = definition.getOutputs();
 
         final List<String> defines = definition.getDefines();
+        final List<String> imports = definition.getImports();
 
         indent(builder, 2);
 
@@ -103,6 +104,11 @@ public class J3snExporter {
         if (!defines.isEmpty()) {
             builder.append('\n');
             writeStrings(defines, builder, "Defines");
+        }
+
+        if (!imports.isEmpty()) {
+            builder.append('\n');
+            writeStrings(imports, builder, "Imports");
         }
 
         if (!inputs.isEmpty()) {

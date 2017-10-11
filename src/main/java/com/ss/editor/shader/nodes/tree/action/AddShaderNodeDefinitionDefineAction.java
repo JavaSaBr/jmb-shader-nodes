@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * The action to add new local variable.
+ * The action to add new define.
  *
  * @author JavaSaBr
  */

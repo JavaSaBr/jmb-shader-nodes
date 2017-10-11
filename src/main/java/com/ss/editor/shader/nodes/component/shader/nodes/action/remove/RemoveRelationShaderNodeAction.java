@@ -6,18 +6,18 @@ import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.VariableMapping;
+import com.ss.editor.Messages;
 import com.ss.editor.annotation.FXThread;
-import com.ss.editor.shader.nodes.PluginMessages;
-import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
-import com.ss.editor.shader.nodes.component.shader.nodes.operation.detach.InputDetachShaderNodeOperation;
-import com.ss.editor.shader.nodes.component.shader.nodes.operation.detach.OutputDetachShaderNodeOperation;
-import com.ss.editor.shader.nodes.component.shader.nodes.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.component.shader.nodes.ShaderNodeElement;
+import com.ss.editor.shader.nodes.component.shader.nodes.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.component.shader.nodes.action.ShaderNodeAction;
 import com.ss.editor.shader.nodes.component.shader.nodes.global.OutputGlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.component.shader.nodes.line.VariableLine;
 import com.ss.editor.shader.nodes.component.shader.nodes.main.MainShaderNodeElement;
+import com.ss.editor.shader.nodes.component.shader.nodes.operation.detach.InputDetachShaderNodeOperation;
+import com.ss.editor.shader.nodes.component.shader.nodes.operation.detach.OutputDetachShaderNodeOperation;
 import com.ss.editor.shader.nodes.component.shader.nodes.parameter.ShaderNodeParameter;
+import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -35,7 +35,7 @@ public class RemoveRelationShaderNodeAction extends ShaderNodeAction<VariableLin
     @Override
     @FXThread
     protected @NotNull String getName() {
-        return PluginMessages.ACTION_DELETE;
+        return Messages.MODEL_NODE_TREE_ACTION_REMOVE;
     }
 
     @Override
