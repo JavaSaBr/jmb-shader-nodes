@@ -31,12 +31,9 @@
  */
 package com.jme3.shader;
 
-import com.jme3.export.InputCapsule;
-import com.jme3.export.JmeExporter;
-import com.jme3.export.JmeImporter;
-import com.jme3.export.OutputCapsule;
-import com.jme3.export.Savable;
+import com.jme3.export.*;
 import com.jme3.shader.Shader.ShaderType;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,6 +50,7 @@ public class ShaderNodeDefinition implements Savable {
     private List<ShaderNodeVariable> inputs = new ArrayList<>();
     private List<ShaderNodeVariable> outputs = new ArrayList<>();
     private List<String> defines = new ArrayList<>();
+    private List<String> imports = new ArrayList<>();
 
     private List<String> shadersLanguage = new ArrayList<>();
     private List<String> shadersPath = new ArrayList<>();
@@ -102,6 +100,24 @@ public class ShaderNodeDefinition implements Savable {
      */
     public void setDefines(final List<String> defines) {
         this.defines = defines;
+    }
+
+    /**
+     * Gets the list of imports.
+     *
+     * @return the list of imports.
+     */
+    public List<String> getImports() {
+        return imports;
+    }
+
+    /**
+     * Sets the list of imports.
+     *
+     * @param imports the list of imports.
+     */
+    public void setImports(final List<String> imports) {
+        this.imports = imports;
     }
 
     /**
@@ -222,8 +238,10 @@ public class ShaderNodeDefinition implements Savable {
         oc.write(shadersLanguage.toArray(str), "shadersLanguage", null);
         oc.write(shadersPath.toArray(str), "shadersPath", null);
         oc.write(type, "type", null);
+        oc.write(imports.toArray(new String[imports.size()]), "imports", null);
+        oc.write(defines.toArray(new String[defines.size()]), "defines", null);
         oc.writeSavableArrayList((ArrayList) inputs, "inputs", new ArrayList<ShaderNodeVariable>());
-        oc.writeSavableArrayList((ArrayList) outputs, "inputs", new ArrayList<ShaderNodeVariable>());
+        oc.writeSavableArrayList((ArrayList) outputs, "outputs", new ArrayList<ShaderNodeVariable>());
     }
 
     public List<String> getShadersLanguage() {
@@ -242,8 +260,6 @@ public class ShaderNodeDefinition implements Savable {
         this.noOutput = noOutput;
     }
 
-
-
     /**
      * jme serialization (not used)
      *
@@ -252,21 +268,35 @@ public class ShaderNodeDefinition implements Savable {
      */
     @Override
     public void read(JmeImporter im) throws IOException {
-        InputCapsule ic = (InputCapsule) im.getCapsule(this);
+        InputCapsule ic = im.getCapsule(this);
         name = ic.readString("name", "");
 
         String[] str = ic.readStringArray("shadersLanguage", null);
         if (str != null) {
             shadersLanguage = Arrays.asList(str);
         } else {
-            shadersLanguage = new ArrayList<String>();
+            shadersLanguage = new ArrayList<>();
         }
 
         str = ic.readStringArray("shadersPath", null);
         if (str != null) {
             shadersPath = Arrays.asList(str);
         } else {
-            shadersPath = new ArrayList<String>();
+            shadersPath = new ArrayList<>();
+        }
+
+        str = ic.readStringArray("imports", null);
+        if (str != null) {
+            imports = Arrays.asList(str);
+        } else {
+            imports = new ArrayList<>();
+        }
+
+        str = ic.readStringArray("defines", null);
+        if (str != null) {
+            defines = Arrays.asList(str);
+        } else {
+            defines = new ArrayList<>();
         }
 
         type = ic.readEnum("type", Shader.ShaderType.class, null);

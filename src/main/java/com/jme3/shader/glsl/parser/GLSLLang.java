@@ -26,16 +26,6 @@ public class GLSLLang {
     public static final String PR_TYPE_VERSION = "version";
     public static final String PR_TYPE_LINE = "line";
 
-    public static final String PR_IF = "#" + PR_TYPE_IF;
-    public static final String PR_IFDEF = "#" + PR_TYPE_IFDEF;
-    public static final String PR_IFNDEF = "#" + PR_TYPE_IFNDEF;
-    public static final String PR_ELIF = "#" + PR_TYPE_ELIF;
-    public static final String PR_ELSE = "#" + PR_TYPE_ELSE;
-    public static final String PR_ENDIF = "#" + PR_TYPE_ENDIF;
-    public static final String PR_DEFINE = "#" + PR_TYPE_DEFINE;
-    public static final String PR_EXTENSION = "#" + PR_TYPE_EXTENSION;
-    public static final String PR_IMPORT = "#" + PR_TYPE_IMPORT;
-
     public static final Set<String> KEYWORDS = new HashSet<>();
 
     static {
@@ -46,8 +36,10 @@ public class GLSLLang {
         KEYWORDS.add("attribute");
         KEYWORDS.add("discard");
         KEYWORDS.add("if");
+        KEYWORDS.add("elif");
         KEYWORDS.add("endif");
         KEYWORDS.add("defined");
+        KEYWORDS.add("define");
         KEYWORDS.add("else");
         KEYWORDS.add("ifdef");
         KEYWORDS.add("ifndef");
@@ -59,6 +51,7 @@ public class GLSLLang {
         KEYWORDS.add("while");
         KEYWORDS.add("inout");
         KEYWORDS.add("struct");
+        KEYWORDS.add("import");
     }
 
     public static final Set<String> PREPROCESSOR = new HashSet<>();

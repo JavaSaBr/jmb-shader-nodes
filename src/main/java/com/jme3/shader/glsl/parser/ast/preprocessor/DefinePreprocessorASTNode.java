@@ -59,6 +59,6 @@ public class DefinePreprocessorASTNode extends PreprocessorASTNode {
 
     @Override
     protected String getStringAttributes() {
-        return GLSLLang.PR_DEFINE;
+        return GLSLLang.PR_TYPE_DEFINE;
     }
 }

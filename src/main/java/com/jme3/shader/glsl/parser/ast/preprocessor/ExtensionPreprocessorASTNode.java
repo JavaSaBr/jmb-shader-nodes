@@ -59,6 +59,6 @@ public class ExtensionPreprocessorASTNode extends PreprocessorASTNode {
 
     @Override
     protected String getStringAttributes() {
-        return GLSLLang.PR_EXTENSION;
+        return GLSLLang.PR_TYPE_EXTENSION;
     }
 }

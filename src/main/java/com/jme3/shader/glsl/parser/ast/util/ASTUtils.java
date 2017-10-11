@@ -4,10 +4,16 @@ import com.jme3.shader.glsl.parser.GLSLLang;
 import com.jme3.shader.glsl.parser.GLSLParser;
 import com.jme3.shader.glsl.parser.Token;
 import com.jme3.shader.glsl.parser.ast.ASTNode;
+import com.jme3.shader.glsl.parser.ast.NameASTNode;
 import com.jme3.shader.glsl.parser.ast.declaration.MethodDeclarationASTNode;
+import com.jme3.shader.glsl.parser.ast.preprocessor.ExtensionPreprocessorASTNode;
+import com.jme3.shader.glsl.parser.ast.preprocessor.ImportPreprocessorASTNode;
+import com.jme3.shader.glsl.parser.ast.value.StringValueASTNode;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The utility class to work with AST nodes.
@@ -16,36 +22,50 @@ import java.util.List;
  */
 public class ASTUtils {
 
-    public static final Predicate<Token> EMPTY = new Predicate<Token>() {
+    public static final BiPredicate<GLSLParser, char[]> EMPTY = new BiPredicate<GLSLParser, char[]>() {
         @Override
-        public boolean test(final Token token) {
+        public boolean test(final GLSLParser parser, final char[] content) {
             return false;
         }
     };
 
-    public static final Predicate<Token> END_IF = new Predicate<Token>() {
+    public static final BiPredicate<GLSLParser, char[]> END_IF = new BiPredicate<GLSLParser, char[]>() {
         @Override
-        public boolean test(final Token token) {
-            return token.getType() == GLSLParser.TOKEN_PREPROCESSOR && token.getText().equals(GLSLLang.PR_ENDIF);
-        }
-    };
+        public boolean test(final GLSLParser parser, final char[] content) {
 
-    public static final Predicate<Token> END_IF_OR_ELSE_OR_ELSE_IF = new Predicate<Token>() {
-        @Override
-        public boolean test(final Token token) {
+            final Token token = parser.readToken(content);
 
             if (token.getType() != GLSLParser.TOKEN_PREPROCESSOR) {
                 return false;
             }
 
-            final String text = token.getText();
-            return text.equals(GLSLLang.PR_ENDIF) || text.equals(GLSLLang.PR_ELSE) || text.equals(GLSLLang.PR_ELIF);
+            final Token keyWordToken = parser.findToken(content, GLSLParser.TOKEN_KEYWORD);
+            final String text = keyWordToken.getText();
+            return text.equals(GLSLLang.PR_TYPE_ENDIF);
         }
     };
 
-    public static final Predicate<Token> RIGHT_BRACE = new Predicate<Token>() {
+    public static final BiPredicate<GLSLParser, char[]> END_IF_OR_ELSE_OR_ELSE_IF = new BiPredicate<GLSLParser, char[]>() {
         @Override
-        public boolean test(final Token token) {
+        public boolean test(final GLSLParser parser, final char[] content) {
+
+            final Token token = parser.readToken(content);
+
+            if (token.getType() != GLSLParser.TOKEN_PREPROCESSOR) {
+                return false;
+            }
+
+            final Token keyWordToken = parser.findToken(content, GLSLParser.TOKEN_KEYWORD);
+            final String text = keyWordToken.getText();
+            return text.equals(GLSLLang.PR_TYPE_ENDIF) || text.equals(GLSLLang.PR_TYPE_ELSE) ||
+                    text.equals(GLSLLang.PR_TYPE_ELIF);
+        }
+    };
+
+    public static final BiPredicate<GLSLParser, char[]> RIGHT_BRACE = new BiPredicate<GLSLParser, char[]>() {
+        @Override
+        public boolean test(final GLSLParser parser, final char[] content) {
+            final Token token = parser.readToken(content);
             return token.getType() == GLSLParser.TOKEN_RIGHT_BRACE;
         }
     };
@@ -58,9 +78,21 @@ public class ASTUtils {
      * @param <T>  the type.
      * @return the list of all found nodes.
      */
-    public <T extends ASTNode> List<T> findAllByType(final ASTNode node, final Class<T> type) {
+    public static <T extends ASTNode> List<T> findAllByType(final ASTNode node, final Class<T> type) {
+        return findAllByType(node, new ArrayList<>(4), type);
+    }
 
-        final List<T> result = new ArrayList<>();
+    /**
+     * Find all existing nodes.
+     *
+     * @param node   the node.
+     * @param result the result.
+     * @param type   the type.
+     * @param <T>    the type.
+     * @return the list of all found nodes.
+     */
+    public static <T extends ASTNode> List<T> findAllByType(final ASTNode node, final List<T> result,
+                                                            final Class<T> type) {
 
         node.visit(new Predicate<ASTNode>() {
 
@@ -196,5 +228,182 @@ public class ASTUtils {
         }
 
         return String.valueOf(result);
+    }
+
+    /**
+     * Removed duplicates of the extensions.
+     *
+     * @param extensions the extensions.
+     */
+    public static void removeExtensionDuplicates(final List<ExtensionPreprocessorASTNode> extensions) {
+
+        if (extensions.size() < 2) {
+            return;
+        }
+
+        for (Iterator<ExtensionPreprocessorASTNode> iterator = extensions.iterator(); iterator.hasNext(); ) {
+
+            final ExtensionPreprocessorASTNode extension = iterator.next();
+            final NameASTNode name = extension.getExtension();
+
+            boolean isDuplicate = false;
+            for (final ExtensionPreprocessorASTNode other : extensions) {
+                if (Objects.equals(name, other.getExtension())) {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+
+            if (isDuplicate) {
+                iterator.remove();
+            }
+        }
+    }
+
+    /**
+     * Removed duplications of the imports.
+     *
+     * @param imports the imports.
+     */
+    public static void removeImportDuplicates(final List<ImportPreprocessorASTNode> imports) {
+
+        if (imports.size() < 2) {
+            return;
+        }
+
+        for (Iterator<ImportPreprocessorASTNode> iterator = imports.iterator(); iterator.hasNext(); ) {
+
+            final ImportPreprocessorASTNode imp = iterator.next();
+            final StringValueASTNode value = imp.getValue();
+
+            boolean isDuplicate = false;
+            for (final ImportPreprocessorASTNode other : imports) {
+                if (Objects.equals(value, other.getValue())) {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+
+            if (isDuplicate) {
+                iterator.remove();
+            }
+        }
+    }
+
+    /**
+     * Replaces a name of a variable in the source code.
+     *
+     * @param source  the source code.
+     * @param oldName the old name.
+     * @param newName the new name.
+     * @return the updated string.
+     */
+    public static String replaceVar(final String source, final String oldName, final String newName) {
+
+        final StringBuilder result = new StringBuilder(source.length() + newName.length());
+
+        boolean copyOriginal = false;
+
+        for (int i = 0, first = -1, current = 0, last = -1, length = source.length(); i < length; i++) {
+
+            final char ch = source.charAt(i);
+
+            if (first == -1) {
+
+                if (oldName.charAt(0) != ch) {
+                    result.append(ch);
+                    continue;
+                }
+
+                first = i;
+                current = 1;
+                continue;
+            }
+
+            if (ch == oldName.charAt(current)) {
+                current++;
+
+                if (current >= oldName.length()) {
+                    last = i;
+                }
+
+            } else {
+                last = i;
+                copyOriginal = true;
+            }
+
+            if (last == -1) {
+                continue;
+            }
+
+            if (copyOriginal) {
+                result.append(source, first, last + 1);
+                copyOriginal = false;
+                first = -1;
+                last = -1;
+                continue;
+            }
+
+            char prevChar = ' ';
+            char afterChar = ' ';
+
+            if (first > 0) {
+                prevChar = source.charAt(first - 1);
+            }
+
+            if (last < source.length() - 1) {
+                afterChar = source.charAt(last + 1);
+            }
+
+            boolean canBeReplaced = checkPrevVarChar(prevChar);
+            canBeReplaced = canBeReplaced && checkAfterVarChar(afterChar);
+
+            if (canBeReplaced) {
+                result.append(newName);
+            } else {
+                result.append(oldName);
+            }
+
+            first = -1;
+            last = -1;
+        }
+
+        return result.toString();
+    }
+
+    private static boolean checkPrevVarChar(final char prevChar) {
+        switch (prevChar) {
+            case ' ':
+            case ',':
+            case '=':
+            case '+':
+            case '*':
+            case '-':
+            case '/':
+            case '(': {
+                return true;
+            }
+            default:
+                return false;
+        }
+    }
+
+    private static boolean checkAfterVarChar(final char prevChar) {
+        switch (prevChar) {
+            case ' ':
+            case ',':
+            case '=':
+            case '.':
+            case '+':
+            case '*':
+            case '-':
+            case '/':
+            case ';':
+            case ')': {
+                return true;
+            }
+            default:
+                return false;
+        }
     }
 }

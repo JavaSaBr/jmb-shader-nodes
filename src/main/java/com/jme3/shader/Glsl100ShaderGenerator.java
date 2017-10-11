@@ -107,7 +107,7 @@ public class Glsl100ShaderGenerator extends ShaderGenerator {
     protected void generateVaryings(StringBuilder source, ShaderGenerationInfo info, ShaderType type) {
         source.append("\n");
         for (ShaderNodeVariable var : info.getVaryings()) {
-            declareVarying(source, var, type == ShaderType.Vertex ? false : true);
+            declareVarying(source, var, type != ShaderType.Vertex);
         }
     }
 
@@ -140,7 +140,6 @@ public class Glsl100ShaderGenerator extends ShaderGenerator {
         source.append("\n");
         source.append("void main() {\n");
         indent();
-        appendIndent(source);
         if (type == ShaderType.Vertex) {
             declareGlobalPosition(info, source);
         } else if (type == ShaderType.Fragment) {
@@ -572,6 +571,16 @@ public class Glsl100ShaderGenerator extends ShaderGenerator {
         return "GLSL100";
     }
 
+    @Override
+    protected String getLanguage(final ShaderType type) {
+        return "GLSL";
+    }
+
+    @Override
+    protected int getVersion(final ShaderType type) {
+        return 100;
+    }
+
     /**
      * appends indentation.
      * @param source
@@ -614,7 +623,6 @@ public class Glsl100ShaderGenerator extends ShaderGenerator {
      */
     protected void indent() {
         indent++;
-        indent = Math.min(10, indent);
     }
 
     /**

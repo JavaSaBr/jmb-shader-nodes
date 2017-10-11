@@ -6,4 +6,6 @@ package com.jme3.shader.glsl.parser.ast.value;
  * @author JavaSaBr
  */
 public class StringValueASTNode extends ValueASTNode {
+
+
 }

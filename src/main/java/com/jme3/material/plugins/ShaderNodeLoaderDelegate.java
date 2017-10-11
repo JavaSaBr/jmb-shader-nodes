@@ -38,15 +38,9 @@ import com.jme3.material.MatParam;
 import com.jme3.material.MaterialDef;
 import com.jme3.material.ShaderGenerationInfo;
 import com.jme3.material.TechniqueDef;
-import com.jme3.shader.Shader;
-import com.jme3.shader.ShaderNode;
-import com.jme3.shader.ShaderNodeDefinition;
-import com.jme3.shader.ShaderNodeVariable;
-import com.jme3.shader.ShaderUtils;
-import com.jme3.shader.UniformBinding;
-import com.jme3.shader.VarType;
-import com.jme3.shader.VariableMapping;
+import com.jme3.shader.*;
 import com.jme3.util.blockparser.Statement;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -202,17 +196,26 @@ public class ShaderNodeLoaderDelegate {
                             throw new MatParseException(e.getMessage(), statement1, e);
                         }
                     }
-                }  else if (line.startsWith("Defines")) {
-                    for (Statement statement1 : statement.getContents()) {
+                } else if (line.startsWith("Defines")) {
+                    for (final Statement sub : statement.getContents()) {
                         try {
-                            final String[] values = statement1.getLine().split("[ \\{]");
+                            final String[] values = sub.getLine().split("[ \\{]");
                             shaderNodeDefinition.getDefines().add(values[0]);
-                        } catch (RuntimeException e) {
-                            throw new MatParseException(e.getMessage(), statement1, e);
+                        } catch (final RuntimeException e) {
+                            throw new MatParseException(e.getMessage(), sub, e);
+                        }
+                    }
+                } else if (line.startsWith("Imports")) {
+                    for (final Statement sub : statement.getContents()) {
+                        try {
+                            final String[] values = sub.getLine().split("[ \\{]");
+                            shaderNodeDefinition.getImports().add(values[0]);
+                        } catch (final RuntimeException e) {
+                            throw new MatParseException(e.getMessage(), sub, e);
                         }
                     }
                 } else {
-                    throw new MatParseException("one of Type, Shader, Documentation, Input, Output, Defines", split[0], statement);
+                    throw new MatParseException("One of Type, Shader, Documentation, Input, Output, Defines, Imports", split[0], statement);
                 }
             } catch (RuntimeException e) {
                 throw new MatParseException(e.getMessage(), statement, e);

@@ -261,6 +261,22 @@ public abstract class ShaderGenerator {
     protected abstract String getLanguageAndVersion(Shader.ShaderType type);
 
     /**
+     * Gets the shader language of the shader. It should be something like "GLSL".
+     *
+     * @param type the shader type for which the language should be returned.
+     * @return the shader language.
+     */
+    protected abstract String getLanguage(final Shader.ShaderType type);
+
+    /**
+     * Gets the shader version of the shader. It should be something like "100", "150", "310".
+     *
+     * @param type the shader type for which the version should be returned.
+     * @return the shader version.
+     */
+    protected abstract int getVersion(final Shader.ShaderType type);
+
+    /**
      * generates the uniforms declaration for a shader of the given type.
      *
      * @param source the source StringBuilder to append generated code.
@@ -342,28 +358,42 @@ public abstract class ShaderGenerator {
     protected abstract void generateNodeMainSection(StringBuilder source, ShaderNode shaderNode, String nodeSource, ShaderGenerationInfo info);
 
     /**
-     * returns the shaderpath index according to the version of the generator.
+     * Finds the index of a shader source path according to the version of the generator.
      * This allow to select the higher version of the shader that the generator
-     * can handle
+     * can handle.
      *
      * @param shaderNode the shaderNode being processed
-     * @param type the shaderType
-     * @return the index of the shader path in ShaderNodeDefinition shadersPath
-     * list
+     * @param type       the shaderType
+     * @return the index of the shader path in ShaderNodeDefinition shadersPath list.
      * @throws NumberFormatException
      */
-    protected int findShaderIndexFromVersion(ShaderNode shaderNode, ShaderType type) throws NumberFormatException {
+    protected int findShaderIndexFromVersion(final ShaderNode shaderNode, final ShaderType type)
+            throws NumberFormatException {
+
         int index = 0;
-        List<String> lang = shaderNode.getDefinition().getShadersLanguage();
-        int genVersion = Integer.parseInt(getLanguageAndVersion(type).substring(4));
-        int curVersion = 0;
-        for (int i = 0; i < lang.size(); i++) {
-            int version = Integer.parseInt(lang.get(i).substring(4));
-            if (version > curVersion && version <= genVersion) {
-                curVersion = version;
+
+        final ShaderNodeDefinition definition = shaderNode.getDefinition();
+        final List<String> languages = definition.getShadersLanguage();
+
+        final String language = getLanguage(type);
+        final int genVersion = getVersion(type);
+
+        int currentVersion = 0;
+
+        for (int i = 0; i < languages.size(); i++) {
+
+            final String langAndVersion = languages.get(i);
+            if (!langAndVersion.startsWith(language)) {
+                continue;
+            }
+
+            int shaderVersion = Integer.parseInt(langAndVersion.substring(language.length()));
+            if (shaderVersion > currentVersion && shaderVersion <= genVersion) {
+                currentVersion = shaderVersion;
                 index = i;
             }
         }
+
         return index;
     }
 }

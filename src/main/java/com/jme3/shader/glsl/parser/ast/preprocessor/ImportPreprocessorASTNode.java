@@ -35,6 +35,6 @@ public class ImportPreprocessorASTNode extends PreprocessorASTNode {
 
     @Override
     protected String getStringAttributes() {
-        return GLSLLang.PR_IMPORT;
+        return GLSLLang.PR_TYPE_IMPORT;
     }
 }
