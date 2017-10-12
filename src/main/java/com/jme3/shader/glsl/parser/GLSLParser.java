@@ -222,7 +222,7 @@ public class GLSLParser {
         }
 
         if (!PREPROCESSOR_WITH_CONDITION.contains(keyword)) {
-            return parsePreprocessor(token, keywordToken);
+            return parsePreprocessorNode(token, keywordToken, content);
         }
 
         return parseConditionalPreprocessor(token, content, keyword);
@@ -233,9 +233,11 @@ public class GLSLParser {
      *
      * @param token        the preprocessor token.
      * @param keyWordToken the keyword token of the preprocessor.
+     * @param content      the content.
      * @return the preprocessor AST node.
      */
-    private PreprocessorASTNode parsePreprocessor(final Token token, final Token keyWordToken) {
+    private PreprocessorASTNode parsePreprocessorNode(final Token token, final Token keyWordToken,
+                                                      final char[] content) {
 
         final ASTNode parent = nodeStack.getLast();
         final PreprocessorASTNode node = new PreprocessorASTNode();
@@ -244,7 +246,7 @@ public class GLSLParser {
         node.setLine(token.getLine());
         node.setOffset(token.getOffset());
         node.setLength(keyWordToken.getOffset() + keyWordToken.getLength() - node.getOffset());
-        node.setText(token.getText() + keyWordToken.getText());
+        node.setText(String.valueOf(content, node.getOffset(), node.getLength()));
 
         parent.addChild(node);
 
@@ -303,10 +305,11 @@ public class GLSLParser {
 
                 final ConditionalPreprocessorASTNode lastNode = node.getLastNode(ConditionalPreprocessorASTNode.class);
                 final PreprocessorASTNode endNode = lastNode.getEndNode();
-                final Token endToken = new Token(TOKEN_PREPROCESSOR, endNode.getOffset(), endNode.getLine(), endNode.getText());
-                final Token endKeyWordToken = new Token(TOKEN_KEYWORD, endNode.getOffset(), endNode.getLine(), endNode.getText());
+                final String endNodeText = endNode.getText();
 
-                //FIXME
+                final Token endToken = new Token(TOKEN_PREPROCESSOR, endNode.getOffset(), endNode.getLine(), "#");
+                final Token endKeyWordToken = new Token(TOKEN_KEYWORD, endNode.getOffset(), endNode.getLine(), endNodeText);
+
                 node.setEndNode(parsePreprocessor(endToken, endKeyWordToken, content));
             }
 
@@ -374,6 +377,17 @@ public class GLSLParser {
                 node.setParent(parent);
                 node.setLine(token.getLine());
                 node.setOffset(token.getOffset());
+
+                nodeStack.addLast(node);
+                try {
+                    parseValue(token);
+                    parseSymbol(compare);
+                    parseValue(second);
+                } finally {
+                    nodeStack.removeLast();
+                }
+
+                ASTUtils.updateLengthAndText(node, content);
 
                 return node;
             }

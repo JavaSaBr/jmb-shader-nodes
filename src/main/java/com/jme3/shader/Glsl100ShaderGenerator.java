@@ -47,7 +47,7 @@ import java.util.List;
  */
 public class Glsl100ShaderGenerator extends ShaderGenerator {
 
-    private ShaderNodeVariable inPosTmp;
+    protected ShaderNodeVariable inPosTmp;
 
     /**
      * creates a Glsl100ShaderGenerator
@@ -629,7 +629,7 @@ public class Glsl100ShaderGenerator extends ShaderGenerator {
      * makes sure inPosition attribute is of type vec3 or vec4
      * @param var the inPosition attribute
      */
-    private void fixInPositionType(ShaderNodeVariable var) {
+    protected void fixInPositionType(ShaderNodeVariable var) {
         if(!var.getType().equals("vec3") || !var.getType().equals("vec4")){
             var.setType("vec3");
         }
