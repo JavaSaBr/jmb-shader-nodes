@@ -603,9 +603,17 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
             return false;
         }
 
+        final String name = variable.getName();
+        final String prefix = variable.getPrefix();
+
+        final int length = prefix.length() + name.length();
+
         for (final ExternalFieldDeclarationASTNode field : importedFields) {
             final NameASTNode nameASTNode = field.getName();
-            if (nameASTNode.getName().equals(variable.getName())) {
+            final String fieldName = nameASTNode.getName();
+            if (fieldName.length() != length || !fieldName.startsWith(prefix)) {
+                continue;
+            } else if (fieldName.endsWith(name)) {
                 return true;
             }
         }
@@ -642,16 +650,8 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
      */
     protected FileDeclarationASTNode parseShaderSource(final String shaderSourcePath) {
 
-        if (!USE_AST_CACHE) {
-
-            final String loadedSource = assetManager.loadAsset(new AssetKey<>(shaderSourcePath));
-            final GLSLParser parser = GLSLParser.newInstance();
-
-            return parser.parseFileDeclaration(shaderSourcePath, loadedSource);
-        }
-
         final Map<String, FileDeclarationASTNode> cache = AST_CACHE.get();
-        final FileDeclarationASTNode cached = cache.get(shaderSourcePath);
+        final FileDeclarationASTNode cached = USE_AST_CACHE ? cache.get(shaderSourcePath) : null;
 
         if (cached != null) {
             return cached;
@@ -681,7 +681,9 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
         final GLSLParser parser = GLSLParser.newInstance();
         final FileDeclarationASTNode result = parser.parseFileDeclaration(shaderSourcePath, loadedSource);
 
-        cache.put(shaderSourcePath, result);
+        if (USE_AST_CACHE) {
+            cache.put(shaderSourcePath, result);
+        }
 
         return result;
     }
