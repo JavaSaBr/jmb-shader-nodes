@@ -13,12 +13,12 @@ import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.plugin.api.editor.BaseFileEditorWithSplitRightTool;
 import com.ss.editor.shader.nodes.PluginMessages;
+import com.ss.editor.shader.nodes.editor.state.ShaderNodeDefinitionEditorState;
 import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionList;
 import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionShaderSource;
 import com.ss.editor.shader.nodes.util.J3snExporter;
 import com.ss.editor.ui.component.editor.EditorDescription;
 import com.ss.editor.ui.component.editor.state.EditorState;
-import com.ss.editor.ui.component.editor.state.impl.EditorWithEditorToolEditorState;
 import com.ss.editor.ui.component.tab.EditorToolComponent;
 import com.ss.editor.ui.control.code.GLSLCodeArea;
 import com.ss.editor.ui.control.property.PropertyEditor;
@@ -30,6 +30,7 @@ import com.ss.rlib.util.FileUtils;
 import com.ss.rlib.util.StringUtils;
 import com.ss.rlib.util.dictionary.DictionaryFactory;
 import com.ss.rlib.util.dictionary.ObjectDictionary;
+import javafx.scene.control.SplitPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +49,7 @@ import java.util.function.Supplier;
  *
  * @author JavaSaBr
  */
-public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRightTool<EditorWithEditorToolEditorState> {
+public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRightTool<ShaderNodeDefinitionEditorState> {
 
     /**
      * The description of this editor.
@@ -128,6 +129,12 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
                 PluginMessages.SND_EDITOR_TOOL_STRUCTURE);
 
         FXUtils.addClassTo(structureTree.getTreeView(), CSSClasses.TRANSPARENT_TREE_VIEW);
+    }
+
+    @FXThread
+    @Override
+    protected void calcVSplitSize(@NotNull final SplitPane splitPane) {
+        splitPane.setDividerPosition(0, 0.6);
     }
 
     @Override
@@ -333,7 +340,9 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
 
         definitionList = assetManager.loadAsset(key);
 
-        getStructureTree().fill(new ShaderNodeDefinitionList(definitionList));
+        final NodeTree<ChangeConsumer> structureTree = getStructureTree();
+        structureTree.fill(new ShaderNodeDefinitionList(definitionList));
+        //FIXME added auto expand
     }
 
     /**
@@ -416,7 +425,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
     @Override
     @FXThread
     protected @Nullable Supplier<EditorState> getEditorStateFactory() {
-        return EditorWithEditorToolEditorState::new;
+        return ShaderNodeDefinitionEditorState::new;
     }
 
     @Override
