@@ -34,4 +34,17 @@ public class TypeASTNode extends ASTNode {
     protected String getStringAttributes() {
         return getName();
     }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final TypeASTNode that = (TypeASTNode) o;
+        return getName().equals(that.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return getName().hashCode();
+    }
 }

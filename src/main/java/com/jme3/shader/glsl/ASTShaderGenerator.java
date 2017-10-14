@@ -108,6 +108,17 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
     };
 
     /**
+     * The list of declared uniforms in imports.
+     */
+    private static final ThreadLocal<List<ExternalFieldDeclarationASTNode>> IMPORTED_GLOBAL_UNIFORMS = new ThreadLocal<List<ExternalFieldDeclarationASTNode>>() {
+
+        @Override
+        protected List<ExternalFieldDeclarationASTNode> initialValue() {
+            return new ArrayList<>();
+        }
+    };
+
+    /**
      * The list of methods.
      */
     private static final ThreadLocal<List<MethodDeclarationASTNode>> METHODS = new ThreadLocal<List<MethodDeclarationASTNode>>() {
@@ -172,7 +183,32 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
         super.initialize(techniqueDef);
         TECHNIQUE_DEF.set(techniqueDef);
         INDENT.get().set(0);
+        IMPORTED_GLOBAL_UNIFORMS.get().clear();
         prepareShaderNodeSources(techniqueDef.getShaderNodes());
+    }
+
+    @Override
+    public Shader generateShader(final String definesSourceCode) {
+        final TechniqueDef techniqueDef = TECHNIQUE_DEF.get();
+        final Shader result = super.generateShader(definesSourceCode);
+
+        final List<UniformBinding> worldBindings = techniqueDef.getWorldBindings();
+        final List<ExternalFieldDeclarationASTNode> globalUniforms = IMPORTED_GLOBAL_UNIFORMS.get();
+
+        ASTUtils.removeExists(globalUniforms, worldBindings);
+
+        if (!globalUniforms.isEmpty()) {
+            for (final ExternalFieldDeclarationASTNode field : globalUniforms) {
+
+                final NameASTNode nameNode = field.getName();
+                final String name = nameNode.getName();
+
+                final UniformBinding binding = UniformBinding.valueOf(name.substring(2, name.length()));
+                result.addUniformBinding(binding);
+            }
+        }
+
+        return result;
     }
 
     @Override
@@ -203,6 +239,11 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
         importedFields.clear();
 
         generateImports(imports, importedFields, sourceDeclaration);
+
+        final List<ExternalFieldDeclarationASTNode> importedGlobalUniforms = IMPORTED_GLOBAL_UNIFORMS.get();
+
+        ASTUtils.copyGlobalUniforms(importedFields, importedGlobalUniforms);
+
         generateUniforms(sourceDeclaration, info, type);
 
         if (type == ShaderType.Vertex) {

@@ -1,14 +1,15 @@
 package com.jme3.shader.glsl.parser.ast.util;
 
+import com.jme3.shader.UniformBinding;
 import com.jme3.shader.glsl.parser.GLSLLang;
 import com.jme3.shader.glsl.parser.GLSLParser;
 import com.jme3.shader.glsl.parser.Token;
 import com.jme3.shader.glsl.parser.ast.ASTNode;
 import com.jme3.shader.glsl.parser.ast.NameASTNode;
+import com.jme3.shader.glsl.parser.ast.declaration.ExternalFieldDeclarationASTNode;
+import com.jme3.shader.glsl.parser.ast.declaration.ExternalFieldDeclarationASTNode.ExternalFieldType;
 import com.jme3.shader.glsl.parser.ast.declaration.MethodDeclarationASTNode;
 import com.jme3.shader.glsl.parser.ast.preprocessor.ExtensionPreprocessorASTNode;
-import com.jme3.shader.glsl.parser.ast.preprocessor.ImportPreprocessorASTNode;
-import com.jme3.shader.glsl.parser.ast.value.StringValueASTNode;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -261,30 +262,60 @@ public class ASTUtils {
     }
 
     /**
-     * Removed duplications of the imports.
+     * Copies only global uniforms from the first list to the second.
      *
-     * @param imports the imports.
+     * @param fields the list of external field.
+     * @param result the result list.
      */
-    public static void removeImportDuplicates(final List<ImportPreprocessorASTNode> imports) {
-
-        if (imports.size() < 2) {
+    public static void copyGlobalUniforms(final List<ExternalFieldDeclarationASTNode> fields,
+                                          final List<ExternalFieldDeclarationASTNode> result) {
+        if (fields.isEmpty()) {
             return;
         }
 
-        for (Iterator<ImportPreprocessorASTNode> iterator = imports.iterator(); iterator.hasNext(); ) {
+        for (final ExternalFieldDeclarationASTNode field : fields) {
 
-            final ImportPreprocessorASTNode imp = iterator.next();
-            final StringValueASTNode value = imp.getValue();
-
-            boolean isDuplicate = false;
-            for (final ImportPreprocessorASTNode other : imports) {
-                if (Objects.equals(value, other.getValue())) {
-                    isDuplicate = true;
-                    break;
-                }
+            final ExternalFieldType type = field.getFieldType();
+            if (type != ExternalFieldType.UNIFORM) {
+                continue;
             }
 
-            if (isDuplicate) {
+            final NameASTNode nameNode = field.getName();
+            final String name = nameNode.getName();
+
+            if (!name.startsWith("g_")) {
+                continue;
+            }
+
+            if (!result.contains(field)) {
+                result.add(field);
+            }
+        }
+    }
+
+    /**
+     * Removes exists global uniforms from the fields list.
+     *
+     * @param fields   the fields list.
+     * @param bindings the list of exists global uniforms.
+     */
+    public static void removeExists(final List<ExternalFieldDeclarationASTNode> fields,
+                                    final List<UniformBinding> bindings) {
+
+        if (fields.isEmpty() || bindings.isEmpty()) {
+            return;
+        }
+
+        for (Iterator<ExternalFieldDeclarationASTNode> iterator = fields.iterator(); iterator.hasNext(); ) {
+
+            final ExternalFieldDeclarationASTNode field = iterator.next();
+
+            final NameASTNode nameNode = field.getName();
+            final String name = nameNode.getName();
+
+            final UniformBinding binding = UniformBinding.valueOf(name.substring(2, name.length()));
+
+            if (bindings.contains(binding)) {
                 iterator.remove();
             }
         }
