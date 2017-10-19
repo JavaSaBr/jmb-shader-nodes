@@ -71,6 +71,77 @@ public class ASTUtils {
         }
     };
 
+    private static final CharPredicate PREVIOUS_VAR_CHAR_CHECKER = new CharPredicate() {
+        @Override
+        public boolean test(final char value) {
+            switch (value) {
+                case ' ':
+                case ',':
+                case '=':
+                case '+':
+                case '*':
+                case '-':
+                case '/':
+                case '(': {
+                    return true;
+                }
+                default:
+                    return false;
+            }
+        }
+    };
+
+    private static final CharPredicate NEXT_VAR_CHAR_CHECKER = new CharPredicate() {
+        @Override
+        public boolean test(final char value) {
+            switch (value) {
+                case ' ':
+                case ',':
+                case '=':
+                case '.':
+                case '+':
+                case '*':
+                case '-':
+                case '/':
+                case ';':
+                case ')': {
+                    return true;
+                }
+                default:
+                    return false;
+            }
+        }
+    };
+
+    private static final CharPredicate PREVIOUS_METHOD_CHAR_CHECKER = new CharPredicate() {
+        @Override
+        public boolean test(final char value) {
+            return PREVIOUS_VAR_CHAR_CHECKER.test(value);
+        }
+    };
+
+    private static final CharPredicate NEXT_METHOD_CHAR_CHECKER = new CharPredicate() {
+        @Override
+        public boolean test(final char value) {
+            switch (value) {
+                case ' ':
+                case ',':
+                case '=':
+                case '.':
+                case '+':
+                case '*':
+                case '-':
+                case '/':
+                case ';':
+                case '(': {
+                    return true;
+                }
+                default:
+                    return false;
+            }
+        }
+    };
+
     /**
      * Find all existing nodes.
      *
@@ -330,6 +401,33 @@ public class ASTUtils {
      * @return the updated string.
      */
     public static String replaceVar(final String source, final String oldName, final String newName) {
+        return replace(source, oldName, newName, PREVIOUS_VAR_CHAR_CHECKER, NEXT_VAR_CHAR_CHECKER);
+    }
+
+    /**
+     * Replaces a name of a method in the source code.
+     *
+     * @param source  the source code.
+     * @param oldName the old name.
+     * @param newName the new name.
+     * @return the updated string.
+     */
+    public static String replaceMethod(final String source, final String oldName, final String newName) {
+        return replace(source, oldName, newName, PREVIOUS_METHOD_CHAR_CHECKER, NEXT_METHOD_CHAR_CHECKER);
+    }
+
+    /**
+     * Replaces a name in the source code.
+     *
+     * @param source          the source code.
+     * @param oldName         the old name.
+     * @param newName         the new name.
+     * @param prevCharChecker the checker of a previous char.
+     * @param nextCharChecker the checker of a next char.
+     * @return the updated string.
+     */
+    public static String replace(final String source, final String oldName, final String newName,
+                                 final CharPredicate prevCharChecker, final CharPredicate nextCharChecker) {
 
         final StringBuilder result = new StringBuilder(source.length() + newName.length());
 
@@ -351,7 +449,7 @@ public class ASTUtils {
                 continue;
             }
 
-            if (ch == oldName.charAt(current)) {
+            if (current < oldName.length() && ch == oldName.charAt(current)) {
                 current++;
 
                 if (current >= oldName.length()) {
@@ -386,8 +484,8 @@ public class ASTUtils {
                 afterChar = source.charAt(last + 1);
             }
 
-            boolean canBeReplaced = checkPrevVarChar(prevChar);
-            canBeReplaced = canBeReplaced && checkAfterVarChar(afterChar);
+            boolean canBeReplaced = prevCharChecker.test(prevChar);
+            canBeReplaced = canBeReplaced && nextCharChecker.test(afterChar);
 
             if (canBeReplaced) {
                 result.append(newName);
@@ -400,41 +498,5 @@ public class ASTUtils {
         }
 
         return result.toString();
-    }
-
-    private static boolean checkPrevVarChar(final char prevChar) {
-        switch (prevChar) {
-            case ' ':
-            case ',':
-            case '=':
-            case '+':
-            case '*':
-            case '-':
-            case '/':
-            case '(': {
-                return true;
-            }
-            default:
-                return false;
-        }
-    }
-
-    private static boolean checkAfterVarChar(final char prevChar) {
-        switch (prevChar) {
-            case ' ':
-            case ',':
-            case '=':
-            case '.':
-            case '+':
-            case '*':
-            case '-':
-            case '/':
-            case ';':
-            case ')': {
-                return true;
-            }
-            default:
-                return false;
-        }
     }
 }

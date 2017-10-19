@@ -26,6 +26,12 @@ public class GLSLLang {
     public static final String PR_TYPE_VERSION = "version";
     public static final String PR_TYPE_LINE = "line";
 
+
+    public static final String KW_IF = "if";
+    public static final String KW_ELSE = "else";
+    public static final String KW_DISCARD = "discard";
+    public static final String KW_FOR = "for";
+
     public static final Set<String> KEYWORDS = new HashSet<>();
 
     static {
@@ -44,6 +50,7 @@ public class GLSLLang {
         KEYWORDS.add("ifdef");
         KEYWORDS.add("ifndef");
         KEYWORDS.add("const");
+        KEYWORDS.add("discard");
         KEYWORDS.add("break");
         KEYWORDS.add("continue");
         KEYWORDS.add("do");

@@ -263,8 +263,16 @@ public class Glsl100ShaderGenerator extends ShaderGenerator {
         final ShaderNodeDefinition definition = shaderNode.getDefinition();
 
         for (final ShaderNodeVariable var : definition.getInputs()) {
-            final ShaderNodeVariable variable = new ShaderNodeVariable(var.getType(), shaderNode.getName(), var.getName(), var.getMultiplicity());
+
+            if (var.getDefaultValue() == null) {
+                continue;
+            }
+
+            final ShaderNodeVariable variable = new ShaderNodeVariable(var.getType(), shaderNode.getName(),
+                    var.getName(), var.getMultiplicity());
+
             final String fullName = shaderNode.getName() + "_" + var.getName();
+
             if (!declaredInputs.contains(fullName)) {
                 if (!isVarying(info, variable)) {
                     declareVariable(source, variable);

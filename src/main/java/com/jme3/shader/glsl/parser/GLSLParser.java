@@ -4,6 +4,8 @@ import static com.jme3.shader.glsl.parser.GLSLLang.KEYWORDS;
 import static com.jme3.shader.glsl.parser.GLSLLang.PREPROCESSOR_WITH_CONDITION;
 import static java.util.Objects.requireNonNull;
 import com.jme3.shader.glsl.parser.ast.*;
+import com.jme3.shader.glsl.parser.ast.branching.ForASTNode;
+import com.jme3.shader.glsl.parser.ast.branching.IfASTNode;
 import com.jme3.shader.glsl.parser.ast.branching.condition.*;
 import com.jme3.shader.glsl.parser.ast.declaration.ExternalFieldDeclarationASTNode;
 import com.jme3.shader.glsl.parser.ast.declaration.ExternalFieldDeclarationASTNode.ExternalFieldType;
@@ -18,10 +20,7 @@ import com.jme3.shader.glsl.parser.ast.value.ExtensionStatusValueASTNode;
 import com.jme3.shader.glsl.parser.ast.value.StringValueASTNode;
 import com.jme3.shader.glsl.parser.ast.value.ValueASTNode;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The parser of GLSL code.
@@ -46,6 +45,9 @@ public class GLSLParser {
     public static final int TOKEN_COLON = 15;
     public static final int TOKEN_SINGLE_COMMENT = 16;
     public static final int TOKEN_COMPARE = 17;
+    public static final int TOKEN_DOT = 18;
+    public static final int TOKEN_LEFT_BRACKET = 19;
+    public static final int TOKEN_RIGHT_BRACKET = 20;
 
     public static final int LEVEL_FILE = 1;
     public static final int LEVEL_STRUCT = 2;
@@ -173,7 +175,13 @@ public class GLSLParser {
                 parsePreprocessor(token, findToken(content, TOKEN_KEYWORD), content);
             } else if (token.getType() == TOKEN_KEYWORD) {
 
-                if (level == LEVEL_FILE) {
+                if (GLSLLang.KW_IF.equals(token.getText())) {
+                    parseIf(token, content);
+                } else if (GLSLLang.KW_FOR.equals(token.getText())) {
+                    parseFor(token, content);
+                }  else if (GLSLLang.KW_DISCARD.equals(token.getText())) {
+                    parseDiscard(token);
+                } else if (level == LEVEL_FILE) {
                     parseExternalFieldDeclaration(token, content);
                 }
 
@@ -187,14 +195,14 @@ public class GLSLParser {
 
                     saveState();
                     try {
-                        secondToken = findToken(content, TOKEN_ASSIGN, TOKEN_WORD);
+                        secondToken = findToken(content, TOKEN_ASSIGN, TOKEN_DOT, TOKEN_WORD);
                     } finally {
                         restoreState();
                     }
 
                     if (secondToken.getType() == TOKEN_WORD) {
                         parseLocalVarDeclaration(token, content);
-                    } else if (secondToken.getType() == TOKEN_ASSIGN) {
+                    } else if (secondToken.getType() == TOKEN_ASSIGN || secondToken.getType() == TOKEN_DOT) {
                         parseAssignExpression(token, content);
                     }
                 }
@@ -316,6 +324,92 @@ public class GLSLParser {
 
                 node.setEndNode(parsePreprocessor(endToken, endKeyWordToken, content));
             }
+
+        } finally {
+            nodeStack.removeLast();
+        }
+
+        ASTUtils.updateLengthAndText(node, content);
+
+        parent.addChild(node);
+
+        return node;
+    }
+
+    /**
+     * Parse an 'if' AST node.
+     *
+     * @param token   the 'if' token.
+     * @param content the content.
+     * @return the 'if' AST node.
+     */
+    private IfASTNode parseIf(final Token token, final char[] content) {
+
+        final ASTNode parent = nodeStack.getLast();
+        final IfASTNode node = new IfASTNode();
+        node.setParent(parent);
+        node.setLine(token.getLine());
+        node.setOffset(token.getOffset());
+
+        nodeStack.addLast(node);
+        try {
+
+            node.setCondition(parseCondition(null, content));
+            node.setBody(parseBody(content, ASTUtils.RIGHT_BRACE));
+
+            final Token nextToken = findToken(content, TOKEN_RIGHT_BRACE, TOKEN_KEYWORD);
+
+            if (nextToken.getType() == TOKEN_WORD && GLSLLang.KW_ELSE.equals(nextToken.getText())) {
+                node.setElseNode(parseValue(nextToken));
+                node.setElseBody(parseBody(content, ASTUtils.RIGHT_BRACE));
+                parseValue(findToken(content, TOKEN_RIGHT_BRACE));
+            } else if (nextToken.getType() == TOKEN_RIGHT_BRACE) {
+                parseValue(nextToken);
+            }
+
+        } finally {
+            nodeStack.removeLast();
+        }
+
+        ASTUtils.updateLengthAndText(node, content);
+
+        parent.addChild(node);
+
+        return node;
+    }
+
+    /**
+     * Parse an 'for' AST node.
+     *
+     * @param token   the 'for' token.
+     * @param content the content.
+     * @return the 'for' AST node.
+     */
+    private ForASTNode parseFor(final Token token, final char[] content) {
+
+        final Token leftToken = findToken(content, TOKEN_LEFT_PARENTHESIS);
+        final Token rightToken = findToken(content, TOKEN_RIGHT_PARENTHESIS);
+
+        final ASTNode parent = nodeStack.getLast();
+        final ForASTNode node = new ForASTNode();
+        node.setParent(parent);
+        node.setLine(token.getLine());
+        node.setOffset(token.getOffset());
+
+        nodeStack.addLast(node);
+        try {
+
+            final Token startBodyToken = findToken(content, TOKEN_LEFT_BRACE);
+
+            parseSymbol(leftToken);
+            parseSymbol(rightToken);
+            parseSymbol(startBodyToken);
+
+            node.setBody(parseBody(content, ASTUtils.RIGHT_BRACE));
+
+            final Token endBodyToken = findToken(content, TOKEN_RIGHT_BRACE);
+
+            parseSymbol(endBodyToken);
 
         } finally {
             nodeStack.removeLast();
@@ -1031,6 +1125,28 @@ public class GLSLParser {
     }
 
     /**
+     * Parse a discard AST node.
+     *
+     * @param token the token.
+     * @return the discard AST node.
+     */
+    private DiscardASTNode parseDiscard(final Token token) {
+
+        final String text = token.getText();
+        final ASTNode parent = nodeStack.getLast();
+        final DiscardASTNode node = new DiscardASTNode();
+        node.setParent(parent);
+        node.setLine(token.getLine());
+        node.setOffset(token.getOffset());
+        node.setLength(token.getLength());
+        node.setText(text);
+
+        parent.addChild(node);
+
+        return node;
+    }
+
+    /**
      * Parse a string value AST node.
      *
      * @param token the token.
@@ -1292,7 +1408,25 @@ public class GLSLParser {
             if (currentToken == null) {
                 switch (ch) {
                     case ';': {
+
+                        final Token token = tryToGetToken(text);
+                        if (token != null) return token;
+
                         return handleCharToken(text, ch, TOKEN_SEMICOLON);
+                    }
+                    case '[': {
+
+                        final Token token = tryToGetToken(text);
+                        if (token != null) return token;
+
+                        return handleCharToken(text, ch, TOKEN_LEFT_BRACKET);
+                    }
+                    case ']': {
+
+                        final Token token = tryToGetToken(text);
+                        if (token != null) return token;
+
+                        return handleCharToken(text, ch, TOKEN_RIGHT_BRACKET);
                     }
                     case '(': {
 
@@ -1300,6 +1434,17 @@ public class GLSLParser {
                         if (token != null) return token;
 
                         return handleCharToken(text, ch, TOKEN_LEFT_PARENTHESIS);
+                    }
+                    case '.': {
+
+                        if (text != null && isNumber(text)) {
+                            break;
+                        }
+
+                        final Token token = tryToGetToken(text);
+                        if (token != null) return token;
+
+                        return handleCharToken(text, ch, TOKEN_DOT);
                     }
                     case ')': {
                         return handleCharToken(text, ch, TOKEN_RIGHT_PARENTHESIS);
@@ -1314,6 +1459,10 @@ public class GLSLParser {
                         return handleCharToken(text, ch, TOKEN_EXCLAMATION_MARK);
                     }
                     case '=': {
+
+                        final Token token = tryToGetToken(text);
+                        if (token != null) return token;
+
                         if (text == null && content[offset] != '=') {
                             return handleCharToken(text, ch, TOKEN_ASSIGN);
                         }
@@ -1370,6 +1519,14 @@ public class GLSLParser {
                 return new Token(TOKEN_COMPARE, offset - text.length(), line, text);
             } else if ("==".equals(text)) {
                 return new Token(TOKEN_COMPARE, offset - text.length(), line, text);
+            } else if ("-=".equals(text)) {
+                return new Token(TOKEN_ASSIGN, offset - text.length(), line, text);
+            } else if ("+=".equals(text)) {
+                return new Token(TOKEN_ASSIGN, offset - text.length(), line, text);
+            } else if ("*=".equals(text)) {
+                return new Token(TOKEN_ASSIGN, offset - text.length(), line, text);
+            } else if ("/=".equals(text)) {
+                return new Token(TOKEN_ASSIGN, offset - text.length(), line, text);
             } else if ("//".equals(text)) {
                 splitChars = SINGLE_COMMENT_SPLIT_CHARS;
                 setCurrentToken(new Token(TOKEN_SINGLE_COMMENT, line, offset - 1));
@@ -1425,10 +1582,8 @@ public class GLSLParser {
             return false;
         }
 
-        try {
-            Double.parseDouble(text);
+        if (isNumber(text)) {
             return true;
-        } catch (final NumberFormatException e) {
         }
 
         for (int i = 0, length = text.length(); i < length; i++) {
@@ -1439,6 +1594,16 @@ public class GLSLParser {
         }
 
         return true;
+    }
+
+    private boolean isNumber(final String text) {
+        if (text == null) return false;
+        try {
+            Double.parseDouble(text);
+            return true;
+        } catch (final NumberFormatException e) {
+        }
+        return false;
     }
 
     private String getText(final String text) {

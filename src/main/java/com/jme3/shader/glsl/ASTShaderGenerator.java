@@ -363,8 +363,16 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
             }
 
             for (final ShaderNodeVariable var : definition.getInputs()) {
-                final ShaderNodeVariable variable = new ShaderNodeVariable(var.getType(), shaderNode.getName(), var.getName(), var.getMultiplicity());
+
+                if (var.getDefaultValue() == null) {
+                    continue;
+                }
+
+                final ShaderNodeVariable variable = new ShaderNodeVariable(var.getType(), shaderNode.getName(),
+                        var.getName(), var.getMultiplicity());
+
                 final String fullName = shaderNode.getName() + "_" + var.getName();
+
                 if (!declaredInputs.contains(fullName)) {
                     if (!isVarying(info, variable)) {
                         declareVariable(source, variable);
@@ -428,7 +436,7 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
             }
 
             // replace calls of the declared methods.
-            methodBodySource = methodBodySource.replace(name, shaderNode.getName() + "_" + name);
+            methodBodySource = ASTUtils.replaceMethod(methodBodySource, name, shaderNode.getName() + "_" + name);
         }
 
         return methodBodySource;

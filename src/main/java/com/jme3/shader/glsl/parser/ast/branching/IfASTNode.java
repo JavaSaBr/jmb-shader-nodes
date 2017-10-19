@@ -1,14 +1,15 @@
-package com.jme3.shader.glsl.parser.ast.preprocessor;
+package com.jme3.shader.glsl.parser.ast.branching;
 
+import com.jme3.shader.glsl.parser.ast.ASTNode;
 import com.jme3.shader.glsl.parser.ast.BodyASTNode;
 import com.jme3.shader.glsl.parser.ast.branching.condition.ConditionASTNode;
 
 /**
- * The node to present conditional preprocessor.
+ * The node to present an 'if' a statement in the code.
  *
  * @author JavaSaBr
  */
-public class ConditionalPreprocessorASTNode extends PreprocessorASTNode {
+public class IfASTNode extends ASTNode {
 
     /**
      * The condition.
@@ -28,12 +29,7 @@ public class ConditionalPreprocessorASTNode extends PreprocessorASTNode {
     /**
      * The else node.
      */
-    private PreprocessorASTNode elseNode;
-
-    /**
-     * The end node.
-     */
-    private PreprocessorASTNode endNode;
+    private ASTNode elseNode;
 
     /**
      * Gets the condition.
@@ -94,7 +90,7 @@ public class ConditionalPreprocessorASTNode extends PreprocessorASTNode {
      *
      * @return the else node.
      */
-    public PreprocessorASTNode getElseNode() {
+    public ASTNode getElseNode() {
         return elseNode;
     }
 
@@ -103,25 +99,7 @@ public class ConditionalPreprocessorASTNode extends PreprocessorASTNode {
      *
      * @param elseNode the else node.
      */
-    public void setElseNode(final PreprocessorASTNode elseNode) {
+    public void setElseNode(final ASTNode elseNode) {
         this.elseNode = elseNode;
-    }
-
-    /**
-     * Gets the end node.
-     *
-     * @return the end node.
-     */
-    public PreprocessorASTNode getEndNode() {
-        return endNode;
-    }
-
-    /**
-     * Sets the end node.
-     *
-     * @param endNode the end node.
-     */
-    public void setEndNode(final PreprocessorASTNode endNode) {
-        this.endNode = endNode;
     }
 }
