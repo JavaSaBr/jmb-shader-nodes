@@ -10,6 +10,7 @@ import com.ss.editor.FileExtensions;
 import com.ss.editor.annotation.BackgroundThread;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
+import com.ss.editor.extension.property.EditableProperty;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.plugin.api.editor.BaseFileEditorWithSplitRightTool;
 import com.ss.editor.shader.nodes.PluginMessages;
@@ -342,7 +343,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
 
         final NodeTree<ChangeConsumer> structureTree = getStructureTree();
         structureTree.fill(new ShaderNodeDefinitionList(definitionList));
-        //FIXME added auto expand
+        structureTree.expandToLevel(1);
     }
 
     /**
@@ -461,5 +462,11 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
 
         final NodeTree<ChangeConsumer> structureTree = getStructureTree();
         structureTree.notifyChanged(parent, object);
+
+        final PropertyEditor<ChangeConsumer> propertyEditor = getPropertyEditor();
+
+        if (object instanceof EditableProperty) {
+            propertyEditor.refresh();
+        }
     }
 }

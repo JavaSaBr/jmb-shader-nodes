@@ -39,7 +39,7 @@ public class MainShaderNodeElement extends ShaderNodeElement<ShaderNode> {
     @Override
     @FXThread
     protected @NotNull String getTitleText() {
-        return getObject().getName();
+        return getObject().getDefinition().getName();
     }
 
 

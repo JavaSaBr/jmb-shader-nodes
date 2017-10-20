@@ -1,5 +1,6 @@
 package com.jme3.shader.glsl.parser.ast.util;
 
+import com.jme3.shader.ShaderNode;
 import com.jme3.shader.UniformBinding;
 import com.jme3.shader.glsl.parser.GLSLLang;
 import com.jme3.shader.glsl.parser.GLSLParser;
@@ -10,6 +11,7 @@ import com.jme3.shader.glsl.parser.ast.declaration.ExternalFieldDeclarationASTNo
 import com.jme3.shader.glsl.parser.ast.declaration.ExternalFieldDeclarationASTNode.ExternalFieldType;
 import com.jme3.shader.glsl.parser.ast.declaration.MethodDeclarationASTNode;
 import com.jme3.shader.glsl.parser.ast.preprocessor.ExtensionPreprocessorASTNode;
+import com.jme3.shader.glsl.parser.ast.value.DefineValueASTNode;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -141,6 +143,65 @@ public class ASTUtils {
             }
         }
     };
+
+    private static final CharPredicate PREVIOUS_DEFINE_CHAR_CHECKER = new CharPredicate() {
+        @Override
+        public boolean test(final char value) {
+            switch (value) {
+                case ' ':
+                case '(': {
+                    return true;
+                }
+                default:
+                    return false;
+            }
+        }
+    };
+
+    private static final CharPredicate NEXT_DEFINE_CHAR_CHECKER = new CharPredicate() {
+        @Override
+        public boolean test(final char value) {
+            switch (value) {
+                case ' ':
+                case ')': {
+                    return true;
+                }
+                default:
+                    return false;
+            }
+        }
+    };
+
+    /**
+     * Checks the name of define.
+     *
+     * @param defineName the define name.
+     * @return true if this define is shader node define.
+     */
+    public static boolean isShaderNodeDefine(final String defineName) {
+        return defineName.startsWith("SD_USE_") || defineName.startsWith("SD_IS_SET_");
+    }
+
+    /**
+     * Checks the name of define.
+     *
+     * @param defineName the define name.
+     * @return true if this define is shader node variable define.
+     */
+    public static boolean isShaderNodeVarDefine(final String defineName) {
+        return defineName.startsWith("SD_IS_SET_");
+    }
+
+    /**
+     * Converts the define name to the result define name.
+     *
+     * @param shaderNode the shader node.
+     * @param defineName the define name.
+     * @return the result define name.
+     */
+    public static String toResultDefineVarName(final ShaderNode shaderNode, final String defineName) {
+        return shaderNode.getName() + "_SD_IS_SET_" + defineName;
+    }
 
     /**
      * Find all existing nodes.
@@ -320,7 +381,37 @@ public class ASTUtils {
 
             boolean isDuplicate = false;
             for (final ExtensionPreprocessorASTNode other : extensions) {
-                if (Objects.equals(name, other.getExtension())) {
+                if (other != extension && Objects.equals(name, other.getExtension())) {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+
+            if (isDuplicate) {
+                iterator.remove();
+            }
+        }
+    }
+
+    /**
+     * Removed duplicates of the define values.
+     *
+     * @param defineValues the define values.
+     */
+    public static void removeDefineValueDuplicates(final List<DefineValueASTNode> defineValues) {
+
+        if (defineValues.size() < 2) {
+            return;
+        }
+
+        for (Iterator<DefineValueASTNode> iterator = defineValues.iterator(); iterator.hasNext(); ) {
+
+            final DefineValueASTNode defineValue = iterator.next();
+            final String value = defineValue.getValue();
+
+            boolean isDuplicate = false;
+            for (final DefineValueASTNode other : defineValues) {
+                if (other != defineValue && Objects.equals(value, other.getValue())) {
                     isDuplicate = true;
                     break;
                 }
@@ -393,6 +484,29 @@ public class ASTUtils {
     }
 
     /**
+     * Copies defined variables from the list of define value nodes.
+     *
+     * @param defineValueNodes the list of all define value nodes.
+     * @param definedVariables the lit of defined variables.
+     */
+    public static void copyDefinedVariables(final List<DefineValueASTNode> defineValueNodes,
+                                            final List<String> definedVariables) {
+
+        if (defineValueNodes.isEmpty()) {
+            return;
+        }
+
+        for (final DefineValueASTNode defineValueNode : defineValueNodes) {
+            final String value = defineValueNode.getValue();
+            if (!isShaderNodeVarDefine(value)) {
+                continue;
+            }
+
+            definedVariables.add(value.substring("SD_IS_SET_".length(), value.length()));
+        }
+    }
+
+    /**
      * Replaces a name of a variable in the source code.
      *
      * @param source  the source code.
@@ -402,6 +516,18 @@ public class ASTUtils {
      */
     public static String replaceVar(final String source, final String oldName, final String newName) {
         return replace(source, oldName, newName, PREVIOUS_VAR_CHAR_CHECKER, NEXT_VAR_CHAR_CHECKER);
+    }
+
+    /**
+     * Replaces a name of a define in the source code.
+     *
+     * @param source  the source code.
+     * @param oldName the old name.
+     * @param newName the new name.
+     * @return the updated string.
+     */
+    public static String replaceDefine(final String source, final String oldName, final String newName) {
+        return replace(source, oldName, newName, PREVIOUS_DEFINE_CHAR_CHECKER, NEXT_DEFINE_CHAR_CHECKER);
     }
 
     /**
@@ -428,6 +554,10 @@ public class ASTUtils {
      */
     public static String replace(final String source, final String oldName, final String newName,
                                  final CharPredicate prevCharChecker, final CharPredicate nextCharChecker) {
+
+        if (!source.contains(oldName)) {
+            return source;
+        }
 
         final StringBuilder result = new StringBuilder(source.length() + newName.length());
 
