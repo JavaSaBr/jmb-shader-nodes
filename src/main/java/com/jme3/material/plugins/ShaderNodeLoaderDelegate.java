@@ -675,18 +675,12 @@ public class ShaderNodeLoaderDelegate {
             }
             if (shaderNode.getDefinition().getType() == Shader.ShaderType.Vertex) {
                 if (updateRightFromUniforms(param, mapping, vertexDeclaredUniforms, statement1)) {
+                    updateMaterialTextureType(statement1, mapping, left, param);
                     storeVertexUniform(mapping.getRightVariable());
                 }
             } else {
                 if (updateRightFromUniforms(param, mapping, fragmentDeclaredUniforms, statement1)) {
-                    if (mapping.getRightVariable().getType().contains("|")) {
-                        String type = fixSamplerType(left.getType(), mapping.getRightVariable().getType());
-                        if (type != null) {
-                            mapping.getRightVariable().setType(type);
-                        } else {
-                            throw new MatParseException(param.getVarType().toString() + " can only be matched to one of " + param.getVarType().getGlslType().replaceAll("\\|", ",") + " found " + left.getType(), statement1);
-                        }
-                    }
+                    updateMaterialTextureType(statement1, mapping, left, param);
                     storeFragmentUniform(mapping.getRightVariable());
                 }
             }
@@ -726,6 +720,23 @@ public class ShaderNodeLoaderDelegate {
         checkTypes(mapping, statement1);
 
         return mapping;
+    }
+
+    private void updateMaterialTextureType(final Statement statement1, final VariableMapping mapping,
+                                           final ShaderNodeVariable left, final MatParam param) throws MatParseException {
+
+        if (!mapping.getRightVariable().getType().contains("|")) {
+            return;
+        }
+
+        final String type = fixSamplerType(left.getType(), mapping.getRightVariable().getType());
+
+        if (type != null) {
+            mapping.getRightVariable().setType(type);
+        } else {
+            throw new MatParseException(param.getVarType().toString() + " can only be matched to one of " +
+                    param.getVarType().getGlslType().replaceAll("\\|", ",") + " found " + left.getType(), statement1);
+        }
     }
 
     /**

@@ -266,36 +266,55 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
 
         ASTUtils.removeExtensionDuplicates(extensions);
 
-        final StringBuilder sourceDeclaration = new StringBuilder();
-        final StringBuilder source = new StringBuilder();
+        final StringBuilder headerSource = new StringBuilder();
+        final StringBuilder importsSource = new StringBuilder();
+        final StringBuilder uniformsSource = new StringBuilder();
+        final StringBuilder methodsSource = new StringBuilder();
+        final StringBuilder mainSource = new StringBuilder();
 
-        generateExtensions(extensions, sourceDeclaration);
+        generateExtensions(extensions, headerSource);
 
         final List<ExternalFieldDeclarationASTNode> importedUniforms = IMPORTED_UNIFORMS.get();
         importedUniforms.clear();
 
-        generateImports(imports, importedUniforms, sourceDeclaration);
+        generateImports(imports, importedUniforms, importsSource);
 
         final List<ExternalFieldDeclarationASTNode> importedGlobalUniforms = IMPORTED_GLOBAL_UNIFORMS.get();
 
         ASTUtils.copyGlobalUniforms(importedUniforms, importedGlobalUniforms);
 
-        generateUniforms(sourceDeclaration, info, type);
+        generateUniforms(uniformsSource, info, type);
 
         if (type == ShaderType.Vertex) {
-            generateAttributes(sourceDeclaration, info);
+            generateAttributes(uniformsSource, info);
         }
 
-        generateVaryings(sourceDeclaration, info, type);
-        generateMethods(shaderNodes, type, sourceDeclaration);
-        generateStartOfMainSection(source, info, type);
-        generateDeclarationAndMainBody(shaderNodes, sourceDeclaration, source, info, type);
-        generateEndOfMainSection(source, info, type);
-        generateVarDefines(sourceDeclaration);
+        generateVaryings(uniformsSource, info, type);
+        generateMethods(shaderNodes, type, methodsSource);
+        generateStartOfMainSection(mainSource, info, type);
+        generateDeclarationAndMainBody(shaderNodes, null, mainSource, info, type);
+        generateEndOfMainSection(mainSource, info, type);
+        generateVarDefines(headerSource);
 
-        sourceDeclaration.append(source);
+        final StringBuilder result = new StringBuilder();
 
-        return sourceDeclaration.toString();
+        if (headerSource.length() > 0) {
+            result.append(headerSource).append('\n');
+        }
+
+        if (importsSource.length() > 0) {
+            result.append(importsSource);
+        }
+
+        if (uniformsSource.length() > 0) {
+            result.append(uniformsSource).append('\n');
+        }
+
+        if (methodsSource.length() > 0) {
+            result.append(methodsSource).append('\n');
+        }
+
+        return result.append(mainSource).toString();
     }
 
     /**
@@ -692,7 +711,9 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
         for (final String anImport : imports) {
             final FileDeclarationASTNode shaderFile = parseShaderSource(anImport);
             findAllByType(shaderFile, importedUniforms, ExternalFieldDeclarationASTNode.class);
+            builder.append("// ------ Started ").append(anImport).append(" ------ //\n");
             builder.append(shaderFile.getText()).append('\n');
+            builder.append("// ------ Finished ").append(anImport).append(" ------ //\n\n");
         }
 
         builder.append('\n');
@@ -736,7 +757,6 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
 
         final List<ExternalFieldDeclarationASTNode> importedFields = IMPORTED_UNIFORMS.get();
 
-        source.append("\n");
         for (final ShaderNodeVariable var : uniforms) {
             if (isExist(var, importedFields)) continue;
             declareVariable(source, var, false, "uniform");
@@ -747,8 +767,6 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
     protected void generateAttributes(final StringBuilder source, final ShaderGenerationInfo info) {
 
         final List<ExternalFieldDeclarationASTNode> importedFields = IMPORTED_UNIFORMS.get();
-
-        source.append("\n");
 
         boolean inPosition = false;
 

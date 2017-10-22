@@ -80,8 +80,7 @@ public class ASTGlsl150ShaderGenerator extends ASTGlsl100ShaderGenerator {
     private void generateCompatibilityDefines(StringBuilder source, ShaderType type) {
         //Adding compatibility defines, as it's more efficient than replacing the function calls in the source code
         if (type == ShaderType.Fragment) {
-            source.append("\n")
-                    .append("#define texture1D texture\n")
+            source.append("#define texture1D texture\n")
                     .append("#define texture2D texture\n")
                     .append("#define texture3D texture\n")
                     .append("#define textureCube texture\n")
