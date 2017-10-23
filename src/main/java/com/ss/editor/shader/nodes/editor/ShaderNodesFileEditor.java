@@ -30,11 +30,12 @@ import com.ss.editor.plugin.api.editor.material.BaseMaterialFileEditor;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
 import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.ShaderNodesEditorPlugin;
-import com.ss.editor.shader.nodes.component.preview.shader.FragmentShaderCodePreviewComponent;
 import com.ss.editor.shader.nodes.component.preview.material.definition.MaterialDefCodePreviewComponent;
+import com.ss.editor.shader.nodes.component.preview.shader.FragmentShaderCodePreviewComponent;
 import com.ss.editor.shader.nodes.component.preview.shader.ShaderCodePreviewComponent;
 import com.ss.editor.shader.nodes.component.preview.shader.VertexShaderCodePreviewComponent;
 import com.ss.editor.shader.nodes.component.shader.nodes.ShaderNodesContainer;
+import com.ss.editor.shader.nodes.component.shader.nodes.global.GlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.component.shader.nodes.operation.add.AddTechniqueOperation;
 import com.ss.editor.shader.nodes.editor.state.ShaderNodeState;
 import com.ss.editor.shader.nodes.editor.state.ShaderNodeVariableState;
@@ -568,6 +569,13 @@ public class ShaderNodesFileEditor extends
         final List<TechniqueDef> techniqueDefs = materialDef.getTechniqueDefs(newValue);
         final TechniqueDef techniqueDef = techniqueDefs.get(0);
 
+        final ShaderGenerationInfo info = techniqueDef.getShaderGenerationInfo();
+        final List<ShaderNodeVariable> fragmentGlobals = info.getFragmentGlobals();
+
+        if (fragmentGlobals.isEmpty()) {
+            fragmentGlobals.add(new ShaderNodeVariable("vec4", GlobalShaderNodeElement.NAMESPACE, "color", null));
+        }
+
         final ShaderNodesContainer container = getShaderNodesContainer();
         container.show(techniqueDef);
         container.notifyChangedMaterial();
@@ -714,7 +722,8 @@ public class ShaderNodesFileEditor extends
             final List<TechniqueDef> techniqueDefs = materialDef.getTechniqueDefs(defsName);
 
             for (final TechniqueDef techniqueDef : techniqueDefs) {
-                newMaterialDef.addTechniqueDef(notNull(Utils.get(techniqueDef, TechniqueDef::clone)));
+                final TechniqueDef cloned = notNull(Utils.get(techniqueDef, TechniqueDef::clone));
+                newMaterialDef.addTechniqueDef(cloned);
             }
         }
 

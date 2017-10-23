@@ -473,13 +473,13 @@ public class Glsl100ShaderGenerator extends ShaderGenerator {
     /**
      * Finds if a variable is a varying
      * @param info the ShaderGenerationInfo
-     * @param v the variable
+     * @param variable the variable
      * @return true is the given variable is a varying
      */
-    protected boolean isVarying(ShaderGenerationInfo info, ShaderNodeVariable v) {
+    protected boolean isVarying(ShaderGenerationInfo info, ShaderNodeVariable variable) {
         boolean isVarying = false;
-        for (ShaderNodeVariable shaderNodeVariable : info.getVaryings()) {
-            if (shaderNodeVariable.equals(v)) {
+        for (ShaderNodeVariable varying : info.getVaryings()) {
+            if (varying.equals(variable)) {
                 isVarying = true;
             }
         }

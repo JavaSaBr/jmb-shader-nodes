@@ -20,7 +20,10 @@ import com.jme3.shader.glsl.parser.ast.value.ExtensionStatusValueASTNode;
 import com.jme3.shader.glsl.parser.ast.value.StringValueASTNode;
 import com.jme3.shader.glsl.parser.ast.value.ValueASTNode;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The parser of GLSL code.
@@ -123,6 +126,8 @@ public class GLSLParser {
      */
     public FileDeclarationASTNode parseFileDeclaration(final String path, final String glslCode) {
 
+        final long time = System.currentTimeMillis();
+
         final FileDeclarationASTNode node = new FileDeclarationASTNode();
         node.setPath(path);
         node.setLine(line);
@@ -130,12 +135,18 @@ public class GLSLParser {
         node.setLength(glslCode.length());
         node.setText(glslCode);
 
+        if (glslCode.length() < 6 && glslCode.trim().isEmpty()) {
+            return node;
+        }
+
         nodeStack.addLast(node);
         try {
             parseContent(glslCode.toCharArray(), LEVEL_FILE, ASTUtils.EMPTY);
         } finally {
             nodeStack.removeLast();
         }
+
+        System.out.println("Parse " + path + ":" + (System.currentTimeMillis() - time));
 
         return node;
     }
@@ -195,13 +206,15 @@ public class GLSLParser {
 
                     saveState();
                     try {
-                        secondToken = findToken(content, TOKEN_ASSIGN, TOKEN_DOT, TOKEN_WORD);
+                        secondToken = findToken(content, TOKEN_ASSIGN, TOKEN_DOT, TOKEN_LEFT_PARENTHESIS, TOKEN_WORD);
                     } finally {
                         restoreState();
                     }
 
                     if (secondToken.getType() == TOKEN_WORD) {
                         parseLocalVarDeclaration(token, content);
+                    } else if (secondToken.getType() == TOKEN_LEFT_PARENTHESIS) {
+                        parseMethodCall(token, content);
                     } else if (secondToken.getType() == TOKEN_ASSIGN || secondToken.getType() == TOKEN_DOT) {
                         parseAssignExpression(token, content);
                     }
@@ -1023,6 +1036,38 @@ public class GLSLParser {
         try {
             parseName(firstToken);
             parseSymbol(assignToken);
+            parseSymbol(endToken);
+        } finally {
+            nodeStack.removeLast();
+        }
+
+        ASTUtils.updateLengthAndText(node, content);
+
+        parent.addChild(node);
+
+        return node;
+    }
+
+    /**
+     * Parse a method call expression AST node.
+     *
+     * @param firstToken the first token.
+     * @param content    the content.
+     * @return the method call expression AST node.
+     */
+    private MethodCallASTNode parseMethodCall(final Token firstToken, final char[] content) {
+
+        final Token endToken = findToken(content, TOKEN_SEMICOLON);
+
+        final ASTNode parent = nodeStack.getLast();
+        final MethodCallASTNode node = new MethodCallASTNode();
+        node.setParent(parent);
+        node.setLine(firstToken.getLine());
+        node.setOffset(firstToken.getOffset());
+
+        nodeStack.addLast(node);
+        try {
+            parseName(firstToken);
             parseSymbol(endToken);
         } finally {
             nodeStack.removeLast();

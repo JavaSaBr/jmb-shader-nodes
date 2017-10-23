@@ -205,7 +205,6 @@ public class ShaderNodeVariable implements Savable, Cloneable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final ShaderNodeVariable variable = (ShaderNodeVariable) o;
-        if (shaderOutput != variable.shaderOutput) return false;
         if (prefix != null ? !prefix.equals(variable.prefix) : variable.prefix != null) return false;
         if (!name.equals(variable.name)) return false;
         if (!type.equals(variable.type)) return false;

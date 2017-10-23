@@ -78,6 +78,8 @@ public class ASTUtils {
         public boolean test(final char value) {
             switch (value) {
                 case ' ':
+                case '\n':
+                case '\r':
                 case ',':
                 case '=':
                 case '+':
@@ -98,6 +100,8 @@ public class ASTUtils {
         public boolean test(final char value) {
             switch (value) {
                 case ' ':
+                case '\n':
+                case '\r':
                 case ',':
                 case '=':
                 case '.':
@@ -127,6 +131,8 @@ public class ASTUtils {
         public boolean test(final char value) {
             switch (value) {
                 case ' ':
+                case '\n':
+                case '\r':
                 case ',':
                 case '=':
                 case '.':
@@ -149,6 +155,8 @@ public class ASTUtils {
         public boolean test(final char value) {
             switch (value) {
                 case ' ':
+                case '\n':
+                case '\r':
                 case '(': {
                     return true;
                 }
@@ -163,6 +171,8 @@ public class ASTUtils {
         public boolean test(final char value) {
             switch (value) {
                 case ' ':
+                case '\n':
+                case '\r':
                 case ')': {
                     return true;
                 }
@@ -561,6 +571,8 @@ public class ASTUtils {
 
         final StringBuilder result = new StringBuilder(source.length() + newName.length());
 
+        String debug = "";
+
         boolean copyOriginal = false;
 
         for (int i = 0, first = -1, current = 0, last = -1, length = source.length(); i < length; i++) {
@@ -576,8 +588,11 @@ public class ASTUtils {
 
                 first = i;
                 current = 1;
+                debug = String.valueOf(ch);
                 continue;
             }
+
+            debug += ch;
 
             if (current < oldName.length() && ch == oldName.charAt(current)) {
                 current++;

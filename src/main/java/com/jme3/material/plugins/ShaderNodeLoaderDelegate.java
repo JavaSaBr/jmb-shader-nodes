@@ -949,12 +949,12 @@ public class ShaderNodeLoaderDelegate {
             dv.addNode(shaderNode);
             //if a variable is declared with the same name as an input and an output and is a varying, set it as a shader output so it's declared as a varying only once.
             for (VariableMapping variableMapping : node.getInputMapping()) {
-                if (variableMapping.getLeftVariable().getName().equals(variable.getName())) {
-                    variableMapping.getLeftVariable().setShaderOutput(true);
+                final ShaderNodeVariable leftVariable = variableMapping.getLeftVariable();
+                if (leftVariable.getName().equals(variable.getName())) {
+                    leftVariable.setShaderOutput(true);
                 }
             }
         }
-
     }
 
     /**
