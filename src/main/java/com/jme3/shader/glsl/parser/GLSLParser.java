@@ -83,6 +83,11 @@ public class GLSLParser {
     private final Deque<ASTNode> nodeStack;
 
     /**
+     * The list of read tokens.
+     */
+    private final Deque<Token> readTokens;
+
+    /**
      * The set of split chars.
      */
     private Set<Character> splitChars;
@@ -115,6 +120,7 @@ public class GLSLParser {
     private GLSLParser() {
         this.nodeStack = new ArrayDeque<>();
         this.splitChars = SPLIT_CHARS;
+        this.readTokens = new ArrayDeque<>();
     }
 
     /**
@@ -142,6 +148,9 @@ public class GLSLParser {
         nodeStack.addLast(node);
         try {
             parseContent(glslCode.toCharArray(), LEVEL_FILE, ASTUtils.EMPTY);
+        } catch (final RuntimeException e) {
+            System.out.println(glslCode);
+            throw e;
         } finally {
             nodeStack.removeLast();
         }
@@ -368,16 +377,30 @@ public class GLSLParser {
         try {
 
             node.setCondition(parseCondition(null, content));
-            node.setBody(parseBody(content, ASTUtils.RIGHT_BRACE));
 
-            final Token nextToken = findToken(content, TOKEN_RIGHT_BRACE, TOKEN_KEYWORD);
+            Token nextToken;
 
-            if (nextToken.getType() == TOKEN_WORD && GLSLLang.KW_ELSE.equals(nextToken.getText())) {
-                node.setElseNode(parseValue(nextToken));
-                node.setElseBody(parseBody(content, ASTUtils.RIGHT_BRACE));
-                parseValue(findToken(content, TOKEN_RIGHT_BRACE));
-            } else if (nextToken.getType() == TOKEN_RIGHT_BRACE) {
-                parseValue(nextToken);
+            saveState();
+            try {
+                nextToken = findToken(content, TOKEN_LEFT_BRACE, TOKEN_WORD, TOKEN_KEYWORD);
+            } finally {
+                restoreState();
+            }
+
+            if (nextToken.getType() == TOKEN_LEFT_BRACE) {
+                node.setBody(parseBody(content, ASTUtils.RIGHT_BRACE));
+                nextToken = findToken(content, TOKEN_RIGHT_BRACE, TOKEN_KEYWORD);
+
+                if (nextToken.getType() == TOKEN_WORD && GLSLLang.KW_ELSE.equals(nextToken.getText())) {
+                    node.setElseNode(parseValue(nextToken));
+                    node.setElseBody(parseBody(content, ASTUtils.RIGHT_BRACE));
+                    parseSymbol(findToken(content, TOKEN_RIGHT_BRACE));
+                } else if (nextToken.getType() == TOKEN_RIGHT_BRACE) {
+                    parseSymbol(nextToken);
+                }
+
+            } else {
+                node.setBody(parseBody(content, ASTUtils.IF_WITHOUT_BRACES));
             }
 
         } finally {
@@ -1261,6 +1284,7 @@ public class GLSLParser {
         node.setText(text);
 
         parent.addChild(node);
+        readTokens.add(symbolToken);
 
         return node;
     }
@@ -1281,6 +1305,29 @@ public class GLSLParser {
      */
     private void setCurrentToken(final Token currentToken) {
         this.currentToken = currentToken;
+    }
+
+    /**
+     * Finds a token by the types.
+     *
+     * @param content    the content.
+     * @param firstType  the first type.
+     * @param secondType the second type.
+     * @return the found token.
+     * @throws RuntimeException when we didn't find a token with the types.
+     */
+    private Token findToken(final char[] content, final int firstType, final int secondType) {
+
+        Token token;
+        do {
+            token = readToken(content);
+        } while (token.getType() != firstType && token.getType() != secondType && token.getType() != Token.EOF);
+
+        if (token.getType() == Token.EOF) {
+            throw new RuntimeException("unexpected EOF token");
+        }
+
+        return token;
     }
 
     /**
@@ -1306,26 +1353,12 @@ public class GLSLParser {
     }
 
     /**
-     * Finds a token by the types.
+     * Gets the previous read token.
      *
-     * @param content    the content.
-     * @param firstType  the first type.
-     * @param secondType the second type.
-     * @return the found token.
-     * @throws RuntimeException when we didn't find a token with the types.
+     * @return the previous read token.
      */
-    private Token findToken(final char[] content, final int firstType, final int secondType) {
-
-        Token token;
-        do {
-            token = readToken(content);
-        } while (token.getType() != firstType && token.getType() != secondType && token.getType() != Token.EOF);
-
-        if (token.getType() == Token.EOF) {
-            throw new RuntimeException("unexpected EOF token");
-        }
-
-        return token;
+    public Token getPreviousReadToken() {
+        return readTokens.getLast();
     }
 
     /**

@@ -140,10 +140,18 @@ public class J3snExporter {
 
         for (final ShaderNodeVariable variable : variables) {
             indent(builder, 3);
+
+            final String defaultValue = variable.getDefaultValue();
+
             builder.append(variable.getType())
                     .append(' ')
-                    .append(variable.getName())
-                    .append('\n');
+                    .append(variable.getName());
+
+            if (defaultValue != null && !defaultValue.isEmpty()) {
+                builder.append(' ').append(defaultValue);
+            }
+
+            builder.append('\n');
         }
 
         indent(builder, 2);

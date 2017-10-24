@@ -13,6 +13,40 @@ import com.jme3.shader.ShaderNodeVariable;
  */
 public class ASTGlsl150ShaderGenerator extends ASTGlsl100ShaderGenerator {
 
+    private static final String MAIN_COMPATIBILITY =
+            "#if defined GL_ES\n" +
+            "#  define hfloat highp float\n" +
+            "#  define hvec2  highp vec2\n" +
+            "#  define hvec3  highp vec3\n" +
+            "#  define hvec4  highp vec4\n" +
+            "#  define lfloat lowp float\n" +
+            "#  define lvec2 lowp vec2\n" +
+            "#  define lvec3 lowp vec3\n" +
+            "#  define lvec4 lowp vec4\n" +
+            "#else\n" +
+            "#  define hfloat float\n" +
+            "#  define hvec2  vec2\n" +
+            "#  define hvec3  vec3\n" +
+            "#  define hvec4  vec4\n" +
+            "#  define lfloat float\n" +
+            "#  define lvec2  vec2\n" +
+            "#  define lvec3  vec3\n" +
+            "#  define lvec4  vec4\n" +
+            "#endif\n" +
+            "#define texture1D texture\n" +
+            "#define texture2D texture\n" +
+            "#define texture3D texture\n" +
+            "#define textureCube texture\n" +
+            "#define texture2DLod textureLod\n" +
+            "#define textureCubeLod textureLod\n";
+
+    private static final String VERTEX_COMPATIBILITY =
+            "#define varying out\n" +
+            "#define attribute in\n";
+
+    private static final String FRAGMENT_COMPATIBILITY =
+            "#define varying in\n";
+
     public ASTGlsl150ShaderGenerator(final AssetManager assetManager) {
         super(assetManager);
     }
@@ -69,23 +103,23 @@ public class ASTGlsl150ShaderGenerator extends ASTGlsl100ShaderGenerator {
 
     @Override
     protected void generateEndOfMainSection(StringBuilder source, ShaderGenerationInfo info, Shader.ShaderType type) {
+
         if (type == Shader.ShaderType.Vertex) {
             appendOutput(source, "gl_Position", info.getVertexGlobal());
         }
+
         unIndent();
         appendIndent(source);
         source.append("}\n");
     }
 
     private void generateCompatibilityDefines(StringBuilder source, ShaderType type) {
-        //Adding compatibility defines, as it's more efficient than replacing the function calls in the source code
+        source.append(MAIN_COMPATIBILITY);
+
         if (type == ShaderType.Fragment) {
-            source.append("#define texture1D texture\n")
-                    .append("#define texture2D texture\n")
-                    .append("#define texture3D texture\n")
-                    .append("#define textureCube texture\n")
-                    .append("#define texture2DLod textureLod\n")
-                    .append("#define textureCubeLod textureLod\n");
+            source.append(FRAGMENT_COMPATIBILITY);
+        } else if (type == ShaderType.Vertex) {
+            source.append(VERTEX_COMPATIBILITY);
         }
     }
 

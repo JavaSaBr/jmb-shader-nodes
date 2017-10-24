@@ -231,11 +231,15 @@ public class ShaderNodeLoaderDelegate {
      * @throws IOException
      */
     protected ShaderNodeVariable readVariable(Statement statement) throws IOException {
+
         String line = statement.getLine().trim().replaceAll("\\s*\\[", "[");
         String[] splitVar = line.split("\\s");
-        if (splitVar.length != 2) {
-            throw new MatParseException("2 arguments", splitVar.length + "", statement);
+
+        if (splitVar.length > 3) {
+            throw new MatParseException("More than 3 arguments", splitVar.length + "", statement);
         }
+
+        String defaultValue = splitVar.length > 2? splitVar[2] : null;
         String varName = splitVar[1];
         String varType = splitVar[0];
         String multiplicity = null;
@@ -246,11 +250,17 @@ public class ShaderNodeLoaderDelegate {
             varName = arr[0].trim();
             multiplicity = arr[1].replaceAll("\\]", "").trim();
         }
+
         if (varNames.contains(varName + ";")) {
             throw new MatParseException("Duplicate variable name " + varName, statement);
         }
+
         varNames += varName + ";";
-        return new ShaderNodeVariable(varType, "", varName, multiplicity);
+
+        final ShaderNodeVariable variable = new ShaderNodeVariable(varType, "", varName, multiplicity);
+        variable.setDefaultValue(defaultValue);
+
+        return variable;
     }
 
     /**

@@ -10,6 +10,7 @@ import com.jme3.material.TechniqueDef;
 import com.jme3.shader.*;
 import com.jme3.shader.Shader.ShaderType;
 import com.jme3.shader.glsl.parser.GLSLParser;
+import com.jme3.shader.glsl.parser.ast.ASTNode;
 import com.jme3.shader.glsl.parser.ast.NameASTNode;
 import com.jme3.shader.glsl.parser.ast.declaration.ExternalFieldDeclarationASTNode;
 import com.jme3.shader.glsl.parser.ast.declaration.FileDeclarationASTNode;
@@ -299,6 +300,7 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
         generateDeclarationAndMainBody(shaderNodes, null, mainSource, info, type);
         generateEndOfMainSection(mainSource, info, type);
         generateVarDefines(headerSource);
+        generateShaderNodeHeaders(shaderNodes, info, type, headerSource);
 
         final StringBuilder result = new StringBuilder();
 
@@ -322,11 +324,56 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
     }
 
     /**
+     * Generates shader nodes headers.
+     *
+     * @param shaderNodes  the list of shader nodes.
+     * @param info         the generating information.
+     * @param type         the shader type.
+     * @param headerSource the header source.
+     */
+    private void generateShaderNodeHeaders(final List<ShaderNode> shaderNodes, final ShaderGenerationInfo info,
+                                           final ShaderType type, final StringBuilder headerSource) {
+
+        final Map<ShaderNode, FileDeclarationASTNode> shaderNodeSources = SHADER_NODE_SOURCES.get();
+        final List<DefineValueASTNode> defineValueNodes = DEFINE_VALUE_NODES.get();
+        final List<String> unusedNodes = info.getUnusedNodes();
+
+        for (final ShaderNode shaderNode : shaderNodes) {
+
+            if (unusedNodes.contains(shaderNode.getName())) {
+                continue;
+            }
+
+            final ShaderNodeDefinition definition = shaderNode.getDefinition();
+            if (definition.getType() != type) {
+                continue;
+            }
+
+            final FileDeclarationASTNode shaderFile = shaderNodeSources.get(shaderNode);
+            final List<ASTNode> children = shaderFile.getChildren();
+
+            for (final ASTNode child : children) {
+
+                if (child instanceof MethodDeclarationASTNode) {
+                    continue;
+                }
+
+                defineValueNodes.clear();
+                findAllByType(child, defineValueNodes, DefineValueASTNode.class);
+
+                final String code = updateDefineNames(shaderNode, child.getText(), defineValueNodes);
+
+                headerSource.append(code);
+            }
+        }
+    }
+
+    /**
      * Generates variable defines.
      *
-     * @param sourceDeclaration the source declaration.
+     * @param headerSource the header source.
      */
-    private void generateVarDefines(final StringBuilder sourceDeclaration) {
+    private void generateVarDefines(final StringBuilder headerSource) {
 
         final List<String> resultDefines = RESULT_DEFINES.get();
         if (resultDefines.isEmpty()) {
@@ -334,8 +381,10 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
         }
 
         for (final String define : resultDefines) {
-            sourceDeclaration.append("#define ").append(define).append(" 1").append('\n');
+            headerSource.append("#define ").append(define).append(" 1").append('\n');
         }
+
+        headerSource.append('\n');
     }
 
     /**
@@ -441,15 +490,15 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
         startCondition(shaderNode.getCondition(), source);
 
         final ShaderNodeDefinition definition = shaderNode.getDefinition();
-        final List<String> declaredInputs = new ArrayList<>();
+        final List<String> declaredVariables = new ArrayList<>();
 
-        for (VariableMapping mapping : shaderNode.getInputMapping()) {
+        for (final VariableMapping mapping : shaderNode.getInputMapping()) {
 
             final ShaderNodeVariable rightVariable = mapping.getRightVariable();
             final ShaderNodeVariable leftVariable = mapping.getLeftVariable();
 
-            //Variables fed with a sampler matparam or world param are replaced by the matparam itself
-            //It avoids issue with samplers that have to be uniforms.
+            // Variables fed with a sampler matparam or world param are replaced by the matparam itself
+            // It avoids issue with samplers that have to be uniforms.
             if (isWorldOrMaterialParam(rightVariable) && rightVariable.getType().startsWith("sampler")) {
                 nodeSource = replace(nodeSource, leftVariable, rightVariable.getPrefix() + rightVariable.getName());
             } else {
@@ -462,9 +511,10 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
             }
 
             String newName = shaderNode.getName() + "_" + leftVariable.getName();
-            if (!declaredInputs.contains(newName)) {
+
+            if (!declaredVariables.contains(newName)) {
                 nodeSource = replace(nodeSource, leftVariable, newName);
-                declaredInputs.add(newName);
+                declaredVariables.add(newName);
             }
         }
 
@@ -474,36 +524,47 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
                 continue;
             }
 
-            final ShaderNodeVariable variable = new ShaderNodeVariable(var.getType(), shaderNode.getName(), var.getName(), var.getMultiplicity());
-
             final String fullName = shaderNode.getName() + "_" + var.getName();
 
-            if (!declaredInputs.contains(fullName)) {
-                if (!isVarying(info, variable)) {
-                    declareVariable(source, variable);
-                }
-                nodeSource = replaceVariableName(nodeSource, variable);
-                declaredInputs.add(fullName);
+            if (declaredVariables.contains(fullName)) {
+                continue;
             }
+
+            final ShaderNodeVariable variable = new ShaderNodeVariable(var.getType(), shaderNode.getName(),
+                    var.getName(), var.getMultiplicity());
+
+            if (!isVarying(info, variable)) {
+                declareVariable(source, variable, var.getDefaultValue(), true, null);
+            }
+            nodeSource = replaceVariableName(nodeSource, variable);
+            declaredVariables.add(fullName);
         }
 
-        for (ShaderNodeVariable var : definition.getOutputs()) {
-            ShaderNodeVariable v = new ShaderNodeVariable(var.getType(), shaderNode.getName(), var.getName(), var.getMultiplicity());
-            if (!declaredInputs.contains(shaderNode.getName() + "_" + var.getName())) {
-                if (!isVarying(info, v)) {
-                    declareVariable(source, v);
-                }
-                nodeSource = replaceVariableName(nodeSource, v);
+        for (final ShaderNodeVariable var : definition.getOutputs()) {
+
+            if (declaredVariables.contains(shaderNode.getName() + "_" + var.getName())) {
+                continue;
             }
+
+            final ShaderNodeVariable variable = new ShaderNodeVariable(var.getType(), shaderNode.getName(),
+                    var.getName(), var.getMultiplicity());
+
+            if (!isVarying(info, variable)) {
+                declareVariable(source, variable);
+            }
+
+            nodeSource = replaceVariableName(nodeSource, variable);
         }
 
         appendIndent(source);
+
         source.append(nodeSource);
         source.append('\n');
 
-        for (VariableMapping mapping : shaderNode.getOutputMapping()) {
+        for (final VariableMapping mapping : shaderNode.getOutputMapping()) {
             map(mapping, source);
         }
+
         endCondition(shaderNode.getCondition(), source);
         comment(source, shaderNode, "End");
     }

@@ -73,6 +73,20 @@ public class ASTUtils {
         }
     };
 
+    public static final BiPredicate<GLSLParser, char[]> IF_WITHOUT_BRACES = new BiPredicate<GLSLParser, char[]>() {
+        @Override
+        public boolean test(final GLSLParser parser, final char[] content) {
+
+            Token token = parser.getPreviousReadToken();
+            if (token.getType() == GLSLParser.TOKEN_SEMICOLON) {
+                return true;
+            }
+
+            token = parser.readToken(content);
+            return token.getType() == GLSLParser.TOKEN_SEMICOLON;
+        }
+    };
+
     private static final CharPredicate PREVIOUS_VAR_CHAR_CHECKER = new CharPredicate() {
         @Override
         public boolean test(final char value) {
