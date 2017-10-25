@@ -36,6 +36,7 @@ import com.ss.editor.shader.nodes.component.preview.shader.ShaderCodePreviewComp
 import com.ss.editor.shader.nodes.component.preview.shader.VertexShaderCodePreviewComponent;
 import com.ss.editor.shader.nodes.component.shader.nodes.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.component.shader.nodes.global.GlobalShaderNodeElement;
+import com.ss.editor.shader.nodes.component.shader.nodes.operation.ChangeLightModeOperation;
 import com.ss.editor.shader.nodes.component.shader.nodes.operation.add.AddTechniqueOperation;
 import com.ss.editor.shader.nodes.editor.state.ShaderNodeState;
 import com.ss.editor.shader.nodes.editor.state.ShaderNodeVariableState;
@@ -62,6 +63,7 @@ import com.ss.rlib.util.Utils;
 import com.ss.rlib.util.VarTable;
 import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayFactory;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -92,6 +94,9 @@ public class ShaderNodesFileEditor extends
     @NotNull
     private static final Predicate<Class<?>> ACTION_TESTER = type -> type == NewFileAction.class ||
             type == DeleteFileAction.class || type == RenameFileAction.class;
+
+    @NotNull
+    private static final ObservableList<LightMode> LIGHT_MODES = FXCollections.observableArrayList(LightMode.values());
 
     /**
      * The description of this editor.
@@ -165,6 +170,17 @@ public class ShaderNodesFileEditor extends
      */
     @Nullable
     private ComboBox<String> techniqueComboBox;
+
+    /**
+     * The list of available light modes.
+     */
+    @Nullable
+    private ComboBox<LightMode> lightModeComboBox;
+
+    /**
+     * The flag of ignoring changes of light modes.
+     */
+    private boolean ignoreLightModeChanges;
 
     @Override
     @FXThread
@@ -390,11 +406,19 @@ public class ShaderNodesFileEditor extends
         addTechnique.setOnAction(event -> addTechnique());
         addTechnique.setGraphic(new ImageView(Icons.ADD_16));
 
+        final Label lightModeLabel = new Label(Messages.MODEL_PROPERTY_LIGHT_MODE + ":");
+
+        lightModeComboBox = new ComboBox<>(LIGHT_MODES);
+        lightModeComboBox.getSelectionModel()
+                .selectedItemProperty()
+                .addListener((observable, oldValue, newValue) -> changeLightMode(oldValue, newValue));
+
         DynamicIconSupport.addSupport(addTechnique);
 
+        FXUtils.addToPane(lightModeLabel, lightModeComboBox, container);
         FXUtils.addToPane(techniqueLabel, techniqueComboBox, addTechnique, container);
-        FXUtils.addClassTo(techniqueLabel, CSSClasses.FILE_EDITOR_TOOLBAR_LABEL);
-        FXUtils.addClassTo(techniqueComboBox, CSSClasses.FILE_EDITOR_TOOLBAR_FIELD);
+        FXUtils.addClassTo(techniqueLabel, lightModeLabel, CSSClasses.FILE_EDITOR_TOOLBAR_LABEL);
+        FXUtils.addClassTo(techniqueComboBox, lightModeComboBox, CSSClasses.FILE_EDITOR_TOOLBAR_FIELD);
         FXUtils.addClassesTo(addTechnique, CSSClasses.FLAT_BUTTON, CSSClasses.FILE_EDITOR_TOOLBAR_BUTTON);
     }
 
@@ -555,6 +579,32 @@ public class ShaderNodesFileEditor extends
     }
 
     /**
+     * Get the light modes combo box.
+     *
+     * @return the light modes combo box.
+     */
+    @FXThread
+    private @NotNull ComboBox<LightMode> getLightModeComboBox() {
+        return notNull(lightModeComboBox);
+    }
+
+    /**
+     * @return true if need to skip changes of light modes.
+     */
+    @FXThread
+    private boolean isIgnoreLightModeChanges() {
+        return ignoreLightModeChanges;
+    }
+
+    /**
+     * @param ignoreLightModeChanges true if need to skip changes of light modes.
+     */
+    @FXThread
+    private void setIgnoreLightModeChanges(final boolean ignoreLightModeChanges) {
+        this.ignoreLightModeChanges = ignoreLightModeChanges;
+    }
+
+    /**
      * Handle changing the technique.
      */
     @FXThread
@@ -588,6 +638,26 @@ public class ShaderNodesFileEditor extends
         getFragmentPreview().load(techniqueDef);
         getVertexPreview().load(techniqueDef);
         getEditor3DState().selectTechnique(currentMaterial, newValue);
+
+        setIgnoreLightModeChanges(true);
+        try {
+            getLightModeComboBox().getSelectionModel().select(techniqueDef.getLightMode());
+        } finally {
+            setIgnoreLightModeChanges(false);
+        }
+    }
+
+    /**
+     * Handle changing the light mode of this current technique.
+     */
+    @FXThread
+    private void changeLightMode(@Nullable final LightMode prevLightMode, @Nullable final LightMode newLightMode) {
+        if (isIgnoreLightModeChanges() || prevLightMode == null || newLightMode == null) return;
+
+        final ComboBox<String> techniqueComboBox = getTechniqueComboBox();
+        final String name = techniqueComboBox.getSelectionModel().getSelectedItem();
+
+        execute(new ChangeLightModeOperation(name, prevLightMode, newLightMode));
     }
 
     /**
@@ -952,6 +1022,8 @@ public class ShaderNodesFileEditor extends
         if (object instanceof MatParam) {
             final PropertyEditor<ShaderNodesChangeConsumer> propertyEditor = getPropertyEditor();
             propertyEditor.refresh();
+        } else if (object instanceof TechniqueDef) {
+            buildMaterial();
         }
 
         getShaderNodesContainer().notifyChangedMaterial();
