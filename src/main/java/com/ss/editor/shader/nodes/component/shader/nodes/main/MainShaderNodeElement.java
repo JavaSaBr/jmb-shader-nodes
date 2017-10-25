@@ -19,6 +19,7 @@ import com.ss.editor.shader.nodes.component.shader.nodes.parameter.InputShaderNo
 import com.ss.editor.shader.nodes.component.shader.nodes.parameter.OutputShaderNodeParameter;
 import com.ss.editor.shader.nodes.component.shader.nodes.parameter.ShaderNodeParameter;
 import com.ss.rlib.ui.util.FXUtils;
+import com.ss.rlib.util.StringUtils;
 import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -90,6 +91,10 @@ public class MainShaderNodeElement extends ShaderNodeElement<ShaderNode> {
         final VariableMapping currentMapping = findInMappingByNLeftVar(shaderNode, inVar);
         final VariableMapping newMapping = makeMapping(inputParameter, outputParameter);
         newMapping.setRightSwizzling(calculateRightSwizzling(inVar, outVar));
+
+        if (StringUtils.isEmpty(newMapping.getRightSwizzling())) {
+            newMapping.setLeftSwizzling(calculateLeftSwizzling(inVar, outputParameter.getVariable()));
+        }
 
         if (newMapping.equals(currentMapping)) {
             return;

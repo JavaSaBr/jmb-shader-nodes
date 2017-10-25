@@ -72,12 +72,6 @@ public class ASTGlsl150ShaderGenerator extends ASTGlsl100ShaderGenerator {
     }
 
     @Override
-    protected void generateUniforms(StringBuilder source, ShaderGenerationInfo info, ShaderType type) {
-        generateCompatibilityDefines(source, type);
-        super.generateUniforms(source, info, type);
-    }
-
-    @Override
     protected void generateStartOfMainSection(StringBuilder source, ShaderGenerationInfo info, Shader.ShaderType type) {
         source.append("\n");
 
@@ -113,14 +107,18 @@ public class ASTGlsl150ShaderGenerator extends ASTGlsl100ShaderGenerator {
         source.append("}\n");
     }
 
-    private void generateCompatibilityDefines(StringBuilder source, ShaderType type) {
-        source.append(MAIN_COMPATIBILITY);
+    @Override
+    protected void generateCompatibilityDefines(final StringBuilder headerSource, final ShaderType type) {
+        super.generateCompatibilityDefines(headerSource, type);
+        headerSource.append(MAIN_COMPATIBILITY);
 
         if (type == ShaderType.Fragment) {
-            source.append(FRAGMENT_COMPATIBILITY);
+            headerSource.append(FRAGMENT_COMPATIBILITY);
         } else if (type == ShaderType.Vertex) {
-            source.append(VERTEX_COMPATIBILITY);
+            headerSource.append(VERTEX_COMPATIBILITY);
         }
+
+        headerSource.append('\n');
     }
 
     /**

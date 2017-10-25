@@ -615,6 +615,9 @@ public class ASTUtils {
                     last = i;
                 }
 
+            } else if (current == oldName.length()) {
+                i--;
+                last = i;
             } else {
                 last = i;
                 copyOriginal = true;

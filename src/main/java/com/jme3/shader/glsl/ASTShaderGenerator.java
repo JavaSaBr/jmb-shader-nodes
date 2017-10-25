@@ -300,6 +300,7 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
         generateDeclarationAndMainBody(shaderNodes, null, mainSource, info, type);
         generateEndOfMainSection(mainSource, info, type);
         generateVarDefines(headerSource);
+        generateCompatibilityDefines(headerSource, type);
         generateShaderNodeHeaders(shaderNodes, info, type, headerSource);
 
         final StringBuilder result = new StringBuilder();
@@ -363,9 +364,12 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
 
                 final String code = updateDefineNames(shaderNode, child.getText(), defineValueNodes);
 
-                headerSource.append(code);
+                headerSource.append(code).append('\n').append('\n');
             }
         }
+    }
+
+    protected void generateCompatibilityDefines(final StringBuilder headerSource, final ShaderType type) {
     }
 
     /**

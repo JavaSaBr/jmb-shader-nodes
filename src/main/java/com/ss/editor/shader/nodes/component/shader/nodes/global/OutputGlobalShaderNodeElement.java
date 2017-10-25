@@ -1,25 +1,24 @@
 package com.ss.editor.shader.nodes.component.shader.nodes.global;
 
-import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.calculateRightSwizzling;
-import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.findOutMappingByNNLeftVar;
-import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.makeMapping;
+import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.*;
 import com.jme3.material.ShaderGenerationInfo;
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.VariableMapping;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.shader.nodes.PluginMessages;
-import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
-import com.ss.editor.shader.nodes.component.shader.nodes.operation.attach.AttachVarToGlobalNodeOperation;
-import com.ss.editor.shader.nodes.component.shader.nodes.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.component.shader.nodes.ShaderNodeElement;
+import com.ss.editor.shader.nodes.component.shader.nodes.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.component.shader.nodes.main.FragmentShaderNodeElement;
 import com.ss.editor.shader.nodes.component.shader.nodes.main.MainShaderNodeElement;
 import com.ss.editor.shader.nodes.component.shader.nodes.main.VertexShaderNodeElement;
+import com.ss.editor.shader.nodes.component.shader.nodes.operation.attach.AttachVarToGlobalNodeOperation;
 import com.ss.editor.shader.nodes.component.shader.nodes.parameter.InputShaderNodeParameter;
 import com.ss.editor.shader.nodes.component.shader.nodes.parameter.OutputShaderNodeParameter;
 import com.ss.editor.shader.nodes.component.shader.nodes.parameter.ShaderNodeParameter;
+import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import com.ss.rlib.ui.util.FXUtils;
+import com.ss.rlib.util.StringUtils;
 import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -105,6 +104,10 @@ public class OutputGlobalShaderNodeElement extends GlobalShaderNodeElement {
         final VariableMapping currentMapping = findOutMappingByNNLeftVar(shaderNode, inVar);
         final VariableMapping newMapping = makeMapping(inputParameter, outputParameter);
         newMapping.setRightSwizzling(calculateRightSwizzling(inVar, outputParameter.getVariable()));
+
+        if (StringUtils.isEmpty(newMapping.getRightSwizzling())) {
+            newMapping.setLeftSwizzling(calculateLeftSwizzling(inVar, outputParameter.getVariable()));
+        }
 
         if (newMapping.equals(currentMapping)) {
             return;

@@ -445,8 +445,8 @@ public class ShaderNodeUtils {
      * @return the right swizzling or null.
      */
     @FromAnyThread
-    public static @Nullable String calculateRightSwizzling(@NotNull final ShaderNodeVariable leftVar,
-                                                           @NotNull final ShaderNodeVariable rightVar) {
+    public static @NotNull String calculateRightSwizzling(@NotNull final ShaderNodeVariable leftVar,
+                                                          @NotNull final ShaderNodeVariable rightVar) {
 
         final String leftType = leftVar.getType();
         final String rightType = rightVar.getType();
@@ -480,6 +480,56 @@ public class ShaderNodeUtils {
                 switch (leftType) {
                     case "float":
                         return "x";
+                }
+                break;
+            }
+        }
+
+        return "";
+    }
+
+    /**
+     * Try to calculate a left swizzling for the mapping.
+     *
+     * @param leftVar  the left variable.
+     * @param rightVar the right variable.
+     * @return the left swizzling or null.
+     */
+    @FromAnyThread
+    public static @NotNull String calculateLeftSwizzling(@NotNull final ShaderNodeVariable leftVar,
+                                                         @NotNull final ShaderNodeVariable rightVar) {
+
+        //FIXME
+        if (true) {
+            return "";
+        }
+
+        final String leftType = leftVar.getType();
+        final String rightType = rightVar.getType();
+
+        if (leftType == null || rightType == null) {
+            return "";
+        }
+
+        switch (leftType) {
+            case "vec4": {
+                switch (rightType) {
+                    case "float":
+                        return "xyzw";
+                }
+                break;
+            }
+            case "vec3": {
+                switch (rightType) {
+                    case "float":
+                        return "xyz";
+                }
+                break;
+            }
+            case "vec2": {
+                switch (rightType) {
+                    case "float":
+                        return "xy";
                 }
                 break;
             }
