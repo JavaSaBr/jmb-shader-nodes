@@ -70,6 +70,10 @@
 .shader-node-parameter-input-socket {
 }
 
+.shader-node-parameter-input-socket:required {
+}
+
+.shader-node-parameter-input-socket:required:droppable,
 .shader-node-parameter-input-socket:droppable {
     -fx-background-color: -fx-focus-color;
 }

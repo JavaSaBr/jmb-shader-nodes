@@ -14,6 +14,7 @@ import com.ss.editor.shader.nodes.component.shader.nodes.ShaderNodeElement;
 import com.ss.editor.shader.nodes.component.shader.nodes.global.OutputGlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.component.shader.nodes.parameter.InputShaderNodeParameter;
 import com.ss.editor.shader.nodes.component.shader.nodes.parameter.OutputShaderNodeParameter;
+import com.ss.editor.util.GLSLType;
 import com.ss.rlib.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -435,6 +436,26 @@ public class ShaderNodeUtils {
         }
 
         return false;
+    }
+
+    /**
+     * Check the variable is required this.
+     *
+     * @param variable the variable.
+     * @return true of this variable is required.
+     */
+    public static boolean isRequired(@NotNull final ShaderNodeVariable variable) {
+
+        final GLSLType glslType = GLSLType.ofRawType(variable.getType());
+
+        switch (glslType) {
+            case SAMPLER_2D:
+            case SAMPLER_CUBE: {
+                return false;
+            }
+        }
+
+        return StringUtils.isEmpty(variable.getDefaultValue());
     }
 
     /**

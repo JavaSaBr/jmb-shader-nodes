@@ -7,6 +7,7 @@ import com.ss.editor.shader.nodes.component.shader.nodes.ShaderNodeElement;
 import com.ss.editor.shader.nodes.component.shader.nodes.parameter.InputShaderNodeParameter;
 import com.ss.editor.shader.nodes.component.shader.nodes.parameter.OutputShaderNodeParameter;
 import com.ss.editor.shader.nodes.component.shader.nodes.parameter.ShaderNodeParameter;
+import com.ss.editor.shader.nodes.util.ShaderNodeUtils;
 import com.ss.rlib.ui.util.FXUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.BooleanPropertyBase;
@@ -24,7 +25,10 @@ import org.jetbrains.annotations.NotNull;
 public class InputSocketElement extends SocketElement {
 
     @NotNull
-    private static final PseudoClass DRAGGED_PSEUDO_CLASS = PseudoClass.getPseudoClass("droppable");
+    private static final PseudoClass DROPPABLE_PSEUDO_CLASS = PseudoClass.getPseudoClass("droppable");
+
+    @NotNull
+    private static final PseudoClass REQUIRED_PSEUDO_CLASS = PseudoClass.getPseudoClass("required");
 
     /**
      * The droppable state.
@@ -34,7 +38,7 @@ public class InputSocketElement extends SocketElement {
 
         @Override
         public void invalidated() {
-            pseudoClassStateChanged(DRAGGED_PSEUDO_CLASS, get());
+            pseudoClassStateChanged(DROPPABLE_PSEUDO_CLASS, get());
         }
 
         @Override
@@ -48,11 +52,34 @@ public class InputSocketElement extends SocketElement {
         }
     };
 
+    /**
+     * The required state.
+     */
+    @NotNull
+    private final BooleanProperty required = new BooleanPropertyBase(false) {
+
+        @Override
+        public void invalidated() {
+            pseudoClassStateChanged(REQUIRED_PSEUDO_CLASS, get());
+        }
+
+        @Override
+        public Object getBean() {
+            return InputSocketElement.this;
+        }
+
+        @Override
+        public String getName() {
+            return "required";
+        }
+    };
+
     public InputSocketElement(@NotNull final ShaderNodeParameter parameter) {
         super(parameter);
         setOnDragOver(this::handleDragOver);
         setOnDragDropped(this::handleDragDropped);
         setOnDragExited(this::handleDragExited);
+        required.setValue(ShaderNodeUtils.isRequired(parameter.getVariable()));
         FXUtils.addClassTo(this, SHADER_NODE_PARAMETER_INPUT_SOCKET);
     }
 

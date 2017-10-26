@@ -32,7 +32,6 @@ public class InputShaderNodeParameter extends ShaderNodeParameter {
     @FXThread
     protected void createContent() {
         super.createContent();
-
         FXUtils.addToPane(getSocket(), this);
         FXUtils.addToPane(getNameLabel(), this);
         FXUtils.addToPane(getTypeLabel(), this);
