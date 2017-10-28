@@ -196,27 +196,23 @@ public class ShaderNodeLoaderDelegate {
                             throw new MatParseException(e.getMessage(), statement1, e);
                         }
                     }
-                } else if (line.startsWith("Defines")) {
-                    for (final Statement sub : statement.getContents()) {
-                        try {
-                            final String[] values = sub.getLine().split("[ \\{]");
-                            shaderNodeDefinition.getDefines().add(values[0]);
-                        } catch (final RuntimeException e) {
-                            throw new MatParseException(e.getMessage(), sub, e);
-                        }
-                    }
-                } else if (line.startsWith("Imports")) {
-                    for (final Statement sub : statement.getContents()) {
-                        try {
-                            final String[] values = sub.getLine().split("[ \\{]");
-                            shaderNodeDefinition.getImports().add(values[0]);
-                        } catch (final RuntimeException e) {
-                            throw new MatParseException(e.getMessage(), sub, e);
-                        }
-                    }
                 } else {
-                    throw new MatParseException("One of Type, Shader, Documentation, Input, Output, Defines, Imports", split[0], statement);
+
+                    final String additionalValuesName = split[0];
+                    final List<String> valueList = new ArrayList<>();
+
+                    for (final Statement sub : statement.getContents()) {
+                        try {
+                            final String[] values = sub.getLine().split("[ \\{]");
+                            valueList.add(values[0]);
+                        } catch (final RuntimeException e) {
+                            throw new MatParseException(e.getMessage(), sub, e);
+                        }
+                    }
+
+                    shaderNodeDefinition.setAdditionalValues(additionalValuesName, valueList);
                 }
+
             } catch (RuntimeException e) {
                 throw new MatParseException(e.getMessage(), statement, e);
             }
@@ -732,7 +728,16 @@ public class ShaderNodeLoaderDelegate {
         return mapping;
     }
 
-    private void updateMaterialTextureType(final Statement statement1, final VariableMapping mapping,
+    /**
+     * Updated the material texture type of the variable mapping.
+     *
+     * @param statement the statement.
+     * @param mapping the variable mapping.
+     * @param left the left variable.
+     * @param param the material parameter.
+     * @throws MatParseException
+     */
+    private void updateMaterialTextureType(final Statement statement, final VariableMapping mapping,
                                            final ShaderNodeVariable left, final MatParam param) throws MatParseException {
 
         if (!mapping.getRightVariable().getType().contains("|")) {
@@ -745,7 +750,7 @@ public class ShaderNodeLoaderDelegate {
             mapping.getRightVariable().setType(type);
         } else {
             throw new MatParseException(param.getVarType().toString() + " can only be matched to one of " +
-                    param.getVarType().getGlslType().replaceAll("\\|", ",") + " found " + left.getType(), statement1);
+                    param.getVarType().getGlslType().replaceAll("\\|", ",") + " found " + left.getType(), statement);
         }
     }
 

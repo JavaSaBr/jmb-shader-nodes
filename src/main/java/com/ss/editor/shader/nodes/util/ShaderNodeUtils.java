@@ -5,10 +5,8 @@ import com.jme3.material.MatParam;
 import com.jme3.material.MaterialDef;
 import com.jme3.material.TechniqueDef;
 import com.jme3.scene.VertexBuffer;
-import com.jme3.shader.ShaderNode;
-import com.jme3.shader.ShaderNodeVariable;
-import com.jme3.shader.UniformBinding;
-import com.jme3.shader.VariableMapping;
+import com.jme3.shader.*;
+import com.jme3.shader.glsl.ASTShaderGenerator;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.shader.nodes.component.shader.nodes.ShaderNodeElement;
 import com.ss.editor.shader.nodes.component.shader.nodes.global.OutputGlobalShaderNodeElement;
@@ -19,6 +17,7 @@ import com.ss.rlib.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -278,7 +277,7 @@ public class ShaderNodeUtils {
         final String inNameSpace;
 
         if (inObject instanceof ShaderNode) {
-            inNameSpace = ((ShaderNode) inObject).getDefinition().getName();
+            inNameSpace = ((ShaderNode) inObject).getName();
         } else {
             inNameSpace = inVar.getNameSpace();
         }
@@ -286,7 +285,7 @@ public class ShaderNodeUtils {
         final String outNameSpace;
 
         if (outObject instanceof ShaderNode) {
-            outNameSpace = ((ShaderNode) outObject).getDefinition().getName();
+            outNameSpace = ((ShaderNode) outObject).getName();
         } else {
             outNameSpace = outVar.getNameSpace();
         }
@@ -444,6 +443,7 @@ public class ShaderNodeUtils {
      * @param variable the variable.
      * @return true of this variable is required.
      */
+    @FromAnyThread
     public static boolean isRequired(@NotNull final ShaderNodeVariable variable) {
 
         final GLSLType glslType = GLSLType.ofRawType(variable.getType());
@@ -557,5 +557,41 @@ public class ShaderNodeUtils {
         }
 
         return "";
+    }
+
+    /**
+     * Get the list of imports of the definition.
+     *
+     * @param definition the definition.
+     * @return the list of imports.
+     */
+    @FromAnyThread
+    public static @NotNull List<String> getImports(@NotNull final ShaderNodeDefinition definition) {
+
+        List<String> result = definition.getAdditionalValues(ASTShaderGenerator.SD_DEF_IMPORTS);
+        if (result == null) {
+            result = new ArrayList<>();
+            definition.setAdditionalValues(ASTShaderGenerator.SD_DEF_IMPORTS, result);
+        }
+
+        return result;
+    }
+
+    /**
+     * Get the list of defines of the definition.
+     *
+     * @param definition the definition.
+     * @return the list of defines.
+     */
+    @FromAnyThread
+    public static @NotNull List<String> getDefines(@NotNull final ShaderNodeDefinition definition) {
+
+        List<String> result = definition.getAdditionalValues(ASTShaderGenerator.SD_DEF_DEFINES);
+        if (result == null) {
+            result = new ArrayList<>();
+            definition.setAdditionalValues(ASTShaderGenerator.SD_DEF_DEFINES, result);
+        }
+
+        return result;
     }
 }

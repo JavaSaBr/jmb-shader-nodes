@@ -24,10 +24,8 @@ import com.ss.editor.FileExtensions;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The base implementation of a shader generator with using AST GLSL to generate a result shader.
@@ -35,6 +33,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author JavaSaBr
  */
 public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
+
+    public static final String SD_DEF_IMPORTS = "Imports";
+    public static final String SD_DEF_DEFINES = "Defines";
 
     private static final boolean USE_AST_CACHE;
 
@@ -54,142 +55,40 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
         }
     }
 
+    protected static final char[] EMPTY_CHARS = new char[0];
+
     /**
-     * The cache of AST of shader sources.
+     * Calculate the indent using space characters.
+     *
+     * @param level the level.
+     * @return the result indent.
      */
-    private static final ThreadLocal<Map<String, FileDeclarationASTNode>> AST_CACHE = new ThreadLocal<Map<String, FileDeclarationASTNode>>() {
+    protected static char[] getIndent(final int level) {
+
+        if (level == 0) {
+            return EMPTY_CHARS;
+        }
+
+        final int characters = level * 4;
+        final char[] result = new char[characters];
+
+        for (int i = 0; i < result.length; i++) {
+            result[i] = ' ';
+        }
+
+        return result;
+    }
+
+    /**
+     * The thread local state of this generator.
+     */
+    private static final ThreadLocal<ASTShaderGeneratorState> LOCAL_STATE = new ThreadLocal<ASTShaderGeneratorState>() {
 
         @Override
-        protected Map<String, FileDeclarationASTNode> initialValue() {
-            return new HashMap<>();
+        protected ASTShaderGeneratorState initialValue() {
+            return new ASTShaderGeneratorState();
         }
     };
-
-    /**
-     * The mapping a shader node source path to a AST presentation.
-     */
-    private static final ThreadLocal<Map<ShaderNode, FileDeclarationASTNode>> SHADER_NODE_SOURCES = new ThreadLocal<Map<ShaderNode, FileDeclarationASTNode>>() {
-
-        @Override
-        protected Map<ShaderNode, FileDeclarationASTNode> initialValue() {
-            return new HashMap<>();
-        }
-    };
-
-    /**
-     * The list of extensions.
-     */
-    private static final ThreadLocal<List<ExtensionPreprocessorASTNode>> EXTENSIONS = new ThreadLocal<List<ExtensionPreprocessorASTNode>>() {
-
-        @Override
-        protected List<ExtensionPreprocessorASTNode> initialValue() {
-            return new ArrayList<>();
-        }
-    };
-
-    /**
-     * The list of imports.
-     */
-    private static final ThreadLocal<List<String>> IMPORTS = new ThreadLocal<List<String>>() {
-
-        @Override
-        protected List<String> initialValue() {
-            return new ArrayList<>();
-        }
-    };
-
-    /**
-     * The list of defined variables.
-     */
-    private static final ThreadLocal<List<String>> DEFINED_VARIABLES = new ThreadLocal<List<String>>() {
-
-        @Override
-        protected List<String> initialValue() {
-            return new ArrayList<>();
-        }
-    };
-
-    /**
-     * The list of result defines.
-     */
-    private static final ThreadLocal<List<String>> RESULT_DEFINES = new ThreadLocal<List<String>>() {
-
-        @Override
-        protected List<String> initialValue() {
-            return new ArrayList<>();
-        }
-    };
-
-    /**
-     * The list of define value nodes.
-     */
-    private static final ThreadLocal<List<DefineValueASTNode>> DEFINE_VALUE_NODES = new ThreadLocal<List<DefineValueASTNode>>() {
-
-        @Override
-        protected List<DefineValueASTNode> initialValue() {
-            return new ArrayList<>();
-        }
-    };
-
-    /**
-     * The list of declared uniforms in imported shaders.
-     */
-    private static final ThreadLocal<List<ExternalFieldDeclarationASTNode>> IMPORTED_UNIFORMS = new ThreadLocal<List<ExternalFieldDeclarationASTNode>>() {
-
-        @Override
-        protected List<ExternalFieldDeclarationASTNode> initialValue() {
-            return new ArrayList<>();
-        }
-    };
-
-    /**
-     * The result list of declared uniforms in imported shaders.
-     */
-    private static final ThreadLocal<List<ExternalFieldDeclarationASTNode>> IMPORTED_GLOBAL_UNIFORMS = new ThreadLocal<List<ExternalFieldDeclarationASTNode>>() {
-
-        @Override
-        protected List<ExternalFieldDeclarationASTNode> initialValue() {
-            return new ArrayList<>();
-        }
-    };
-
-    /**
-     * The list of methods.
-     */
-    private static final ThreadLocal<List<MethodDeclarationASTNode>> METHODS = new ThreadLocal<List<MethodDeclarationASTNode>>() {
-
-        @Override
-        protected List<MethodDeclarationASTNode> initialValue() {
-            return new ArrayList<>();
-        }
-    };
-
-    /**
-     * The list of local variables.
-     */
-    private static final ThreadLocal<List<LocalVarDeclarationASTNode>> LOCAL_VARS = new ThreadLocal<List<LocalVarDeclarationASTNode>>() {
-
-        @Override
-        protected List<LocalVarDeclarationASTNode> initialValue() {
-            return new ArrayList<>();
-        }
-    };
-
-    /**
-     * The indent.
-     */
-    private static final ThreadLocal<AtomicInteger> INDENT = new ThreadLocal<AtomicInteger>() {
-
-        @Override
-        protected AtomicInteger initialValue() {
-            return new AtomicInteger();
-        }
-    };
-
-    /**
-     * The technique definition.
-     */
-    private static final ThreadLocal<TechniqueDef> TECHNIQUE_DEF = new ThreadLocal<>();
 
     public ASTShaderGenerator(final AssetManager assetManager) {
         super(assetManager);
@@ -197,28 +96,32 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
 
     @Override
     protected void indent() {
-        INDENT.get().incrementAndGet();
+        final ASTShaderGeneratorState state = LOCAL_STATE.get();
+        state.setIndent(state.getIndent() + 1);
     }
 
     @Override
     protected void unIndent() {
-        final AtomicInteger counter = INDENT.get();
-        if (counter.decrementAndGet() < 0) {
-            counter.set(0);
-        }
+        final ASTShaderGeneratorState state = LOCAL_STATE.get();
+        if (state.getIndent() < 0) return;
+        state.setIndent(state.getIndent() - 1);
     }
 
     @Override
     protected void appendIndent(final StringBuilder source) {
-        source.append(getIndent(INDENT.get().get()));
+        final ASTShaderGeneratorState state = LOCAL_STATE.get();
+        source.append(getIndent(state.getIndent()));
     }
 
     @Override
     public void initialize(final TechniqueDef techniqueDef) {
         super.initialize(techniqueDef);
-        TECHNIQUE_DEF.set(techniqueDef);
-        INDENT.get().set(0);
-        IMPORTED_GLOBAL_UNIFORMS.get().clear();
+
+        final ASTShaderGeneratorState state = LOCAL_STATE.get();
+        state.setTechniqueDef(techniqueDef);
+        state.setIndent(0);
+        state.getImportedGlobalUniforms().clear();
+
         prepareShaderNodeSources(techniqueDef.getShaderNodes());
     }
 
@@ -227,12 +130,13 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
 
         final long time = System.currentTimeMillis();
 
-        final TechniqueDef techniqueDef = TECHNIQUE_DEF.get();
+        final ASTShaderGeneratorState state = LOCAL_STATE.get();
+        final TechniqueDef techniqueDef = state.getTechniqueDef();
         final Shader result = super.generateShader(definesSourceCode);
 
         // we need to add uniform bindings from imported shaders, because it can be unpresented in shader nodes.
         final List<UniformBinding> worldBindings = techniqueDef.getWorldBindings();
-        final List<ExternalFieldDeclarationASTNode> globalUniforms = IMPORTED_GLOBAL_UNIFORMS.get();
+        final List<ExternalFieldDeclarationASTNode> globalUniforms = state.getImportedGlobalUniforms();
 
         ASTUtils.removeExists(globalUniforms, worldBindings);
 
@@ -260,11 +164,12 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
             return null;
         }
 
-        final Map<ShaderNode, FileDeclarationASTNode> shaderNodeSources = SHADER_NODE_SOURCES.get();
-        final List<ExtensionPreprocessorASTNode> extensions = EXTENSIONS.get();
+        final ASTShaderGeneratorState state = LOCAL_STATE.get();
+        final Map<ShaderNode, FileDeclarationASTNode> shaderNodeSources = state.getShaderNodeSources();
+        final List<ExtensionPreprocessorASTNode> extensions = state.getExtensions();
         extensions.clear();
 
-        final List<String> imports = IMPORTS.get();
+        final List<String> imports = state.getImports();
         imports.clear();
 
         findImportsAndExtensions(shaderNodes, type, shaderNodeSources, extensions, imports);
@@ -279,14 +184,12 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
 
         generateExtensions(extensions, headerSource);
 
-        final List<ExternalFieldDeclarationASTNode> importedUniforms = IMPORTED_UNIFORMS.get();
+        final List<ExternalFieldDeclarationASTNode> importedUniforms = state.getImportedUnforms();
         importedUniforms.clear();
 
         generateImports(imports, importedUniforms, importsSource);
 
-        final List<ExternalFieldDeclarationASTNode> importedGlobalUniforms = IMPORTED_GLOBAL_UNIFORMS.get();
-
-        ASTUtils.copyGlobalUniforms(importedUniforms, importedGlobalUniforms);
+        ASTUtils.copyGlobalUniforms(importedUniforms, state.getImportedGlobalUniforms());
 
         generateUniforms(uniformsSource, info, type);
 
@@ -299,7 +202,7 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
         generateStartOfMainSection(mainSource, info, type);
         generateDeclarationAndMainBody(shaderNodes, null, mainSource, info, type);
         generateEndOfMainSection(mainSource, info, type);
-        generateVarDefines(headerSource);
+        generateVarDefines(headerSource, state.getResultDefines());
         generateCompatibilityDefines(headerSource, type);
         generateShaderNodeHeaders(shaderNodes, info, type, headerSource);
 
@@ -335,8 +238,9 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
     private void generateShaderNodeHeaders(final List<ShaderNode> shaderNodes, final ShaderGenerationInfo info,
                                            final ShaderType type, final StringBuilder headerSource) {
 
-        final Map<ShaderNode, FileDeclarationASTNode> shaderNodeSources = SHADER_NODE_SOURCES.get();
-        final List<DefineValueASTNode> defineValueNodes = DEFINE_VALUE_NODES.get();
+        final ASTShaderGeneratorState state = LOCAL_STATE.get();
+        final Map<ShaderNode, FileDeclarationASTNode> shaderNodeSources = state.getShaderNodeSources();
+        final List<DefineValueASTNode> defineValueNodes = state.getDefineValueNodes();
         final List<String> unusedNodes = info.getUnusedNodes();
 
         for (final ShaderNode shaderNode : shaderNodes) {
@@ -369,17 +273,23 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
         }
     }
 
+    /**
+     * Generates compatibility defines.
+     *
+     * @param headerSource the header source.
+     * @param type         the shader type.
+     */
     protected void generateCompatibilityDefines(final StringBuilder headerSource, final ShaderType type) {
     }
 
     /**
      * Generates variable defines.
      *
-     * @param headerSource the header source.
+     * @param headerSource  the header source.
+     * @param resultDefines the result defines list.
      */
-    private void generateVarDefines(final StringBuilder headerSource) {
+    private void generateVarDefines(final StringBuilder headerSource, final List<String> resultDefines) {
 
-        final List<String> resultDefines = RESULT_DEFINES.get();
         if (resultDefines.isEmpty()) {
             return;
         }
@@ -412,10 +322,12 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
                 continue;
             }
 
-            final List<String> defImports = definition.getImports();
-            for (final String anImport : defImports) {
-                if (!imports.contains(anImport)) {
-                    imports.add(anImport);
+            final List<String> defImports = definition.getAdditionalValues(SD_DEF_IMPORTS);
+            if (defImports != null && !defImports.isEmpty()) {
+                for (final String anImport : defImports) {
+                    if (!imports.contains(anImport)) {
+                        imports.add(anImport);
+                    }
                 }
             }
 
@@ -429,14 +341,15 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
                                                   final StringBuilder sourceDeclaration, final StringBuilder source,
                                                   final ShaderGenerationInfo info, final ShaderType type) {
 
-        final Map<ShaderNode, FileDeclarationASTNode> shaderNodeSources = SHADER_NODE_SOURCES.get();
-        final List<LocalVarDeclarationASTNode> localVariables = LOCAL_VARS.get();
-        final List<MethodDeclarationASTNode> methods = METHODS.get();
+        final ASTShaderGeneratorState state = LOCAL_STATE.get();
+        final Map<ShaderNode, FileDeclarationASTNode> shaderNodeSources = state.getShaderNodeSources();
+        final List<LocalVarDeclarationASTNode> localVariables = state.getLocalVars();
+        final List<MethodDeclarationASTNode> methods = state.getMethods();
         final List<String> unusedNodes = info.getUnusedNodes();
 
-        final List<DefineValueASTNode> defineValueNodes = DEFINE_VALUE_NODES.get();
-        final List<String> definedVariables = DEFINED_VARIABLES.get();
-        final List<String> resultDefines = RESULT_DEFINES.get();
+        final List<DefineValueASTNode> defineValueNodes = state.getDefineValueNodes();
+        final List<String> definedVariables = state.getDefinedVariables();
+        final List<String> resultDefines = state.getResultDefines();
         resultDefines.clear();
 
         for (final ShaderNode shaderNode : shaderNodes) {
@@ -725,10 +638,11 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
     protected void generateMethods(final List<ShaderNode> shaderNodes, final ShaderType type,
                                    final StringBuilder builder) {
 
-        final List<MethodDeclarationASTNode> methods = METHODS.get();
+        final ASTShaderGeneratorState state = LOCAL_STATE.get();
+        final List<MethodDeclarationASTNode> methods = state.getMethods();
         methods.clear();
 
-        final Map<ShaderNode, FileDeclarationASTNode> shaderNodeSources = SHADER_NODE_SOURCES.get();
+        final Map<ShaderNode, FileDeclarationASTNode> shaderNodeSources = state.getShaderNodeSources();
 
         for (final ShaderNode shaderNode : shaderNodes) {
 
@@ -824,7 +738,8 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
     @Override
     protected void generateUniforms(final StringBuilder source, final List<ShaderNodeVariable> uniforms) {
 
-        final List<ExternalFieldDeclarationASTNode> importedFields = IMPORTED_UNIFORMS.get();
+        final ASTShaderGeneratorState state = LOCAL_STATE.get();
+        final List<ExternalFieldDeclarationASTNode> importedFields = state.getImportedUnforms();
 
         for (final ShaderNodeVariable var : uniforms) {
             if (isExist(var, importedFields)) continue;
@@ -835,7 +750,8 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
     @Override
     protected void generateAttributes(final StringBuilder source, final ShaderGenerationInfo info) {
 
-        final List<ExternalFieldDeclarationASTNode> importedFields = IMPORTED_UNIFORMS.get();
+        final ASTShaderGeneratorState state = LOCAL_STATE.get();
+        final List<ExternalFieldDeclarationASTNode> importedFields = state.getImportedUnforms();
 
         boolean inPosition = false;
 
@@ -897,7 +813,8 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
      */
     protected void prepareShaderNodeSources(final List<ShaderNode> shaderNodes) {
 
-        final Map<ShaderNode, FileDeclarationASTNode> shaderNodeSources = SHADER_NODE_SOURCES.get();
+        final ASTShaderGeneratorState state = LOCAL_STATE.get();
+        final Map<ShaderNode, FileDeclarationASTNode> shaderNodeSources = state.getShaderNodeSources();
         shaderNodeSources.clear();
 
         for (final ShaderNode shaderNode : shaderNodes) {
@@ -919,7 +836,8 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
      */
     protected FileDeclarationASTNode parseShaderSource(final String shaderSourcePath) {
 
-        final Map<String, FileDeclarationASTNode> cache = AST_CACHE.get();
+        final ASTShaderGeneratorState state = LOCAL_STATE.get();
+        final Map<String, FileDeclarationASTNode> cache = state.getAstCache();
         final FileDeclarationASTNode cached = USE_AST_CACHE ? cache.get(shaderSourcePath) : null;
 
         if (cached != null) {

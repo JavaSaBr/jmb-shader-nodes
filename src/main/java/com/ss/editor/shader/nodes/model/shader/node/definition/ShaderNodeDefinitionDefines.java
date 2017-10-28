@@ -3,6 +3,7 @@ package com.ss.editor.shader.nodes.model.shader.node.definition;
 import static java.util.stream.Collectors.toList;
 import com.jme3.shader.ShaderNodeDefinition;
 import com.ss.editor.annotation.FromAnyThread;
+import com.ss.editor.shader.nodes.util.ShaderNodeUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public class ShaderNodeDefinitionDefines {
      */
     @FromAnyThread
     public @NotNull List<ShaderNodeDefinitionDefine> getDefines() {
-        return definition.getDefines().stream()
+        return ShaderNodeUtils.getDefines(definition).stream()
                 .map(name -> new ShaderNodeDefinitionDefine(getDefinition(), name))
                 .collect(toList());
     }
@@ -43,7 +44,7 @@ public class ShaderNodeDefinitionDefines {
      */
     @FromAnyThread
     public void add(@NotNull final ShaderNodeDefinitionDefine define) {
-        definition.getDefines().add(define.getDefine());
+        ShaderNodeUtils.getDefines(definition).add(define.getDefine());
     }
 
     /**
@@ -54,7 +55,7 @@ public class ShaderNodeDefinitionDefines {
      */
     @FromAnyThread
     public void add(final int index, @NotNull final ShaderNodeDefinitionDefine define) {
-        definition.getDefines().add(index, define.getDefine());
+        ShaderNodeUtils.getDefines(definition).add(index, define.getDefine());
     }
 
     /**
@@ -65,7 +66,7 @@ public class ShaderNodeDefinitionDefines {
      */
     @FromAnyThread
     public int indexOf(@NotNull final ShaderNodeDefinitionDefine define) {
-        return definition.getDefines().indexOf(define.getDefine());
+        return ShaderNodeUtils.getDefines(definition).indexOf(define.getDefine());
     }
 
     /**
@@ -75,7 +76,7 @@ public class ShaderNodeDefinitionDefines {
      */
     @FromAnyThread
     public void remove(@NotNull final ShaderNodeDefinitionDefine define) {
-        definition.getDefines().remove(define.getDefine());
+        ShaderNodeUtils.getDefines(definition).remove(define.getDefine());
     }
 
     /**
@@ -86,7 +87,7 @@ public class ShaderNodeDefinitionDefines {
      */
     @FromAnyThread
     public void rename(@NotNull final ShaderNodeDefinitionDefine define, @NotNull final String newName) {
-        final List<String> defines = definition.getDefines();
+        final List<String> defines = ShaderNodeUtils.getDefines(definition);
         final int position = defines.indexOf(define.getDefine());
         defines.remove(position);
         defines.add(position, newName);

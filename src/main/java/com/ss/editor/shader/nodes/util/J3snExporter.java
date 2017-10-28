@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The exporter a list of shader node definitions to a j3sn file.
@@ -68,9 +69,6 @@ public class J3snExporter {
         final List<ShaderNodeVariable> inputs = definition.getInputs();
         final List<ShaderNodeVariable> outputs = definition.getOutputs();
 
-        final List<String> defines = definition.getDefines();
-        final List<String> imports = definition.getImports();
-
         indent(builder, 2);
 
         builder.append("Type: ")
@@ -101,14 +99,14 @@ public class J3snExporter {
             builder.append("}\n");
         }
 
-        if (!defines.isEmpty()) {
-            builder.append('\n');
-            writeStrings(defines, builder, "Defines");
-        }
-
-        if (!imports.isEmpty()) {
-            builder.append('\n');
-            writeStrings(imports, builder, "Imports");
+        final Set<String> names = definition.getAdditionalValuesNames();
+        if (!names.isEmpty()) {
+            for (final String name : names) {
+                final List<String> values = definition.getAdditionalValues(name);
+                if (values.isEmpty()) continue;
+                builder.append('\n');
+                writeStrings(values, builder, name);
+            }
         }
 
         if (!inputs.isEmpty()) {

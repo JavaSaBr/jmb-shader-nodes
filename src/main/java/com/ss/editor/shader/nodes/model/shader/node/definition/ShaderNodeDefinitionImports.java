@@ -3,6 +3,7 @@ package com.ss.editor.shader.nodes.model.shader.node.definition;
 import static java.util.stream.Collectors.toList;
 import com.jme3.shader.ShaderNodeDefinition;
 import com.ss.editor.annotation.FromAnyThread;
+import com.ss.editor.shader.nodes.util.ShaderNodeUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public class ShaderNodeDefinitionImports {
      */
     @FromAnyThread
     public @NotNull List<ShaderNodeDefinitionImport> getImports() {
-        return definition.getImports().stream()
+        return ShaderNodeUtils.getImports(definition).stream()
                 .map(path -> new ShaderNodeDefinitionImport(getDefinition(), path))
                 .collect(toList());
     }
@@ -43,7 +44,7 @@ public class ShaderNodeDefinitionImports {
      */
     @FromAnyThread
     public void add(@NotNull final ShaderNodeDefinitionImport imp) {
-        definition.getImports().add(imp.getPath());
+        ShaderNodeUtils.getImports(definition).add(imp.getPath());
     }
 
     /**
@@ -54,7 +55,7 @@ public class ShaderNodeDefinitionImports {
      */
     @FromAnyThread
     public void add(final int index, @NotNull final ShaderNodeDefinitionImport imp) {
-        definition.getImports().add(index, imp.getPath());
+        ShaderNodeUtils.getImports(definition).add(index, imp.getPath());
     }
 
     /**
@@ -65,7 +66,7 @@ public class ShaderNodeDefinitionImports {
      */
     @FromAnyThread
     public int indexOf(@NotNull final ShaderNodeDefinitionImport imp) {
-        return definition.getImports().indexOf(imp.getPath());
+        return ShaderNodeUtils.getImports(definition).indexOf(imp.getPath());
     }
 
     /**
@@ -75,7 +76,7 @@ public class ShaderNodeDefinitionImports {
      */
     @FromAnyThread
     public void remove(@NotNull final ShaderNodeDefinitionImport imp) {
-        definition.getImports().remove(imp.getPath());
+        ShaderNodeUtils.getImports(definition).remove(imp.getPath());
     }
 
     /**
@@ -86,7 +87,7 @@ public class ShaderNodeDefinitionImports {
      */
     @FromAnyThread
     public void changePath(@NotNull final ShaderNodeDefinitionImport imp, @NotNull final String newPath) {
-        final List<String> imports = definition.getImports();
+        final List<String> imports = ShaderNodeUtils.getImports(definition);
         final int position = imports.indexOf(imp.getPath());
         imports.remove(position);
         imports.add(position, newPath);

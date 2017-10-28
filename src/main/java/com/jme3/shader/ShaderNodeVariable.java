@@ -201,33 +201,45 @@ public class ShaderNodeVariable implements Savable, Cloneable {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        final ShaderNodeVariable variable = (ShaderNodeVariable) o;
-        if (prefix != null ? !prefix.equals(variable.prefix) : variable.prefix != null) return false;
-        if (!name.equals(variable.name)) return false;
-        if (!type.equals(variable.type)) return false;
-        if (nameSpace != null ? !nameSpace.equals(variable.nameSpace) : variable.nameSpace != null) return false;
-        if (condition != null ? !condition.equals(variable.condition) : variable.condition != null) return false;
-        if (multiplicity != null ? !multiplicity.equals(variable.multiplicity) : variable.multiplicity != null) {
-            return false;
-        }
-
-        return defaultValue != null ? defaultValue.equals(variable.defaultValue) : variable.defaultValue == null;
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + (name != null?name.hashCode():0);
+        hash = 29 * hash + (type != null?type.hashCode():0);
+        hash = 29 * hash + (prefix != null ? prefix.hashCode() : 0);
+        hash = 29 * hash + (nameSpace != null?nameSpace.hashCode():0);
+        hash = 29 * hash + (condition != null?condition.hashCode():0);
+        hash = 29 * hash + (multiplicity != null?multiplicity.hashCode():0);
+        return hash;
     }
 
     @Override
-    public int hashCode() {
-        int result = prefix != null ? prefix.hashCode() : 0;
-        result = 31 * result + name.hashCode();
-        result = 31 * result + type.hashCode();
-        result = 31 * result + (nameSpace != null ? nameSpace.hashCode() : 0);
-        result = 31 * result + (condition != null ? condition.hashCode() : 0);
-        result = 31 * result + (multiplicity != null ? multiplicity.hashCode() : 0);
-        result = 31 * result + (defaultValue != null ? defaultValue.hashCode() : 0);
-        result = 31 * result + (shaderOutput ? 1 : 0);
-        return result;
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ShaderNodeVariable other = (ShaderNodeVariable) obj;
+        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+            return false;
+        }
+        if ((this.type == null) ? (other.type != null) : !this.type.equals(other.type)) {
+            return false;
+        }
+        if ((this.prefix == null) ? (other.prefix != null) : !this.prefix.equals(other.prefix)) {
+            return false;
+        }
+        if ((this.nameSpace == null) ? (other.nameSpace != null) : !this.nameSpace.equals(other.nameSpace)) {
+            return false;
+        }
+        if ((this.condition == null) ? (other.condition != null) : !this.condition.equals(other.condition)) {
+            return false;
+        }
+        if ((this.multiplicity == null) ? (other.multiplicity != null) : !this.multiplicity.equals(other.multiplicity)) {
+            return false;
+        }
+        return true;
     }
 
     /**

@@ -11,6 +11,7 @@ import com.ss.editor.plugin.api.property.PropertyDefinition;
 import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionDefine;
 import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionDefines;
 import com.ss.editor.shader.nodes.tree.operation.AddShaderNodeDefinitionDefineOperation;
+import com.ss.editor.shader.nodes.util.ShaderNodeUtils;
 import com.ss.editor.ui.Icons;
 import com.ss.editor.ui.control.tree.NodeTree;
 import com.ss.editor.ui.control.tree.action.AbstractNodeAction;
@@ -77,7 +78,7 @@ public class AddShaderNodeDefinitionDefineAction extends AbstractNodeAction<Chan
         final ShaderNodeDefinitionDefines localVariables = (ShaderNodeDefinitionDefines) node.getElement();
         final ShaderNodeDefinition definition = localVariables.getDefinition();
         final String name = vars.getString(PROP_NAME);
-        return !definition.getDefines().contains(name);
+        return !ShaderNodeUtils.getDefines(definition).contains(name);
     }
 
     /**

@@ -188,6 +188,7 @@ public class TechniqueDef implements Savable, Cloneable {
         defineTypes = new ArrayList<VarType>();
         paramToDefineId = new HashMap<String, Integer>();
         definesToShaderMap = new HashMap<DefineList, Shader>();
+        worldBinds = new ArrayList<>();
     }
 
     /**
@@ -513,8 +514,10 @@ public class TechniqueDef implements Savable, Cloneable {
             }
         }
 
-        if (getWorldBindings() != null) {
-            for (UniformBinding binding : getWorldBindings()) {
+        final List<UniformBinding> worldBindings = getWorldBindings();
+
+        if (!worldBindings.isEmpty()) {
+            for (UniformBinding binding : worldBindings) {
                 shader.addUniformBinding(binding);
             }
         }
@@ -625,11 +628,6 @@ public class TechniqueDef implements Savable, Cloneable {
      * to the list of world parameters, false otherwise.
      */
     public boolean addWorldParam(String name) {
-
-        if (worldBinds == null) {
-            worldBinds = new ArrayList<>();
-        }
-
         try {
             worldBinds.add(UniformBinding.valueOf(name));
             return true;
@@ -654,15 +652,6 @@ public class TechniqueDef implements Savable, Cloneable {
      */
     public List<UniformBinding> getWorldBindings() {
         return worldBinds;
-    }
-
-    /**
-     * Sets the list of world bindings.
-     *
-     * @param worldBinds the list of world bindings.
-     */
-    public void setWorldBinds(final ArrayList<UniformBinding> worldBinds) {
-        this.worldBinds = worldBinds;
     }
 
     public void write(JmeExporter ex) throws IOException{
@@ -831,10 +820,8 @@ public class TechniqueDef implements Savable, Cloneable {
             e.printStackTrace();
         }
 
-        if (worldBinds != null) {
-            clone.worldBinds = new ArrayList<>(worldBinds.size());
-            clone.worldBinds.addAll(worldBinds);
-        }
+        clone.worldBinds = new ArrayList<>(worldBinds.size());
+        clone.worldBinds.addAll(worldBinds);
 
         return clone;
     }

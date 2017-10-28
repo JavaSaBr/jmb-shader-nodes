@@ -52,6 +52,11 @@ public class AttachVarToShaderNodeOperation extends AttachShaderNodeOperation {
      */
     private boolean wasAddedToVaryings;
 
+    /**
+     * True of the output shader was unused.
+     */
+    private boolean outShaderWasUnused;
+
     public AttachVarToShaderNodeOperation(@NotNull final ShaderNode shaderNode,
                                           @Nullable final VariableMapping newMapping,
                                           @Nullable final VariableMapping oldMapping,
@@ -99,6 +104,12 @@ public class AttachVarToShaderNodeOperation extends AttachShaderNodeOperation {
             shaderNodes.add(shaderNode);
         }
 
+        final List<String> unusedNodes = generationInfo.getUnusedNodes();
+        if (unusedNodes.contains(outShaderNode.getName())) {
+            unusedNodes.remove(outShaderNode.getName());
+            outShaderWasUnused = true;
+        }
+
         final List<VariableMapping> inputMapping = shaderNode.getInputMapping();
 
         if (getOldMapping() != null) {
@@ -116,9 +127,9 @@ public class AttachVarToShaderNodeOperation extends AttachShaderNodeOperation {
         super.undoImplInJMEThread(editor);
 
         final VariableMapping newMapping = getNewMapping();
+        final ShaderGenerationInfo generationInfo = techniqueDef.getShaderGenerationInfo();
 
         if (newMapping != null && wasAddedToVaryings) {
-            final ShaderGenerationInfo generationInfo = techniqueDef.getShaderGenerationInfo();
             final List<ShaderNodeVariable> varyings = generationInfo.getVaryings();
             varyings.remove(newMapping.getRightVariable());
             wasAddedToVaryings = false;
@@ -134,6 +145,12 @@ public class AttachVarToShaderNodeOperation extends AttachShaderNodeOperation {
             shaderNodes.clear();
             shaderNodes.addAll(previousShaderOrder);
             previousShaderOrder = null;
+        }
+
+        if (outShaderWasUnused) {
+            final List<String> unusedNodes = generationInfo.getUnusedNodes();
+            unusedNodes.add(outShaderNode.getName());
+            outShaderWasUnused = false;
         }
 
         final List<VariableMapping> inputMapping = getShaderNode().getInputMapping();
