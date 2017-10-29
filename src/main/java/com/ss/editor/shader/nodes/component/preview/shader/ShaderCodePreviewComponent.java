@@ -146,6 +146,7 @@ public abstract class ShaderCodePreviewComponent extends CodePreviewComponent {
 
         final ExecutorManager executorManager = ExecutorManager.getInstance();
         executorManager.addFXTask(this::loadShader);
+        load(techniqueDef);
     }
 
     /**

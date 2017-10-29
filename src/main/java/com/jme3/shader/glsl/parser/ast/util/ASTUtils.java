@@ -661,4 +661,21 @@ public class ASTUtils {
 
         return result.toString();
     }
+
+    /**
+     * Clears the string builder.
+     *
+     * @param builder the string builder.
+     * @return the cleared string builder.
+     */
+    public static StringBuilder clear(final StringBuilder builder) {
+
+        final int length = builder.length();
+
+        if (length < 1) {
+            return builder;
+        }
+
+        return builder.delete(0, length - 1);
+    }
 }

@@ -77,6 +77,31 @@ public class ASTShaderGeneratorState {
     private final List<LocalVarDeclarationASTNode> localVars;
 
     /**
+     * The builder of header shader code.
+     */
+    private final StringBuilder headerSource;
+
+    /**
+     * The builder of imported shader code.
+     */
+    private final StringBuilder importsSource;
+
+    /**
+     * The builder of uniforms code.
+     */
+    private final StringBuilder uniformsSource;
+
+    /**
+     * The builder of methods code.
+     */
+    private final StringBuilder methodsSource;
+
+    /**
+     * The builder of main source code.
+     */
+    private final StringBuilder mainSource;
+
+    /**
      * The technique definition.
      */
     private TechniqueDef techniqueDef;
@@ -98,6 +123,11 @@ public class ASTShaderGeneratorState {
         this.importedGlobalUniforms = new ArrayList<>();
         this.methods = new ArrayList<>();
         this.localVars = new ArrayList<>();
+        this.headerSource = new StringBuilder();
+        this.importsSource = new StringBuilder();
+        this.uniformsSource = new StringBuilder();
+        this.methodsSource = new StringBuilder();
+        this.mainSource = new StringBuilder();
     }
 
     /**
@@ -233,5 +263,50 @@ public class ASTShaderGeneratorState {
      */
     public void setIndent(final int indent) {
         this.indent = indent;
+    }
+
+    /**
+     * Gets the builder of header shader code.
+     *
+     * @return the builder of header shader code.
+     */
+    public StringBuilder getHeaderSource() {
+        return headerSource;
+    }
+
+    /**
+     * Gets the builder of imported shader code.
+     *
+     * @return the builder of imported shader code.
+     */
+    public StringBuilder getImportsSource() {
+        return importsSource;
+    }
+
+    /**
+     * Gets the builder of main source code.
+     *
+     * @return the builder of main source code.
+     */
+    public StringBuilder getMainSource() {
+        return mainSource;
+    }
+
+    /**
+     * Gets the builder of methods code.
+     *
+     * @return the builder of methods code.
+     */
+    public StringBuilder getMethodsSource() {
+        return methodsSource;
+    }
+
+    /**
+     * Gets the builder of uniforms code.
+     *
+     * @return the builder of uniforms code.
+     */
+    public StringBuilder getUniformsSource() {
+        return uniformsSource;
     }
 }

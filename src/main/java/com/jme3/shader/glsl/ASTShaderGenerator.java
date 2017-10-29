@@ -176,11 +176,11 @@ public abstract class ASTShaderGenerator extends Glsl100ShaderGenerator {
 
         ASTUtils.removeExtensionDuplicates(extensions);
 
-        final StringBuilder headerSource = new StringBuilder();
-        final StringBuilder importsSource = new StringBuilder();
-        final StringBuilder uniformsSource = new StringBuilder();
-        final StringBuilder methodsSource = new StringBuilder();
-        final StringBuilder mainSource = new StringBuilder();
+        final StringBuilder headerSource = ASTUtils.clear(state.getHeaderSource());
+        final StringBuilder importsSource = ASTUtils.clear(state.getImportsSource());
+        final StringBuilder uniformsSource = ASTUtils.clear(state.getUniformsSource());
+        final StringBuilder methodsSource = ASTUtils.clear(state.getMethodsSource());
+        final StringBuilder mainSource = ASTUtils.clear(state.getMainSource());
 
         generateExtensions(extensions, headerSource);
 
