@@ -136,8 +136,6 @@ public abstract class AstShaderGenerator extends Glsl100ShaderGenerator {
     @Override
     public Shader generateShader(final String definesSourceCode) {
 
-        final long time = System.currentTimeMillis();
-
         final AstShaderGeneratorState state = LOCAL_STATE.get();
         final TechniqueDef techniqueDef = state.getTechniqueDef();
         final Shader result = super.generateShader(definesSourceCode);
@@ -158,8 +156,6 @@ public abstract class AstShaderGenerator extends Glsl100ShaderGenerator {
                 result.addUniformBinding(binding);
             }
         }
-
-        System.out.println("Generated shader " + techniqueDef.getName() + ":" + (System.currentTimeMillis() - time));
 
         return result;
     }

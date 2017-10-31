@@ -132,8 +132,6 @@ public class GLSLParser {
      */
     public FileDeclarationASTNode parseFileDeclaration(final String path, final String glslCode) {
 
-        final long time = System.currentTimeMillis();
-
         final FileDeclarationASTNode node = new FileDeclarationASTNode();
         node.setPath(path);
         node.setLine(line);
@@ -154,8 +152,6 @@ public class GLSLParser {
         } finally {
             nodeStack.removeLast();
         }
-
-        System.out.println("Parse " + path + ":" + (System.currentTimeMillis() - time));
 
         return node;
     }
