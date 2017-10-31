@@ -5,7 +5,7 @@ import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.ShaderNodeDefinitionKey;
 import com.jme3.shader.ShaderNodeDefinition;
-import com.jme3.shader.glsl.parser.GLSLParser;
+import com.jme3.shader.glsl.parser.GlslParser;
 import com.ss.editor.FileExtensions;
 import com.ss.editor.annotation.BackgroundThread;
 import com.ss.editor.annotation.FXThread;
@@ -194,7 +194,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
             EXECUTOR_MANAGER.schedule(() -> {
                 try {
                     //FIXME to delete
-                    GLSLParser.newInstance().parseFileDeclaration(shaderSource.getShaderPath(), code);
+                    GlslParser.newInstance().parseFileDeclaration(shaderSource.getShaderPath(), code);
                 } catch (final Throwable e) {
                     e.printStackTrace();
                 }

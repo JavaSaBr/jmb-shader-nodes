@@ -31,7 +31,7 @@
  */
 package com.jme3.shader;
 
-import static com.jme3.shader.glsl.parser.ast.util.ASTUtils.getIndent;
+import static com.jme3.shader.glsl.parser.ast.util.AstUtils.getIndent;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.ShaderGenerationInfo;
 import com.jme3.material.plugins.ConditionParser;

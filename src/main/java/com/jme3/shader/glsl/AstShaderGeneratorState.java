@@ -2,13 +2,13 @@ package com.jme3.shader.glsl;
 
 import com.jme3.material.TechniqueDef;
 import com.jme3.shader.ShaderNode;
-import com.jme3.shader.glsl.parser.ast.declaration.ExternalFieldDeclarationASTNode;
-import com.jme3.shader.glsl.parser.ast.declaration.FileDeclarationASTNode;
-import com.jme3.shader.glsl.parser.ast.declaration.LocalVarDeclarationASTNode;
-import com.jme3.shader.glsl.parser.ast.declaration.MethodDeclarationASTNode;
-import com.jme3.shader.glsl.parser.ast.preprocessor.ExtensionPreprocessorASTNode;
-import com.jme3.shader.glsl.parser.ast.preprocessor.ImportPreprocessorASTNode;
-import com.jme3.shader.glsl.parser.ast.value.DefineValueASTNode;
+import com.jme3.shader.glsl.parser.ast.declaration.ExternalFieldDeclarationAstNode;
+import com.jme3.shader.glsl.parser.ast.declaration.FileDeclarationAstNode;
+import com.jme3.shader.glsl.parser.ast.declaration.LocalVarDeclarationAstNode;
+import com.jme3.shader.glsl.parser.ast.declaration.MethodDeclarationAstNode;
+import com.jme3.shader.glsl.parser.ast.preprocessor.ExtensionPreprocessorAstNode;
+import com.jme3.shader.glsl.parser.ast.preprocessor.ImportPreprocessorAstNode;
+import com.jme3.shader.glsl.parser.ast.value.DefineValueAstNode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,22 +25,22 @@ public class AstShaderGeneratorState {
     /**
      * The cache of AST of shader sources.
      */
-    private final Map<String, FileDeclarationASTNode> astCache;
+    private final Map<String, FileDeclarationAstNode> astCache;
 
     /**
      * The mapping a shader node source path to a AST presentation.
      */
-    private final Map<ShaderNode, FileDeclarationASTNode> shaderNodeSources;
+    private final Map<ShaderNode, FileDeclarationAstNode> shaderNodeSources;
 
     /**
      * The list of extension nodes.
      */
-    private final List<ExtensionPreprocessorASTNode> extensionNodes;
+    private final List<ExtensionPreprocessorAstNode> extensionNodes;
 
     /**
      * The list of import nodes.
      */
-    private final List<ImportPreprocessorASTNode> importNodes;
+    private final List<ImportPreprocessorAstNode> importNodes;
 
     /**
      * The list of defined variables.
@@ -55,27 +55,27 @@ public class AstShaderGeneratorState {
     /**
      * The list of define value nodes.
      */
-    private final List<DefineValueASTNode> defineValueNodes;
+    private final List<DefineValueAstNode> defineValueNodes;
 
     /**
      * The list of declared uniforms in imported shaders.
      */
-    private final List<ExternalFieldDeclarationASTNode> importedUnforms;
+    private final List<ExternalFieldDeclarationAstNode> importedUnforms;
 
     /**
      * The result list of declared uniforms in imported shaders.
      */
-    private final List<ExternalFieldDeclarationASTNode> importedGlobalUniforms;
+    private final List<ExternalFieldDeclarationAstNode> importedGlobalUniforms;
 
     /**
      * The list of methods.
      */
-    private final List<MethodDeclarationASTNode> methods;
+    private final List<MethodDeclarationAstNode> methods;
 
     /**
      * The list of local variables.
      */
-    private final List<LocalVarDeclarationASTNode> localVars;
+    private final List<LocalVarDeclarationAstNode> localVars;
 
     /**
      * The builder of header shader code.
@@ -148,7 +148,7 @@ public class AstShaderGeneratorState {
      *
      * @return the cache of AST of shader sources.
      */
-    public Map<String, FileDeclarationASTNode> getAstCache() {
+    public Map<String, FileDeclarationAstNode> getAstCache() {
         return astCache;
     }
 
@@ -157,7 +157,7 @@ public class AstShaderGeneratorState {
      *
      * @return the mapping a shader node source path to a AST presentation.
      */
-    public Map<ShaderNode, FileDeclarationASTNode> getShaderNodeSources() {
+    public Map<ShaderNode, FileDeclarationAstNode> getShaderNodeSources() {
         return shaderNodeSources;
     }
 
@@ -166,7 +166,7 @@ public class AstShaderGeneratorState {
      *
      * @return the list of define value nodes.
      */
-    public List<DefineValueASTNode> getDefineValueNodes() {
+    public List<DefineValueAstNode> getDefineValueNodes() {
         return defineValueNodes;
     }
 
@@ -175,7 +175,7 @@ public class AstShaderGeneratorState {
      *
      * @return the list of extension nodes.
      */
-    public List<ExtensionPreprocessorASTNode> getExtensionNodes() {
+    public List<ExtensionPreprocessorAstNode> getExtensionNodes() {
         return extensionNodes;
     }
 
@@ -184,7 +184,7 @@ public class AstShaderGeneratorState {
      *
      * @return the list of import nodes.
      */
-    public List<ImportPreprocessorASTNode> getImportNodes() {
+    public List<ImportPreprocessorAstNode> getImportNodes() {
         return importNodes;
     }
 
@@ -193,7 +193,7 @@ public class AstShaderGeneratorState {
      *
      * @return the result list of declared uniforms in imported shaders.
      */
-    public List<ExternalFieldDeclarationASTNode> getImportedGlobalUniforms() {
+    public List<ExternalFieldDeclarationAstNode> getImportedGlobalUniforms() {
         return importedGlobalUniforms;
     }
 
@@ -202,7 +202,7 @@ public class AstShaderGeneratorState {
      *
      * @return the list of declared uniforms in imported shaders.
      */
-    public List<ExternalFieldDeclarationASTNode> getImportedUnforms() {
+    public List<ExternalFieldDeclarationAstNode> getImportedUnforms() {
         return importedUnforms;
     }
 
@@ -211,7 +211,7 @@ public class AstShaderGeneratorState {
      *
      * @return the list of local variables.
      */
-    public List<LocalVarDeclarationASTNode> getLocalVars() {
+    public List<LocalVarDeclarationAstNode> getLocalVars() {
         return localVars;
     }
 
@@ -220,7 +220,7 @@ public class AstShaderGeneratorState {
      *
      * @return the list of methods.
      */
-    public List<MethodDeclarationASTNode> getMethods() {
+    public List<MethodDeclarationAstNode> getMethods() {
         return methods;
     }
 
