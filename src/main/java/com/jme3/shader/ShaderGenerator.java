@@ -31,13 +31,13 @@
  */
 package com.jme3.shader;
 
-import com.jme3.asset.AssetKey;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.ShaderGenerationInfo;
 import com.jme3.material.TechniqueDef;
 import com.jme3.shader.Shader.ShaderType;
+import com.jme3.shader.plugins.ShaderAssetKey;
 
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,30 +49,6 @@ import java.util.regex.Pattern;
  * @author Nehon
  */
 public abstract class ShaderGenerator {
-
-    protected static final char[] EMPTY_CHARS = new char[0];
-
-    /**
-     * Calculate the indent using space characters.
-     *
-     * @param level the level.
-     * @return the result indent.
-     */
-    protected static char[] getIndent(final int level) {
-
-        if (level == 0) {
-            return EMPTY_CHARS;
-        }
-
-        final int characters = level * 4;
-        final char[] result = new char[characters];
-
-        for (int i = 0; i < result.length; i++) {
-            result[i] = ' ';
-        }
-
-        return result;
-    }
 
     /**
      * the asset manager
@@ -90,6 +66,8 @@ public abstract class ShaderGenerator {
      * Extension pattern
      */
     Pattern extensions = Pattern.compile("(#extension.*\\s+)");
+
+    private Map<String, String> imports = new LinkedHashMap<>();
 
     /**
      * Build a shaderGenerator
@@ -152,6 +130,8 @@ public abstract class ShaderGenerator {
             return null;
         }
 
+        imports.clear();
+
         indent = 0;
 
         StringBuilder sourceDeclaration = new StringBuilder();
@@ -169,6 +149,12 @@ public abstract class ShaderGenerator {
         generateDeclarationAndMainBody(shaderNodes, sourceDeclaration, source, info, type);
 
         generateEndOfMainSection(source, info, type);
+
+        //insert imports backward
+        int insertIndex = sourceDeclaration.length();
+        for (String importSource : imports.values()) {
+            sourceDeclaration.insert(insertIndex, importSource);
+        }
 
         sourceDeclaration.append(source);
 
@@ -211,27 +197,33 @@ public abstract class ShaderGenerator {
             if (shaderNode.getDefinition().getType() == type) {
                 int index = findShaderIndexFromVersion(shaderNode, type);
                 String shaderPath = shaderNode.getDefinition().getShadersPath().get(index);
-                String loadedSource = (String) assetManager.loadAsset(new AssetKey(shaderPath));
+                Map<String, String> sources = (Map<String, String>) assetManager.loadAsset(new ShaderAssetKey(shaderPath, false));
+                String loadedSource = sources.get("[main]");
+                for (String name : sources.keySet() ) {
+                    if (!name.equals("[main]")) {
+                        imports.put(name, sources.get(name));
+                    }
+                }
                 appendNodeDeclarationAndMain(loadedSource, sourceDeclaration, source, shaderNode, info, shaderPath);
             }
         }
     }
 
     /**
-     * Appends declaration and main part of a nodes to the shader declaration and
+     * Appends declaration and main part of a node to the shader declaration and
      * main part. the loadedSource is split by "void main(){" to split
-     * declaration from main part of the nodes source code.The trailing "}" is
+     * declaration from main part of the node source code.The trailing "}" is
      * removed from the main part. Each part is then respectively passed to
      * generateDeclarativeSection and generateNodeMainSection.
      *
      * @see ShaderGenerator#generateDeclarativeSection
      * @see ShaderGenerator#generateNodeMainSection
      *
-     * @param loadedSource the actual source code loaded for this nodes.
+     * @param loadedSource the actual source code loaded for this node.
      * @param shaderPath path the the shader file
      * @param sourceDeclaration the Shader declaration part string builder.
      * @param source the Shader main part StringBuilder.
-     * @param shaderNode the shader nodes.
+     * @param shaderNode the shader node.
      * @param info the ShaderGenerationInfo.
      */
     protected void appendNodeDeclarationAndMain(String loadedSource, StringBuilder sourceDeclaration, StringBuilder source, ShaderNode shaderNode, ShaderGenerationInfo info, String shaderPath) {
@@ -259,22 +251,6 @@ public abstract class ShaderGenerator {
      * @return the shaderLanguage and version.
      */
     protected abstract String getLanguageAndVersion(Shader.ShaderType type);
-
-    /**
-     * Gets the shader language of the shader. It should be something like "GLSL".
-     *
-     * @param type the shader type for which the language should be returned.
-     * @return the shader language.
-     */
-    protected abstract String getLanguage(final Shader.ShaderType type);
-
-    /**
-     * Gets the shader version of the shader. It should be something like "100", "150", "310".
-     *
-     * @param type the shader type for which the version should be returned.
-     * @return the shader version.
-     */
-    protected abstract int getVersion(final Shader.ShaderType type);
 
     /**
      * generates the uniforms declaration for a shader of the given type.
@@ -313,7 +289,7 @@ public abstract class ShaderGenerator {
      * @see ShaderNode#getDefinition()
      * @see ShaderNodeDefinition#getType()
      *
-     * @param nodeDecalarationSource the declaration part of the nodes
+     * @param nodeDecalarationSource the declaration part of the node
      * @param source the StringBuilder to append generated code.
      * @param shaderNode the shaderNode.
      * @param info the ShaderGenerationInfo.
@@ -358,42 +334,28 @@ public abstract class ShaderGenerator {
     protected abstract void generateNodeMainSection(StringBuilder source, ShaderNode shaderNode, String nodeSource, ShaderGenerationInfo info);
 
     /**
-     * Finds the index of a shader source path according to the version of the generator.
+     * returns the shaderpath index according to the version of the generator.
      * This allow to select the higher version of the shader that the generator
-     * can handle.
+     * can handle
      *
      * @param shaderNode the shaderNode being processed
-     * @param type       the shaderType
-     * @return the index of the shader path in ShaderNodeDefinition shadersPath list.
+     * @param type the shaderType
+     * @return the index of the shader path in ShaderNodeDefinition shadersPath
+     * list
      * @throws NumberFormatException
      */
-    protected int findShaderIndexFromVersion(final ShaderNode shaderNode, final ShaderType type)
-            throws NumberFormatException {
-
+    protected int findShaderIndexFromVersion(ShaderNode shaderNode, ShaderType type) throws NumberFormatException {
         int index = 0;
-
-        final ShaderNodeDefinition definition = shaderNode.getDefinition();
-        final List<String> languages = definition.getShadersLanguage();
-
-        final String language = getLanguage(type);
-        final int genVersion = getVersion(type);
-
-        int currentVersion = 0;
-
-        for (int i = 0; i < languages.size(); i++) {
-
-            final String langAndVersion = languages.get(i);
-            if (!langAndVersion.startsWith(language)) {
-                continue;
-            }
-
-            int shaderVersion = Integer.parseInt(langAndVersion.substring(language.length()));
-            if (shaderVersion > currentVersion && shaderVersion <= genVersion) {
-                currentVersion = shaderVersion;
+        List<String> lang = shaderNode.getDefinition().getShadersLanguage();
+        int genVersion = Integer.parseInt(getLanguageAndVersion(type).substring(4));
+        int curVersion = 0;
+        for (int i = 0; i < lang.size(); i++) {
+            int version = Integer.parseInt(lang.get(i).substring(4));
+            if (version > curVersion && version <= genVersion) {
+                curVersion = version;
                 index = i;
             }
         }
-
         return index;
     }
 }

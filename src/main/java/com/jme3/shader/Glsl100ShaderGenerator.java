@@ -31,6 +31,7 @@
  */
 package com.jme3.shader;
 
+import static com.jme3.shader.glsl.parser.ast.util.ASTUtils.getIndent;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.ShaderGenerationInfo;
 import com.jme3.material.plugins.ConditionParser;
@@ -580,16 +581,6 @@ public class Glsl100ShaderGenerator extends ShaderGenerator {
     @Override
     protected String getLanguageAndVersion(ShaderType type) {
         return "GLSL100";
-    }
-
-    @Override
-    protected String getLanguage(final ShaderType type) {
-        return "GLSL";
-    }
-
-    @Override
-    protected int getVersion(final ShaderType type) {
-        return 100;
     }
 
     /**

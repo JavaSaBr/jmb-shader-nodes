@@ -57,11 +57,6 @@ public class Glsl150ShaderGenerator extends Glsl100ShaderGenerator {
         return "GLSL150";
     }
 
-    @Override
-    protected int getVersion(final ShaderType type) {
-        return 150;
-    }
-
     /**
      * {@inheritDoc} in glsl 1.5 attributes are prefixed with the "in" keyword
      * and not the "attribute" keyword

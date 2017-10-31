@@ -11,7 +11,7 @@ import com.jme3.shader.ShaderNodeVariable;
  *
  * @author JavaSaBr
  */
-public class ASTGlsl150ShaderGenerator extends ASTGlsl100ShaderGenerator {
+public class AstGlsl150ShaderGenerator extends AstGlsl100ShaderGenerator {
 
     private static final String MAIN_COMPATIBILITY =
             "#if defined GL_ES\n" +
@@ -47,18 +47,13 @@ public class ASTGlsl150ShaderGenerator extends ASTGlsl100ShaderGenerator {
     private static final String FRAGMENT_COMPATIBILITY =
             "#define varying in\n";
 
-    public ASTGlsl150ShaderGenerator(final AssetManager assetManager) {
+    public AstGlsl150ShaderGenerator(final AssetManager assetManager) {
         super(assetManager);
     }
 
     @Override
     protected String getLanguageAndVersion(final ShaderType type) {
         return "GLSL150";
-    }
-
-    @Override
-    protected int getVersion(final ShaderType type) {
-        return 150;
     }
 
     @Override

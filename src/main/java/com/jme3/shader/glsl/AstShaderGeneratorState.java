@@ -7,6 +7,7 @@ import com.jme3.shader.glsl.parser.ast.declaration.FileDeclarationASTNode;
 import com.jme3.shader.glsl.parser.ast.declaration.LocalVarDeclarationASTNode;
 import com.jme3.shader.glsl.parser.ast.declaration.MethodDeclarationASTNode;
 import com.jme3.shader.glsl.parser.ast.preprocessor.ExtensionPreprocessorASTNode;
+import com.jme3.shader.glsl.parser.ast.preprocessor.ImportPreprocessorASTNode;
 import com.jme3.shader.glsl.parser.ast.value.DefineValueASTNode;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import java.util.Map;
  *
  * @author JavaSaBr
  */
-public class ASTShaderGeneratorState {
+public class AstShaderGeneratorState {
 
     /**
      * The cache of AST of shader sources.
@@ -32,14 +33,14 @@ public class ASTShaderGeneratorState {
     private final Map<ShaderNode, FileDeclarationASTNode> shaderNodeSources;
 
     /**
-     * The list of extensions.
+     * The list of extension nodes.
      */
-    private final List<ExtensionPreprocessorASTNode> extensions;
+    private final List<ExtensionPreprocessorASTNode> extensionNodes;
 
     /**
-     * The list of imports.
+     * The list of import nodes.
      */
-    private final List<String> imports;
+    private final List<ImportPreprocessorASTNode> importNodes;
 
     /**
      * The list of defined variables.
@@ -111,11 +112,11 @@ public class ASTShaderGeneratorState {
      */
     private int indent;
 
-    public ASTShaderGeneratorState() {
+    public AstShaderGeneratorState() {
         this.astCache = new HashMap<>();
         this.shaderNodeSources = new HashMap<>();
-        this.extensions = new ArrayList<>();
-        this.imports = new ArrayList<>();
+        this.extensionNodes = new ArrayList<>();
+        this.importNodes = new ArrayList<>();
         this.definedVariables = new ArrayList<>();
         this.resultDefines = new ArrayList<>();
         this.defineValueNodes = new ArrayList<>();
@@ -158,12 +159,21 @@ public class ASTShaderGeneratorState {
     }
 
     /**
-     * Gets the list of extensions.
+     * Gets the list of extension nodes.
      *
-     * @return the list of extensions.
+     * @return the list of extension nodes.
      */
-    public List<ExtensionPreprocessorASTNode> getExtensions() {
-        return extensions;
+    public List<ExtensionPreprocessorASTNode> getExtensionNodes() {
+        return extensionNodes;
+    }
+
+    /**
+     * Gets the list of import nodes.
+     *
+     * @return the list of import nodes.
+     */
+    public List<ImportPreprocessorASTNode> getImportNodes() {
+        return importNodes;
     }
 
     /**
@@ -209,15 +219,6 @@ public class ASTShaderGeneratorState {
      */
     public List<String> getDefinedVariables() {
         return definedVariables;
-    }
-
-    /**
-     * Gets the list of imports.
-     *
-     * @return the list of imports.
-     */
-    public List<String> getImports() {
-        return imports;
     }
 
     /**

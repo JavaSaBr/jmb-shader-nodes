@@ -11,7 +11,9 @@ import com.jme3.shader.glsl.parser.ast.declaration.ExternalFieldDeclarationASTNo
 import com.jme3.shader.glsl.parser.ast.declaration.ExternalFieldDeclarationASTNode.ExternalFieldType;
 import com.jme3.shader.glsl.parser.ast.declaration.MethodDeclarationASTNode;
 import com.jme3.shader.glsl.parser.ast.preprocessor.ExtensionPreprocessorASTNode;
+import com.jme3.shader.glsl.parser.ast.preprocessor.ImportPreprocessorASTNode;
 import com.jme3.shader.glsl.parser.ast.value.DefineValueASTNode;
+import com.jme3.shader.glsl.parser.ast.value.StringValueASTNode;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -388,24 +390,54 @@ public class ASTUtils {
     }
 
     /**
-     * Removed duplicates of the extensions.
+     * Removed duplicates of the extensionNodes.
      *
-     * @param extensions the extensions.
+     * @param extensionNodes the extensionNodes.
      */
-    public static void removeExtensionDuplicates(final List<ExtensionPreprocessorASTNode> extensions) {
+    public static void removeExtensionDuplicates(final List<ExtensionPreprocessorASTNode> extensionNodes) {
 
-        if (extensions.size() < 2) {
+        if (extensionNodes.size() < 2) {
             return;
         }
 
-        for (Iterator<ExtensionPreprocessorASTNode> iterator = extensions.iterator(); iterator.hasNext(); ) {
+        for (Iterator<ExtensionPreprocessorASTNode> iterator = extensionNodes.iterator(); iterator.hasNext(); ) {
 
-            final ExtensionPreprocessorASTNode extension = iterator.next();
-            final NameASTNode name = extension.getExtension();
+            final ExtensionPreprocessorASTNode extensionNode = iterator.next();
+            final NameASTNode name = extensionNode.getExtension();
 
             boolean isDuplicate = false;
-            for (final ExtensionPreprocessorASTNode other : extensions) {
-                if (other != extension && Objects.equals(name, other.getExtension())) {
+            for (final ExtensionPreprocessorASTNode other : extensionNodes) {
+                if (other != extensionNode && Objects.equals(name, other.getExtension())) {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+
+            if (isDuplicate) {
+                iterator.remove();
+            }
+        }
+    }
+
+    /**
+     * Removed duplicates of the imports.
+     *
+     * @param importNodes the imports.
+     */
+    public static void removeImportDuplicates(final List<ImportPreprocessorASTNode> importNodes) {
+
+        if (importNodes.size() < 2) {
+            return;
+        }
+
+        for (Iterator<ImportPreprocessorASTNode> iterator = importNodes.iterator(); iterator.hasNext(); ) {
+
+            final ImportPreprocessorASTNode importNode = iterator.next();
+            final StringValueASTNode value = importNode.getValue();
+
+            boolean isDuplicate = false;
+            for (final ImportPreprocessorASTNode other : importNodes) {
+                if (other != importNode && Objects.equals(value, other.getValue())) {
                     isDuplicate = true;
                     break;
                 }

@@ -1,7 +1,8 @@
 package com.ss.editor.shader.nodes;
 
 import com.jme3.asset.AssetManager;
-import com.jme3.shader.glsl.ASTGlsl150ShaderGenerator;
+import com.jme3.shader.glsl.AstGlsl150ShaderGenerator;
+import com.jme3.shader.glsl.AstShaderGenerator;
 import com.ss.editor.Editor;
 import com.ss.editor.FileExtensions;
 import com.ss.editor.annotation.FXThread;
@@ -49,8 +50,9 @@ public class ShaderNodesEditorPlugin extends EditorPlugin {
     @Override
     public void onAfterCreateJMEContext(@NotNull final PluginSystem pluginSystem) {
         super.onAfterCreateJMEContext(pluginSystem);
+        System.setProperty(AstShaderGenerator.PROP_USE_CASE, "false");
         final AssetManager assetManager = Editor.getInstance().getAssetManager();
-        assetManager.setShaderGenerator(new ASTGlsl150ShaderGenerator(assetManager));
+        assetManager.setShaderGenerator(new AstGlsl150ShaderGenerator(assetManager));
     }
 
     @FXThread
