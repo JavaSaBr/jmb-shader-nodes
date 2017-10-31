@@ -568,10 +568,12 @@ public class ASTUtils {
      * @param source  the source code.
      * @param oldName the old name.
      * @param newName the new name.
-     * @return the updated string.
+     * @param result  the result code.
+     * @return the builder with result code.
      */
-    public static String replaceVar(final String source, final String oldName, final String newName) {
-        return replace(source, oldName, newName, PREVIOUS_VAR_CHAR_CHECKER, NEXT_VAR_CHAR_CHECKER);
+    public static StringBuilder replaceVar(final StringBuilder source, final String oldName, final String newName,
+                                           final StringBuilder result) {
+        return replace(source, oldName, newName, PREVIOUS_VAR_CHAR_CHECKER, NEXT_VAR_CHAR_CHECKER, result);
     }
 
     /**
@@ -580,10 +582,12 @@ public class ASTUtils {
      * @param source  the source code.
      * @param oldName the old name.
      * @param newName the new name.
-     * @return the updated string.
+     * @param result  the result code.
+     * @return the builder with result code.
      */
-    public static String replaceDefine(final String source, final String oldName, final String newName) {
-        return replace(source, oldName, newName, PREVIOUS_DEFINE_CHAR_CHECKER, NEXT_DEFINE_CHAR_CHECKER);
+    public static StringBuilder replaceDefine(final StringBuilder source, final String oldName, final String newName,
+                                              final StringBuilder result) {
+        return replace(source, oldName, newName, PREVIOUS_DEFINE_CHAR_CHECKER, NEXT_DEFINE_CHAR_CHECKER, result);
     }
 
     /**
@@ -592,10 +596,12 @@ public class ASTUtils {
      * @param source  the source code.
      * @param oldName the old name.
      * @param newName the new name.
-     * @return the updated string.
+     * @param result  the result code.
+     * @return the builder with result code.
      */
-    public static String replaceMethod(final String source, final String oldName, final String newName) {
-        return replace(source, oldName, newName, PREVIOUS_METHOD_CHAR_CHECKER, NEXT_METHOD_CHAR_CHECKER);
+    public static StringBuilder replaceMethod(final StringBuilder source, final String oldName, final String newName,
+                                              final StringBuilder result) {
+        return replace(source, oldName, newName, PREVIOUS_METHOD_CHAR_CHECKER, NEXT_METHOD_CHAR_CHECKER, result);
     }
 
     /**
@@ -606,18 +612,19 @@ public class ASTUtils {
      * @param newName         the new name.
      * @param prevCharChecker the checker of a previous char.
      * @param nextCharChecker the checker of a next char.
-     * @return the updated string.
+     * @param result          the result code.
+     * @return the builder with result code.
      */
-    public static String replace(final String source, final String oldName, final String newName,
-                                 final CharPredicate prevCharChecker, final CharPredicate nextCharChecker) {
+    private static StringBuilder replace(final StringBuilder source, final String oldName, final String newName,
+                                         final CharPredicate prevCharChecker, final CharPredicate nextCharChecker,
+                                         final StringBuilder result) {
 
-        if (!source.contains(oldName)) {
-            return source;
+        if (source.indexOf(oldName) == -1) {
+            result.append(source);
+            return result;
         }
 
-        final StringBuilder result = new StringBuilder(source.length() + newName.length());
-
-        String debug = "";
+        //String debug = "";
 
         boolean copyOriginal = false;
 
@@ -634,11 +641,11 @@ public class ASTUtils {
 
                 first = i;
                 current = 1;
-                debug = String.valueOf(ch);
+                //debug = String.valueOf(ch);
                 continue;
             }
 
-            debug += ch;
+            //debug += ch;
 
             if (current < oldName.length() && ch == oldName.charAt(current)) {
                 current++;
@@ -691,7 +698,7 @@ public class ASTUtils {
             last = -1;
         }
 
-        return result.toString();
+        return result;
     }
 
     /**
@@ -708,6 +715,6 @@ public class ASTUtils {
             return builder;
         }
 
-        return builder.delete(0, length - 1);
+        return builder.delete(0, length);
     }
 }

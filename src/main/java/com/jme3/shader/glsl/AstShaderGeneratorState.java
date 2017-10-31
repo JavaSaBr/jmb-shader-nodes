@@ -103,6 +103,16 @@ public class AstShaderGeneratorState {
     private final StringBuilder mainSource;
 
     /**
+     * The builder with original source.
+     */
+    private final StringBuilder originalSource;
+
+    /**
+     * The builder with updated source.
+     */
+    private final StringBuilder updatedSource;
+
+    /**
      * The technique definition.
      */
     private TechniqueDef techniqueDef;
@@ -129,6 +139,8 @@ public class AstShaderGeneratorState {
         this.uniformsSource = new StringBuilder();
         this.methodsSource = new StringBuilder();
         this.mainSource = new StringBuilder();
+        this.originalSource = new StringBuilder();
+        this.updatedSource = new StringBuilder();
     }
 
     /**
@@ -309,5 +321,23 @@ public class AstShaderGeneratorState {
      */
     public StringBuilder getUniformsSource() {
         return uniformsSource;
+    }
+
+    /**
+     * Gets the builder with original source.
+     *
+     * @return the builder with original source.
+     */
+    public StringBuilder getOriginalSource() {
+        return originalSource;
+    }
+
+    /**
+     * Gets the builder with updated source.
+     *
+     * @return the builder with updated source.
+     */
+    public StringBuilder getUpdatedSource() {
+        return updatedSource;
     }
 }

@@ -1,5 +1,6 @@
 package com.jme3.shader.glsl;
 
+import static com.jme3.shader.glsl.parser.ast.util.ASTUtils.clear;
 import static com.jme3.shader.glsl.parser.ast.util.ASTUtils.findAllByType;
 import static java.lang.System.getProperty;
 import com.jme3.asset.AssetKey;
@@ -9,6 +10,7 @@ import com.jme3.material.ShaderGenerationInfo;
 import com.jme3.material.TechniqueDef;
 import com.jme3.shader.*;
 import com.jme3.shader.Shader.ShaderType;
+import com.jme3.shader.glsl.parser.GLSLLang;
 import com.jme3.shader.glsl.parser.GLSLParser;
 import com.jme3.shader.glsl.parser.ast.ASTNode;
 import com.jme3.shader.glsl.parser.ast.NameASTNode;
@@ -268,6 +270,8 @@ public abstract class AstShaderGenerator extends Glsl100ShaderGenerator {
 
                 if (child instanceof MethodDeclarationASTNode) {
                     continue;
+                } else if (child instanceof ImportPreprocessorASTNode) {
+                    continue;
                 }
 
                 defineValueNodes.clear();
@@ -487,7 +491,15 @@ public abstract class AstShaderGenerator extends Glsl100ShaderGenerator {
 
     @Override
     protected String replace(final String source, final ShaderNodeVariable var, final String newName) {
-        return ASTUtils.replaceVar(source, var.getName(), newName);
+
+        final AstShaderGeneratorState state = LOCAL_STATE.get();
+        final StringBuilder original = ASTUtils.clear(state.getOriginalSource());
+        original.append(source);
+
+        final StringBuilder result = ASTUtils.clear(state.getUpdatedSource());
+
+        //FIXME
+        return ASTUtils.replaceVar(original, var.getName(), newName, result).toString();
     }
 
     /**
@@ -507,6 +519,10 @@ public abstract class AstShaderGenerator extends Glsl100ShaderGenerator {
             return methodBodySource;
         }
 
+        final AstShaderGeneratorState state = LOCAL_STATE.get();
+        StringBuilder original = ASTUtils.clear(state.getOriginalSource());
+        StringBuilder result = ASTUtils.clear(state.getUpdatedSource());
+
         for (final MethodDeclarationASTNode methodDeclaration : methods) {
 
             final NameASTNode methodName = methodDeclaration.getName();
@@ -516,11 +532,19 @@ public abstract class AstShaderGenerator extends Glsl100ShaderGenerator {
                 continue;
             }
 
+            if (result.length() > 0) {
+                final StringBuilder swap = original;
+                original = result;
+                result = clear(swap);
+            } else {
+                original.append(methodBodySource);
+            }
+
             // replace calls of the declared methods.
-            methodBodySource = ASTUtils.replaceMethod(methodBodySource, name, shaderNode.getName() + "_" + name);
+            ASTUtils.replaceMethod(original, name, shaderNode.getName() + "_" + name, result);
         }
 
-        return methodBodySource;
+        return result.toString();
     }
 
     /**
@@ -531,23 +555,34 @@ public abstract class AstShaderGenerator extends Glsl100ShaderGenerator {
      * @param localVars  the list of local variables.
      * @return the updated source.
      */
-    private String updateLocalVarNames(final ShaderNode shaderNode, String source,
+    private String updateLocalVarNames(final ShaderNode shaderNode, final String source,
                                        final List<LocalVarDeclarationASTNode> localVars) {
 
         if (localVars.isEmpty()) {
             return source;
         }
 
+        final AstShaderGeneratorState state = LOCAL_STATE.get();
+        StringBuilder original = ASTUtils.clear(state.getOriginalSource());
+        StringBuilder result = ASTUtils.clear(state.getUpdatedSource());
+
         for (final LocalVarDeclarationASTNode localVar : localVars) {
 
             final NameASTNode methodName = localVar.getName();
             final String name = methodName.getName();
 
-            // replace calls of the declared methods.
-            source = ASTUtils.replaceVar(source, name, shaderNode.getName() + "_" + name);
+            if (result.length() > 0) {
+                final StringBuilder swap = original;
+                original = result;
+                result = clear(swap);
+            } else {
+                original.append(source);
+            }
+
+            ASTUtils.replaceVar(original, name, shaderNode.getName() + "_" + name, result);
         }
 
-        return source;
+        return result.toString();
     }
 
     /**
@@ -592,11 +627,30 @@ public abstract class AstShaderGenerator extends Glsl100ShaderGenerator {
             return source;
         }
 
+        final AstShaderGeneratorState state = LOCAL_STATE.get();
+        StringBuilder original = ASTUtils.clear(state.getOriginalSource());
+        StringBuilder result = ASTUtils.clear(state.getUpdatedSource());
+
         for (final DefineValueASTNode defineValueNode : defineValueNodes) {
+
             final String define = defineValueNode.getValue();
-            if (ASTUtils.isShaderNodeDefine(define)) {
-                source = ASTUtils.replaceVar(source, define, shaderNode.getName() + "_" + define);
+            if (!ASTUtils.isShaderNodeDefine(define)) {
+                continue;
             }
+
+            if (result.length() > 0) {
+                final StringBuilder swap = original;
+                original = result;
+                result = clear(swap);
+            } else {
+                original.append(source);
+            }
+
+            ASTUtils.replaceDefine(original, define, shaderNode.getName() + "_" + define, result);
+        }
+
+        if (result.length() > 0) {
+            return result.toString();
         }
 
         return source;
@@ -861,8 +915,15 @@ public abstract class AstShaderGenerator extends Glsl100ShaderGenerator {
             sourceMap.put("[main]", builder.toString());
 
         } else {
-            sourceMap = (Map<String, String>)
-                    assetManager.loadAsset(new ShaderAssetKey(shaderSourcePath, false));
+
+            final Object loadedResource = assetManager.loadAsset(new ShaderAssetKey(shaderSourcePath, false));
+
+            if (loadedResource instanceof Map) {
+                sourceMap = (Map<String, String>) loadedResource;
+            } else {
+                throw new RuntimeException("Unexpected the loaded resource for the path " + shaderSourcePath +
+                        ", expected Map<String, String>, received " + loadedResource.getClass());
+            }
         }
 
         final GLSLParser parser = GLSLParser.newInstance();
@@ -881,7 +942,7 @@ public abstract class AstShaderGenerator extends Glsl100ShaderGenerator {
 
             final ImportPreprocessorASTNode importNode = new ImportPreprocessorASTNode();
             importNode.setValue(importValue);
-            importNode.setText("#import \"" + key + "\"");
+            importNode.setText("#" + GLSLLang.PR_TYPE_IMPORT + "\"" + key + "\"");
 
             result.getChildren().add(0, importNode);
 
