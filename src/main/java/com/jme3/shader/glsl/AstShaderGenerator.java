@@ -24,7 +24,6 @@ import com.jme3.shader.glsl.parser.ast.util.CharPredicate;
 import com.jme3.shader.glsl.parser.ast.value.DefineValueAstNode;
 import com.jme3.shader.glsl.parser.ast.value.StringValueAstNode;
 import com.jme3.shader.plugins.ShaderAssetKey;
-import com.ss.editor.FileExtensions;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -1001,7 +1000,7 @@ public abstract class AstShaderGenerator extends Glsl100ShaderGenerator {
 
         final Map<String, String> sourceMap;
 
-        if (shaderSourcePath.endsWith(FileExtensions.GLSL_LIB)) {
+        if (shaderSourcePath.endsWith("glsllib")) {
 
             final StringBuilder builder = new StringBuilder();
 

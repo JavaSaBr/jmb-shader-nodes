@@ -97,7 +97,7 @@ public class AstUtils {
      * @return the list of all found nodes.
      */
     public static <T extends AstNode> List<T> findAllByType(final AstNode node, final Class<T> type) {
-        return findAllByType(node, new ArrayList<>(4), type);
+        return findAllByType(node, new ArrayList<T>(4), type);
     }
 
     /**
