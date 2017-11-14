@@ -1,12 +1,12 @@
 package com.ss.editor.shader.nodes.tree.action;
 
 import static com.ss.rlib.util.ObjectUtils.notNull;
+import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.Messages;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionShaderSource;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionShaderSources;
-import com.ss.editor.shader.nodes.tree.operation.DeleteShaderNodeDefinitionShaderSourceOperation;
+import com.ss.editor.shader.nodes.model.shader.node.definition.SndParameters;
+import com.ss.editor.shader.nodes.tree.operation.DeleteSndParameterOperation;
 import com.ss.editor.ui.Icons;
 import com.ss.editor.ui.control.tree.NodeTree;
 import com.ss.editor.ui.control.tree.action.AbstractNodeAction;
@@ -16,13 +16,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * The action to delete a shader source.
+ * The action to delete a parameter.
  *
  * @author JavaSaBr
  */
-public class DeleteShaderNodeDefinitionShaderSourceAction extends AbstractNodeAction<ChangeConsumer> {
+public class DeleteSndarameterAction extends AbstractNodeAction<ChangeConsumer> {
 
-    public DeleteShaderNodeDefinitionShaderSourceAction(@NotNull final NodeTree<?> nodeTree, @NotNull final TreeNode<?> node) {
+    public DeleteSndarameterAction(@NotNull final NodeTree<?> nodeTree, @NotNull final TreeNode<?> node) {
         super(nodeTree, node);
     }
 
@@ -45,10 +45,10 @@ public class DeleteShaderNodeDefinitionShaderSourceAction extends AbstractNodeAc
 
         final TreeNode<?> node = getNode();
         final TreeNode<?> parent = notNull(node.getParent());
-        final ShaderNodeDefinitionShaderSource shaderSource = (ShaderNodeDefinitionShaderSource) node.getElement();
-        final ShaderNodeDefinitionShaderSources shaderSources = (ShaderNodeDefinitionShaderSources) parent.getElement();
+        final ShaderNodeVariable variable = (ShaderNodeVariable) node.getElement();
+        final SndParameters parameters = (SndParameters) parent.getElement();
 
         final ChangeConsumer changeConsumer = notNull(getNodeTree().getChangeConsumer());
-        changeConsumer.execute(new DeleteShaderNodeDefinitionShaderSourceOperation(shaderSources, shaderSource));
+        changeConsumer.execute(new DeleteSndParameterOperation(parameters, variable));
     }
 }

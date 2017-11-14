@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author JavaSaBr
  */
-public class ShaderNodeDefinitionList {
+public class SndList {
 
     /**
      * The list of definitions.
@@ -19,7 +19,7 @@ public class ShaderNodeDefinitionList {
     @NotNull
     private List<ShaderNodeDefinition> definitions;
 
-    public ShaderNodeDefinitionList(@NotNull final List<ShaderNodeDefinition> definitions) {
+    public SndList(@NotNull final List<ShaderNodeDefinition> definitions) {
         this.definitions = definitions;
     }
 

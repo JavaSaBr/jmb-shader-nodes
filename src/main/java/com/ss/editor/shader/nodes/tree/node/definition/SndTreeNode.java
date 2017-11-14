@@ -6,8 +6,8 @@ import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.shader.nodes.model.shader.node.definition.*;
-import com.ss.editor.shader.nodes.tree.action.DeleteShaderNodeDefinitionAction;
-import com.ss.editor.shader.nodes.tree.operation.RenameShaderNodeDefinitionOperation;
+import com.ss.editor.shader.nodes.tree.action.DeleteSndAction;
+import com.ss.editor.shader.nodes.tree.operation.RenameSndOperation;
 import com.ss.editor.shader.nodes.ui.PluginIcons;
 import com.ss.editor.ui.Icons;
 import com.ss.editor.ui.control.tree.NodeTree;
@@ -26,9 +26,9 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author JavaSaBr
  */
-public class ShaderNodeDefinitionTreeNode extends TreeNode<ShaderNodeDefinition> {
+public class SndTreeNode extends TreeNode<ShaderNodeDefinition> {
 
-    public ShaderNodeDefinitionTreeNode(@NotNull final ShaderNodeDefinition element, final long objectId) {
+    public SndTreeNode(@NotNull final ShaderNodeDefinition element, final long objectId) {
         super(element, objectId);
     }
 
@@ -60,11 +60,11 @@ public class ShaderNodeDefinitionTreeNode extends TreeNode<ShaderNodeDefinition>
         super.changeName(nodeTree, newName);
 
         final TreeNode<?> parent = notNull(getParent());
-        final ShaderNodeDefinitionList definitionList = (ShaderNodeDefinitionList) parent.getElement();
+        final SndList definitionList = (SndList) parent.getElement();
 
         final ShaderNodeDefinition definition = getElement();
         final ChangeConsumer consumer = notNull(nodeTree.getChangeConsumer());
-        consumer.execute(new RenameShaderNodeDefinitionOperation(definition.getName(), newName, definitionList, definition));
+        consumer.execute(new RenameSndOperation(definition.getName(), newName, definitionList, definition));
     }
 
     @Override
@@ -86,9 +86,10 @@ public class ShaderNodeDefinitionTreeNode extends TreeNode<ShaderNodeDefinition>
         final ShaderNodeDefinition definition = getElement();
 
         final Array<TreeNode<?>> children = ArrayFactory.newArray(TreeNode.class, 2);
-        children.add(FACTORY_REGISTRY.createFor(new ShaderNodeInputDefinitionParameters(definition)));
-        children.add(FACTORY_REGISTRY.createFor(new ShaderNodeOutputDefinitionParameters(definition)));
-        children.add(FACTORY_REGISTRY.createFor(new ShaderNodeDefinitionShaderSources(definition)));
+        children.add(FACTORY_REGISTRY.createFor(new SndDocumentation(definition)));
+        children.add(FACTORY_REGISTRY.createFor(new SndInputParameters(definition)));
+        children.add(FACTORY_REGISTRY.createFor(new SndOutputParameters(definition)));
+        children.add(FACTORY_REGISTRY.createFor(new SndShaderSources(definition)));
 
         return children;
     }
@@ -97,6 +98,6 @@ public class ShaderNodeDefinitionTreeNode extends TreeNode<ShaderNodeDefinition>
     @FXThread
     public void fillContextMenu(@NotNull final NodeTree<?> nodeTree, @NotNull final ObservableList<MenuItem> items) {
         super.fillContextMenu(nodeTree, items);
-        items.add(new DeleteShaderNodeDefinitionAction(nodeTree, this));
+        items.add(new DeleteSndAction(nodeTree, this));
     }
 }

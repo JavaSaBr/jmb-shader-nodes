@@ -2,8 +2,8 @@ package com.ss.editor.shader.nodes.tree.node.definition;
 
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionShaderSource;
-import com.ss.editor.shader.nodes.tree.action.DeleteShaderNodeDefinitionShaderSourceAction;
+import com.ss.editor.shader.nodes.model.shader.node.definition.SndShaderSource;
+import com.ss.editor.shader.nodes.tree.action.DeleteSndShaderSourceAction;
 import com.ss.editor.shader.nodes.ui.PluginIcons;
 import com.ss.editor.ui.control.tree.NodeTree;
 import com.ss.editor.ui.control.tree.node.TreeNode;
@@ -18,9 +18,9 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author JavaSaBr
  */
-public class ShaderNodeDefinitionShaderSourceTreeNode extends TreeNode<ShaderNodeDefinitionShaderSource> {
+public class SndShaderSourceTreeNode extends TreeNode<SndShaderSource> {
 
-    public ShaderNodeDefinitionShaderSourceTreeNode(@NotNull final ShaderNodeDefinitionShaderSource element, final long objectId) {
+    public SndShaderSourceTreeNode(@NotNull final SndShaderSource element, final long objectId) {
         super(element, objectId);
     }
 
@@ -28,7 +28,7 @@ public class ShaderNodeDefinitionShaderSourceTreeNode extends TreeNode<ShaderNod
     @FXThread
     public void fillContextMenu(@NotNull final NodeTree<?> nodeTree, @NotNull final ObservableList<MenuItem> items) {
         super.fillContextMenu(nodeTree, items);
-        items.add(new DeleteShaderNodeDefinitionShaderSourceAction(nodeTree, this));
+        items.add(new DeleteSndShaderSourceAction(nodeTree, this));
     }
 
     @Override

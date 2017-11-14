@@ -5,8 +5,8 @@ import com.jme3.shader.ShaderNodeDefinition;
 import com.ss.editor.Messages;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionList;
-import com.ss.editor.shader.nodes.tree.operation.DeleteShaderNodeDefinitionOperation;
+import com.ss.editor.shader.nodes.model.shader.node.definition.SndList;
+import com.ss.editor.shader.nodes.tree.operation.DeleteSndOperation;
 import com.ss.editor.ui.Icons;
 import com.ss.editor.ui.control.tree.NodeTree;
 import com.ss.editor.ui.control.tree.action.AbstractNodeAction;
@@ -20,9 +20,9 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author JavaSaBr
  */
-public class DeleteShaderNodeDefinitionAction extends AbstractNodeAction<ChangeConsumer> {
+public class DeleteSndAction extends AbstractNodeAction<ChangeConsumer> {
 
-    public DeleteShaderNodeDefinitionAction(@NotNull final NodeTree<?> nodeTree, @NotNull final TreeNode<?> node) {
+    public DeleteSndAction(@NotNull final NodeTree<?> nodeTree, @NotNull final TreeNode<?> node) {
         super(nodeTree, node);
     }
 
@@ -47,9 +47,9 @@ public class DeleteShaderNodeDefinitionAction extends AbstractNodeAction<ChangeC
         final TreeNode<?> parent = notNull(node.getParent());
 
         final ShaderNodeDefinition definition = (ShaderNodeDefinition) node.getElement();
-        final ShaderNodeDefinitionList definitionList = (ShaderNodeDefinitionList) parent.getElement();
+        final SndList definitionList = (SndList) parent.getElement();
 
         final ChangeConsumer changeConsumer = notNull(getNodeTree().getChangeConsumer());
-        changeConsumer.execute(new DeleteShaderNodeDefinitionOperation(definitionList, definition));
+        changeConsumer.execute(new DeleteSndOperation(definitionList, definition));
     }
 }

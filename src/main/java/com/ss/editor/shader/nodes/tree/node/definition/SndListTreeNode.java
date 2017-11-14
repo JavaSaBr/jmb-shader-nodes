@@ -4,8 +4,8 @@ import com.jme3.shader.ShaderNodeDefinition;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.shader.nodes.PluginMessages;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionList;
-import com.ss.editor.shader.nodes.tree.action.AddShaderNodeDefinitionAction;
+import com.ss.editor.shader.nodes.model.shader.node.definition.SndList;
+import com.ss.editor.shader.nodes.tree.action.AddSndAction;
 import com.ss.editor.shader.nodes.ui.PluginIcons;
 import com.ss.editor.ui.control.tree.NodeTree;
 import com.ss.editor.ui.control.tree.node.TreeNode;
@@ -24,9 +24,9 @@ import java.util.List;
  *
  * @author JavaSaBr
  */
-public class ShaderNodeDefinitionListTreeNode extends TreeNode<ShaderNodeDefinitionList> {
+public class SndListTreeNode extends TreeNode<SndList> {
 
-    public ShaderNodeDefinitionListTreeNode(@NotNull final ShaderNodeDefinitionList element, final long objectId) {
+    public SndListTreeNode(@NotNull final SndList element, final long objectId) {
         super(element, objectId);
     }
 
@@ -34,7 +34,7 @@ public class ShaderNodeDefinitionListTreeNode extends TreeNode<ShaderNodeDefinit
     @FXThread
     public void fillContextMenu(@NotNull final NodeTree<?> nodeTree, @NotNull final ObservableList<MenuItem> items) {
         super.fillContextMenu(nodeTree, items);
-        items.add(new AddShaderNodeDefinitionAction(nodeTree, this));
+        items.add(new AddSndAction(nodeTree, this));
     }
 
     @Override
@@ -52,7 +52,7 @@ public class ShaderNodeDefinitionListTreeNode extends TreeNode<ShaderNodeDefinit
     @Override
     @FXThread
     public boolean hasChildren(@NotNull final NodeTree<?> nodeTree) {
-        final ShaderNodeDefinitionList definitionList = getElement();
+        final SndList definitionList = getElement();
         final List<ShaderNodeDefinition> definitions = definitionList.getDefinitions();
         return !definitions.isEmpty();
     }
@@ -61,7 +61,7 @@ public class ShaderNodeDefinitionListTreeNode extends TreeNode<ShaderNodeDefinit
     @FXThread
     public @NotNull Array<TreeNode<?>> getChildren(@NotNull final NodeTree<?> nodeTree) {
 
-        final ShaderNodeDefinitionList definitionList = getElement();
+        final SndList definitionList = getElement();
         final Array<TreeNode<?>> children = ArrayFactory.newArray(TreeNode.class);
 
         final List<ShaderNodeDefinition> definitions = definitionList.getDefinitions();

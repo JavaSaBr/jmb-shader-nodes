@@ -3,9 +3,9 @@ package com.ss.editor.shader.nodes.tree.node.definition;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.shader.nodes.PluginMessages;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionShaderSource;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionShaderSources;
-import com.ss.editor.shader.nodes.tree.action.AddShaderNodeDefinitionSourceAction;
+import com.ss.editor.shader.nodes.model.shader.node.definition.SndShaderSource;
+import com.ss.editor.shader.nodes.model.shader.node.definition.SndShaderSources;
+import com.ss.editor.shader.nodes.tree.action.AddSndShaderSourceAction;
 import com.ss.editor.shader.nodes.ui.PluginIcons;
 import com.ss.editor.ui.control.tree.NodeTree;
 import com.ss.editor.ui.control.tree.node.TreeNode;
@@ -24,9 +24,9 @@ import java.util.Map;
  *
  * @author JavaSaBr
  */
-public class ShaderNodeDefinitionShaderSourcesTreeNode extends TreeNode<ShaderNodeDefinitionShaderSources> {
+public class SndShaderSourcesTreeNode extends TreeNode<SndShaderSources> {
 
-    public ShaderNodeDefinitionShaderSourcesTreeNode(@NotNull final ShaderNodeDefinitionShaderSources element, final long objectId) {
+    public SndShaderSourcesTreeNode(@NotNull final SndShaderSources element, final long objectId) {
         super(element, objectId);
     }
 
@@ -40,7 +40,7 @@ public class ShaderNodeDefinitionShaderSourcesTreeNode extends TreeNode<ShaderNo
     @FXThread
     public void fillContextMenu(@NotNull final NodeTree<?> nodeTree, @NotNull final ObservableList<MenuItem> items) {
         super.fillContextMenu(nodeTree, items);
-        items.add(new AddShaderNodeDefinitionSourceAction(nodeTree, this));
+        items.add(new AddSndShaderSourceAction(nodeTree, this));
     }
 
     @Override
@@ -52,7 +52,7 @@ public class ShaderNodeDefinitionShaderSourcesTreeNode extends TreeNode<ShaderNo
     @Override
     @FXThread
     public boolean hasChildren(@NotNull final NodeTree<?> nodeTree) {
-        final ShaderNodeDefinitionShaderSources element = getElement();
+        final SndShaderSources element = getElement();
         final Map<String, String> sourceMap = element.getShadeSourceMap();
         return !sourceMap.isEmpty();
     }
@@ -61,12 +61,12 @@ public class ShaderNodeDefinitionShaderSourcesTreeNode extends TreeNode<ShaderNo
     @FXThread
     public @NotNull Array<TreeNode<?>> getChildren(@NotNull final NodeTree<?> nodeTree) {
 
-        final ShaderNodeDefinitionShaderSources element = getElement();
+        final SndShaderSources element = getElement();
         final Array<TreeNode<?>> children = ArrayFactory.newArray(TreeNode.class);
 
         final Map<String, String> sourceMap = element.getShadeSourceMap();
         sourceMap.forEach((shaderPath, language) -> children.add(FACTORY_REGISTRY.createFor(
-                new ShaderNodeDefinitionShaderSource(element.getDefinition(), language, shaderPath))));
+                new SndShaderSource(element.getDefinition(), language, shaderPath))));
 
         return children;
     }

@@ -36,18 +36,20 @@ public class ShaderNodesTreeNodeFactory implements TreeNodeFactory {
             return unsafeCast(new PreviewMaterialSettingsTreeNode((PreviewMaterialSettings) element, objectId));
         }
 
-        if (element instanceof ShaderNodeDefinitionList) {
-            return unsafeCast(new ShaderNodeDefinitionListTreeNode((ShaderNodeDefinitionList) element, objectId));
+        if (element instanceof SndList) {
+            return unsafeCast(new SndListTreeNode((SndList) element, objectId));
         } else if (element instanceof ShaderNodeDefinition) {
-            return unsafeCast(new ShaderNodeDefinitionTreeNode((ShaderNodeDefinition) element, objectId));
-        } else if (element instanceof ShaderNodeDefinitionParameters) {
-            return unsafeCast(new ShaderNodeDefinitionParametersTreeNode((ShaderNodeDefinitionParameters) element, objectId));
+            return unsafeCast(new SndTreeNode((ShaderNodeDefinition) element, objectId));
+        } else if (element instanceof SndParameters) {
+            return unsafeCast(new SndParametersTreeNode((SndParameters) element, objectId));
         } else if (element instanceof ShaderNodeVariable) {
-            return unsafeCast(new ShaderNodeDefinitionParameterTreeNode((ShaderNodeVariable) element, objectId));
-        } else if (element instanceof ShaderNodeDefinitionShaderSources) {
-            return unsafeCast(new ShaderNodeDefinitionShaderSourcesTreeNode((ShaderNodeDefinitionShaderSources) element, objectId));
-        } else if (element instanceof ShaderNodeDefinitionShaderSource) {
-            return unsafeCast(new ShaderNodeDefinitionShaderSourceTreeNode((ShaderNodeDefinitionShaderSource) element, objectId));
+            return unsafeCast(new SndParameterTreeNode((ShaderNodeVariable) element, objectId));
+        } else if (element instanceof SndShaderSources) {
+            return unsafeCast(new SndShaderSourcesTreeNode((SndShaderSources) element, objectId));
+        } else if (element instanceof SndShaderSource) {
+            return unsafeCast(new SndShaderSourceTreeNode((SndShaderSource) element, objectId));
+        } else if (element instanceof SndDocumentation) {
+            return unsafeCast(new SndDocumentationTreeNode((SndDocumentation) element, objectId));
         }
 
         return null;

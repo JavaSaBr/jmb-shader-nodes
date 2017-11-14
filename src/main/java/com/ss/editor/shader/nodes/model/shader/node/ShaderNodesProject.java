@@ -1,4 +1,4 @@
-package com.ss.editor.shader.nodes.model.shader.nodes;
+package com.ss.editor.shader.nodes.model.shader.node;
 
 import static com.ss.rlib.util.ClassUtils.unsafeCast;
 import com.jme3.export.*;

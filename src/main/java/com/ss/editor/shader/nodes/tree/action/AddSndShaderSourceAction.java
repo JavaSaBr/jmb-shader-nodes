@@ -13,9 +13,9 @@ import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.plugin.api.dialog.GenericFactoryDialog;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
 import com.ss.editor.shader.nodes.PluginMessages;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionShaderSource;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionShaderSources;
-import com.ss.editor.shader.nodes.tree.operation.AddShaderNodeDefinitionSourceOperation;
+import com.ss.editor.shader.nodes.model.shader.node.definition.SndShaderSource;
+import com.ss.editor.shader.nodes.model.shader.node.definition.SndShaderSources;
+import com.ss.editor.shader.nodes.tree.operation.AddSndShaderSourceOperation;
 import com.ss.editor.ui.Icons;
 import com.ss.editor.ui.control.tree.NodeTree;
 import com.ss.editor.ui.control.tree.action.AbstractNodeAction;
@@ -34,7 +34,7 @@ import java.nio.file.Path;
  *
  * @author JavaSaBr
  */
-public class AddShaderNodeDefinitionSourceAction extends AbstractNodeAction<ChangeConsumer> {
+public class AddSndShaderSourceAction extends AbstractNodeAction<ChangeConsumer> {
 
     @NotNull
     private static final String PROP_LANGUAGE = "language";
@@ -42,7 +42,7 @@ public class AddShaderNodeDefinitionSourceAction extends AbstractNodeAction<Chan
     @NotNull
     private static final String PROP_SHADER_RESOURCE = "resource";
 
-    public AddShaderNodeDefinitionSourceAction(@NotNull final NodeTree<?> nodeTree, @NotNull final TreeNode<?> node) {
+    public AddSndShaderSourceAction(@NotNull final NodeTree<?> nodeTree, @NotNull final TreeNode<?> node) {
         super(nodeTree, node);
     }
 
@@ -64,7 +64,7 @@ public class AddShaderNodeDefinitionSourceAction extends AbstractNodeAction<Chan
         super.process();
 
         final TreeNode<?> node = getNode();
-        final ShaderNodeDefinitionShaderSources shaderSources = (ShaderNodeDefinitionShaderSources) node.getElement();
+        final SndShaderSources shaderSources = (SndShaderSources) node.getElement();
         final ShaderNodeDefinition definition = shaderSources.getDefinition();
         final Shader.ShaderType type = definition.getType();
 
@@ -92,7 +92,7 @@ public class AddShaderNodeDefinitionSourceAction extends AbstractNodeAction<Chan
         }
 
         final TreeNode<?> node = getNode();
-        final ShaderNodeDefinitionShaderSources shaderSources = (ShaderNodeDefinitionShaderSources) node.getElement();
+        final SndShaderSources shaderSources = (SndShaderSources) node.getElement();
         final ShaderNodeDefinition definition = shaderSources.getDefinition();
 
         final Path shaderFile = vars.get(PROP_SHADER_RESOURCE, Path.class);
@@ -113,11 +113,12 @@ public class AddShaderNodeDefinitionSourceAction extends AbstractNodeAction<Chan
         final Path shaderFile = vars.get(PROP_SHADER_RESOURCE, Path.class);
 
         final TreeNode<?> node = getNode();
-        final ShaderNodeDefinitionShaderSources shaderSources = (ShaderNodeDefinitionShaderSources) node.getElement();
+        final SndShaderSources shaderSources = (SndShaderSources) node.getElement();
         final ShaderNodeDefinition definition = shaderSources.getDefinition();
-        final ShaderNodeDefinitionShaderSource shaderSource = new ShaderNodeDefinitionShaderSource(definition, language, toAssetPath(shaderFile));
+        final SndShaderSource shaderSource =
+                new SndShaderSource(definition, language, toAssetPath(shaderFile));
 
         final ChangeConsumer changeConsumer = notNull(getNodeTree().getChangeConsumer());
-        changeConsumer.execute(new AddShaderNodeDefinitionSourceOperation(shaderSources, shaderSource));
+        changeConsumer.execute(new AddSndShaderSourceOperation(shaderSources, shaderSource));
     }
 }

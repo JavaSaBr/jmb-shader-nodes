@@ -5,7 +5,7 @@ import com.ss.editor.Messages;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.model.undo.impl.AbstractEditorOperation;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionList;
+import com.ss.editor.shader.nodes.model.shader.node.definition.SndList;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author JavaSaBr
  */
-public class RenameShaderNodeDefinitionOperation extends AbstractEditorOperation<ChangeConsumer> {
+public class RenameSndOperation extends AbstractEditorOperation<ChangeConsumer> {
 
     /**
      * The old name.
@@ -31,7 +31,7 @@ public class RenameShaderNodeDefinitionOperation extends AbstractEditorOperation
      * The list of definitions.
      */
     @NotNull
-    private final ShaderNodeDefinitionList definitionList;
+    private final SndList definitionList;
 
     /**
      * The definition.
@@ -39,9 +39,9 @@ public class RenameShaderNodeDefinitionOperation extends AbstractEditorOperation
     @NotNull
     private final ShaderNodeDefinition definition;
 
-    public RenameShaderNodeDefinitionOperation(@NotNull final String oldName, @NotNull final String newName,
-                                               @NotNull final ShaderNodeDefinitionList definitionList,
-                                               @NotNull final ShaderNodeDefinition definition) {
+    public RenameSndOperation(@NotNull final String oldName, @NotNull final String newName,
+                              @NotNull final SndList definitionList,
+                              @NotNull final ShaderNodeDefinition definition) {
         this.oldName = oldName;
         this.newName = newName;
         this.definitionList = definitionList;

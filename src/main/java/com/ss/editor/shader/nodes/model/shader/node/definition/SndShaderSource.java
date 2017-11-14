@@ -5,11 +5,11 @@ import com.ss.editor.annotation.FromAnyThread;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The class to present shader sources of a shader node.
+ * The class to present shader sources of a shader node definition.
  *
  * @author JavaSaBr
  */
-public class ShaderNodeDefinitionShaderSource {
+public class SndShaderSource {
 
     /**
      * The definition.
@@ -29,8 +29,8 @@ public class ShaderNodeDefinitionShaderSource {
     @NotNull
     private final String shaderPath;
 
-    public ShaderNodeDefinitionShaderSource(@NotNull final ShaderNodeDefinition definition, @NotNull final String language,
-                                            @NotNull final String shaderPath) {
+    public SndShaderSource(@NotNull final ShaderNodeDefinition definition, @NotNull final String language,
+                           @NotNull final String shaderPath) {
         this.definition = definition;
         this.language = language;
         this.shaderPath = shaderPath;
@@ -70,7 +70,7 @@ public class ShaderNodeDefinitionShaderSource {
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final ShaderNodeDefinitionShaderSource that = (ShaderNodeDefinitionShaderSource) o;
+        final SndShaderSource that = (SndShaderSource) o;
         if (!definition.equals(that.definition)) return false;
         if (!language.equals(that.language)) return false;
         return shaderPath.equals(that.shaderPath);

@@ -10,26 +10,26 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * The action to add new input parameter.
+ * The action to add new output parameter.
  *
  * @author JavaSaBr
  */
-public class AddShaderNodeDefinitionInputParameterAction extends AddShaderNodeDefinitionParameterAction {
+public class AddSndOutputParameterAction extends AddSndParameterAction {
 
-    public AddShaderNodeDefinitionInputParameterAction(@NotNull final NodeTree<?> nodeTree,
-                                                       @NotNull final TreeNode<?> node) {
+    public AddSndOutputParameterAction(@NotNull final NodeTree<?> nodeTree,
+                                       @NotNull final TreeNode<?> node) {
         super(nodeTree, node);
     }
 
     @Override
     @FXThread
     protected @NotNull List<ShaderNodeVariable> getCurrentParameters(@NotNull final ShaderNodeDefinition definition) {
-        return definition.getInputs();
+        return definition.getOutputs();
     }
 
     @Override
     @FXThread
     protected @NotNull List<ShaderNodeVariable> getOppositeParameters(@NotNull final ShaderNodeDefinition definition) {
-        return definition.getOutputs();
+        return definition.getInputs();
     }
 }

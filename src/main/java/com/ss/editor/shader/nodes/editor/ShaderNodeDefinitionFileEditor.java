@@ -15,8 +15,8 @@ import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.plugin.api.editor.BaseFileEditorWithSplitRightTool;
 import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.editor.state.ShaderNodeDefinitionEditorState;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionList;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionShaderSource;
+import com.ss.editor.shader.nodes.model.shader.node.definition.SndList;
+import com.ss.editor.shader.nodes.model.shader.node.definition.SndShaderSource;
 import com.ss.editor.shader.nodes.util.J3snExporter;
 import com.ss.editor.ui.component.editor.EditorDescription;
 import com.ss.editor.ui.component.editor.state.EditorState;
@@ -186,9 +186,9 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
             element = object;
         }
 
-        if (element instanceof ShaderNodeDefinitionShaderSource) {
+        if (element instanceof SndShaderSource) {
 
-            final ShaderNodeDefinitionShaderSource shaderSource = (ShaderNodeDefinitionShaderSource) element;
+            final SndShaderSource shaderSource = (SndShaderSource) element;
             final String code = getGLSLCode(shaderSource.getShaderPath());
 
             EXECUTOR_MANAGER.schedule(() -> {
@@ -342,7 +342,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
         definitionList = assetManager.loadAsset(key);
 
         final NodeTree<ChangeConsumer> structureTree = getStructureTree();
-        structureTree.fill(new ShaderNodeDefinitionList(definitionList));
+        structureTree.fill(new SndList(definitionList));
         structureTree.expandToLevel(1);
     }
 

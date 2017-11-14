@@ -3,8 +3,8 @@ package com.ss.editor.shader.nodes.tree.operation;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.model.undo.impl.AbstractEditorOperation;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionShaderSource;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionShaderSources;
+import com.ss.editor.shader.nodes.model.shader.node.definition.SndShaderSource;
+import com.ss.editor.shader.nodes.model.shader.node.definition.SndShaderSources;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -12,22 +12,22 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author JavaSaBr
  */
-public class AddShaderNodeDefinitionSourceOperation extends AbstractEditorOperation<ChangeConsumer> {
+public class AddSndShaderSourceOperation extends AbstractEditorOperation<ChangeConsumer> {
 
     /**
      * The shader node shader sources.
      */
     @NotNull
-    private final ShaderNodeDefinitionShaderSources shaderSources;
+    private final SndShaderSources shaderSources;
 
     /**
      * The shader source.
      */
     @NotNull
-    private final ShaderNodeDefinitionShaderSource shaderSource;
+    private final SndShaderSource shaderSource;
 
-    public AddShaderNodeDefinitionSourceOperation(@NotNull final ShaderNodeDefinitionShaderSources shaderSources,
-                                                  @NotNull final ShaderNodeDefinitionShaderSource shaderSource) {
+    public AddSndShaderSourceOperation(@NotNull final SndShaderSources shaderSources,
+                                       @NotNull final SndShaderSource shaderSource) {
         this.shaderSources = shaderSources;
         this.shaderSource = shaderSource;
     }

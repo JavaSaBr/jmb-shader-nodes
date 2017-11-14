@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The class to present shader sources of a shader node.
+ * The class to present shader sources of a shader node definition.
  *
  * @author JavaSaBr
  */
-public class ShaderNodeDefinitionShaderSources {
+public class SndShaderSources {
 
     /**
      * The definition.
@@ -22,7 +22,7 @@ public class ShaderNodeDefinitionShaderSources {
     @NotNull
     private final ShaderNodeDefinition definition;
 
-    public ShaderNodeDefinitionShaderSources(@NotNull final ShaderNodeDefinition definition) {
+    public SndShaderSources(@NotNull final ShaderNodeDefinition definition) {
         this.definition = definition;
     }
 
@@ -52,15 +52,15 @@ public class ShaderNodeDefinitionShaderSources {
      * @return the list of shader sources.
      */
     @FromAnyThread
-    public @NotNull List<ShaderNodeDefinitionShaderSource> getShadeSources() {
+    public @NotNull List<SndShaderSource> getShadeSources() {
 
         final List<String> shadersPath = definition.getShadersPath();
         final List<String> shadersLanguage = definition.getShadersLanguage();
 
-        final List<ShaderNodeDefinitionShaderSource> result = new ArrayList<>();
+        final List<SndShaderSource> result = new ArrayList<>();
 
         for (int i = 0; i < shadersPath.size(); i++) {
-            result.add(new ShaderNodeDefinitionShaderSource(definition, shadersPath.get(i), shadersLanguage.get(i)));
+            result.add(new SndShaderSource(definition, shadersPath.get(i), shadersLanguage.get(i)));
         }
 
         return result;
@@ -72,7 +72,7 @@ public class ShaderNodeDefinitionShaderSources {
      * @param shaderSource the new shader source.
      */
     @FromAnyThread
-    public void add(@NotNull final ShaderNodeDefinitionShaderSource shaderSource) {
+    public void add(@NotNull final SndShaderSource shaderSource) {
 
         final List<String> shadersPath = definition.getShadersPath();
         final List<String> shadersLanguage = definition.getShadersLanguage();
@@ -88,7 +88,7 @@ public class ShaderNodeDefinitionShaderSources {
      * @param shaderSource the new shader source.
      */
     @FromAnyThread
-    public void add(final int index, @NotNull final ShaderNodeDefinitionShaderSource shaderSource) {
+    public void add(final int index, @NotNull final SndShaderSource shaderSource) {
 
         final List<String> shadersPath = definition.getShadersPath();
         final List<String> shadersLanguage = definition.getShadersLanguage();
@@ -103,7 +103,7 @@ public class ShaderNodeDefinitionShaderSources {
      * @param shaderSource the shader source.
      */
     @FromAnyThread
-    public void remove(@NotNull final ShaderNodeDefinitionShaderSource shaderSource) {
+    public void remove(@NotNull final SndShaderSource shaderSource) {
 
         final List<String> shadersPath = definition.getShadersPath();
         final List<String> shadersLanguage = definition.getShadersLanguage();
@@ -125,7 +125,7 @@ public class ShaderNodeDefinitionShaderSources {
      * @return the position or -1.
      */
     @FromAnyThread
-    public int indexOf(@NotNull final ShaderNodeDefinitionShaderSource shaderSource) {
+    public int indexOf(@NotNull final SndShaderSource shaderSource) {
 
         final List<String> shadersPath = definition.getShadersPath();
         final List<String> shadersLanguage = definition.getShadersLanguage();
@@ -157,7 +157,7 @@ public class ShaderNodeDefinitionShaderSources {
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final ShaderNodeDefinitionShaderSources that = (ShaderNodeDefinitionShaderSources) o;
+        final SndShaderSources that = (SndShaderSources) o;
         return definition.equals(that.definition);
     }
 

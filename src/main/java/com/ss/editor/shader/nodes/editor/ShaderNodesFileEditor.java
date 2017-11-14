@@ -43,7 +43,7 @@ import com.ss.editor.shader.nodes.editor.state.ShaderNodeVariableState;
 import com.ss.editor.shader.nodes.editor.state.ShaderNodesEditorState;
 import com.ss.editor.shader.nodes.editor.state.TechniqueDefState;
 import com.ss.editor.shader.nodes.model.PreviewMaterialSettings;
-import com.ss.editor.shader.nodes.model.shader.nodes.ShaderNodesProject;
+import com.ss.editor.shader.nodes.model.shader.node.ShaderNodesProject;
 import com.ss.editor.ui.Icons;
 import com.ss.editor.ui.component.asset.tree.context.menu.action.DeleteFileAction;
 import com.ss.editor.ui.component.asset.tree.context.menu.action.NewFileAction;

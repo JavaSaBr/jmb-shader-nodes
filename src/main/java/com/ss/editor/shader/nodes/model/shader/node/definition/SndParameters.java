@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author JavaSaBr
  */
-public abstract class ShaderNodeDefinitionParameters {
+public abstract class SndParameters {
 
     /**
      * The definition.
@@ -20,7 +20,7 @@ public abstract class ShaderNodeDefinitionParameters {
     @NotNull
     private final ShaderNodeDefinition definition;
 
-    protected ShaderNodeDefinitionParameters(@NotNull final ShaderNodeDefinition definition) {
+    protected SndParameters(@NotNull final ShaderNodeDefinition definition) {
         this.definition = definition;
     }
 
@@ -46,7 +46,7 @@ public abstract class ShaderNodeDefinitionParameters {
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final ShaderNodeDefinitionParameters that = (ShaderNodeDefinitionParameters) o;
+        final SndParameters that = (SndParameters) o;
         return definition.equals(that.definition);
     }
 

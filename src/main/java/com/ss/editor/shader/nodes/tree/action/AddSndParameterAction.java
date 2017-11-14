@@ -11,8 +11,8 @@ import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.plugin.api.dialog.GenericFactoryDialog;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
 import com.ss.editor.shader.nodes.PluginMessages;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionParameters;
-import com.ss.editor.shader.nodes.tree.operation.AddShaderNodeDefinitionParameterOperation;
+import com.ss.editor.shader.nodes.model.shader.node.definition.SndParameters;
+import com.ss.editor.shader.nodes.tree.operation.AddSndParameterOperation;
 import com.ss.editor.ui.Icons;
 import com.ss.editor.ui.control.tree.NodeTree;
 import com.ss.editor.ui.control.tree.action.AbstractNodeAction;
@@ -34,7 +34,7 @@ import java.util.Optional;
  *
  * @author JavaSaBr
  */
-public abstract class AddShaderNodeDefinitionParameterAction extends AbstractNodeAction<ChangeConsumer> {
+public abstract class AddSndParameterAction extends AbstractNodeAction<ChangeConsumer> {
 
     @NotNull
     private static final String PROP_NAME = "name";
@@ -42,7 +42,7 @@ public abstract class AddShaderNodeDefinitionParameterAction extends AbstractNod
     @NotNull
     private static final String PROP_TYPE = "type";
 
-    public AddShaderNodeDefinitionParameterAction(@NotNull final NodeTree<?> nodeTree, @NotNull final TreeNode<?> node) {
+    public AddSndParameterAction(@NotNull final NodeTree<?> nodeTree, @NotNull final TreeNode<?> node) {
         super(nodeTree, node);
     }
 
@@ -101,7 +101,7 @@ public abstract class AddShaderNodeDefinitionParameterAction extends AbstractNod
     private boolean validate(@NotNull final VarTable vars) {
 
         final TreeNode<?> node = getNode();
-        final ShaderNodeDefinitionParameters parameters = (ShaderNodeDefinitionParameters) node.getElement();
+        final SndParameters parameters = (SndParameters) node.getElement();
         final ShaderNodeDefinition definition = parameters.getDefinition();
 
         final String name = vars.getString(PROP_NAME);
@@ -137,7 +137,7 @@ public abstract class AddShaderNodeDefinitionParameterAction extends AbstractNod
     private void addParameter(@NotNull final VarTable vars) {
 
         final TreeNode<?> node = getNode();
-        final ShaderNodeDefinitionParameters parameters = (ShaderNodeDefinitionParameters) node.getElement();
+        final SndParameters parameters = (SndParameters) node.getElement();
 
         final String name = vars.getString(PROP_NAME);
         final GLSLType glslType = vars.getEnum(PROP_TYPE, GLSLType.class);
@@ -145,6 +145,6 @@ public abstract class AddShaderNodeDefinitionParameterAction extends AbstractNod
         final ShaderNodeVariable variable = new ShaderNodeVariable(glslType.getRawType(), name);
 
         final ChangeConsumer changeConsumer = notNull(getNodeTree().getChangeConsumer());
-        changeConsumer.execute(new AddShaderNodeDefinitionParameterOperation(parameters, variable));
+        changeConsumer.execute(new AddSndParameterOperation(parameters, variable));
     }
 }

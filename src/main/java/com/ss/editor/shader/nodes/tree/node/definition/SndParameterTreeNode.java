@@ -5,9 +5,9 @@ import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionParameters;
-import com.ss.editor.shader.nodes.tree.action.DeleteShaderNodeDefinitionParameterAction;
-import com.ss.editor.shader.nodes.tree.operation.RenameShaderNodeDefinitionParameterOperation;
+import com.ss.editor.shader.nodes.model.shader.node.definition.SndParameters;
+import com.ss.editor.shader.nodes.tree.action.DeleteSndarameterAction;
+import com.ss.editor.shader.nodes.tree.operation.RenameSndParameterOperation;
 import com.ss.editor.shader.nodes.ui.PluginIcons;
 import com.ss.editor.ui.control.tree.NodeTree;
 import com.ss.editor.ui.control.tree.node.TreeNode;
@@ -23,9 +23,9 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author JavaSaBr
  */
-public class ShaderNodeDefinitionParameterTreeNode extends TreeNode<ShaderNodeVariable> {
+public class SndParameterTreeNode extends TreeNode<ShaderNodeVariable> {
 
-    public ShaderNodeDefinitionParameterTreeNode(@NotNull final ShaderNodeVariable element, final long objectId) {
+    public SndParameterTreeNode(@NotNull final ShaderNodeVariable element, final long objectId) {
         super(element, objectId);
     }
 
@@ -33,7 +33,7 @@ public class ShaderNodeDefinitionParameterTreeNode extends TreeNode<ShaderNodeVa
     @FXThread
     public void fillContextMenu(@NotNull final NodeTree<?> nodeTree, @NotNull final ObservableList<MenuItem> items) {
         super.fillContextMenu(nodeTree, items);
-        items.add(new DeleteShaderNodeDefinitionParameterAction(nodeTree, this));
+        items.add(new DeleteSndarameterAction(nodeTree, this));
     }
 
     @FXThread
@@ -44,11 +44,11 @@ public class ShaderNodeDefinitionParameterTreeNode extends TreeNode<ShaderNodeVa
         super.changeName(nodeTree, newName);
 
         final TreeNode<?> parent = notNull(getParent());
-        final ShaderNodeDefinitionParameters parameters = (ShaderNodeDefinitionParameters) parent.getElement();
+        final SndParameters parameters = (SndParameters) parent.getElement();
         final ShaderNodeVariable variable = getElement();
 
         final ChangeConsumer changeConsumer = notNull(nodeTree.getChangeConsumer());
-        changeConsumer.execute(new RenameShaderNodeDefinitionParameterOperation(variable.getName(), newName, parameters, variable));
+        changeConsumer.execute(new RenameSndParameterOperation(variable.getName(), newName, parameters, variable));
     }
 
     @Override

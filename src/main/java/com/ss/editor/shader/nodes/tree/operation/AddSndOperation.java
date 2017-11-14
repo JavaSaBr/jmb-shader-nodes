@@ -4,7 +4,7 @@ import com.jme3.shader.ShaderNodeDefinition;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.model.undo.impl.AbstractEditorOperation;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionList;
+import com.ss.editor.shader.nodes.model.shader.node.definition.SndList;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -12,13 +12,13 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author JavaSaBr
  */
-public class AddShaderNodeDefinitionOperation extends AbstractEditorOperation<ChangeConsumer> {
+public class AddSndOperation extends AbstractEditorOperation<ChangeConsumer> {
 
     /**
      * The definition list.
      */
     @NotNull
-    private final ShaderNodeDefinitionList definitionList;
+    private final SndList definitionList;
 
     /**
      * The added definition.
@@ -26,8 +26,8 @@ public class AddShaderNodeDefinitionOperation extends AbstractEditorOperation<Ch
     @NotNull
     private final ShaderNodeDefinition definition;
 
-    public AddShaderNodeDefinitionOperation(@NotNull final ShaderNodeDefinitionList definitionList,
-                                            @NotNull final ShaderNodeDefinition definition) {
+    public AddSndOperation(@NotNull final SndList definitionList,
+                           @NotNull final ShaderNodeDefinition definition) {
         this.definitionList = definitionList;
         this.definition = definition;
     }

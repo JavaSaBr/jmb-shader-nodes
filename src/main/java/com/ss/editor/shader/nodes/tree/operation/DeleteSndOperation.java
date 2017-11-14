@@ -4,7 +4,7 @@ import com.jme3.shader.ShaderNodeDefinition;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.model.undo.impl.AbstractEditorOperation;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionList;
+import com.ss.editor.shader.nodes.model.shader.node.definition.SndList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -14,13 +14,13 @@ import java.util.List;
  *
  * @author JavaSaBr
  */
-public class DeleteShaderNodeDefinitionOperation extends AbstractEditorOperation<ChangeConsumer> {
+public class DeleteSndOperation extends AbstractEditorOperation<ChangeConsumer> {
 
     /**
      * The definition list.
      */
     @NotNull
-    private final ShaderNodeDefinitionList definitionList;
+    private final SndList definitionList;
 
     /**
      * The definition.
@@ -33,8 +33,8 @@ public class DeleteShaderNodeDefinitionOperation extends AbstractEditorOperation
      */
     private int index;
 
-    public DeleteShaderNodeDefinitionOperation(@NotNull final ShaderNodeDefinitionList definitionList,
-                                               @NotNull final ShaderNodeDefinition definition) {
+    public DeleteSndOperation(@NotNull final SndList definitionList,
+                              @NotNull final ShaderNodeDefinition definition) {
         this.definitionList = definitionList;
         this.definition = definition;
     }

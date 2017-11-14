@@ -12,8 +12,8 @@ import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.plugin.api.dialog.GenericFactoryDialog;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
 import com.ss.editor.shader.nodes.PluginMessages;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionList;
-import com.ss.editor.shader.nodes.tree.operation.AddShaderNodeDefinitionOperation;
+import com.ss.editor.shader.nodes.model.shader.node.definition.SndList;
+import com.ss.editor.shader.nodes.tree.operation.AddSndOperation;
 import com.ss.editor.ui.Icons;
 import com.ss.editor.ui.control.tree.NodeTree;
 import com.ss.editor.ui.control.tree.action.AbstractNodeAction;
@@ -32,7 +32,7 @@ import java.util.ArrayList;
  *
  * @author JavaSaBr
  */
-public class AddShaderNodeDefinitionAction extends AbstractNodeAction<ChangeConsumer> {
+public class AddSndAction extends AbstractNodeAction<ChangeConsumer> {
 
     @NotNull
     private static final String PROP_NAME = "name";
@@ -40,7 +40,7 @@ public class AddShaderNodeDefinitionAction extends AbstractNodeAction<ChangeCons
     @NotNull
     private static final String PROP_TYPE = "type";
 
-    public AddShaderNodeDefinitionAction(@NotNull final NodeTree<?> nodeTree, @NotNull final TreeNode<?> node) {
+    public AddSndAction(@NotNull final NodeTree<?> nodeTree, @NotNull final TreeNode<?> node) {
         super(nodeTree, node);
     }
 
@@ -82,7 +82,7 @@ public class AddShaderNodeDefinitionAction extends AbstractNodeAction<ChangeCons
         final String name = vars.getString(PROP_NAME);
 
         final TreeNode<?> node = getNode();
-        final ShaderNodeDefinitionList element = (ShaderNodeDefinitionList) node.getElement();
+        final SndList element = (SndList) node.getElement();
 
         return element.getDefinitions().stream()
                 .noneMatch(definition -> definition.getName().equals(name));
@@ -100,7 +100,7 @@ public class AddShaderNodeDefinitionAction extends AbstractNodeAction<ChangeCons
         final ShaderType type = vars.getEnum(PROP_TYPE, ShaderType.class);
 
         final TreeNode<?> node = getNode();
-        final ShaderNodeDefinitionList element = (ShaderNodeDefinitionList) node.getElement();
+        final SndList element = (SndList) node.getElement();
 
         final ShaderNodeDefinition definition = new ShaderNodeDefinition();
         definition.setName(definitionName);
@@ -110,6 +110,6 @@ public class AddShaderNodeDefinitionAction extends AbstractNodeAction<ChangeCons
         definition.setOutputs(new ArrayList<>());
 
         final ChangeConsumer changeConsumer = notNull(getNodeTree().getChangeConsumer());
-        changeConsumer.execute(new AddShaderNodeDefinitionOperation(element, definition));
+        changeConsumer.execute(new AddSndOperation(element, definition));
     }
 }

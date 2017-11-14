@@ -4,11 +4,11 @@ import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.shader.nodes.PluginMessages;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeDefinitionParameters;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeInputDefinitionParameters;
-import com.ss.editor.shader.nodes.model.shader.node.definition.ShaderNodeOutputDefinitionParameters;
-import com.ss.editor.shader.nodes.tree.action.AddShaderNodeDefinitionInputParameterAction;
-import com.ss.editor.shader.nodes.tree.action.AddShaderNodeDefinitionOutputParameterAction;
+import com.ss.editor.shader.nodes.model.shader.node.definition.SndParameters;
+import com.ss.editor.shader.nodes.model.shader.node.definition.SndInputParameters;
+import com.ss.editor.shader.nodes.model.shader.node.definition.SndOutputParameters;
+import com.ss.editor.shader.nodes.tree.action.AddSndInputParameterAction;
+import com.ss.editor.shader.nodes.tree.action.AddSndOutputParameterAction;
 import com.ss.editor.shader.nodes.ui.PluginIcons;
 import com.ss.editor.ui.control.tree.NodeTree;
 import com.ss.editor.ui.control.tree.node.TreeNode;
@@ -27,23 +27,23 @@ import java.util.List;
  *
  * @author JavaSaBr
  */
-public class ShaderNodeDefinitionParametersTreeNode extends TreeNode<ShaderNodeDefinitionParameters> {
+public class SndParametersTreeNode extends TreeNode<SndParameters> {
 
-    public ShaderNodeDefinitionParametersTreeNode(@NotNull final ShaderNodeDefinitionParameters element, final long objectId) {
+    public SndParametersTreeNode(@NotNull final SndParameters element, final long objectId) {
         super(element, objectId);
     }
 
     @Override
     @FromAnyThread
     public @NotNull String getName() {
-        return getElement() instanceof ShaderNodeInputDefinitionParameters ?
+        return getElement() instanceof SndInputParameters ?
                 PluginMessages.TREE_NODE_SHADER_NODE_INPUT_PARAMETERS : PluginMessages.TREE_NODE_SHADER_NODE_OUTPUT_PARAMETERS;
     }
 
     @Override
     @FXThread
     public @Nullable Image getIcon() {
-        return getElement() instanceof ShaderNodeInputDefinitionParameters ? PluginIcons.ARROW_RIGHT_16 :
+        return getElement() instanceof SndInputParameters ? PluginIcons.ARROW_RIGHT_16 :
                 PluginIcons.ARROW_LEFT_16;
     }
 
@@ -52,18 +52,18 @@ public class ShaderNodeDefinitionParametersTreeNode extends TreeNode<ShaderNodeD
     public void fillContextMenu(@NotNull final NodeTree<?> nodeTree, @NotNull final ObservableList<MenuItem> items) {
         super.fillContextMenu(nodeTree, items);
 
-        final ShaderNodeDefinitionParameters element = getElement();
-        if (element instanceof ShaderNodeInputDefinitionParameters) {
-            items.add(new AddShaderNodeDefinitionInputParameterAction(nodeTree, this));
-        } else if (element instanceof ShaderNodeOutputDefinitionParameters) {
-            items.add(new AddShaderNodeDefinitionOutputParameterAction(nodeTree, this));
+        final SndParameters element = getElement();
+        if (element instanceof SndInputParameters) {
+            items.add(new AddSndInputParameterAction(nodeTree, this));
+        } else if (element instanceof SndOutputParameters) {
+            items.add(new AddSndOutputParameterAction(nodeTree, this));
         }
     }
 
     @Override
     @FXThread
     public boolean hasChildren(@NotNull final NodeTree<?> nodeTree) {
-        final ShaderNodeDefinitionParameters element = getElement();
+        final SndParameters element = getElement();
         final List<ShaderNodeVariable> parameters = element.getParameters();
         return !parameters.isEmpty();
     }
@@ -72,7 +72,7 @@ public class ShaderNodeDefinitionParametersTreeNode extends TreeNode<ShaderNodeD
     @FXThread
     public @NotNull Array<TreeNode<?>> getChildren(@NotNull final NodeTree<?> nodeTree) {
 
-        final ShaderNodeDefinitionParameters element = getElement();
+        final SndParameters element = getElement();
         final Array<TreeNode<?>> children = ArrayFactory.newArray(TreeNode.class);
 
         final List<ShaderNodeVariable> parameters = element.getParameters();
