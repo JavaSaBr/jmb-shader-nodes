@@ -6,8 +6,8 @@ import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.JMEThread;
-import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.component.shader.nodes.operation.ShaderNodeOperation;
+import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

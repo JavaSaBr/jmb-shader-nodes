@@ -4,8 +4,8 @@ import com.jme3.shader.ShaderNode;
 import com.jme3.shader.VariableMapping;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
-import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.component.shader.nodes.operation.ShaderNodeOperation;
+import com.ss.editor.shader.nodes.editor.ShaderNodesChangeConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -1,8 +1,6 @@
 package com.ss.editor.shader.nodes.tree.property;
 
-import static com.ss.editor.extension.property.EditablePropertyType.ENUM;
-import static com.ss.editor.extension.property.EditablePropertyType.READ_ONLY_STRING;
-import static com.ss.editor.extension.property.EditablePropertyType.STRING;
+import static com.ss.editor.extension.property.EditablePropertyType.*;
 import com.jme3.shader.ShaderNodeDefinition;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.Messages;

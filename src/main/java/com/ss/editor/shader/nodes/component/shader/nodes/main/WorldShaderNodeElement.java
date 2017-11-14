@@ -6,8 +6,8 @@ import com.jme3.shader.UniformBinding;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.component.shader.nodes.ShaderNodesContainer;
-import com.ss.editor.shader.nodes.component.shader.nodes.action.remove.RemoveWorldParamShaderNodeAction;
 import com.ss.editor.shader.nodes.component.shader.nodes.action.ShaderNodeAction;
+import com.ss.editor.shader.nodes.component.shader.nodes.action.remove.RemoveWorldParamShaderNodeAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

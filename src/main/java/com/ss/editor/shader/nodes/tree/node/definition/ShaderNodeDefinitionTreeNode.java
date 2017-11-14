@@ -86,8 +86,6 @@ public class ShaderNodeDefinitionTreeNode extends TreeNode<ShaderNodeDefinition>
         final ShaderNodeDefinition definition = getElement();
 
         final Array<TreeNode<?>> children = ArrayFactory.newArray(TreeNode.class, 2);
-        children.add(FACTORY_REGISTRY.createFor(new ShaderNodeDefinitionImports(definition)));
-        children.add(FACTORY_REGISTRY.createFor(new ShaderNodeDefinitionDefines(definition)));
         children.add(FACTORY_REGISTRY.createFor(new ShaderNodeInputDefinitionParameters(definition)));
         children.add(FACTORY_REGISTRY.createFor(new ShaderNodeOutputDefinitionParameters(definition)));
         children.add(FACTORY_REGISTRY.createFor(new ShaderNodeDefinitionShaderSources(definition)));

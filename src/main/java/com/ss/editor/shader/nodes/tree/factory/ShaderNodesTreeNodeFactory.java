@@ -48,14 +48,6 @@ public class ShaderNodesTreeNodeFactory implements TreeNodeFactory {
             return unsafeCast(new ShaderNodeDefinitionShaderSourcesTreeNode((ShaderNodeDefinitionShaderSources) element, objectId));
         } else if (element instanceof ShaderNodeDefinitionShaderSource) {
             return unsafeCast(new ShaderNodeDefinitionShaderSourceTreeNode((ShaderNodeDefinitionShaderSource) element, objectId));
-        } else if (element instanceof ShaderNodeDefinitionDefines) {
-            return unsafeCast(new ShaderNodeDefinitionDefinesTreeNode((ShaderNodeDefinitionDefines) element, objectId));
-        } else if (element instanceof ShaderNodeDefinitionDefine) {
-            return unsafeCast(new ShaderNodeDefinitionDefineTreeNode((ShaderNodeDefinitionDefine) element, objectId));
-        } else if (element instanceof ShaderNodeDefinitionImports) {
-            return unsafeCast(new ShaderNodeDefinitionImportsTreeNode((ShaderNodeDefinitionImports) element, objectId));
-        } else if (element instanceof ShaderNodeDefinitionImport) {
-            return unsafeCast(new ShaderNodeDefinitionImportTreeNode((ShaderNodeDefinitionImport) element, objectId));
         }
 
         return null;

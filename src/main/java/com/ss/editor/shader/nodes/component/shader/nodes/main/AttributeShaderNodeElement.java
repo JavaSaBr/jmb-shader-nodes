@@ -5,8 +5,8 @@ import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.component.shader.nodes.ShaderNodesContainer;
-import com.ss.editor.shader.nodes.component.shader.nodes.action.remove.RemoveAttributeShaderNodeAction;
 import com.ss.editor.shader.nodes.component.shader.nodes.action.ShaderNodeAction;
+import com.ss.editor.shader.nodes.component.shader.nodes.action.remove.RemoveAttributeShaderNodeAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

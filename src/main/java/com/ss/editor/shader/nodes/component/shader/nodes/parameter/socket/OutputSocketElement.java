@@ -2,8 +2,8 @@ package com.ss.editor.shader.nodes.component.shader.nodes.parameter.socket;
 
 import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE_PARAMETER_OUTPUT_SOCKET;
 import com.ss.editor.annotation.FXThread;
-import com.ss.editor.shader.nodes.component.shader.nodes.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.component.shader.nodes.ShaderNodeElement;
+import com.ss.editor.shader.nodes.component.shader.nodes.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.component.shader.nodes.parameter.ShaderNodeParameter;
 import com.ss.rlib.ui.util.FXUtils;
 import javafx.beans.property.BooleanProperty;
