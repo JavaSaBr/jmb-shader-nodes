@@ -4,3 +4,4 @@ com/ss/editor/shader/nodes/icons/arrow-pointing-to-right.svg icon made by https:
 com/ss/editor/shader/nodes/icons/left-arrow.svg icon made by https://www.flaticon.com/authors/freepik from www.flaticon.com
 com/ss/editor/shader/nodes/icons/code.svg icon made by https://www.flaticon.com/authors/dave-gandy from www.flaticon.com
 com/ss/editor/shader/nodes/icons/grid-pixel.svg icon made by https://www.flaticon.com/authors/pixelvisualization from www.flaticon.com
+com/ss/editor/shader/nodes/icons/document.svg icon made by https://www.flaticon.com/authors/smashicons from www.flaticon.com

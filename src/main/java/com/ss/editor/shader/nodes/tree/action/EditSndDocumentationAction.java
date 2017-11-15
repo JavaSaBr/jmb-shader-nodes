@@ -1,7 +1,13 @@
 package com.ss.editor.shader.nodes.tree.action;
 
+import static com.ss.rlib.util.ObjectUtils.notNull;
+import com.jme3.shader.ShaderNodeDefinition;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
+import com.ss.editor.shader.nodes.PluginMessages;
+import com.ss.editor.shader.nodes.model.shader.node.definition.SndDocumentation;
+import com.ss.editor.shader.nodes.tree.node.definition.SndDocumentationTreeNode;
+import com.ss.editor.shader.nodes.ui.dialog.EditSndDocumentationDialog;
 import com.ss.editor.ui.Icons;
 import com.ss.editor.ui.control.tree.NodeTree;
 import com.ss.editor.ui.control.tree.action.AbstractNodeAction;
@@ -24,7 +30,7 @@ public class EditSndDocumentationAction extends AbstractNodeAction<ChangeConsume
     @Override
     @FXThread
     protected @NotNull String getName() {
-        return "Edit";
+        return PluginMessages.ACTION_ADD_EDIT_DOCUMENTATION;
     }
 
     @Override
@@ -38,6 +44,14 @@ public class EditSndDocumentationAction extends AbstractNodeAction<ChangeConsume
     protected void process() {
         super.process();
 
+        final SndDocumentationTreeNode node = (SndDocumentationTreeNode) getNode();
+        final SndDocumentation documentation = node.getElement();
+        final ShaderNodeDefinition definition = documentation.getDefinition();
 
+        final NodeTree<ChangeConsumer> nodeTree = getNodeTree();
+        final ChangeConsumer changeConsumer = notNull(nodeTree.getChangeConsumer());
+
+        final EditSndDocumentationDialog dialog = new EditSndDocumentationDialog(changeConsumer, definition);
+        dialog.show();
     }
 }

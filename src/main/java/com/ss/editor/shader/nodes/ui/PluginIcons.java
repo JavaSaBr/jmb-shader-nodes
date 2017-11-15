@@ -20,4 +20,6 @@ public interface PluginIcons {
     @NotNull Image CODE_16 = ICON_MANAGER.getImage("com/ss/editor/shader/nodes/icons/code.svg", CLASS_LOADER, 16);
     @NotNull Image FRAGMENT_16 = ICON_MANAGER.getImage("com/ss/editor/shader/nodes/icons/grid-pixel.svg", CLASS_LOADER, 16);
     @NotNull Image VARIABLE_16 = ICON_MANAGER.getImage("com/ss/editor/shader/nodes/icons/square-root-of-x-math-formula.svg", CLASS_LOADER, 16);
+    @NotNull Image DOCUMENT_16 = ICON_MANAGER.getImage("com/ss/editor/shader/nodes/icons/document.svg", CLASS_LOADER, 16);
+
 }

@@ -116,3 +116,8 @@
     -fx-alignment: center-right;
     -fx-text-alignment: right;
 }
+
+.shader-node-def-documentation-dialog {
+    -fx-min-height: 400px;
+    -fx-min-width: 500px;
+}

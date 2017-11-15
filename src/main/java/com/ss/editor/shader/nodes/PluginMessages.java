@@ -26,6 +26,7 @@ public interface PluginMessages {
     @NotNull String SND_CREATOR_SOURCE_FILE = RESOURCE_BUNDLE.getString("SNDCreatorSourceFile");
     @NotNull String SND_EDITOR_NAME = RESOURCE_BUNDLE.getString("SNDEditorName");
     @NotNull String SND_EDITOR_TOOL_STRUCTURE = RESOURCE_BUNDLE.getString("SNDEditorToolStructure");
+    @NotNull String SND_EDITOR_DOCUMENT_DIALOG = RESOURCE_BUNDLE.getString("SNDEditorDocumentDialog");
 
     @NotNull String SNS_EDITOR_TOOL_FRAGMENT = RESOURCE_BUNDLE.getString("SNSEditorToolFragment");
     @NotNull String SNS_EDITOR_TOOL_VERTEX = RESOURCE_BUNDLE.getString("SNSEditorToolVertex");
@@ -48,6 +49,7 @@ public interface PluginMessages {
     @NotNull String ACTION_ADD_SND_PARAMETER = RESOURCE_BUNDLE.getString("ActionAddSNDParameter");
     @NotNull String ACTION_ADD_SHADER_NODE_DEFINITION = RESOURCE_BUNDLE.getString("ActionAddShaderNodeDefinition");
     @NotNull String ACTION_ADD_SHADER_NODE_SOURCE = RESOURCE_BUNDLE.getString("ActionAddShaderNodeSource");
+    @NotNull String ACTION_ADD_EDIT_DOCUMENTATION = RESOURCE_BUNDLE.getString("ActionEditDocumentation");
 
     @NotNull String NODE_ELEMENT_GLOBAL_INPUT = RESOURCE_BUNDLE.getString("NodeElementGlobalInput");
     @NotNull String NODE_ELEMENT_GLOBAL_OUTPUT = RESOURCE_BUNDLE.getString("NodeElementGlobalOutput");
@@ -60,5 +62,6 @@ public interface PluginMessages {
     @NotNull String TREE_NODE_SHADER_NODE_INPUT_PARAMETERS = RESOURCE_BUNDLE.getString("TreeNodeShaderNodeInputParameters");
     @NotNull String TREE_NODE_SHADER_NODE_OUTPUT_PARAMETERS = RESOURCE_BUNDLE.getString("TreeNodeShaderNodeOutputParameters");
     @NotNull String TREE_NODE_SHADER_NODE_SOURCES = RESOURCE_BUNDLE.getString("TreeNodeShaderNodeSources");
+    @NotNull String TREE_NODE_SHADER_NODE_DOCUMENTATION = RESOURCE_BUNDLE.getString("TreeNodeShaderNodeDocumentation");
 
 }

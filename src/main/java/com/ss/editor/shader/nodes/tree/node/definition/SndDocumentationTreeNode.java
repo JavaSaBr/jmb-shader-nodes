@@ -2,9 +2,10 @@ package com.ss.editor.shader.nodes.tree.node.definition;
 
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
+import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.model.shader.node.definition.SndDocumentation;
-import com.ss.editor.shader.nodes.tree.action.DeleteSndarameterAction;
-import com.ss.editor.ui.Icons;
+import com.ss.editor.shader.nodes.tree.action.EditSndDocumentationAction;
+import com.ss.editor.shader.nodes.ui.PluginIcons;
 import com.ss.editor.ui.control.tree.NodeTree;
 import com.ss.editor.ui.control.tree.node.TreeNode;
 import javafx.collections.ObservableList;
@@ -28,18 +29,18 @@ public class SndDocumentationTreeNode extends TreeNode<SndDocumentation> {
     @FXThread
     public void fillContextMenu(@NotNull final NodeTree<?> nodeTree, @NotNull final ObservableList<MenuItem> items) {
         super.fillContextMenu(nodeTree, items);
-        items.add(new DeleteSndarameterAction(nodeTree, this));
+        items.add(new EditSndDocumentationAction(nodeTree, this));
     }
 
     @Override
     @FXThread
     public @Nullable Image getIcon() {
-        return Icons.DATA_16;
+        return PluginIcons.DOCUMENT_16;
     }
 
     @Override
     @FromAnyThread
     public @NotNull String getName() {
-        return "Documentation";
+        return PluginMessages.TREE_NODE_SHADER_NODE_DOCUMENTATION;
     }
 }
