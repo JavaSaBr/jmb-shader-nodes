@@ -8,7 +8,7 @@ import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.shader.nodes.PluginMessages;
-import com.ss.editor.shader.nodes.tree.operation.ChangeSndDocumentationOperation;
+import com.ss.editor.shader.nodes.ui.control.tree.operation.ChangeSndDocumentationOperation;
 import com.ss.editor.shader.nodes.ui.PluginCSSClasses;
 import com.ss.editor.shader.nodes.ui.component.SndDocumentationArea;
 import com.ss.editor.ui.dialog.AbstractSimpleEditorDialog;

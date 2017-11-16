@@ -7,7 +7,7 @@ import com.jme3.util.clone.Cloner;
 import com.jme3.util.clone.JmeCloneable;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.annotation.JMEThread;
-import com.ss.editor.shader.nodes.editor.state.TechniqueDefState;
+import com.ss.editor.shader.nodes.ui.component.editor.state.TechniqueDefState;
 import com.ss.editor.util.EditorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
