@@ -91,9 +91,9 @@ public class J3snExporter {
         if (!StringUtils.isEmpty(documentation)) {
             builder.append('\n');
             indent(builder, 2);
-            builder.append("Documentation {");
+            builder.append("Documentation {").append('\n');
             indent(builder, 3);
-            builder.append(documentation);
+            builder.append(documentation).append('\n');
             indent(builder, 2);
             builder.append("}\n");
         }

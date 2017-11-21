@@ -16,11 +16,13 @@ import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodeDefinitionFileEd
 import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesFileEditor;
 import com.ss.editor.shader.nodes.ui.control.tree.factory.ShaderNodesTreeNodeFactory;
 import com.ss.editor.shader.nodes.ui.control.tree.property.ShaderNodesPropertyBuilder;
+import com.ss.editor.shader.nodes.ui.preview.SndFilePreviewFactory;
 import com.ss.editor.ui.component.creator.FileCreatorRegistry;
 import com.ss.editor.ui.component.editor.EditorRegistry;
 import com.ss.editor.ui.control.property.builder.PropertyBuilderRegistry;
 import com.ss.editor.ui.control.tree.node.TreeNodeFactoryRegistry;
 import com.ss.editor.ui.css.CSSRegistry;
+import com.ss.editor.ui.preview.FilePreviewFactoryRegistry;
 import com.ss.rlib.plugin.PluginContainer;
 import com.ss.rlib.plugin.PluginSystem;
 import com.ss.rlib.plugin.annotation.PluginDescription;
@@ -112,5 +114,12 @@ public class ShaderNodesEditorPlugin extends EditorPlugin {
                 return null;
             }
         });
+    }
+
+    @Override
+    @FromAnyThread
+    public void register(@NotNull final FilePreviewFactoryRegistry registry) {
+        super.register(registry);
+        registry.register(SndFilePreviewFactory.getInstance());
     }
 }

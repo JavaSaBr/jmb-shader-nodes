@@ -20,6 +20,7 @@ public class SndDocumentationArea extends BaseCodeArea {
             {"GLOBALVAR", CSS_KEYWORD},
             {"INPUT", CSS_VALUE_TYPE},
             {"OUTPUT", CSS_VALUE_VALUE},
+            {CLASS_COMMENT, CSS_COMMENT},
     };
 
     @NotNull
@@ -27,6 +28,7 @@ public class SndDocumentationArea extends BaseCodeArea {
             "(?<GLOBALVAR>(@global))"
                     + "|(?<INPUT>(@input))"
                     + "|(?<OUTPUT>(@output))"
+                    + "|(?<" + CLASS_COMMENT + ">" + COMMENT_PATTERN + ")"
     );
 
     @Override
