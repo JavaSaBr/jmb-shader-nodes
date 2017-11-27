@@ -69,8 +69,7 @@ public class SndFilePreview extends AbstractFilePreview<SndDocumentationArea> {
                 documentation = documentation.substring(1, documentation.length());
             }
             documentationArea.reloadContent(documentation);
-            return;
-        }
+            return;}
 
         final StringBuilder result = new StringBuilder();
 

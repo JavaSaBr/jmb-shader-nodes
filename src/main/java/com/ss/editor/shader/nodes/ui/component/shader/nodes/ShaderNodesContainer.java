@@ -13,8 +13,10 @@ import com.jme3.math.Vector2f;
 import com.jme3.shader.*;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.manager.ExecutorManager;
+import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.action.ShaderNodeAction;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.action.add.*;
+import com.ss.editor.shader.nodes.ui.component.shader.nodes.global.GlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.global.InputGlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.global.OutputGlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.line.TempLine;
@@ -22,7 +24,6 @@ import com.ss.editor.shader.nodes.ui.component.shader.nodes.line.VariableLine;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.main.*;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.ShaderNodeParameter;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.socket.SocketElement;
-import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.util.MaterialDefUtils;
 import com.ss.rlib.logging.Logger;
 import com.ss.rlib.logging.LoggerManager;
@@ -635,6 +636,59 @@ public class ShaderNodesContainer extends ScrollPane {
                 .map(ShaderNodeElement::getObject)
                 .filter(shaderNode -> hasOutMappingByLeftVar(shaderNode, leftVariable))
                 .collect(toList());
+    }
+
+    /**
+     * Find a shader node by the name.
+     *
+     * @param name the name.
+     * @return the found shader node or null.
+     */
+    @FXThread
+    public @Nullable ShaderNode findShaderNodeByName(@NotNull final String name) {
+
+        if (MaterialShaderNodeElement.NAMESPACE.equals(name) || GlobalShaderNodeElement.NAMESPACE.equals(name) ||
+                WorldShaderNodeElement.NAMESPACE.equals(name) || AttributeShaderNodeElement.NAMESPACE.equals(name)) {
+            return null;
+        }
+
+        return root.getChildren().stream()
+                .filter(MainShaderNodeElement.class::isInstance)
+                .map(MainShaderNodeElement.class::cast)
+                .map(ShaderNodeElement::getObject)
+                .filter(shaderNode -> shaderNode.getName().equals(name))
+                .findAny().orElse(null);
+    }
+
+    /**
+     * Find all shader nodes which are used from the shader node.
+     *
+     * @param shaderNode the shader node.
+     * @return the list of used shader nodes.
+     */
+    @FXThread
+    public @NotNull List<ShaderNode> findUsedFrom(@NotNull final ShaderNode shaderNode) {
+        return findUsedFrom(new ArrayList<>(), shaderNode);
+    }
+
+    @FXThread
+    private @NotNull List<ShaderNode> findUsedFrom(@NotNull final List<ShaderNode> result,
+                                                   @NotNull final ShaderNode shaderNode) {
+
+        for (final VariableMapping mapping : shaderNode.getInputMapping()) {
+
+            final ShaderNodeVariable rightVariable = mapping.getRightVariable();
+            final ShaderNode usedNode = findShaderNodeByName(rightVariable.getNameSpace());
+
+            if (usedNode == null || result.contains(usedNode)) {
+                continue;
+            }
+
+            result.add(usedNode);
+            findUsedFrom(result, usedNode);
+        }
+
+        return result;
     }
 
     /**

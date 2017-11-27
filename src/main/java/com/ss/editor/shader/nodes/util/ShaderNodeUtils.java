@@ -232,7 +232,7 @@ public class ShaderNodeUtils {
      *
      * @param shaderNode the shader nodes.
      * @param variable   the left variable.
-     * @return true if the shader nodes has the output mapping with the left variable.
+     * @return true if the shader node has the output mapping with the left variable.
      */
     @FromAnyThread
     public static boolean hasOutMappingByLeftVar(@NotNull final ShaderNode shaderNode,

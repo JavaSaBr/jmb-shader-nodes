@@ -2,11 +2,13 @@ package com.ss.editor.shader.nodes.ui.component.shader.nodes.global;
 
 import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.*;
 import com.jme3.material.ShaderGenerationInfo;
+import com.jme3.material.TechniqueDef;
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.VariableMapping;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.shader.nodes.PluginMessages;
+import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.main.FragmentShaderNodeElement;
@@ -16,7 +18,6 @@ import com.ss.editor.shader.nodes.ui.component.shader.nodes.operation.attach.Att
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.InputShaderNodeParameter;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.OutputShaderNodeParameter;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.ShaderNodeParameter;
-import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesChangeConsumer;
 import com.ss.rlib.ui.util.FXUtils;
 import com.ss.rlib.util.StringUtils;
 import javafx.scene.layout.VBox;
@@ -117,7 +118,15 @@ public class OutputGlobalShaderNodeElement extends GlobalShaderNodeElement {
         final List<ShaderNode> currentNodes = container.findWithLeftOutputVar(inVar);
         currentNodes.remove(shaderNode);
 
+        final List<ShaderNode> usedFrom = container.findUsedFrom(shaderNode);
+        if (!usedFrom.contains(shaderNode)) {
+            usedFrom.add(shaderNode);
+        }
+
+        final TechniqueDef techniqueDef = container.getTechniqueDef();
+
         final ShaderNodesChangeConsumer changeConsumer = container.getChangeConsumer();
-        changeConsumer.execute(new AttachVarToGlobalNodeOperation(shaderNode, newMapping, currentMapping, currentNodes));
+        changeConsumer.execute(new AttachVarToGlobalNodeOperation(techniqueDef, shaderNode, newMapping,
+                currentMapping, currentNodes, usedFrom));
     }
 }
