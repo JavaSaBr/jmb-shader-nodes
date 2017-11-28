@@ -30,6 +30,12 @@ import com.ss.editor.plugin.api.editor.material.BaseMaterialFileEditor;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
 import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.ShaderNodesEditorPlugin;
+import com.ss.editor.shader.nodes.model.PreviewMaterialSettings;
+import com.ss.editor.shader.nodes.model.shader.node.ShaderNodesProject;
+import com.ss.editor.shader.nodes.ui.component.editor.state.ShaderNodeState;
+import com.ss.editor.shader.nodes.ui.component.editor.state.ShaderNodeVariableState;
+import com.ss.editor.shader.nodes.ui.component.editor.state.ShaderNodesEditorState;
+import com.ss.editor.shader.nodes.ui.component.editor.state.TechniqueDefState;
 import com.ss.editor.shader.nodes.ui.component.preview.material.definition.MaterialDefCodePreviewComponent;
 import com.ss.editor.shader.nodes.ui.component.preview.shader.FragmentShaderCodePreviewComponent;
 import com.ss.editor.shader.nodes.ui.component.preview.shader.ShaderCodePreviewComponent;
@@ -38,12 +44,6 @@ import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodesContainer
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.global.GlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.operation.ChangeLightModeOperation;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.operation.add.AddTechniqueOperation;
-import com.ss.editor.shader.nodes.ui.component.editor.state.ShaderNodeState;
-import com.ss.editor.shader.nodes.ui.component.editor.state.ShaderNodeVariableState;
-import com.ss.editor.shader.nodes.ui.component.editor.state.ShaderNodesEditorState;
-import com.ss.editor.shader.nodes.ui.component.editor.state.TechniqueDefState;
-import com.ss.editor.shader.nodes.model.PreviewMaterialSettings;
-import com.ss.editor.shader.nodes.model.shader.node.ShaderNodesProject;
 import com.ss.editor.ui.Icons;
 import com.ss.editor.ui.component.asset.tree.context.menu.action.DeleteFileAction;
 import com.ss.editor.ui.component.asset.tree.context.menu.action.NewFileAction;
@@ -220,6 +220,22 @@ public class ShaderNodesFileEditor extends
 
         final J3MLoader loader = new J3MLoader();
         final MaterialDef materialDef = (MaterialDef) loader.load(assetInfo);
+
+        materialDef.getTechniqueDefsNames().forEach(techniqueDefName -> {
+            materialDef.getTechniqueDefs(techniqueDefName).forEach(techniqueDef -> {
+
+                final ShaderGenerationInfo info = techniqueDef.getShaderGenerationInfo();
+                final List<ShaderNodeVariable> fragmentGlobals = info.getFragmentGlobals();
+
+                if (fragmentGlobals.isEmpty()) {
+                    fragmentGlobals.add(new ShaderNodeVariable("vec4", GlobalShaderNodeElement.NAMESPACE, "color", null));
+                }
+
+                if (info.getVertexGlobal() == null) {
+                    info.setVertexGlobal(new ShaderNodeVariable("vec4", GlobalShaderNodeElement.NAMESPACE, "position", null));
+                }
+            });
+        });
 
         setMaterialDef(materialDef);
         getEditor3DState().updateMaterial(EDITOR.getDefaultMaterial());
@@ -624,6 +640,10 @@ public class ShaderNodesFileEditor extends
 
         if (fragmentGlobals.isEmpty()) {
             fragmentGlobals.add(new ShaderNodeVariable("vec4", GlobalShaderNodeElement.NAMESPACE, "color", null));
+        }
+
+        if (info.getVertexGlobal() == null) {
+            info.setVertexGlobal(new ShaderNodeVariable("vec4", GlobalShaderNodeElement.NAMESPACE, "position", null));
         }
 
         final ShaderNodesContainer container = getShaderNodesContainer();

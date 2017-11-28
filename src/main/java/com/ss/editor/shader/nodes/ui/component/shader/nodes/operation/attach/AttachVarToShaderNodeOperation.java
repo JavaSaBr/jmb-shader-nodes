@@ -98,10 +98,13 @@ public class AttachVarToShaderNodeOperation extends AttachShaderNodeOperation {
         }
 
         final List<ShaderNode> shaderNodes = techniqueDef.getShaderNodes();
-        if (shaderNodes.indexOf(outShaderNode) > shaderNodes.indexOf(shaderNode)) {
+        final int outSnIndex = shaderNodes.indexOf(outShaderNode);
+        final int snIndex = shaderNodes.indexOf(shaderNode);
+
+        if (outSnIndex > snIndex) {
             previousShaderOrder = new ArrayList<>(shaderNodes);
-            shaderNodes.remove(shaderNode);
-            shaderNodes.add(shaderNode);
+            shaderNodes.remove(outShaderNode);
+            shaderNodes.add(snIndex, outShaderNode);
         }
 
         final List<String> unusedNodes = generationInfo.getUnusedNodes();

@@ -74,6 +74,14 @@ public class MaterialShaderNodeElement extends OutputVariableShaderNodeElement {
         control.setApplyHandler(this::applyValue);
         control.setEditObject(materialParam);
 
+        switch (materialParam.getVarType()) {
+            case Int:
+            case Float: {
+                control.changeControlWidthPercent(0.4);
+                break;
+            }
+        }
+
         return new EditableMaterialShaderNodeParameter(this, getObject(), control);
     }
 

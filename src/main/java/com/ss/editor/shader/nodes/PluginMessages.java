@@ -48,6 +48,8 @@ public interface PluginMessages {
     @NotNull String ACTION_ADD_MATERIAL_PARAMETER_TITLE = RESOURCE_BUNDLE.getString("ActionAddMaterialParameterTitle");
     @NotNull String ACTION_ADD_SND_PARAMETER = RESOURCE_BUNDLE.getString("ActionAddSNDParameter");
     @NotNull String ACTION_ADD_SHADER_NODE_DEFINITION = RESOURCE_BUNDLE.getString("ActionAddShaderNodeDefinition");
+    @NotNull String ACTION_ADD_SHADER_NODE_DEFINITION_SELECT_DEFINITION = RESOURCE_BUNDLE.getString("ActionAddShaderNodeDefinitionSelectDefinition");
+    @NotNull String ACTION_ADD_SHADER_NODE_DEFINITION_SELECT_DEFINTION_TITLE = RESOURCE_BUNDLE.getString("ActionAddShaderNodeDefinitionSelectDefinitionTitle");
     @NotNull String ACTION_ADD_SHADER_NODE_SOURCE = RESOURCE_BUNDLE.getString("ActionAddShaderNodeSource");
     @NotNull String ACTION_ADD_EDIT_DOCUMENTATION = RESOURCE_BUNDLE.getString("ActionEditDocumentation");
 

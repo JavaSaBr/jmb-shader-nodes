@@ -67,7 +67,7 @@ public class ShaderNodeVariableState extends AbstractEditorState {
     /**
      * Set the name of a variable.
      *
-     * @param name th name of a variable.
+     * @param name the name of a variable.
      */
     @FXThread
     public void setName(@NotNull final String name) {
