@@ -64,12 +64,20 @@ public class SndFilePreview extends AbstractFilePreview<SndDocumentationArea> {
         final SndDocumentationArea documentationArea = getGraphicsNode();
 
         if (definitionList.size() == 1) {
+
             String documentation = definitionList.get(0).getDocumentation();
+            if(StringUtils.isEmpty(documentation)) {
+                documentationArea.reloadContent(" ");
+                return;
+            }
+
             if (documentation.startsWith("\n")) {
                 documentation = documentation.substring(1, documentation.length());
             }
+
             documentationArea.reloadContent(documentation);
-            return;}
+            return;
+        }
 
         final StringBuilder result = new StringBuilder();
 
