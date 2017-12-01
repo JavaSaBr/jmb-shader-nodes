@@ -6,6 +6,8 @@ import com.jme3.material.TechniqueDef;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesFileEditor;
 import com.ss.editor.ui.component.editor.state.impl.EditorMaterialEditorState;
+import com.ss.rlib.logging.Logger;
+import com.ss.rlib.logging.LoggerManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -16,6 +18,9 @@ import java.util.*;
  * @author JavaSaBr
  */
 public class ShaderNodesEditorState extends EditorMaterialEditorState {
+
+    @NotNull
+    private static final Logger LOGGER = LoggerManager.getLogger(ShaderNodesEditorState.class);
 
     /**
      * The constant serialVersionUID.
@@ -46,7 +51,7 @@ public class ShaderNodesEditorState extends EditorMaterialEditorState {
     @FXThread
     public void setChangeHandler(@NotNull final Runnable changeHandler) {
         super.setChangeHandler(changeHandler);
-        techniqueDefStates.forEach(techniqueDefState -> techniqueDefState.setChangeHandler(changeHandler));
+        techniqueDefStates.forEach(state -> state.setChangeHandler(changeHandler));
     }
 
     /**
@@ -62,7 +67,7 @@ public class ShaderNodesEditorState extends EditorMaterialEditorState {
                 .filter(state -> state.getName().equals(techniqueDefName))
                 .findAny();
 
-        if(result.isPresent()) {
+        if (result.isPresent()) {
             return result.get();
         }
 
@@ -82,6 +87,7 @@ public class ShaderNodesEditorState extends EditorMaterialEditorState {
      */
     @FXThread
     public void cleanUp(@NotNull final MaterialDef materialDef) {
+        LOGGER.debug(this, editorState -> "The state before cleanup: " + editorState);
 
         final Collection<String> defsNames = materialDef.getTechniqueDefsNames();
 
@@ -100,10 +106,19 @@ public class ShaderNodesEditorState extends EditorMaterialEditorState {
 
             state.cleanUp(materialDef, techniqueDef);
         }
+
+        LOGGER.debug(this, editorState -> "The state after cleanup: " + editorState);
     }
 
     @Override
     public String toString() {
-        return "ShaderNodesEditorState{" + "techniqueDefStates=" + techniqueDefStates + '}';
+
+        final StringBuilder builder = new StringBuilder("ShaderNodesEditorState:\n");
+
+        for (final TechniqueDefState defState : techniqueDefStates) {
+            builder.append("\t").append(defState).append('\n');
+        }
+
+        return builder.toString();
     }
 }

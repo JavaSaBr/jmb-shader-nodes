@@ -54,6 +54,7 @@ public class ShaderNodeVariableState extends AbstractEditorState {
         this.width = width;
     }
 
+
     /**
      * Get the name of a variable.
      *

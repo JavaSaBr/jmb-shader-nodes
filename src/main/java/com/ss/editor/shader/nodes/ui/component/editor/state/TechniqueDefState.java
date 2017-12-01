@@ -13,6 +13,8 @@ import com.ss.editor.shader.nodes.ui.component.shader.nodes.main.AttributeShader
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.main.MaterialShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.main.WorldShaderNodeElement;
 import com.ss.editor.ui.component.editor.state.impl.AbstractEditorState;
+import com.ss.rlib.logging.Logger;
+import com.ss.rlib.logging.LoggerManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,6 +29,9 @@ import java.util.Optional;
  * @author JavaSaBr
  */
 public class TechniqueDefState extends AbstractEditorState {
+
+    @NotNull
+    private static final Logger LOGGER = LoggerManager.getLogger(TechniqueDefState.class);
 
     /**
      * The constant serialVersionUID.
@@ -90,7 +95,7 @@ public class TechniqueDefState extends AbstractEditorState {
     @FXThread
     public void cleanUp(@NotNull final MaterialDef materialDef, @NotNull final TechniqueDef techniqueDef) {
 
-        for (Iterator<ShaderNodeVariableState> iterator = shaderVariableStates.iterator(); iterator.hasNext(); ) {
+        for (final Iterator<ShaderNodeVariableState> iterator = shaderVariableStates.iterator(); iterator.hasNext(); ) {
 
             final ShaderNodeVariableState state = iterator.next();
 
@@ -123,7 +128,7 @@ public class TechniqueDefState extends AbstractEditorState {
             }
         }
 
-        for (Iterator<ShaderNodeState> iterator = shaderNodeStates.iterator(); iterator.hasNext(); ) {
+        for (final Iterator<ShaderNodeState> iterator = shaderNodeStates.iterator(); iterator.hasNext(); ) {
 
             final ShaderNodeState state = iterator.next();
             final ShaderNode shaderNode = findByName(techniqueDef, state.getName());
@@ -140,11 +145,13 @@ public class TechniqueDefState extends AbstractEditorState {
      *
      * @param variable the variable.
      * @param location the location.
-     * @param width the width.
+     * @param width    the width.
      */
     @FXThread
     public void notifyChange(@NotNull final ShaderNodeVariable variable, @NotNull final Vector2f location,
                              final double width) {
+
+        LOGGER.debug(variable, location, (var, pos) -> "Changed shader node variable: " + var + " to location " + pos);
 
         final Optional<ShaderNodeVariableState> state = shaderVariableStates.stream()
                 .filter(variableState -> variableState.getNameSpace().equals(variable.getNameSpace()))
@@ -160,6 +167,8 @@ public class TechniqueDefState extends AbstractEditorState {
                     variable.getNameSpace(), location, (int) width));
         }
 
+        LOGGER.debug(this, defState -> "New version of tech def state is:" + defState);
+
         notifyChange();
     }
 
@@ -167,12 +176,14 @@ public class TechniqueDefState extends AbstractEditorState {
      * Notify about changes the shader nodes.
      *
      * @param shaderNode the shader nodes.
-     * @param location the location.
-     * @param width the width.
+     * @param location   the location.
+     * @param width      the width.
      */
     @FXThread
     public void notifyChange(@NotNull final ShaderNode shaderNode, @NotNull final Vector2f location,
                              final double width) {
+
+        LOGGER.debug(shaderNode, location, (node, pos) -> "Changed shader node: " + node + " to location " + pos);
 
         final Optional<ShaderNodeState> state = shaderNodeStates.stream()
                 .filter(variableState -> variableState.getName().equals(shaderNode.getName()))
@@ -185,6 +196,8 @@ public class TechniqueDefState extends AbstractEditorState {
         } else {
             shaderNodeStates.add(new ShaderNodeState(shaderNode.getName(), location, (int) width));
         }
+
+        LOGGER.debug(this, defState -> "New version of tech def state is:" + defState);
 
         notifyChange();
     }
@@ -209,6 +222,7 @@ public class TechniqueDefState extends AbstractEditorState {
      */
     @FXThread
     public @Nullable ShaderNodeVariableState getState(@Nullable final ShaderNodeVariable variable) {
+        if (variable == null) return null;
         return shaderVariableStates.stream()
                 .filter(variableState -> variableState.getNameSpace().equals(variable.getNameSpace()))
                 .filter(variableState -> variableState.getName().equals(variable.getName()))
@@ -315,9 +329,30 @@ public class TechniqueDefState extends AbstractEditorState {
 
     @Override
     public String toString() {
-        return "TechniqueDefState{" + "name='" + name + '\'' + ", shaderNodeStates=" + shaderNodeStates +
-                ", shaderVariableStates=" + shaderVariableStates + ", outputNodeLocation=" + outputNodeLocation +
-                ", inputNodeLocation=" + inputNodeLocation + ", outputNodeWidth=" + outputNodeWidth +
-                ", inputNodeWidth=" + inputNodeWidth + '}';
+
+        final StringBuilder builder = new StringBuilder("TechniqueDefState");
+        builder.append("(name:").append(name).append(")");
+
+        if (!shaderNodeStates.isEmpty()) {
+            builder.append("\n\t\tShader Nodes:\n");
+
+            for (final ShaderNodeState state : shaderNodeStates) {
+                builder.append("\t\t\t").append(state).append("\n");
+            }
+
+            builder.delete(builder.length() - 1, builder.length());
+        }
+
+        if (!shaderVariableStates.isEmpty()) {
+            builder.append("\n\t\tShader Variables:\n");
+
+            for (final ShaderNodeVariableState state : shaderVariableStates) {
+                builder.append("\t\t\t").append(state).append("\n");
+            }
+
+            builder.delete(builder.length() - 1, builder.length());
+        }
+
+        return builder.toString();
     }
 }
