@@ -1,18 +1,21 @@
-## Shader Nodes Plugin 1.0.0
+## Shader Nodes Plugin 1.1.0
 
-It's a plugin for jME SpaceShift Editor to support working with Shader Nodes.
+It's a plugin for jMonkeyBuilder to support working with shader modes.
 
-#### It requires jME SpaceShift Editor 1.2.0 or higher.
+#### It requires jMonkeyBuilder 1.3.2 or higher.
 
 Creating the shader nodes project file:
 
-![creating project file](https://i.imgur.com/49IwnM1.png)
-![creating project file](https://i.imgur.com/RnbtB7j.png)
+![creating project file](https://i.imgur.com/XqCWbcC.png)
 
-Shader Nodes editor:
+Shader Nodes Editor:
 
-![shader node editor](https://i.imgur.com/cUSshqI.png)
+![shader node editor](https://i.imgur.com/yF6LXip.png)
 
-Exported material definition file:
+The exported material definition file:
 
-![exported mat def](https://i.imgur.com/hcy8tqe.png)
+![exported mat def](https://i.imgur.com/up12TsF.png)
+
+Shader Node Definition Editor:
+
+![shader node definition editor](https://i.imgur.com/3Z2FdMg.png)

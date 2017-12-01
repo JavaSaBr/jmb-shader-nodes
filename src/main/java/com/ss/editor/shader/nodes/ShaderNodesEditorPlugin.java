@@ -35,10 +35,10 @@ import org.jetbrains.annotations.NotNull;
  */
 @PluginDescription(
         id = "com.ss.editor.shader.nodes",
-        version = "1.0.0",
-        minAppVersion = "1.3.0",
+        version = "1.1.0",
+        minAppVersion = "1.3.2",
         name = "Shader Nodes Tools",
-        description = "A plugin with supporting to work with shader node materials."
+        description = "The plugin with editors to work with shader node materials."
 )
 public class ShaderNodesEditorPlugin extends EditorPlugin {
 
