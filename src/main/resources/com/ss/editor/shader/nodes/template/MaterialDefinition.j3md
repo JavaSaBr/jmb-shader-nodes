@@ -3,6 +3,7 @@ MaterialDef Simple {
         Color Color
     }
     Technique {
+        LightMode %light_mode%
         WorldParameters {
             WorldViewProjectionMatrix
         }

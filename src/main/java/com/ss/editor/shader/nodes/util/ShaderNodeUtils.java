@@ -10,10 +10,11 @@ import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.UniformBinding;
 import com.jme3.shader.VariableMapping;
 import com.ss.editor.annotation.FromAnyThread;
-import com.ss.editor.shader.nodes.component.shader.nodes.ShaderNodeElement;
-import com.ss.editor.shader.nodes.component.shader.nodes.global.OutputGlobalShaderNodeElement;
-import com.ss.editor.shader.nodes.component.shader.nodes.parameter.InputShaderNodeParameter;
-import com.ss.editor.shader.nodes.component.shader.nodes.parameter.OutputShaderNodeParameter;
+import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodeElement;
+import com.ss.editor.shader.nodes.ui.component.shader.nodes.global.OutputGlobalShaderNodeElement;
+import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.InputShaderNodeParameter;
+import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.OutputShaderNodeParameter;
+import com.ss.editor.util.GLSLType;
 import com.ss.rlib.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -231,7 +232,7 @@ public class ShaderNodeUtils {
      *
      * @param shaderNode the shader nodes.
      * @param variable   the left variable.
-     * @return true if the shader nodes has the output mapping with the left variable.
+     * @return true if the shader node has the output mapping with the left variable.
      */
     @FromAnyThread
     public static boolean hasOutMappingByLeftVar(@NotNull final ShaderNode shaderNode,
@@ -277,7 +278,7 @@ public class ShaderNodeUtils {
         final String inNameSpace;
 
         if (inObject instanceof ShaderNode) {
-            inNameSpace = ((ShaderNode) inObject).getDefinition().getName();
+            inNameSpace = ((ShaderNode) inObject).getName();
         } else {
             inNameSpace = inVar.getNameSpace();
         }
@@ -285,7 +286,7 @@ public class ShaderNodeUtils {
         final String outNameSpace;
 
         if (outObject instanceof ShaderNode) {
-            outNameSpace = ((ShaderNode) outObject).getDefinition().getName();
+            outNameSpace = ((ShaderNode) outObject).getName();
         } else {
             outNameSpace = outVar.getNameSpace();
         }
@@ -438,6 +439,27 @@ public class ShaderNodeUtils {
     }
 
     /**
+     * Check the variable is required this.
+     *
+     * @param variable the variable.
+     * @return true of this variable is required.
+     */
+    @FromAnyThread
+    public static boolean isRequired(@NotNull final ShaderNodeVariable variable) {
+
+        final GLSLType glslType = GLSLType.ofRawType(variable.getType());
+
+        switch (glslType) {
+            case SAMPLER_2D:
+            case SAMPLER_CUBE: {
+                return false;
+            }
+        }
+
+        return StringUtils.isEmpty(variable.getDefaultValue());
+    }
+
+    /**
      * Try to calculate a right swizzling for the mapping.
      *
      * @param leftVar  the left variable.
@@ -445,8 +467,8 @@ public class ShaderNodeUtils {
      * @return the right swizzling or null.
      */
     @FromAnyThread
-    public static @Nullable String calculateRightSwizzling(@NotNull final ShaderNodeVariable leftVar,
-                                                           @NotNull final ShaderNodeVariable rightVar) {
+    public static @NotNull String calculateRightSwizzling(@NotNull final ShaderNodeVariable leftVar,
+                                                          @NotNull final ShaderNodeVariable rightVar) {
 
         final String leftType = leftVar.getType();
         final String rightType = rightVar.getType();
@@ -480,6 +502,56 @@ public class ShaderNodeUtils {
                 switch (leftType) {
                     case "float":
                         return "x";
+                }
+                break;
+            }
+        }
+
+        return "";
+    }
+
+    /**
+     * Try to calculate a left swizzling for the mapping.
+     *
+     * @param leftVar  the left variable.
+     * @param rightVar the right variable.
+     * @return the left swizzling or null.
+     */
+    @FromAnyThread
+    public static @NotNull String calculateLeftSwizzling(@NotNull final ShaderNodeVariable leftVar,
+                                                         @NotNull final ShaderNodeVariable rightVar) {
+
+        //FIXME
+        if (true) {
+            return "";
+        }
+
+        final String leftType = leftVar.getType();
+        final String rightType = rightVar.getType();
+
+        if (leftType == null || rightType == null) {
+            return "";
+        }
+
+        switch (leftType) {
+            case "vec4": {
+                switch (rightType) {
+                    case "float":
+                        return "xyzw";
+                }
+                break;
+            }
+            case "vec3": {
+                switch (rightType) {
+                    case "float":
+                        return "xyz";
+                }
+                break;
+            }
+            case "vec2": {
+                switch (rightType) {
+                    case "float":
+                        return "xy";
                 }
                 break;
             }

@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
  * @author JavaSaBr
  */
 public interface PluginCSSClasses {
+
     @NotNull String SHADER_NODES_ROOT = "shader-nodes-root";
     @NotNull String SHADER_NODE = "shader-node";
     @NotNull String SHADER_NODE_HEADER = "header";
@@ -21,4 +22,6 @@ public interface PluginCSSClasses {
     @NotNull String SHADER_NODE_LINE = "shader-node-line";
     @NotNull String SHADER_NODE_TEMP_LINE = "shader-node-temp-line";
     @NotNull String SHADER_CODE_PREVIEW_CONTAINER = "shader-code-preview-component";
+
+    @NotNull String SHADER_NODE_DEF_DOCUMENTATION_DIALOG = "shader-node-def-documentation-dialog";
 }

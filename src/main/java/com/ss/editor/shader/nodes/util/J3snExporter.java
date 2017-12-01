@@ -91,9 +91,9 @@ public class J3snExporter {
         if (!StringUtils.isEmpty(documentation)) {
             builder.append('\n');
             indent(builder, 2);
-            builder.append("Documentation {");
+            builder.append("Documentation {").append('\n');
             indent(builder, 3);
-            builder.append(documentation);
+            builder.append(documentation).append('\n');
             indent(builder, 2);
             builder.append("}\n");
         }
@@ -127,10 +127,40 @@ public class J3snExporter {
 
         for (final ShaderNodeVariable variable : variables) {
             indent(builder, 3);
+
+            final String defaultValue = variable.getDefaultValue();
+
             builder.append(variable.getType())
                     .append(' ')
-                    .append(variable.getName())
-                    .append('\n');
+                    .append(variable.getName());
+
+            if (defaultValue != null && !defaultValue.isEmpty()) {
+                builder.append(' ').append(defaultValue);
+            }
+
+            builder.append('\n');
+        }
+
+        indent(builder, 2);
+        builder.append("}\n");
+    }
+
+    /**
+     * Write the list of string values.
+     *
+     * @param values  the list of string values.
+     * @param builder the builder.
+     * @param name    the name of node.
+     */
+    private void writeStrings(@NotNull final List<String> values, @NotNull final StringBuilder builder,
+                              @NotNull final String name) {
+
+        indent(builder, 2);
+        builder.append(name).append(" {\n");
+
+        for (final String value : values) {
+            indent(builder, 3);
+            builder.append(value).append('\n');
         }
 
         indent(builder, 2);
