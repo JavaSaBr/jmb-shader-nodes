@@ -6,7 +6,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0-RC2'
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
     }
 }
 
@@ -16,7 +16,7 @@ apply plugin: 'idea'
 apply plugin: 'org.junit.platform.gradle.plugin'
 
 group = 'com.spaceshift'
-version = '1.0.0'
+version = '1.1.0'
 
 ext.artifactId = 'shader-nodes'
 
@@ -29,8 +29,8 @@ compileTestJava {
     options.compilerArgs += '-parameters'
 }
 
-ext.junitPlatformVersion = "1.0.0-M5"
-ext.junitJupiterVersion = "5.0.0-M5"
+ext.junitPlatformVersion = "1.0.0"
+ext.junitJupiterVersion = "5.0.0"
 ext.log4jVersion = '2.6.2'
 
 junitPlatform {
@@ -54,7 +54,7 @@ configurations {
 }
 
 dependencies {
-    compile 'com.github.JavaSaBr:jME3-SpaceShift-Editor:develop-SNAPSHOT'
+    compile 'com.github.JavaSabr:jmonkeybuilder:develop-SNAPSHOT'
 
     testCompile "org.junit.platform:junit-platform-commons:$junitPlatformVersion"
     testRuntime "org.junit.platform:junit-platform-engine:$junitPlatformVersion"
@@ -175,7 +175,7 @@ task deployPlugin(type: Zip, dependsOn: 'preparePlugin') {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.1'
+    gradleVersion = '4.3'
 }
 
 defaultTasks 'install'
