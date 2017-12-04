@@ -69,7 +69,7 @@ public class AddNodeShaderNodeAction extends ShaderNodeAction<TechniqueDef> {
     private void addNode(@NotNull final String resource) {
 
         final ShaderNodeDefinitionKey key = new ShaderNodeDefinitionKey(resource);
-        key.setLoadDocumentation(false);
+        key.setLoadDocumentation(true);
 
         final AssetManager assetManager = EDITOR.getAssetManager();
         final List<ShaderNodeDefinition> definitions = assetManager.loadAsset(key);

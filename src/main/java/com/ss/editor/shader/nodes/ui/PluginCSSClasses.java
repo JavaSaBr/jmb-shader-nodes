@@ -24,4 +24,5 @@ public interface PluginCSSClasses {
     @NotNull String SHADER_CODE_PREVIEW_CONTAINER = "shader-code-preview-component";
 
     @NotNull String SHADER_NODE_DEF_DOCUMENTATION_DIALOG = "shader-node-def-documentation-dialog";
+    @NotNull String SHADER_NODE_DEF_DOCUMENTATION_TOOLTIP = "shader-node-def-documentation-tooltip";
 }

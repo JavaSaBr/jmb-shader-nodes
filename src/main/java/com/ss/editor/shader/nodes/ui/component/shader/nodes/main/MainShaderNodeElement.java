@@ -18,13 +18,16 @@ import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.InputShade
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.OutputShaderNodeParameter;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.ShaderNodeParameter;
 import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesChangeConsumer;
+import com.ss.editor.shader.nodes.ui.component.shader.nodes.tooltip.SndDocumentationTooltip;
 import com.ss.rlib.ui.util.FXUtils;
 import com.ss.rlib.util.StringUtils;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * The implementation of shader element to present shader nodes.
@@ -43,6 +46,11 @@ public class MainShaderNodeElement extends ShaderNodeElement<ShaderNode> {
         return getObject().getDefinition().getName();
     }
 
+    @Override
+    @FXThread
+    protected @NotNull Optional<Tooltip> createTooltip() {
+        return Optional.of(new SndDocumentationTooltip(getObject().getDefinition()));
+    }
 
     @FXThread
     @Override

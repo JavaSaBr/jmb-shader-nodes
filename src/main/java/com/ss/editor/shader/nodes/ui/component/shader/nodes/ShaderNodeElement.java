@@ -22,6 +22,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -29,6 +30,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 /**
  * The base implementation of shader nodes.
@@ -106,15 +109,16 @@ public class ShaderNodeElement<T> extends VBox {
 
     public ShaderNodeElement(@NotNull final ShaderNodesContainer container, @NotNull final T object) {
         this.container = container;
+        this.object = object;
+        this.parametersContainer = new VBox();
         setOnMousePressed(this::handleMousePressed);
         setOnMouseDragged(this::handleMouseDragged);
         setOnMouseMoved(this::handleMouseMoved);
         setOnMouseReleased(this::handleMouseReleased);
         setOnContextMenuRequested(this::handleContextMenuRequested);
-        this.object = object;
-        this.parametersContainer = new VBox();
         createContent();
         setPrefWidth(200);
+        createTooltip().ifPresent(tooltip -> Tooltip.install(this, tooltip));
         FXUtils.addClassTo(this, SHADER_NODE);
     }
 
@@ -126,6 +130,16 @@ public class ShaderNodeElement<T> extends VBox {
     @FXThread
     protected @NotNull VBox getParametersContainer() {
         return parametersContainer;
+    }
+
+    /**
+     * Create a tooltip of this node element.
+     *
+     * @return the tooltip.
+     */
+    @FXThread
+    protected @NotNull Optional<Tooltip> createTooltip() {
+        return Optional.empty();
     }
 
     /**

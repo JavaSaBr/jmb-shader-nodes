@@ -121,3 +121,8 @@
     -fx-min-height: 400px;
     -fx-min-width: 500px;
 }
+
+.shader-node-def-documentation-tooltip {
+    -fx-min-height: 150px;
+    -fx-min-width: 500px;
+}
