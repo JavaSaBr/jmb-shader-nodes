@@ -13,7 +13,6 @@ import com.jme3.material.TechniqueDef.LightMode;
 import com.jme3.material.logic.*;
 import com.jme3.material.plugin.export.materialdef.J3mdExporter;
 import com.jme3.material.plugins.J3MLoader;
-import com.jme3.material.plugins.ShaderNodeLoaderDelegate;
 import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
@@ -220,14 +219,7 @@ public class ShaderNodesFileEditor extends
         final StreamAssetInfo assetInfo = new StreamAssetInfo(assetManager, tempKey, materialDefStream);
 
         final J3MLoader loader = new J3MLoader();
-        final MaterialDef materialDef;
-
-        ShaderNodeLoaderDelegate.setForceLoadDocumentation(true);
-        try {
-            materialDef = (MaterialDef) loader.load(assetInfo);
-        } finally {
-            ShaderNodeLoaderDelegate.setForceLoadDocumentation(false);
-        }
+        final MaterialDef materialDef = (MaterialDef) loader.load(assetInfo);
 
         materialDef.getTechniqueDefsNames().forEach(techniqueDefName -> {
             materialDef.getTechniqueDefs(techniqueDefName).forEach(techniqueDef -> {

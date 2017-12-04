@@ -48,7 +48,7 @@ public class AddMaterialParamShaderNodeAction extends ShaderNodeAction<MaterialD
     );
 
     @NotNull
-    private static Array<String> VAR_TYPES = ArrayFactory.newArray(String.class);
+    private static final Array<String> VAR_TYPES = ArrayFactory.newArray(String.class);
 
     static {
         for (final VarType varType : VarType.values()) {

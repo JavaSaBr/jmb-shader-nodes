@@ -1,7 +1,10 @@
 package com.ss.editor.shader.nodes.ui.component.shader.nodes.tooltip;
 
 import static com.ss.rlib.util.ObjectUtils.notNull;
+import com.jme3.asset.AssetManager;
+import com.jme3.asset.ShaderNodeDefinitionKey;
 import com.jme3.shader.ShaderNodeDefinition;
+import com.ss.editor.Editor;
 import com.ss.editor.annotation.FXThread;
 import com.ss.editor.shader.nodes.ui.PluginCSSClasses;
 import com.ss.editor.shader.nodes.ui.component.SndDocumentationArea;
@@ -18,6 +21,9 @@ import org.jetbrains.annotations.Nullable;
  * @author JavaSaBr
  */
 public class SndDocumentationTooltip extends CustomTooltip<BorderPane> {
+
+    @NotNull
+    private static final Editor EDITOR = Editor.getInstance();
 
     @NotNull
     private final ShaderNodeDefinition definition;
@@ -70,7 +76,14 @@ public class SndDocumentationTooltip extends CustomTooltip<BorderPane> {
     protected void show() {
 
         final ShaderNodeDefinition definition = getDefinition();
-        final String documentation = definition.getDocumentation();
+        final ShaderNodeDefinitionKey assetKey = new ShaderNodeDefinitionKey(definition.getPath());
+        assetKey.setLoadDocumentation(true);
+
+        final AssetManager assetManager = EDITOR.getAssetManager();
+        final String documentation = assetManager.loadAsset(assetKey).stream()
+                .filter(def -> def.getName().equals(definition.getName()))
+                .map(ShaderNodeDefinition::getDocumentation)
+                .findAny().orElse("");
 
         if (!StringUtils.isEmpty(documentation)) {
             getDocumentation().reloadContent(documentation);
