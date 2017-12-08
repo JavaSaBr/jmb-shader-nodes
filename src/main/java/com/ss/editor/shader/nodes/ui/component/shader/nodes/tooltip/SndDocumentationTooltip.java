@@ -80,13 +80,13 @@ public class SndDocumentationTooltip extends CustomTooltip<BorderPane> {
         assetKey.setLoadDocumentation(true);
 
         final AssetManager assetManager = EDITOR.getAssetManager();
-        final String documentation = assetManager.loadAsset(assetKey).stream()
+        String documentation = assetManager.loadAsset(assetKey).stream()
                 .filter(def -> def.getName().equals(definition.getName()))
                 .map(ShaderNodeDefinition::getDocumentation)
                 .findAny().orElse("");
 
         if (!StringUtils.isEmpty(documentation)) {
-            getDocumentation().reloadContent(documentation);
+            getDocumentation().reloadContent(documentation.trim());
         }
 
         super.show();

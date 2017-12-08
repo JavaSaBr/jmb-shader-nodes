@@ -54,7 +54,7 @@ configurations {
 }
 
 dependencies {
-    compile 'com.github.JavaSabr:jmonkeybuilder:develop-SNAPSHOT'
+    compile 'com.github.JavaSaBr:jmonkeybuilder:develop-SNAPSHOT'
 
     testCompile "org.junit.platform:junit-platform-commons:$junitPlatformVersion"
     testRuntime "org.junit.platform:junit-platform-engine:$junitPlatformVersion"

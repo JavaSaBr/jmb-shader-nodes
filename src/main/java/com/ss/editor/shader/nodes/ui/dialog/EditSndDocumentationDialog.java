@@ -53,7 +53,7 @@ public class EditSndDocumentationDialog extends AbstractSimpleEditorDialog {
         this.consumer = consumer;
         this.definition = definition;
         final String documentation = definition.getDocumentation();
-        getEditorArea().loadContent(documentation == null ? "" : documentation);
+        getEditorArea().loadContent(documentation == null ? "" : documentation.trim());
     }
 
     /**
