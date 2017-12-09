@@ -542,6 +542,23 @@ public abstract class AstShaderGenerator extends Glsl100ShaderGenerator {
             }
         }
 
+        final List<ValueMapping> valueMapping = shaderNode.getValueMapping();
+
+        for (final ValueMapping mapping : valueMapping) {
+
+            final ShaderNodeVariable variable = mapping.getVariable();
+
+            String newName = shaderNode.getName() + "_" + variable.getName();
+            if (declaredVariables.contains(newName)) {
+                continue;
+            }
+
+            map(mapping, source);
+
+            nodeSource = replace(nodeSource, variable, newName);
+            declaredVariables.add(newName);
+        }
+
         for (final ShaderNodeVariable var : definition.getInputs()) {
 
             if (var.getDefaultValue() == null) {
