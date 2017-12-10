@@ -994,6 +994,10 @@ public class ShaderNodesContainer extends ScrollPane {
             final ShaderNodeVariable leftVariable = variableMapping.getLeftVariable();
             final ShaderNodeVariable rightVariable = variableMapping.getRightVariable();
 
+            if (rightVariable == null) {
+                continue;
+            }
+
             final ShaderNodeParameter leftParameter = findByVariable(leftVariable, fromOutputMapping, true);
             final ShaderNodeParameter rightParameter = findByVariable(rightVariable, fromOutputMapping, false);
 

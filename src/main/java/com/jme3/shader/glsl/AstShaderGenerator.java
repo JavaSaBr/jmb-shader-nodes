@@ -523,7 +523,7 @@ public abstract class AstShaderGenerator extends Glsl100ShaderGenerator {
 
             // Variables fed with a sampler matparam or world param are replaced by the matparam itself
             // It avoids issue with samplers that have to be uniforms.
-            if (isWorldOrMaterialParam(rightVariable) && rightVariable.getType().startsWith("sampler")) {
+            if (rightVariable != null && isWorldOrMaterialParam(rightVariable) && rightVariable.getType().startsWith("sampler")) {
                 nodeSource = replace(nodeSource, leftVariable, rightVariable.getPrefix() + rightVariable.getName());
             } else {
 
@@ -540,23 +540,6 @@ public abstract class AstShaderGenerator extends Glsl100ShaderGenerator {
                 nodeSource = replace(nodeSource, leftVariable, newName);
                 declaredVariables.add(newName);
             }
-        }
-
-        final List<ValueMapping> valueMapping = shaderNode.getValueMapping();
-
-        for (final ValueMapping mapping : valueMapping) {
-
-            final ShaderNodeVariable variable = mapping.getVariable();
-
-            String newName = shaderNode.getName() + "_" + variable.getName();
-            if (declaredVariables.contains(newName)) {
-                continue;
-            }
-
-            map(mapping, source);
-
-            nodeSource = replace(nodeSource, variable, newName);
-            declaredVariables.add(newName);
         }
 
         for (final ShaderNodeVariable var : definition.getInputs()) {
@@ -775,7 +758,7 @@ public abstract class AstShaderGenerator extends Glsl100ShaderGenerator {
                 for (final VariableMapping mapping : otherInputMapping) {
 
                     final ShaderNodeVariable variable = mapping.getRightVariable();
-                    if (!shaderNode.getName().equals(variable.getNameSpace())) {
+                    if (variable == null || !shaderNode.getName().equals(variable.getNameSpace())) {
                         continue;
                     }
 
