@@ -8,7 +8,7 @@ import com.jme3.shader.ShaderNodeDefinition;
 import com.jme3.shader.glsl.parser.GlslParser;
 import com.ss.editor.FileExtensions;
 import com.ss.editor.annotation.BackgroundThread;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.extension.property.EditableProperty;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
@@ -26,6 +26,7 @@ import com.ss.editor.ui.control.property.PropertyEditor;
 import com.ss.editor.ui.control.tree.NodeTree;
 import com.ss.editor.ui.control.tree.node.TreeNode;
 import com.ss.editor.ui.css.CSSClasses;
+import com.ss.editor.util.EditorUtil;
 import com.ss.rlib.ui.util.FXUtils;
 import com.ss.rlib.util.FileUtils;
 import com.ss.rlib.util.StringUtils;
@@ -118,7 +119,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void createToolComponents(@NotNull final EditorToolComponent container, @NotNull final StackPane root) {
         super.createToolComponents(container, root);
 
@@ -132,14 +133,14 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
         FXUtils.addClassTo(structureTree.getTreeView(), CSSClasses.TRANSPARENT_TREE_VIEW);
     }
 
-    @FXThread
+    @FxThread
     @Override
     protected void calcVSplitSize(@NotNull final SplitPane splitPane) {
         splitPane.setDividerPosition(0, 0.6);
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void createEditorAreaPane() {
         super.createEditorAreaPane();
 
@@ -157,7 +158,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
      *
      * @return the code area.
      */
-    @FXThread
+    @FxThread
     private @NotNull GLSLCodeArea getCodeArea() {
         return notNull(codeArea);
     }
@@ -167,7 +168,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
      *
      * @param object the selected object.
      */
-    @FXThread
+    @FxThread
     private void selectFromTree(@Nullable final Object object) {
         setEditedShader(null);
 
@@ -218,7 +219,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
      *
      * @return the dictionary to store original GLSL code.
      */
-    @FXThread
+    @FxThread
     private @NotNull ObjectDictionary<String, String> getGlslOriginalContent() {
         return glslOriginalContent;
     }
@@ -228,7 +229,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
      *
      * @return the dictionary to track changes of GLSL code.
      */
-    @FXThread
+    @FxThread
     private @NotNull ObjectDictionary<String, String> getGlslChangedContent() {
         return glslChangedContent;
     }
@@ -238,7 +239,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
      *
      * @return the current edited shader.
      */
-    @FXThread
+    @FxThread
     private @Nullable String getEditedShader() {
         return editedShader;
     }
@@ -248,7 +249,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
      *
      * @param editedShader the current edited shader.
      */
-    @FXThread
+    @FxThread
     private void setEditedShader(@Nullable final String editedShader) {
         this.editedShader = editedShader;
     }
@@ -256,7 +257,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
     /**
      * @return true if need to ignore GLSL code changes.
      */
-    @FXThread
+    @FxThread
     private boolean isIgnoreCodeChanges() {
         return ignoreCodeChanges;
     }
@@ -264,7 +265,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
     /**
      * @param ignoreCodeChanges true if need to ignore GLSL code changes.
      */
-    @FXThread
+    @FxThread
     private void setIgnoreCodeChanges(final boolean ignoreCodeChanges) {
         this.ignoreCodeChanges = ignoreCodeChanges;
     }
@@ -274,7 +275,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
      *
      * @param glslCode the new GLSL code.
      */
-    @FXThread
+    @FxThread
     private void changeGLSLCode(@NotNull final String glslCode) {
         if (isIgnoreCodeChanges()) return;
 
@@ -300,7 +301,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
      * @param shaderPath the shader path.
      * @return the GLSL code.
      */
-    @FXThread
+    @FxThread
     private @NotNull String getGLSLCode(@NotNull final String shaderPath) {
 
         final ObjectDictionary<String, String> glslChangedContent = getGlslChangedContent();
@@ -328,7 +329,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void doOpenFile(@NotNull final Path file) throws IOException {
         super.doOpenFile(file);
 
@@ -337,7 +338,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
         final ShaderNodeDefinitionKey key = new ShaderNodeDefinitionKey(assetPath);
         key.setLoadDocumentation(true);
 
-        final AssetManager assetManager = EDITOR.getAssetManager();
+        final AssetManager assetManager = EditorUtil.getAssetManager();
 
         definitionList = assetManager.loadAsset(key);
 
@@ -395,7 +396,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
      *
      * @return the structure tree.
      */
-    @FXThread
+    @FxThread
     private @NotNull NodeTree<ChangeConsumer> getStructureTree() {
         return notNull(structureTree);
     }
@@ -405,26 +406,26 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
      *
      * @return the property editor.
      */
-    @FXThread
+    @FxThread
     private @NotNull PropertyEditor<ChangeConsumer> getPropertyEditor() {
         return notNull(propertyEditor);
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected boolean needToolbar() {
         return true;
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void createToolbar(@NotNull final HBox container) {
         super.createToolbar(container);
         FXUtils.addToPane(createSaveAction(), container);
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @Nullable Supplier<EditorState> getEditorStateFactory() {
         return ShaderNodeDefinitionEditorState::new;
     }
@@ -436,7 +437,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void notifyFXAddedChild(@NotNull final Object parent, @NotNull final Object added, final int index,
                                    final boolean needSelect) {
 
@@ -449,13 +450,13 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void notifyFXRemovedChild(@NotNull final Object parent, @NotNull final Object removed) {
         getStructureTree().notifyRemoved(parent, removed);
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void notifyFXChangeProperty(@Nullable final Object parent, @NotNull final Object object,
                                        @NotNull final String propertyName) {
         super.notifyFXChangeProperty(parent, object, propertyName);

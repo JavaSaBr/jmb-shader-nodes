@@ -3,7 +3,7 @@ package com.ss.editor.shader.nodes.ui.component.shader.nodes.main;
 import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.UniformBinding;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.action.ShaderNodeAction;
@@ -38,19 +38,19 @@ public class WorldShaderNodeElement extends OutputVariableShaderNodeElement {
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull String getTitleText() {
         return PluginMessages.NODE_ELEMENT_WORLD_PARAMETER;
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull String getNameSpace() {
         return NAMESPACE;
     }
 
     @Override
-    @FXThread
+    @FxThread
     public @Nullable ShaderNodeAction<?> getDeleteAction() {
         return new RemoveWorldParamShaderNodeAction(getContainer(), getObject(),
                 new Vector2f((float) getLayoutX(), (float) getLayoutY()));

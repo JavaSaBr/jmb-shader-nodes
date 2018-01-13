@@ -4,7 +4,7 @@ import static com.ss.editor.ui.util.UIUtils.consumeIf;
 import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.jme3.shader.ShaderNodeDefinition;
 import com.ss.editor.Messages;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.shader.nodes.PluginMessages;
@@ -61,13 +61,13 @@ public class EditSndDocumentationDialog extends AbstractSimpleEditorDialog {
      *
      * @return the editor area.
      */
-    @FXThread
+    @FxThread
     private @NotNull SndDocumentationArea getEditorArea() {
         return notNull(editorArea);
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void createContent(@NotNull final VBox root) {
         super.createContent(root);
 
@@ -92,7 +92,7 @@ public class EditSndDocumentationDialog extends AbstractSimpleEditorDialog {
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void processOk() {
         super.processOk();
 

@@ -2,7 +2,7 @@ package com.ss.editor.shader.nodes.ui.component.shader.nodes.operation.attach;
 
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.VariableMapping;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.operation.ShaderNodeOperation;
 import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesChangeConsumer;
@@ -73,20 +73,20 @@ public class AttachShaderNodeOperation extends ShaderNodeOperation {
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void redoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
         super.redoImplInFXThread(editor);
         notify(editor, oldMapping, newMapping);
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void undoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
         super.undoImplInFXThread(editor);
         notify(editor, newMapping, oldMapping);
     }
 
-    @FXThread
+    @FxThread
     protected void notify(@NotNull final ShaderNodesChangeConsumer editor, @Nullable final VariableMapping oldMapping,
                           @Nullable final VariableMapping newMapping) {
 

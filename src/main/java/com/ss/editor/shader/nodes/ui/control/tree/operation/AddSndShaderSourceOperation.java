@@ -1,6 +1,6 @@
 package com.ss.editor.shader.nodes.ui.control.tree.operation;
 
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.model.undo.impl.AbstractEditorOperation;
 import com.ss.editor.shader.nodes.model.shader.node.definition.SndShaderSource;
@@ -33,14 +33,14 @@ public class AddSndShaderSourceOperation extends AbstractEditorOperation<ChangeC
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void redoImpl(@NotNull final ChangeConsumer editor) {
         shaderSources.add(shaderSource);
         editor.notifyFXAddedChild(shaderSources, shaderSource, -1, true);
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void undoImpl(@NotNull final ChangeConsumer editor) {
         shaderSources.remove(shaderSource);
         editor.notifyFXRemovedChild(shaderSources, shaderSources);

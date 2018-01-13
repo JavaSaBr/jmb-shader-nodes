@@ -7,7 +7,7 @@ import com.jme3.material.TechniqueDef;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.shader.ShaderNodeVariable;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.operation.add.AddAttributeOperation;
@@ -52,19 +52,19 @@ public class AddAttributeShaderNodeAction extends AddTechniqueDefParameterShader
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull String getName() {
         return PluginMessages.VERTEX_ATTRIBUTE;
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull String getDialogTitle() {
         return PluginMessages.ACTION_ADD_VERTEX_ATTRIBUTE_TITLE;
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void addParameter(@NotNull final VarTable vars) {
 
         final ShaderNodesContainer container = getContainer();

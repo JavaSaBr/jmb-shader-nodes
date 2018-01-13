@@ -8,7 +8,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.UniformBinding;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.main.AttributeShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.main.MaterialShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.main.WorldShaderNodeElement;
@@ -92,7 +92,7 @@ public class TechniqueDefState extends AbstractEditorState {
      * @param materialDef  the material definition.
      * @param techniqueDef the technique definition.
      */
-    @FXThread
+    @FxThread
     public void cleanUp(@NotNull final MaterialDef materialDef, @NotNull final TechniqueDef techniqueDef) {
 
         for (final Iterator<ShaderNodeVariableState> iterator = shaderVariableStates.iterator(); iterator.hasNext(); ) {
@@ -147,7 +147,7 @@ public class TechniqueDefState extends AbstractEditorState {
      * @param location the location.
      * @param width    the width.
      */
-    @FXThread
+    @FxThread
     public void notifyChange(@NotNull final ShaderNodeVariable variable, @NotNull final Vector2f location,
                              final double width) {
 
@@ -179,7 +179,7 @@ public class TechniqueDefState extends AbstractEditorState {
      * @param location   the location.
      * @param width      the width.
      */
-    @FXThread
+    @FxThread
     public void notifyChange(@NotNull final ShaderNode shaderNode, @NotNull final Vector2f location,
                              final double width) {
 
@@ -208,7 +208,7 @@ public class TechniqueDefState extends AbstractEditorState {
      * @param shaderNode the shader nodes.
      * @return the state or null.
      */
-    @FXThread
+    @FxThread
     public @Nullable ShaderNodeState getState(@NotNull final ShaderNode shaderNode) {
         return shaderNodeStates.stream().filter(variableState -> variableState.getName().equals(shaderNode.getName()))
                 .findAny().orElse(null);
@@ -220,7 +220,7 @@ public class TechniqueDefState extends AbstractEditorState {
      * @param variable the shader nodes variable.
      * @return the state or null.
      */
-    @FXThread
+    @FxThread
     public @Nullable ShaderNodeVariableState getState(@Nullable final ShaderNodeVariable variable) {
         if (variable == null) return null;
         return shaderVariableStates.stream()
@@ -234,7 +234,7 @@ public class TechniqueDefState extends AbstractEditorState {
      *
      * @return the name of technique definition.
      */
-    @FXThread
+    @FxThread
     public @NotNull String getName() {
         return name;
     }
@@ -244,7 +244,7 @@ public class TechniqueDefState extends AbstractEditorState {
      *
      * @return the location of input nodes.
      */
-    @FXThread
+    @FxThread
     public @NotNull Vector2f getInputNodeLocation() {
         return inputNodeLocation;
     }
@@ -254,7 +254,7 @@ public class TechniqueDefState extends AbstractEditorState {
      *
      * @return the location of output nodes.
      */
-    @FXThread
+    @FxThread
     public @NotNull Vector2f getOutputNodeLocation() {
         return outputNodeLocation;
     }
@@ -264,7 +264,7 @@ public class TechniqueDefState extends AbstractEditorState {
      *
      * @param inputNodeLocation the location of input nodes.
      */
-    @FXThread
+    @FxThread
     public void setInputNodeLocation(@NotNull final Vector2f inputNodeLocation) {
         final Vector2f prev = getInputNodeLocation();
         this.inputNodeLocation = inputNodeLocation;
@@ -276,7 +276,7 @@ public class TechniqueDefState extends AbstractEditorState {
      *
      * @param outputNodeLocation the location of output nodes.
      */
-    @FXThread
+    @FxThread
     public void setOutputNodeLocation(@NotNull final Vector2f outputNodeLocation) {
         final Vector2f prev = getOutputNodeLocation();
         this.outputNodeLocation = outputNodeLocation;
@@ -288,7 +288,7 @@ public class TechniqueDefState extends AbstractEditorState {
      *
      * @return the width of output nodes.
      */
-    @FXThread
+    @FxThread
     public int getOutputNodeWidth() {
         return outputNodeWidth;
     }
@@ -298,7 +298,7 @@ public class TechniqueDefState extends AbstractEditorState {
      *
      * @return the width of input nodes.
      */
-    @FXThread
+    @FxThread
     public int getInputNodeWidth() {
         return inputNodeWidth;
     }
@@ -308,7 +308,7 @@ public class TechniqueDefState extends AbstractEditorState {
      *
      * @param outputNodeWidth the width of output nodes.
      */
-    @FXThread
+    @FxThread
     public void setOutputNodeWidth(final int outputNodeWidth) {
         final int prev = getOutputNodeWidth();
         this.outputNodeWidth = outputNodeWidth;
@@ -320,7 +320,7 @@ public class TechniqueDefState extends AbstractEditorState {
      *
      * @param inputNodeWidth the width of input nodes.
      */
-    @FXThread
+    @FxThread
     public void setInputNodeWidth(final int inputNodeWidth) {
         final int prev = getInputNodeWidth();
         this.inputNodeWidth = inputNodeWidth;

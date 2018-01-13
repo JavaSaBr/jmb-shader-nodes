@@ -4,8 +4,8 @@ import static com.ss.editor.shader.nodes.util.MaterialDefUtils.getMatParams;
 import com.jme3.material.MatParam;
 import com.jme3.material.MaterialDef;
 import com.jme3.math.Vector2f;
-import com.ss.editor.annotation.FXThread;
-import com.ss.editor.annotation.JMEThread;
+import com.ss.editor.annotation.FxThread;
+import com.ss.editor.annotation.JmeThread;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.operation.ShaderNodeOperation;
 import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesChangeConsumer;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +45,7 @@ public class AddMaterialParameterOperation extends ShaderNodeOperation {
     }
 
     @Override
-    @JMEThread
+    @JmeThread
     protected void redoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
         super.redoImplInJMEThread(editor);
 
@@ -54,7 +54,7 @@ public class AddMaterialParameterOperation extends ShaderNodeOperation {
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void redoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
         super.redoImplInFXThread(editor);
         editor.notifyAddedMatParameter(matParam, location);
@@ -62,7 +62,7 @@ public class AddMaterialParameterOperation extends ShaderNodeOperation {
 
 
     @Override
-    @JMEThread
+    @JmeThread
     protected void undoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
         super.undoImplInJMEThread(editor);
 
@@ -71,7 +71,7 @@ public class AddMaterialParameterOperation extends ShaderNodeOperation {
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void undoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
         super.undoImplInFXThread(editor);
         editor.notifyRemovedMatParameter(matParam);

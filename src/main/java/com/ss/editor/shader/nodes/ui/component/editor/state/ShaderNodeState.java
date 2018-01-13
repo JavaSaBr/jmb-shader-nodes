@@ -1,7 +1,7 @@
 package com.ss.editor.shader.nodes.ui.component.editor.state;
 
 import com.jme3.math.Vector2f;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.ui.component.editor.state.impl.AbstractEditorState;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,7 +50,7 @@ public class ShaderNodeState extends AbstractEditorState {
      *
      * @return the name of a shader nodes.
      */
-    @FXThread
+    @FxThread
     public @NotNull String getName() {
         return name;
     }
@@ -60,7 +60,7 @@ public class ShaderNodeState extends AbstractEditorState {
      *
      * @param name the name of a shader nodes.
      */
-    @FXThread
+    @FxThread
     public void setName(@NotNull final String name) {
         this.name = name;
     }
@@ -70,7 +70,7 @@ public class ShaderNodeState extends AbstractEditorState {
      *
      * @return the location of a shader nodes.
      */
-    @FXThread
+    @FxThread
     public @NotNull Vector2f getLocation() {
         return location;
     }
@@ -80,7 +80,7 @@ public class ShaderNodeState extends AbstractEditorState {
      *
      * @param location the location of a shader nodes.
      */
-    @FXThread
+    @FxThread
     public void setLocation(@NotNull final Vector2f location) {
         this.location = location;
     }
@@ -90,7 +90,7 @@ public class ShaderNodeState extends AbstractEditorState {
      *
      * @return the width of a shader nodes.
      */
-    @FXThread
+    @FxThread
     public int getWidth() {
         return width;
     }
@@ -100,7 +100,7 @@ public class ShaderNodeState extends AbstractEditorState {
      *
      * @param width the width of a shader nodes.
      */
-    @FXThread
+    @FxThread
     public void setWidth(final int width) {
         this.width = width;
     }

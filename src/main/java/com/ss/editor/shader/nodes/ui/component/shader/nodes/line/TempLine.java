@@ -1,7 +1,7 @@
 package com.ss.editor.shader.nodes.ui.component.shader.nodes.line;
 
 import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE_TEMP_LINE;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.socket.SocketElement;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.StrokeLineCap;
@@ -26,7 +26,7 @@ public class TempLine extends CubicCurve {
     /**
      * Configure the line.
      */
-    @FXThread
+    @FxThread
     private void configureLine() {
         startXProperty().bind(sourceSocket.centerXPropertyProperty());
         startYProperty().bind(sourceSocket.centerYPropertyProperty());
@@ -44,7 +44,7 @@ public class TempLine extends CubicCurve {
      * @param x the X coord.
      * @param y the Y coord.
      */
-    @FXThread
+    @FxThread
     public void updateEnd(final double x, final double y) {
         setEndX(x);
         setEndY(y);

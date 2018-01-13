@@ -6,7 +6,7 @@ import com.jme3.material.MatParam;
 import com.jme3.util.clone.Cloner;
 import com.jme3.util.clone.JmeCloneable;
 import com.ss.editor.annotation.FromAnyThread;
-import com.ss.editor.annotation.JMEThread;
+import com.ss.editor.annotation.JmeThread;
 import com.ss.editor.shader.nodes.ui.component.editor.state.TechniqueDefState;
 import com.ss.editor.util.EditorUtil;
 import org.jetbrains.annotations.NotNull;
@@ -108,7 +108,7 @@ public class ShaderNodesProject implements JmeCloneable, Savable {
     }
 
     @Override
-    @JMEThread
+    @JmeThread
     public ShaderNodesProject jmeClone() {
         try {
             return (ShaderNodesProject) super.clone();
@@ -118,13 +118,13 @@ public class ShaderNodesProject implements JmeCloneable, Savable {
     }
 
     @Override
-    @JMEThread
+    @JmeThread
     public void cloneFields(@NotNull final Cloner cloner, @NotNull final Object original) {
         matParams = cloner.clone(matParams);
     }
 
     @Override
-    @JMEThread
+    @JmeThread
     public void write(@NotNull final JmeExporter ex) throws IOException {
 
         final byte[] techStates = EditorUtil.serialize(techniqueDefStates);
@@ -136,7 +136,7 @@ public class ShaderNodesProject implements JmeCloneable, Savable {
     }
 
     @Override
-    @JMEThread
+    @JmeThread
     public void read(@NotNull final JmeImporter im) throws IOException {
 
         final InputCapsule in = im.getCapsule(this);

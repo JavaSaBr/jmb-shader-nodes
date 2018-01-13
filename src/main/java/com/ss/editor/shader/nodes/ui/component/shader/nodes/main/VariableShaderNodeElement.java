@@ -1,7 +1,7 @@
 package com.ss.editor.shader.nodes.ui.component.shader.nodes.main;
 
 import com.jme3.shader.ShaderNodeVariable;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.ShaderNodeParameter;
@@ -20,7 +20,7 @@ public class VariableShaderNodeElement extends ShaderNodeElement<ShaderNodeVaria
         super(container, variable);
     }
 
-    @FXThread
+    @FxThread
     @Override
     public @Nullable ShaderNodeParameter parameterFor(@NotNull final ShaderNodeVariable variable,
                                                       final boolean fromOutputMapping, final boolean input) {
@@ -33,7 +33,7 @@ public class VariableShaderNodeElement extends ShaderNodeElement<ShaderNodeVaria
      *
      * @return the namespace.
      */
-    @FXThread
+    @FxThread
     protected @NotNull String getNameSpace() {
         return "unknown";
     }

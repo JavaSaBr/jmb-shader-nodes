@@ -1,7 +1,7 @@
 package com.ss.editor.shader.nodes.ui.control.tree.operation;
 
 import com.jme3.shader.ShaderNodeDefinition;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.model.undo.impl.AbstractEditorOperation;
 import com.ss.editor.shader.nodes.model.shader.node.definition.SndList;
@@ -40,7 +40,7 @@ public class DeleteSndOperation extends AbstractEditorOperation<ChangeConsumer> 
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void redoImpl(@NotNull final ChangeConsumer editor) {
         final List<ShaderNodeDefinition> definitions = definitionList.getDefinitions();
         index = definitions.indexOf(definition);
@@ -49,7 +49,7 @@ public class DeleteSndOperation extends AbstractEditorOperation<ChangeConsumer> 
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void undoImpl(@NotNull final ChangeConsumer editor) {
         definitionList.getDefinitions().add(index, definition);
         editor.notifyFXAddedChild(definitionList, definition, index, false);

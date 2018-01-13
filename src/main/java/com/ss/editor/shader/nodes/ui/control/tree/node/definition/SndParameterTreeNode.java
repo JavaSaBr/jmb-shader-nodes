@@ -2,7 +2,7 @@ package com.ss.editor.shader.nodes.ui.control.tree.node.definition;
 
 import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.jme3.shader.ShaderNodeVariable;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.shader.nodes.model.shader.node.definition.SndParameters;
@@ -30,13 +30,13 @@ public class SndParameterTreeNode extends TreeNode<ShaderNodeVariable> {
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void fillContextMenu(@NotNull final NodeTree<?> nodeTree, @NotNull final ObservableList<MenuItem> items) {
         super.fillContextMenu(nodeTree, items);
         items.add(new DeleteSndarameterAction(nodeTree, this));
     }
 
-    @FXThread
+    @FxThread
     @Override
     public void changeName(@NotNull final NodeTree<?> nodeTree, @NotNull final String newName) {
         if (StringUtils.equals(getName(), newName)) return;
@@ -52,7 +52,7 @@ public class SndParameterTreeNode extends TreeNode<ShaderNodeVariable> {
     }
 
     @Override
-    @FXThread
+    @FxThread
     public @Nullable Image getIcon() {
         return PluginIcons.VARIABLE_16;
     }
@@ -64,7 +64,7 @@ public class SndParameterTreeNode extends TreeNode<ShaderNodeVariable> {
     }
 
     @Override
-    @FXThread
+    @FxThread
     public boolean canEditName() {
         return true;
     }

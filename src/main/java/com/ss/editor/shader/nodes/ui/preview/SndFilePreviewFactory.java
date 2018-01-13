@@ -1,6 +1,6 @@
 package com.ss.editor.shader.nodes.ui.preview;
 
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.ui.preview.FilePreview;
 import com.ss.editor.ui.preview.FilePreviewFactory;
 import com.ss.rlib.util.array.Array;
@@ -21,7 +21,7 @@ public class SndFilePreviewFactory implements FilePreviewFactory {
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void createFilePreviews(@NotNull final Array<FilePreview> result) {
         result.add(new SndFilePreview());
     }

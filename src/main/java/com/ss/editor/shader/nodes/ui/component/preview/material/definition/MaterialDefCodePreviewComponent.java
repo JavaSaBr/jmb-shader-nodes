@@ -6,7 +6,7 @@ import com.jme3.asset.AssetManager;
 import com.jme3.material.MaterialDef;
 import com.jme3.material.plugin.export.materialdef.J3mdExporter;
 import com.jme3.renderer.RenderManager;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.ui.component.preview.CodePreviewComponent;
 import com.ss.editor.ui.control.code.BaseCodeArea;
 import com.ss.editor.ui.control.code.MaterialDefinitionCodeArea;
@@ -29,7 +29,7 @@ public class MaterialDefCodePreviewComponent extends CodePreviewComponent {
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void createComponents() {
 
         codeArea = new MaterialDefinitionCodeArea();
@@ -45,7 +45,7 @@ public class MaterialDefCodePreviewComponent extends CodePreviewComponent {
      *
      * @param materialDef the material definition.
      */
-    @FXThread
+    @FxThread
     public void load(@NotNull final MaterialDef materialDef) {
 
         final ByteArrayOutputStream bout = new ByteArrayOutputStream();

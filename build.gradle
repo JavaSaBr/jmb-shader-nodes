@@ -53,6 +53,10 @@ configurations {
     pluginDependences
 }
 
+javadoc {
+    failOnError = false
+}
+
 dependencies {
     compile 'com.github.JavaSaBr:jmonkeybuilder:develop-SNAPSHOT'
 

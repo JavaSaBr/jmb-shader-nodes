@@ -1,7 +1,7 @@
 package com.ss.editor.shader.nodes.ui.control.tree.operation;
 
 import com.jme3.shader.ShaderNodeDefinition;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.model.undo.impl.AbstractEditorOperation;
 import org.jetbrains.annotations.NotNull;
@@ -34,14 +34,14 @@ public class ChangeSndDocumentationOperation extends AbstractEditorOperation<Cha
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void redoImpl(@NotNull final ChangeConsumer editor) {
         definition.setDocumentation(newDocumentation);
         editor.notifyFXChangeProperty(definition, "documentation");
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void undoImpl(@NotNull final ChangeConsumer editor) {
         definition.setDocumentation(oldDocumentation);
         editor.notifyFXChangeProperty(definition, "documentation");

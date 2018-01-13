@@ -1,7 +1,7 @@
 package com.ss.editor.shader.nodes.model.shader.node.definition;
 
 import com.jme3.shader.ShaderNodeDefinition;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -28,7 +28,7 @@ public class SndList {
      *
      * @return the list of definitions.
      */
-    @FXThread
+    @FxThread
     public @NotNull List<ShaderNodeDefinition> getDefinitions() {
         return definitions;
     }

@@ -3,10 +3,9 @@ package com.ss.editor.shader.nodes;
 import com.jme3.asset.AssetManager;
 import com.jme3.shader.glsl.AstGlsl150ShaderGenerator;
 import com.jme3.shader.glsl.AstShaderGenerator;
-import com.ss.editor.Editor;
 import com.ss.editor.FileExtensions;
-import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.manager.FileIconManager;
 import com.ss.editor.manager.ResourceManager;
 import com.ss.editor.plugin.EditorPlugin;
@@ -23,6 +22,7 @@ import com.ss.editor.ui.control.property.builder.PropertyBuilderRegistry;
 import com.ss.editor.ui.control.tree.node.TreeNodeFactoryRegistry;
 import com.ss.editor.ui.css.CSSRegistry;
 import com.ss.editor.ui.preview.FilePreviewFactoryRegistry;
+import com.ss.editor.util.EditorUtil;
 import com.ss.rlib.plugin.PluginContainer;
 import com.ss.rlib.plugin.PluginSystem;
 import com.ss.rlib.plugin.annotation.PluginDescription;
@@ -53,11 +53,11 @@ public class ShaderNodesEditorPlugin extends EditorPlugin {
     public void onAfterCreateJMEContext(@NotNull final PluginSystem pluginSystem) {
         super.onAfterCreateJMEContext(pluginSystem);
         System.setProperty(AstShaderGenerator.PROP_USE_CASE, "false");
-        final AssetManager assetManager = Editor.getInstance().getAssetManager();
+        final AssetManager assetManager = EditorUtil.getAssetManager();
         assetManager.setShaderGenerator(new AstGlsl150ShaderGenerator(assetManager));
     }
 
-    @FXThread
+    @FxThread
     @Override
     public void onBeforeCreateJavaFXContext(@NotNull final PluginSystem pluginSystem) {
         super.onBeforeCreateJavaFXContext(pluginSystem);

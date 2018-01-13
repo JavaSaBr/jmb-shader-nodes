@@ -3,7 +3,7 @@ package com.ss.editor.shader.nodes.ui.component.editor.state;
 import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.jme3.material.MaterialDef;
 import com.jme3.material.TechniqueDef;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesFileEditor;
 import com.ss.editor.ui.component.editor.state.impl.EditorMaterialEditorState;
 import com.ss.rlib.logging.Logger;
@@ -42,13 +42,13 @@ public class ShaderNodesEditorState extends EditorMaterialEditorState {
      *
      * @return the states of technique definitions.
      */
-    @FXThread
+    @FxThread
     public @NotNull List<TechniqueDefState> getTechniqueDefStates() {
         return techniqueDefStates;
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void setChangeHandler(@NotNull final Runnable changeHandler) {
         super.setChangeHandler(changeHandler);
         techniqueDefStates.forEach(state -> state.setChangeHandler(changeHandler));
@@ -60,7 +60,7 @@ public class ShaderNodesEditorState extends EditorMaterialEditorState {
      * @param techniqueDefName the name of a technique definition.
      * @return the state.
      */
-    @FXThread
+    @FxThread
     public @NotNull TechniqueDefState getState(@NotNull final String techniqueDefName) {
 
         final Optional<TechniqueDefState> result = techniqueDefStates.stream()
@@ -85,7 +85,7 @@ public class ShaderNodesEditorState extends EditorMaterialEditorState {
      *
      * @param materialDef the material definition.
      */
-    @FXThread
+    @FxThread
     public void cleanUp(@NotNull final MaterialDef materialDef) {
         LOGGER.debug(this, editorState -> "The state before cleanup: " + editorState);
 

@@ -7,7 +7,7 @@ import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.jme3.shader.Shader.ShaderType;
 import com.jme3.shader.ShaderNodeDefinition;
 import com.ss.editor.Messages;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.plugin.api.dialog.GenericFactoryDialog;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
@@ -45,19 +45,19 @@ public class AddSndAction extends AbstractNodeAction<ChangeConsumer> {
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull String getName() {
         return PluginMessages.ACTION_ADD_SHADER_NODE_DEFINITION;
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @Nullable Image getIcon() {
         return Icons.ADD_16;
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void process() {
         super.process();
 
@@ -76,7 +76,7 @@ public class AddSndAction extends AbstractNodeAction<ChangeConsumer> {
      *
      * @param vars the vars of the definition.
      */
-    @FXThread
+    @FxThread
     private boolean validate(@NotNull final VarTable vars) {
 
         final String name = vars.getString(PROP_NAME);
@@ -93,7 +93,7 @@ public class AddSndAction extends AbstractNodeAction<ChangeConsumer> {
      *
      * @param vars the vars of the definition.
      */
-    @FXThread
+    @FxThread
     private void addDefinition(@NotNull final VarTable vars) {
 
         final String definitionName = vars.getString(PROP_NAME);

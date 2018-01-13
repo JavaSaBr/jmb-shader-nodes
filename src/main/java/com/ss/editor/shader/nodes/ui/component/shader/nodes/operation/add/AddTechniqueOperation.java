@@ -2,8 +2,8 @@ package com.ss.editor.shader.nodes.ui.component.shader.nodes.operation.add;
 
 import com.jme3.material.MaterialDef;
 import com.jme3.material.TechniqueDef;
-import com.ss.editor.annotation.FXThread;
-import com.ss.editor.annotation.JMEThread;
+import com.ss.editor.annotation.FxThread;
+import com.ss.editor.annotation.JmeThread;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.operation.ShaderNodeOperation;
 import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesChangeConsumer;
 import org.jetbrains.annotations.NotNull;
@@ -35,21 +35,21 @@ public class AddTechniqueOperation extends ShaderNodeOperation {
     }
 
     @Override
-    @JMEThread
+    @JmeThread
     protected void redoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
         super.redoImplInJMEThread(editor);
         materialDef.addTechniqueDef(techniqueDef);
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void redoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
         super.redoImplInFXThread(editor);
         editor.notifyAddedTechnique(techniqueDef);
     }
 
     @Override
-    @JMEThread
+    @JmeThread
     protected void undoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
         super.undoImplInJMEThread(editor);
 
@@ -58,7 +58,7 @@ public class AddTechniqueOperation extends ShaderNodeOperation {
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void undoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
         super.undoImplInFXThread(editor);
         editor.notifyRemovedTechnique(techniqueDef);

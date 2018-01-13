@@ -6,7 +6,7 @@ import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.jme3.shader.ShaderNodeDefinition;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.Messages;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.plugin.api.dialog.GenericFactoryDialog;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
@@ -17,7 +17,7 @@ import com.ss.editor.ui.Icons;
 import com.ss.editor.ui.control.tree.NodeTree;
 import com.ss.editor.ui.control.tree.action.AbstractNodeAction;
 import com.ss.editor.ui.control.tree.node.TreeNode;
-import com.ss.editor.util.GLSLType;
+import com.ss.editor.util.GlslType;
 import com.ss.rlib.util.StringUtils;
 import com.ss.rlib.util.VarTable;
 import com.ss.rlib.util.array.Array;
@@ -47,13 +47,13 @@ public abstract class AddSndParameterAction extends AbstractNodeAction<ChangeCon
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull String getName() {
         return PluginMessages.ACTION_ADD_SND_PARAMETER;
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @Nullable Image getIcon() {
         return Icons.ADD_16;
     }
@@ -64,7 +64,7 @@ public abstract class AddSndParameterAction extends AbstractNodeAction<ChangeCon
      * @param definition the definition.
      * @return the list of current parameters.
      */
-    @FXThread
+    @FxThread
     protected abstract @NotNull List<ShaderNodeVariable> getCurrentParameters(
             @NotNull final ShaderNodeDefinition definition);
 
@@ -74,18 +74,18 @@ public abstract class AddSndParameterAction extends AbstractNodeAction<ChangeCon
      * @param definition the definition.
      * @return the list of opposite parameters.
      */
-    @FXThread
+    @FxThread
     protected abstract @NotNull List<ShaderNodeVariable> getOppositeParameters(
             @NotNull final ShaderNodeDefinition definition);
 
     @Override
-    @FXThread
+    @FxThread
     protected void process() {
         super.process();
 
         final Array<PropertyDefinition> definitions = ArrayFactory.newArray(PropertyDefinition.class);
         definitions.add(new PropertyDefinition(STRING, Messages.MODEL_PROPERTY_NAME, PROP_NAME, "newVar"));
-        definitions.add(new PropertyDefinition(ENUM, Messages.MODEL_PROPERTY_TYPE, PROP_TYPE, GLSLType.FLOAT));
+        definitions.add(new PropertyDefinition(ENUM, Messages.MODEL_PROPERTY_TYPE, PROP_TYPE, GlslType.FLOAT));
 
         final GenericFactoryDialog dialog = new GenericFactoryDialog(definitions, this::addParameter, this::validate);
         dialog.setTitle(getName());
@@ -97,7 +97,7 @@ public abstract class AddSndParameterAction extends AbstractNodeAction<ChangeCon
      *
      * @param vars the vars of the new parameter.
      */
-    @FXThread
+    @FxThread
     private boolean validate(@NotNull final VarTable vars) {
 
         final TreeNode<?> node = getNode();
@@ -112,7 +112,7 @@ public abstract class AddSndParameterAction extends AbstractNodeAction<ChangeCon
             return false;
         }
 
-        final GLSLType glslType = vars.getEnum(PROP_TYPE, GLSLType.class);
+        final GlslType glslType = vars.getEnum(PROP_TYPE, GlslType.class);
         final String rawType = glslType.getRawType();
 
         final List<ShaderNodeVariable> oppositeParameters = getOppositeParameters(definition);
@@ -133,15 +133,14 @@ public abstract class AddSndParameterAction extends AbstractNodeAction<ChangeCon
      *
      * @param vars the vars of the parameter.
      */
-    @FXThread
+    @FxThread
     private void addParameter(@NotNull final VarTable vars) {
 
         final TreeNode<?> node = getNode();
         final SndParameters parameters = (SndParameters) node.getElement();
 
         final String name = vars.getString(PROP_NAME);
-        final GLSLType glslType = vars.getEnum(PROP_TYPE, GLSLType.class);
-
+        final GlslType glslType = vars.getEnum(PROP_TYPE, GlslType.class);
         final ShaderNodeVariable variable = new ShaderNodeVariable(glslType.getRawType(), name);
 
         final ChangeConsumer changeConsumer = notNull(getNodeTree().getChangeConsumer());

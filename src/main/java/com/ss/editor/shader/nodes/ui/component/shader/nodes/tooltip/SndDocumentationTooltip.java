@@ -4,11 +4,11 @@ import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.ShaderNodeDefinitionKey;
 import com.jme3.shader.ShaderNodeDefinition;
-import com.ss.editor.Editor;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.ui.PluginCSSClasses;
 import com.ss.editor.shader.nodes.ui.component.SndDocumentationArea;
 import com.ss.editor.ui.tooltip.CustomTooltip;
+import com.ss.editor.util.EditorUtil;
 import com.ss.rlib.ui.util.FXUtils;
 import com.ss.rlib.util.StringUtils;
 import javafx.scene.layout.BorderPane;
@@ -23,9 +23,6 @@ import org.jetbrains.annotations.Nullable;
 public class SndDocumentationTooltip extends CustomTooltip<BorderPane> {
 
     @NotNull
-    private static final Editor EDITOR = Editor.getInstance();
-
-    @NotNull
     private final ShaderNodeDefinition definition;
 
     @Nullable
@@ -36,13 +33,13 @@ public class SndDocumentationTooltip extends CustomTooltip<BorderPane> {
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull BorderPane createRoot() {
         return new BorderPane();
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void createContent(@NotNull final BorderPane root) {
         super.createContent(root);
         this.documentation = new SndDocumentationArea();
@@ -56,7 +53,7 @@ public class SndDocumentationTooltip extends CustomTooltip<BorderPane> {
      *
      * @return the definition.
      */
-    @FXThread
+    @FxThread
     private @NotNull ShaderNodeDefinition getDefinition() {
         return definition;
     }
@@ -66,20 +63,20 @@ public class SndDocumentationTooltip extends CustomTooltip<BorderPane> {
      *
      * @return the area to show documentation.
      */
-    @FXThread
+    @FxThread
     private @NotNull SndDocumentationArea getDocumentation() {
         return notNull(documentation);
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void show() {
 
         final ShaderNodeDefinition definition = getDefinition();
         final ShaderNodeDefinitionKey assetKey = new ShaderNodeDefinitionKey(definition.getPath());
         assetKey.setLoadDocumentation(true);
 
-        final AssetManager assetManager = EDITOR.getAssetManager();
+        final AssetManager assetManager = EditorUtil.getAssetManager();
         String documentation = assetManager.loadAsset(assetKey).stream()
                 .filter(def -> def.getName().equals(definition.getName()))
                 .map(ShaderNodeDefinition::getDocumentation)

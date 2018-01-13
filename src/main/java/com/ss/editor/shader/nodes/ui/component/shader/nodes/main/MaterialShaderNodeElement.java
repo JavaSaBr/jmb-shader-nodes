@@ -9,9 +9,9 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector4f;
 import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.VarType;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.annotation.FromAnyThread;
-import com.ss.editor.annotation.JMEThread;
+import com.ss.editor.annotation.JmeThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodesContainer;
@@ -56,7 +56,7 @@ public class MaterialShaderNodeElement extends OutputVariableShaderNodeElement {
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull OutputShaderNodeParameter newParameter() {
 
         final ShaderNodeVariable variable = getObject();
@@ -88,7 +88,7 @@ public class MaterialShaderNodeElement extends OutputVariableShaderNodeElement {
     /**
      * Notify about changed preview material.
      */
-    @FXThread
+    @FxThread
     public void notifyChangedMaterial() {
         getParametersContainer().getChildren().stream()
                 .filter(EditableMaterialShaderNodeParameter.class::isInstance)
@@ -96,7 +96,7 @@ public class MaterialShaderNodeElement extends OutputVariableShaderNodeElement {
                 .forEach(EditableMaterialShaderNodeParameter::sync);
     }
 
-    @FXThread
+    @FxThread
     private @Nullable PropertyControl<ChangeConsumer, MatParam, ?> buildControl(@NotNull final ChangeConsumer consumer,
                                                                                 @NotNull final MatParam param) {
 
@@ -138,7 +138,7 @@ public class MaterialShaderNodeElement extends OutputVariableShaderNodeElement {
         return null;
     }
 
-    @FXThread
+    @FxThread
     private <T> T getCurrentValue(@NotNull final MatParam matParam) {
 
         final ShaderNodesChangeConsumer changeConsumer = getContainer().getChangeConsumer();
@@ -159,7 +159,7 @@ public class MaterialShaderNodeElement extends OutputVariableShaderNodeElement {
         return value;
     }
 
-    @JMEThread
+    @JmeThread
     private <T> void applyValue(@NotNull final MatParam matParam, @Nullable T value) {
 
         final ShaderNodesChangeConsumer changeConsumer = getContainer().getChangeConsumer();
@@ -177,19 +177,19 @@ public class MaterialShaderNodeElement extends OutputVariableShaderNodeElement {
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull String getTitleText() {
         return PluginMessages.NODE_ELEMENT_MATERIAL_PARAMETER;
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull String getNameSpace() {
         return NAMESPACE;
     }
 
     @Override
-    @FXThread
+    @FxThread
     public @Nullable ShaderNodeAction<?> getDeleteAction() {
         return new RemoveMaterialParamShaderNodeAction(getContainer(), getObject(),
                 new Vector2f((float) getLayoutX(), (float) getLayoutY()));

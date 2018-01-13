@@ -9,7 +9,7 @@ import com.jme3.renderer.Renderer;
 import com.jme3.shader.Shader.ShaderType;
 import com.ss.editor.FileExtensions;
 import com.ss.editor.Messages;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.extension.property.EditablePropertyType;
 import com.ss.editor.plugin.api.file.creator.GenericFileCreator;
@@ -82,7 +82,8 @@ public class ShaderNodeDefinitionsFileCreator extends GenericFileCreator {
         AVAILABLE_TYPES.add(ShaderType.Vertex.name());
         AVAILABLE_TYPES.add(ShaderType.Fragment.name());
 
-        final Renderer renderer = EDITOR.getRenderer();
+        //FIXME
+        final Renderer renderer = JME_APPLICATION.getRenderer();
 
         final EnumSet<Caps> caps = renderer.getCaps();
         caps.stream().filter(cap -> cap.name().startsWith("GLSL"))
@@ -124,7 +125,7 @@ public class ShaderNodeDefinitionsFileCreator extends GenericFileCreator {
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void processOk() {
         super.hide();
 

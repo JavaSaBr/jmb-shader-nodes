@@ -2,7 +2,7 @@ package com.ss.editor.shader.nodes.ui.component.shader.nodes.operation.attach;
 
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.VariableMapping;
-import com.ss.editor.annotation.JMEThread;
+import com.ss.editor.annotation.JmeThread;
 import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesChangeConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +23,7 @@ public class AttachAttributeToShaderNodeOperation extends AttachShaderNodeOperat
     }
 
     @Override
-    @JMEThread
+    @JmeThread
     protected void redoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
         super.redoImplInJMEThread(editor);
 
@@ -39,7 +39,7 @@ public class AttachAttributeToShaderNodeOperation extends AttachShaderNodeOperat
     }
 
     @Override
-    @JMEThread
+    @JmeThread
     protected void undoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
         super.undoImplInJMEThread(editor);
 

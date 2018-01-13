@@ -4,7 +4,7 @@ import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.*;
 import com.jme3.material.TechniqueDef;
 import com.jme3.math.Vector2f;
 import com.jme3.shader.*;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.action.ShaderNodeAction;
@@ -41,18 +41,18 @@ public class MainShaderNodeElement extends ShaderNodeElement<ShaderNode> {
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull String getTitleText() {
         return getObject().getDefinition().getName();
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull Optional<Tooltip> createTooltip() {
         return Optional.of(new SndDocumentationTooltip(getObject().getDefinition()));
     }
 
-    @FXThread
+    @FxThread
     @Override
     public @Nullable ShaderNodeParameter parameterFor(@NotNull final ShaderNodeVariable variable,
                                                       final boolean fromOutputMapping, final boolean input) {
@@ -65,7 +65,7 @@ public class MainShaderNodeElement extends ShaderNodeElement<ShaderNode> {
         return super.parameterFor(variable, fromOutputMapping, input);
     }
 
-    @FXThread
+    @FxThread
     @Override
     protected void fillParameters(@NotNull final VBox container) {
         super.fillParameters(container);
@@ -85,7 +85,7 @@ public class MainShaderNodeElement extends ShaderNodeElement<ShaderNode> {
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void attach(@NotNull final InputShaderNodeParameter inputParameter,
                        @NotNull final OutputShaderNodeParameter outputParameter) {
         super.attach(inputParameter, outputParameter);
@@ -145,7 +145,7 @@ public class MainShaderNodeElement extends ShaderNodeElement<ShaderNode> {
     }
 
     @Override
-    @FXThread
+    @FxThread
     public @Nullable ShaderNodeAction<?> getDeleteAction() {
         return new RemoveShaderNodeAction(getContainer(), getObject(),
                 new Vector2f((float) getLayoutX(), (float) getLayoutY()));

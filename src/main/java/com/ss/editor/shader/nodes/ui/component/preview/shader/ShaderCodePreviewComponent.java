@@ -10,9 +10,9 @@ import com.jme3.renderer.Renderer;
 import com.jme3.shader.Shader;
 import com.jme3.shader.ShaderGenerator;
 import com.ss.editor.Messages;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.annotation.FromAnyThread;
-import com.ss.editor.annotation.JMEThread;
+import com.ss.editor.annotation.JmeThread;
 import com.ss.editor.manager.ExecutorManager;
 import com.ss.editor.shader.nodes.ui.component.preview.CodePreviewComponent;
 import com.ss.editor.ui.control.code.BaseCodeArea;
@@ -55,7 +55,7 @@ public abstract class ShaderCodePreviewComponent extends CodePreviewComponent {
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void createComponents() {
 
         final Label languageLabel  = new Label(Messages.MODEL_PROPERTY_LANGUAGE + ":");
@@ -85,7 +85,7 @@ public abstract class ShaderCodePreviewComponent extends CodePreviewComponent {
      *
      * @return the shader type.
      */
-    @FXThread
+    @FxThread
     protected abstract @NotNull Shader.ShaderType getShaderType();
 
     /**
@@ -93,7 +93,7 @@ public abstract class ShaderCodePreviewComponent extends CodePreviewComponent {
      *
      * @param newValue the new shader language or null.
      */
-    @FXThread
+    @FxThread
     private void changeLanguage(@Nullable final String newValue) {
 
         final BaseCodeArea codeArea = getCodeArea();
@@ -126,7 +126,7 @@ public abstract class ShaderCodePreviewComponent extends CodePreviewComponent {
     @FromAnyThread
     public void load(@NotNull final TechniqueDef techniqueDef) {
         final ExecutorManager executorManager = ExecutorManager.getInstance();
-        executorManager.addJMETask(() -> generateShader(techniqueDef));
+        executorManager.addJmeTask(() -> generateShader(techniqueDef));
     }
 
     /**
@@ -134,7 +134,7 @@ public abstract class ShaderCodePreviewComponent extends CodePreviewComponent {
      *
      * @param techniqueDef the technique definition.
      */
-    @JMEThread
+    @JmeThread
     private void generateShader(@NotNull final TechniqueDef techniqueDef) {
 
         final Renderer renderer = getRenderManager().getRenderer();
@@ -145,13 +145,13 @@ public abstract class ShaderCodePreviewComponent extends CodePreviewComponent {
         this.shader = abstractShaderGenerator.generateShader("");
 
         final ExecutorManager executorManager = ExecutorManager.getInstance();
-        executorManager.addFXTask(this::loadShader);
+        executorManager.addFxTask(this::loadShader);
     }
 
     /**
      * Load languages from the generated shader.
      */
-    @FXThread
+    @FxThread
     private void loadShader() {
 
         final ComboBox<String> languageBox = getLanguageBox();
@@ -173,7 +173,7 @@ public abstract class ShaderCodePreviewComponent extends CodePreviewComponent {
      *
      * @return the box with language options.
      */
-    @FXThread
+    @FxThread
     private @NotNull ComboBox<String> getLanguageBox() {
         return notNull(languageBox);
     }
@@ -183,7 +183,7 @@ public abstract class ShaderCodePreviewComponent extends CodePreviewComponent {
      *
      * @return the current shader.
      */
-    @FXThread
+    @FxThread
     protected @NotNull Shader getShader() {
         return notNull(shader);
     }

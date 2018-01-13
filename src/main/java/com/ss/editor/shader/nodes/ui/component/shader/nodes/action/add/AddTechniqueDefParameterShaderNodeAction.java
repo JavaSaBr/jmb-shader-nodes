@@ -4,7 +4,7 @@ import static com.ss.editor.extension.property.EditablePropertyType.STRING_FROM_
 import com.jme3.material.TechniqueDef;
 import com.jme3.math.Vector2f;
 import com.ss.editor.Messages;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.plugin.api.dialog.GenericFactoryDialog;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodesContainer;
@@ -45,7 +45,7 @@ public abstract class AddTechniqueDefParameterShaderNodeAction extends ShaderNod
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void process() {
         super.process();
 
@@ -62,7 +62,7 @@ public abstract class AddTechniqueDefParameterShaderNodeAction extends ShaderNod
      *
      * @return the dialog title.
      */
-    @FXThread
+    @FxThread
     protected @NotNull String getDialogTitle() {
         throw new RuntimeException("unsupported");
     }
@@ -73,7 +73,7 @@ public abstract class AddTechniqueDefParameterShaderNodeAction extends ShaderNod
      * @param vars the variables.
      * @return true if the values are valid.
      */
-    @FXThread
+    @FxThread
     protected boolean validate(@NotNull final VarTable vars) {
         return available.contains(vars.getString(PROP_NAME));
     }
@@ -83,6 +83,6 @@ public abstract class AddTechniqueDefParameterShaderNodeAction extends ShaderNod
      *
      * @param vars the variables.
      */
-    @FXThread
+    @FxThread
     protected abstract void addParameter(@NotNull final VarTable vars);
 }

@@ -3,7 +3,7 @@ package com.ss.editor.shader.nodes.ui.control.tree.factory;
 import static com.ss.rlib.util.ClassUtils.unsafeCast;
 import com.jme3.shader.ShaderNodeDefinition;
 import com.jme3.shader.ShaderNodeVariable;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.shader.nodes.model.PreviewMaterialSettings;
 import com.ss.editor.shader.nodes.model.shader.node.definition.*;
@@ -29,7 +29,7 @@ public class ShaderNodesTreeNodeFactory implements TreeNodeFactory {
     }
 
     @Override
-    @FXThread
+    @FxThread
     public <T, V extends TreeNode<T>> @Nullable V createFor(@Nullable final T element, final long objectId) {
 
         if (element instanceof PreviewMaterialSettings) {
@@ -56,7 +56,7 @@ public class ShaderNodesTreeNodeFactory implements TreeNodeFactory {
     }
 
     @Override
-    @FXThread
+    @FxThread
     public int getOrder() {
         return 5;
     }

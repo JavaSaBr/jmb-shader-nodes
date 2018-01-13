@@ -7,8 +7,8 @@ import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeDefinition;
 import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.VariableMapping;
-import com.ss.editor.annotation.FXThread;
-import com.ss.editor.annotation.JMEThread;
+import com.ss.editor.annotation.FxThread;
+import com.ss.editor.annotation.JmeThread;
 import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesChangeConsumer;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,7 +41,7 @@ public class RemoveShaderNodeOperation extends RemoveOperation {
     }
 
     @Override
-    @JMEThread
+    @JmeThread
     protected void redoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
         super.redoImplInJMEThread(editor);
 
@@ -67,14 +67,14 @@ public class RemoveShaderNodeOperation extends RemoveOperation {
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void redoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
         super.redoImplInFXThread(editor);
         editor.notifyRemovedRemovedShaderNode(shaderNode);
     }
 
     @Override
-    @JMEThread
+    @JmeThread
     protected void undoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
         super.undoImplInJMEThread(editor);
 
@@ -90,7 +90,7 @@ public class RemoveShaderNodeOperation extends RemoveOperation {
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void undoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
         super.undoImplInFXThread(editor);
         editor.notifyAddedShaderNode(shaderNode, location);

@@ -4,7 +4,7 @@ import com.jme3.material.MaterialDef;
 import com.jme3.material.TechniqueDef;
 import com.jme3.material.logic.*;
 import com.ss.editor.Messages;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesChangeConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +39,7 @@ public class ChangeLightModeOperation extends ShaderNodeOperation {
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void redoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
         super.redoImplInFXThread(editor);
 
@@ -59,7 +59,7 @@ public class ChangeLightModeOperation extends ShaderNodeOperation {
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void undoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
         super.undoImplInFXThread(editor);
 
@@ -83,7 +83,7 @@ public class ChangeLightModeOperation extends ShaderNodeOperation {
      *
      * @param techniqueDef the technique def.
      */
-    @FXThread
+    @FxThread
     private void createLogic(@NotNull final TechniqueDef techniqueDef) {
         switch (techniqueDef.getLightMode()) {
             case SinglePass: {
