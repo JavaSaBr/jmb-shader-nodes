@@ -45,13 +45,13 @@ public class DeleteSndOperation extends AbstractEditorOperation<ChangeConsumer> 
         final List<ShaderNodeDefinition> definitions = definitionList.getDefinitions();
         index = definitions.indexOf(definition);
         definitions.remove(definition);
-        editor.notifyFXRemovedChild(definitionList, definition);
+        editor.notifyFxRemovedChild(definitionList, definition);
     }
 
     @Override
     @FxThread
     protected void undoImpl(@NotNull final ChangeConsumer editor) {
         definitionList.getDefinitions().add(index, definition);
-        editor.notifyFXAddedChild(definitionList, definition, index, false);
+        editor.notifyFxAddedChild(definitionList, definition, index, false);
     }
 }

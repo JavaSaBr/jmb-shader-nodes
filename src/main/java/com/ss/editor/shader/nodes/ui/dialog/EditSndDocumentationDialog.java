@@ -1,6 +1,6 @@
 package com.ss.editor.shader.nodes.ui.dialog;
 
-import static com.ss.editor.ui.util.UIUtils.consumeIf;
+import static com.ss.editor.ui.util.UiUtils.consumeIf;
 import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.jme3.shader.ShaderNodeDefinition;
 import com.ss.editor.Messages;

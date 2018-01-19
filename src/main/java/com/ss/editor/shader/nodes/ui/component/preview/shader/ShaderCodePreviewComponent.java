@@ -10,14 +10,14 @@ import com.jme3.renderer.Renderer;
 import com.jme3.shader.Shader;
 import com.jme3.shader.ShaderGenerator;
 import com.ss.editor.Messages;
-import com.ss.editor.annotation.FxThread;
 import com.ss.editor.annotation.FromAnyThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.annotation.JmeThread;
 import com.ss.editor.manager.ExecutorManager;
 import com.ss.editor.shader.nodes.ui.component.preview.CodePreviewComponent;
 import com.ss.editor.ui.control.code.BaseCodeArea;
 import com.ss.editor.ui.control.code.GLSLCodeArea;
-import com.ss.editor.ui.css.CSSClasses;
+import com.ss.editor.ui.css.CssClasses;
 import com.ss.rlib.ui.util.FXUtils;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
@@ -77,7 +77,7 @@ public abstract class ShaderCodePreviewComponent extends CodePreviewComponent {
         FXUtils.addToPane(languageContainer, this);
         FXUtils.addToPane(codeArea, this);
 
-        FXUtils.addClassTo(languageContainer, CSSClasses.DEF_HBOX);
+        FXUtils.addClassTo(languageContainer, CssClasses.DEF_HBOX);
     }
 
     /**

@@ -39,7 +39,7 @@ public class AddSndParameterOperation extends AbstractEditorOperation<ChangeCons
     protected void redoImpl(@NotNull final ChangeConsumer editor) {
         final List<ShaderNodeVariable> parameterList = parameters.getParameters();
         parameterList.add(variable);
-        editor.notifyFXAddedChild(parameters, variable, -1, true);
+        editor.notifyFxAddedChild(parameters, variable, -1, true);
     }
 
     @Override
@@ -47,6 +47,6 @@ public class AddSndParameterOperation extends AbstractEditorOperation<ChangeCons
     protected void undoImpl(@NotNull final ChangeConsumer editor) {
         final List<ShaderNodeVariable> parameterList = parameters.getParameters();
         parameterList.remove(variable);
-        editor.notifyFXRemovedChild(parameters, variable);
+        editor.notifyFxRemovedChild(parameters, variable);
     }
 }

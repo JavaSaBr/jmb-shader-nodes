@@ -36,13 +36,13 @@ public class AddSndOperation extends AbstractEditorOperation<ChangeConsumer> {
     @FxThread
     protected void redoImpl(@NotNull final ChangeConsumer editor) {
         definitionList.getDefinitions().add(definition);
-        editor.notifyFXAddedChild(definitionList, definition, -1, true);
+        editor.notifyFxAddedChild(definitionList, definition, -1, true);
     }
 
     @Override
     @FxThread
     protected void undoImpl(@NotNull final ChangeConsumer editor) {
         definitionList.getDefinitions().remove(definition);
-        editor.notifyFXRemovedChild(definitionList, definition);
+        editor.notifyFxRemovedChild(definitionList, definition);
     }
 }

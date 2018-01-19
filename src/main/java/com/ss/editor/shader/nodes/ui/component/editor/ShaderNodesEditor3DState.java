@@ -3,7 +3,8 @@ package com.ss.editor.shader.nodes.ui.component.editor;
 import com.jme3.material.Material;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.annotation.JmeThread;
-import com.ss.editor.plugin.api.editor.material.BaseMaterialEditor3DState;
+import com.ss.editor.plugin.api.editor.material.BaseMaterialEditor3DPart;
+import com.ss.editor.util.EditorUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author JavaSaBr
  */
-public class ShaderNodesEditor3DState extends BaseMaterialEditor3DState<ShaderNodesFileEditor> {
+public class ShaderNodesEditor3DState extends BaseMaterialEditor3DPart<ShaderNodesFileEditor> {
 
     public ShaderNodesEditor3DState(@NotNull final ShaderNodesFileEditor fileEditor) {
         super(fileEditor);
@@ -37,7 +38,7 @@ public class ShaderNodesEditor3DState extends BaseMaterialEditor3DState<ShaderNo
     @JmeThread
     private void selectTechniqueImpl(@NotNull final Material material, @NotNull final String name) {
         //FIXME
-        material.selectTechnique(name, JME_APPLICATION.getRenderManager());
+        material.selectTechnique(name, EditorUtil.getRenderManager());
         updateMaterialImpl(material);
     }
 

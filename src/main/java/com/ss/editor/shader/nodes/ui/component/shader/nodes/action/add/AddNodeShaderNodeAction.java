@@ -19,7 +19,7 @@ import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.action.ShaderNodeAction;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.operation.add.AddShaderNodeOperation;
-import com.ss.editor.ui.util.UIUtils;
+import com.ss.editor.ui.util.UiUtils;
 import com.ss.editor.util.EditorUtil;
 import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayFactory;
@@ -56,7 +56,7 @@ public class AddNodeShaderNodeAction extends ShaderNodeAction<TechniqueDef> {
     protected void process() {
         super.process();
         final Array<String> resources = RESOURCE_MANAGER.getAvailableResources(FileExtensions.JME_SHADER_NODE);
-        UIUtils.openResourceAssetDialog(this::addNode, resources);
+        UiUtils.openResourceAssetDialog(this::addNode, resources);
     }
 
     /**

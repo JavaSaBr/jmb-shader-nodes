@@ -42,13 +42,13 @@ public class DeleteSndShaderSourceOperation extends AbstractEditorOperation<Chan
     protected void redoImpl(@NotNull final ChangeConsumer editor) {
         index = shaderSources.indexOf(shaderSource);
         shaderSources.remove(shaderSource);
-        editor.notifyFXRemovedChild(shaderSources, shaderSource);
+        editor.notifyFxRemovedChild(shaderSources, shaderSource);
     }
 
     @Override
     @FxThread
     protected void undoImpl(@NotNull final ChangeConsumer editor) {
         shaderSources.add(index, shaderSource);
-        editor.notifyFXAddedChild(shaderSources, shaderSource, index, false);
+        editor.notifyFxAddedChild(shaderSources, shaderSource, index, false);
     }
 }

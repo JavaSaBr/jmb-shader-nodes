@@ -22,11 +22,11 @@ import com.jme3.shader.VariableMapping;
 import com.ss.editor.FileExtensions;
 import com.ss.editor.Messages;
 import com.ss.editor.annotation.BackgroundThread;
-import com.ss.editor.annotation.FxThread;
 import com.ss.editor.annotation.FromAnyThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.manager.ResourceManager;
 import com.ss.editor.plugin.api.dialog.GenericFactoryDialog;
-import com.ss.editor.plugin.api.editor.material.BaseMaterialEditor3DState.ModelType;
+import com.ss.editor.plugin.api.editor.material.BaseMaterialEditor3DPart.ModelType;
 import com.ss.editor.plugin.api.editor.material.BaseMaterialFileEditor;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
 import com.ss.editor.shader.nodes.PluginMessages;
@@ -53,10 +53,10 @@ import com.ss.editor.ui.component.editor.EditorDescription;
 import com.ss.editor.ui.component.editor.state.EditorState;
 import com.ss.editor.ui.component.tab.EditorToolComponent;
 import com.ss.editor.ui.control.property.PropertyEditor;
-import com.ss.editor.ui.css.CSSClasses;
+import com.ss.editor.ui.css.CssClasses;
 import com.ss.editor.ui.dialog.asset.virtual.StringVirtualAssetEditorDialog;
 import com.ss.editor.ui.util.DynamicIconSupport;
-import com.ss.editor.ui.util.UIUtils;
+import com.ss.editor.ui.util.UiUtils;
 import com.ss.editor.util.EditorUtil;
 import com.ss.editor.util.MaterialUtils;
 import com.ss.rlib.ui.util.FXUtils;
@@ -185,7 +185,7 @@ public class ShaderNodesFileEditor extends
 
     @Override
     @FxThread
-    protected @NotNull ShaderNodesEditor3DState create3DEditorState() {
+    protected @NotNull ShaderNodesEditor3DState create3DEditorPart() {
         return new ShaderNodesEditor3DState(this);
     }
 
@@ -239,10 +239,10 @@ public class ShaderNodesFileEditor extends
         });
 
         setMaterialDef(materialDef);
-        getEditor3DState().updateMaterial(JME_APPLICATION.getDefaultMaterial());
 
-        final ShaderNodesEditor3DState editor3DState = getEditor3DState();
-        editor3DState.changeMode(ModelType.BOX);
+        final ShaderNodesEditor3DState editor3DPart = getEditor3DPart();
+        editor3DPart.updateMaterial(EditorUtil.getDefaultMaterial());
+        editor3DPart.changeMode(ModelType.BOX);
     }
 
     @Override
@@ -317,7 +317,7 @@ public class ShaderNodesFileEditor extends
         });
 
         FXUtils.addToPane(splitPanel, editorAreaPane);
-        FXUtils.addClassTo(splitPanel, CSSClasses.FILE_EDITOR_TOOL_SPLIT_PANE);
+        FXUtils.addClassTo(splitPanel, CssClasses.FILE_EDITOR_TOOL_SPLIT_PANE);
     }
 
     @Override
@@ -326,8 +326,7 @@ public class ShaderNodesFileEditor extends
         super.createToolComponents(container, root);
 
         final AssetManager assetManager = EditorUtil.getAssetManager();
-        //FIXME
-        final RenderManager renderManager = JME_APPLICATION.getRenderManager();
+        final RenderManager renderManager = EditorUtil.getRenderManager();
 
         fragmentPreview = new FragmentShaderCodePreviewComponent(assetManager, renderManager);
         fragmentPreview.prefHeightProperty().bind(root.heightProperty());
@@ -406,7 +405,7 @@ public class ShaderNodesFileEditor extends
 
         FXUtils.addToPane(exportAction, importAction, container);
 
-        FXUtils.addClassesTo(exportAction, importAction, CSSClasses.FLAT_BUTTON, CSSClasses.FILE_EDITOR_TOOLBAR_BUTTON);
+        FXUtils.addClassesTo(exportAction, importAction, CssClasses.FLAT_BUTTON, CssClasses.FILE_EDITOR_TOOLBAR_BUTTON);
         DynamicIconSupport.addSupport(exportAction, importAction);
     }
 
@@ -438,9 +437,9 @@ public class ShaderNodesFileEditor extends
 
         FXUtils.addToPane(lightModeLabel, lightModeComboBox, container);
         FXUtils.addToPane(techniqueLabel, techniqueComboBox, addTechnique, container);
-        FXUtils.addClassTo(techniqueLabel, lightModeLabel, CSSClasses.FILE_EDITOR_TOOLBAR_LABEL);
-        FXUtils.addClassTo(techniqueComboBox, lightModeComboBox, CSSClasses.FILE_EDITOR_TOOLBAR_FIELD);
-        FXUtils.addClassesTo(addTechnique, CSSClasses.FLAT_BUTTON, CSSClasses.FILE_EDITOR_TOOLBAR_BUTTON);
+        FXUtils.addClassTo(techniqueLabel, lightModeLabel, CssClasses.FILE_EDITOR_TOOLBAR_LABEL);
+        FXUtils.addClassTo(techniqueComboBox, lightModeComboBox, CssClasses.FILE_EDITOR_TOOLBAR_FIELD);
+        FXUtils.addClassesTo(addTechnique, CssClasses.FLAT_BUTTON, CssClasses.FILE_EDITOR_TOOLBAR_BUTTON);
     }
 
     /**
@@ -521,7 +520,7 @@ public class ShaderNodesFileEditor extends
      */
     @FxThread
     private void export() {
-        UIUtils.openSaveAsDialog(this::export, FileExtensions.JME_MATERIAL_DEFINITION, ACTION_TESTER);
+        UiUtils.openSaveAsDialog(this::export, FileExtensions.JME_MATERIAL_DEFINITION, ACTION_TESTER);
     }
 
     /**
@@ -531,7 +530,7 @@ public class ShaderNodesFileEditor extends
     private void importMatDef() {
         final ResourceManager resourceManager = ResourceManager.getInstance();
         final Array<String> resources = resourceManager.getAvailableResources(FileExtensions.JME_MATERIAL_DEFINITION);
-        UIUtils.openResourceAssetDialog(this::importMatDef, this::validateMatDef, resources);
+        UiUtils.openResourceAssetDialog(this::importMatDef, this::validateMatDef, resources);
     }
 
     /**
@@ -662,7 +661,7 @@ public class ShaderNodesFileEditor extends
 
         getFragmentPreview().load(techniqueDef);
         getVertexPreview().load(techniqueDef);
-        getEditor3DState().selectTechnique(currentMaterial, newValue);
+        getEditor3DPart().selectTechnique(currentMaterial, newValue);
 
         setIgnoreLightModeChanges(true);
         try {
@@ -677,7 +676,10 @@ public class ShaderNodesFileEditor extends
      */
     @FxThread
     private void changeLightMode(@Nullable final LightMode prevLightMode, @Nullable final LightMode newLightMode) {
-        if (isIgnoreLightModeChanges() || prevLightMode == null || newLightMode == null) return;
+
+        if (isIgnoreLightModeChanges() || prevLightMode == null || newLightMode == null) {
+            return;
+        }
 
         final ComboBox<String> techniqueComboBox = getTechniqueComboBox();
         final String name = techniqueComboBox.getSelectionModel().getSelectedItem();
@@ -778,7 +780,7 @@ public class ShaderNodesFileEditor extends
 
         setCurrentMaterial(newMaterial);
         getShaderNodesContainer().notifyChangedMaterial();
-        getEditor3DState().updateMaterial(newMaterial);
+        getEditor3DPart().updateMaterial(newMaterial);
         getMatDefPreview().load(newMaterial.getMaterialDef());
 
         if (items.contains(currentTechnique)) {
@@ -1041,8 +1043,8 @@ public class ShaderNodesFileEditor extends
 
     @Override
     @FxThread
-    public void notifyFXChangeProperty(@NotNull final Object object, @NotNull final String propertyName) {
-        super.notifyFXChangeProperty(object, propertyName);
+    public void notifyFxChangeProperty(@NotNull final Object object, @NotNull final String propertyName) {
+        super.notifyFxChangeProperty(object, propertyName);
 
         if (object instanceof MatParam) {
             final PropertyEditor<ShaderNodesChangeConsumer> propertyEditor = getPropertyEditor();

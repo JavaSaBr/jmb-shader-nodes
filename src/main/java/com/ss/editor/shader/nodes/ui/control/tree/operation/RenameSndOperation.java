@@ -52,13 +52,13 @@ public class RenameSndOperation extends AbstractEditorOperation<ChangeConsumer> 
     @FxThread
     protected void redoImpl(@NotNull final ChangeConsumer editor) {
         definition.setName(newName);
-        editor.notifyFXChangeProperty(definitionList, definition, Messages.MODEL_PROPERTY_NAME);
+        editor.notifyFxChangeProperty(definitionList, definition, Messages.MODEL_PROPERTY_NAME);
     }
 
     @Override
     @FxThread
     protected void undoImpl(@NotNull final ChangeConsumer editor) {
         definition.setName(oldName);
-        editor.notifyFXChangeProperty(definitionList, definition, Messages.MODEL_PROPERTY_NAME);
+        editor.notifyFxChangeProperty(definitionList, definition, Messages.MODEL_PROPERTY_NAME);
     }
 }

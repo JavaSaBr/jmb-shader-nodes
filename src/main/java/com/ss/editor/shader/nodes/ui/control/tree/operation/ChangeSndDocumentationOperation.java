@@ -37,13 +37,13 @@ public class ChangeSndDocumentationOperation extends AbstractEditorOperation<Cha
     @FxThread
     protected void redoImpl(@NotNull final ChangeConsumer editor) {
         definition.setDocumentation(newDocumentation);
-        editor.notifyFXChangeProperty(definition, "documentation");
+        editor.notifyFxChangeProperty(definition, "documentation");
     }
 
     @Override
     @FxThread
     protected void undoImpl(@NotNull final ChangeConsumer editor) {
         definition.setDocumentation(oldDocumentation);
-        editor.notifyFXChangeProperty(definition, "documentation");
+        editor.notifyFxChangeProperty(definition, "documentation");
     }
 }

@@ -45,7 +45,7 @@ public class DeleteSndParameterOperation extends AbstractEditorOperation<ChangeC
         final List<ShaderNodeVariable> parameterList = parameters.getParameters();
         index = parameterList.indexOf(variable);
         parameterList.remove(variable);
-        editor.notifyFXRemovedChild(parameters, variable);
+        editor.notifyFxRemovedChild(parameters, variable);
     }
 
     @Override
@@ -53,6 +53,6 @@ public class DeleteSndParameterOperation extends AbstractEditorOperation<ChangeC
     protected void undoImpl(@NotNull final ChangeConsumer editor) {
         final List<ShaderNodeVariable> parameterList = parameters.getParameters();
         parameterList.add(index, variable);
-        editor.notifyFXAddedChild(parameters, variable, index, false);
+        editor.notifyFxAddedChild(parameters, variable, index, false);
     }
 }

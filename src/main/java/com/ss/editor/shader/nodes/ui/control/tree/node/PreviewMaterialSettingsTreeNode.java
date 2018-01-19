@@ -2,7 +2,7 @@ package com.ss.editor.shader.nodes.ui.control.tree.node;
 
 import com.ss.editor.model.node.material.RootMaterialSettings;
 import com.ss.editor.shader.nodes.PluginMessages;
-import com.ss.editor.ui.control.material.tree.node.RootMaterialSettingsTreeNode;
+import com.ss.editor.ui.control.tree.node.impl.material.settings.RootMaterialSettingsTreeNode;
 import org.jetbrains.annotations.NotNull;
 
 /**

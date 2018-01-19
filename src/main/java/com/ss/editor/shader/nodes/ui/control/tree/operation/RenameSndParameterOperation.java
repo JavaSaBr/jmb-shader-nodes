@@ -52,13 +52,13 @@ public class RenameSndParameterOperation extends AbstractEditorOperation<ChangeC
     @FxThread
     protected void redoImpl(@NotNull final ChangeConsumer editor) {
         variable.setName(newName);
-        editor.notifyFXChangeProperty(parameters, variable, Messages.MODEL_PROPERTY_NAME);
+        editor.notifyFxChangeProperty(parameters, variable, Messages.MODEL_PROPERTY_NAME);
     }
 
     @Override
     @FxThread
     protected void undoImpl(@NotNull final ChangeConsumer editor) {
         variable.setName(oldName);
-        editor.notifyFXChangeProperty(parameters, variable, Messages.MODEL_PROPERTY_NAME);
+        editor.notifyFxChangeProperty(parameters, variable, Messages.MODEL_PROPERTY_NAME);
     }
 }

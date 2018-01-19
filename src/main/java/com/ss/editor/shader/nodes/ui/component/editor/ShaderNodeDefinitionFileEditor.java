@@ -8,15 +8,15 @@ import com.jme3.shader.ShaderNodeDefinition;
 import com.jme3.shader.glsl.parser.GlslParser;
 import com.ss.editor.FileExtensions;
 import com.ss.editor.annotation.BackgroundThread;
-import com.ss.editor.annotation.FxThread;
 import com.ss.editor.annotation.FromAnyThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.extension.property.EditableProperty;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.plugin.api.editor.BaseFileEditorWithSplitRightTool;
 import com.ss.editor.shader.nodes.PluginMessages;
-import com.ss.editor.shader.nodes.ui.component.editor.state.ShaderNodeDefinitionEditorState;
 import com.ss.editor.shader.nodes.model.shader.node.definition.SndList;
 import com.ss.editor.shader.nodes.model.shader.node.definition.SndShaderSource;
+import com.ss.editor.shader.nodes.ui.component.editor.state.ShaderNodeDefinitionEditorState;
 import com.ss.editor.shader.nodes.util.J3snExporter;
 import com.ss.editor.ui.component.editor.EditorDescription;
 import com.ss.editor.ui.component.editor.state.EditorState;
@@ -25,7 +25,7 @@ import com.ss.editor.ui.control.code.GLSLCodeArea;
 import com.ss.editor.ui.control.property.PropertyEditor;
 import com.ss.editor.ui.control.tree.NodeTree;
 import com.ss.editor.ui.control.tree.node.TreeNode;
-import com.ss.editor.ui.css.CSSClasses;
+import com.ss.editor.ui.css.CssClasses;
 import com.ss.editor.util.EditorUtil;
 import com.ss.rlib.ui.util.FXUtils;
 import com.ss.rlib.util.FileUtils;
@@ -130,7 +130,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
         container.addComponent(buildSplitComponent(structureTree, propertyEditor, root),
                 PluginMessages.SND_EDITOR_TOOL_STRUCTURE);
 
-        FXUtils.addClassTo(structureTree.getTreeView(), CSSClasses.TRANSPARENT_TREE_VIEW);
+        FXUtils.addClassTo(structureTree.getTreeView(), CssClasses.TRANSPARENT_TREE_VIEW);
     }
 
     @FxThread
@@ -438,7 +438,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
 
     @Override
     @FxThread
-    public void notifyFXAddedChild(@NotNull final Object parent, @NotNull final Object added, final int index,
+    public void notifyFxAddedChild(@NotNull final Object parent, @NotNull final Object added, final int index,
                                    final boolean needSelect) {
 
         final NodeTree<ChangeConsumer> structureTree = getStructureTree();
@@ -451,15 +451,15 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
 
     @Override
     @FxThread
-    public void notifyFXRemovedChild(@NotNull final Object parent, @NotNull final Object removed) {
+    public void notifyFxRemovedChild(@NotNull final Object parent, @NotNull final Object removed) {
         getStructureTree().notifyRemoved(parent, removed);
     }
 
     @Override
     @FxThread
-    public void notifyFXChangeProperty(@Nullable final Object parent, @NotNull final Object object,
+    public void notifyFxChangeProperty(@Nullable final Object parent, @NotNull final Object object,
                                        @NotNull final String propertyName) {
-        super.notifyFXChangeProperty(parent, object, propertyName);
+        super.notifyFxChangeProperty(parent, object, propertyName);
 
         final NodeTree<ChangeConsumer> structureTree = getStructureTree();
         structureTree.notifyChanged(parent, object);

@@ -55,7 +55,7 @@ public class ChangeLightModeOperation extends ShaderNodeOperation {
 
         createLogic(techniqueDef);
 
-        editor.notifyFXChangeProperty(techniqueDef, Messages.MODEL_PROPERTY_LIGHT_MODE);
+        editor.notifyFxChangeProperty(techniqueDef, Messages.MODEL_PROPERTY_LIGHT_MODE);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class ChangeLightModeOperation extends ShaderNodeOperation {
 
         createLogic(techniqueDef);
 
-        editor.notifyFXChangeProperty(techniqueDef, Messages.MODEL_PROPERTY_LIGHT_MODE);
+        editor.notifyFxChangeProperty(techniqueDef, Messages.MODEL_PROPERTY_LIGHT_MODE);
     }
 
     /**

@@ -36,13 +36,13 @@ public class AddSndShaderSourceOperation extends AbstractEditorOperation<ChangeC
     @FxThread
     protected void redoImpl(@NotNull final ChangeConsumer editor) {
         shaderSources.add(shaderSource);
-        editor.notifyFXAddedChild(shaderSources, shaderSource, -1, true);
+        editor.notifyFxAddedChild(shaderSources, shaderSource, -1, true);
     }
 
     @Override
     @FxThread
     protected void undoImpl(@NotNull final ChangeConsumer editor) {
         shaderSources.remove(shaderSource);
-        editor.notifyFXRemovedChild(shaderSources, shaderSources);
+        editor.notifyFxRemovedChild(shaderSources, shaderSources);
     }
 }
