@@ -21,6 +21,8 @@ import org.jetbrains.annotations.Nullable;
 public interface ShaderNodesChangeConsumer extends ChangeConsumer {
 
     /**
+     * Get the edited material definition.
+     * 
      * @return the edited material definition.
      */
     @FromAnyThread

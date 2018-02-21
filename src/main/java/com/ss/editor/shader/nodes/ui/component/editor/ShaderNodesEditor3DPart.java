@@ -12,9 +12,9 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author JavaSaBr
  */
-public class ShaderNodesEditor3DState extends BaseMaterialEditor3DPart<ShaderNodesFileEditor> {
+public class ShaderNodesEditor3DPart extends BaseMaterialEditor3DPart<ShaderNodesFileEditor> {
 
-    public ShaderNodesEditor3DState(@NotNull final ShaderNodesFileEditor fileEditor) {
+    public ShaderNodesEditor3DPart(@NotNull final ShaderNodesFileEditor fileEditor) {
         super(fileEditor);
     }
 

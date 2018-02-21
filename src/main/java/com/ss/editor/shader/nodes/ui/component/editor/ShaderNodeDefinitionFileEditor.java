@@ -30,8 +30,10 @@ import com.ss.editor.util.EditorUtil;
 import com.ss.rlib.ui.util.FXUtils;
 import com.ss.rlib.util.FileUtils;
 import com.ss.rlib.util.StringUtils;
+import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.dictionary.DictionaryFactory;
 import com.ss.rlib.util.dictionary.ObjectDictionary;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -123,7 +125,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
     protected void createToolComponents(@NotNull final EditorToolComponent container, @NotNull final StackPane root) {
         super.createToolComponents(container, root);
 
-        structureTree = new NodeTree<>(this::selectFromTree, this);
+        structureTree = new NodeTree<>(this::selectFromTree, this, SelectionMode.SINGLE);
         propertyEditor = new PropertyEditor<>(this);
         propertyEditor.prefHeightProperty().bind(root.heightProperty());
 
@@ -164,17 +166,18 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
     }
 
     /**
-     * Handle selected object from the structure tree.
+     * Handle selected objects from the structure tree.
      *
-     * @param object the selected object.
+     * @param objects the selected objects.
      */
     @FxThread
-    private void selectFromTree(@Nullable final Object object) {
+    private void selectFromTree(@NotNull final Array<Object> objects) {
         setEditedShader(null);
 
         final GLSLCodeArea codeArea = getCodeArea();
         codeArea.setEditable(false);
 
+        final Object object = objects.first();
         Object parent = null;
         Object element;
 
@@ -190,7 +193,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
         if (element instanceof SndShaderSource) {
 
             final SndShaderSource shaderSource = (SndShaderSource) element;
-            final String code = getGLSLCode(shaderSource.getShaderPath());
+            final String code = getGlslCode(shaderSource.getShaderPath());
 
             EXECUTOR_MANAGER.schedule(() -> {
                 try {
@@ -255,6 +258,8 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
     }
 
     /**
+     * Return true if need to ignore GLSL code changes.
+     *
      * @return true if need to ignore GLSL code changes.
      */
     @FxThread
@@ -263,6 +268,8 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
     }
 
     /**
+     * Set true if need to ignore GLSL code changes.
+     *
      * @param ignoreCodeChanges true if need to ignore GLSL code changes.
      */
     @FxThread
@@ -277,7 +284,10 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
      */
     @FxThread
     private void changeGLSLCode(@NotNull final String glslCode) {
-        if (isIgnoreCodeChanges()) return;
+
+        if (isIgnoreCodeChanges()) {
+            return;
+        }
 
         final String editedShader = getEditedShader();
         if (editedShader == null) {
@@ -302,7 +312,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
      * @return the GLSL code.
      */
     @FxThread
-    private @NotNull String getGLSLCode(@NotNull final String shaderPath) {
+    private @NotNull String getGlslCode(@NotNull final String shaderPath) {
 
         final ObjectDictionary<String, String> glslChangedContent = getGlslChangedContent();
         final String glslCode = glslChangedContent.get(shaderPath);
@@ -445,7 +455,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
         structureTree.notifyAdded(parent, added, index);
 
         if (needSelect) {
-            structureTree.select(added);
+            structureTree.selectSingle(added);
         }
     }
 

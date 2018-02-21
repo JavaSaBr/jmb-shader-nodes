@@ -210,7 +210,8 @@ public class TechniqueDefState extends AbstractEditorState {
      */
     @FxThread
     public @Nullable ShaderNodeState getState(@NotNull final ShaderNode shaderNode) {
-        return shaderNodeStates.stream().filter(variableState -> variableState.getName().equals(shaderNode.getName()))
+        return shaderNodeStates.stream()
+                .filter(varState -> varState.getName().equals(shaderNode.getName()))
                 .findAny().orElse(null);
     }
 

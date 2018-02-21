@@ -56,8 +56,7 @@ public class ShaderNodesTreeNodeFactory implements TreeNodeFactory {
     }
 
     @Override
-    @FxThread
-    public int getOrder() {
+    public int getPriority() {
         return 5;
     }
 }

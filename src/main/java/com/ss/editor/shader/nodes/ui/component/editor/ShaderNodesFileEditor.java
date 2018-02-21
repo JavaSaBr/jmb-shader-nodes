@@ -89,7 +89,7 @@ import java.util.function.Supplier;
  * @author JavaSaBr
  */
 public class ShaderNodesFileEditor extends
-        BaseMaterialFileEditor<ShaderNodesEditor3DState, ShaderNodesEditorState, ShaderNodesChangeConsumer> implements
+        BaseMaterialFileEditor<ShaderNodesEditor3DPart, ShaderNodesEditorState, ShaderNodesChangeConsumer> implements
         ShaderNodesChangeConsumer {
 
     @NotNull
@@ -185,8 +185,8 @@ public class ShaderNodesFileEditor extends
 
     @Override
     @FxThread
-    protected @NotNull ShaderNodesEditor3DState create3DEditorPart() {
-        return new ShaderNodesEditor3DState(this);
+    protected @NotNull ShaderNodesEditor3DPart create3DEditorPart() {
+        return new ShaderNodesEditor3DPart(this);
     }
 
     @Override
@@ -240,7 +240,7 @@ public class ShaderNodesFileEditor extends
 
         setMaterialDef(materialDef);
 
-        final ShaderNodesEditor3DState editor3DPart = getEditor3DPart();
+        final ShaderNodesEditor3DPart editor3DPart = getEditor3DPart();
         editor3DPart.updateMaterial(EditorUtil.getDefaultMaterial());
         editor3DPart.changeMode(ModelType.BOX);
     }
