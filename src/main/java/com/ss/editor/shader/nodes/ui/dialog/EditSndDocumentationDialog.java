@@ -1,15 +1,15 @@
 package com.ss.editor.shader.nodes.ui.dialog;
 
-import static com.ss.editor.ui.util.UIUtils.consumeIf;
+import static com.ss.editor.ui.util.UiUtils.consumeIf;
 import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.jme3.shader.ShaderNodeDefinition;
 import com.ss.editor.Messages;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.ui.control.tree.operation.ChangeSndDocumentationOperation;
-import com.ss.editor.shader.nodes.ui.PluginCSSClasses;
+import com.ss.editor.shader.nodes.ui.PluginCssClasses;
 import com.ss.editor.shader.nodes.ui.component.SndDocumentationArea;
 import com.ss.editor.ui.dialog.AbstractSimpleEditorDialog;
 import com.ss.rlib.ui.util.FXUtils;
@@ -61,13 +61,13 @@ public class EditSndDocumentationDialog extends AbstractSimpleEditorDialog {
      *
      * @return the editor area.
      */
-    @FXThread
+    @FxThread
     private @NotNull SndDocumentationArea getEditorArea() {
         return notNull(editorArea);
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void createContent(@NotNull final VBox root) {
         super.createContent(root);
 
@@ -75,7 +75,7 @@ public class EditSndDocumentationDialog extends AbstractSimpleEditorDialog {
         editorArea.setOnKeyReleased(event -> consumeIf(event,
                 keyEvent -> keyEvent.getCode() == KeyCode.ENTER));
 
-        FXUtils.addClassTo(editorArea, PluginCSSClasses.SHADER_NODE_DEF_DOCUMENTATION_DIALOG);
+        FXUtils.addClassTo(editorArea, PluginCssClasses.SHADER_NODE_DEF_DOCUMENTATION_DIALOG);
         FXUtils.addToPane(editorArea, root);
     }
 
@@ -92,7 +92,7 @@ public class EditSndDocumentationDialog extends AbstractSimpleEditorDialog {
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void processOk() {
         super.processOk();
 

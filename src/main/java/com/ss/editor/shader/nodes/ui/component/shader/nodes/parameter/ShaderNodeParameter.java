@@ -1,9 +1,9 @@
 package com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter;
 
-import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE_PARAMETER;
-import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE_PARAMETER_SOCKET;
+import static com.ss.editor.shader.nodes.ui.PluginCssClasses.SHADER_NODE_PARAMETER;
+import static com.ss.editor.shader.nodes.ui.PluginCssClasses.SHADER_NODE_PARAMETER_SOCKET;
 import com.jme3.shader.ShaderNodeVariable;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.socket.SocketElement;
 import com.ss.rlib.ui.util.FXUtils;
@@ -65,7 +65,7 @@ public class ShaderNodeParameter extends HBox {
      *
      * @return the shader nodes element.
      */
-    @FXThread
+    @FxThread
     public @NotNull ShaderNodeElement<?> getNodeElement() {
         return nodeElement;
     }
@@ -75,7 +75,7 @@ public class ShaderNodeParameter extends HBox {
      *
      * @return the socket element.
      */
-    @FXThread
+    @FxThread
     protected @NotNull SocketElement createSocket() {
         return new SocketElement(this);
     }
@@ -83,7 +83,7 @@ public class ShaderNodeParameter extends HBox {
     /**
      * @return the type label.
      */
-    @FXThread
+    @FxThread
     protected @NotNull Label getTypeLabel() {
         return typeLabel;
     }
@@ -91,7 +91,7 @@ public class ShaderNodeParameter extends HBox {
     /**
      * @return the name label.
      */
-    @FXThread
+    @FxThread
     protected @NotNull Label getNameLabel() {
         return nameLabel;
     }
@@ -99,7 +99,7 @@ public class ShaderNodeParameter extends HBox {
     /**
      * @return the socket.
      */
-    @FXThread
+    @FxThread
     public @NotNull SocketElement getSocket() {
         return socket;
     }
@@ -107,7 +107,7 @@ public class ShaderNodeParameter extends HBox {
     /**
      * @return the variable.
      */
-    @FXThread
+    @FxThread
     public @NotNull ShaderNodeVariable getVariable() {
         return variable;
     }
@@ -115,7 +115,7 @@ public class ShaderNodeParameter extends HBox {
     /**
      * Create content of this parameter.
      */
-    @FXThread
+    @FxThread
     protected void createContent() {
 
         final ShaderNodeVariable variable = getVariable();

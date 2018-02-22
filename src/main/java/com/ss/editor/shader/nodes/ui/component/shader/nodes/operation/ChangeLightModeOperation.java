@@ -4,7 +4,7 @@ import com.jme3.material.MaterialDef;
 import com.jme3.material.TechniqueDef;
 import com.jme3.material.logic.*;
 import com.ss.editor.Messages;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesChangeConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,9 +39,9 @@ public class ChangeLightModeOperation extends ShaderNodeOperation {
     }
 
     @Override
-    @FXThread
-    protected void redoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.redoImplInFXThread(editor);
+    @FxThread
+    protected void redoImplInFxThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.redoImplInFxThread(editor);
 
         final MaterialDef materialDef = editor.getMaterialDef();
         final List<TechniqueDef> techniqueDefs = materialDef.getTechniqueDefs(techniqueName);
@@ -55,13 +55,13 @@ public class ChangeLightModeOperation extends ShaderNodeOperation {
 
         createLogic(techniqueDef);
 
-        editor.notifyFXChangeProperty(techniqueDef, Messages.MODEL_PROPERTY_LIGHT_MODE);
+        editor.notifyFxChangeProperty(techniqueDef, Messages.MODEL_PROPERTY_LIGHT_MODE);
     }
 
     @Override
-    @FXThread
-    protected void undoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.undoImplInFXThread(editor);
+    @FxThread
+    protected void undoImplInFxThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.undoImplInFxThread(editor);
 
         final MaterialDef materialDef = editor.getMaterialDef();
         final List<TechniqueDef> techniqueDefs = materialDef.getTechniqueDefs(techniqueName);
@@ -75,7 +75,7 @@ public class ChangeLightModeOperation extends ShaderNodeOperation {
 
         createLogic(techniqueDef);
 
-        editor.notifyFXChangeProperty(techniqueDef, Messages.MODEL_PROPERTY_LIGHT_MODE);
+        editor.notifyFxChangeProperty(techniqueDef, Messages.MODEL_PROPERTY_LIGHT_MODE);
     }
 
     /**
@@ -83,7 +83,7 @@ public class ChangeLightModeOperation extends ShaderNodeOperation {
      *
      * @param techniqueDef the technique def.
      */
-    @FXThread
+    @FxThread
     private void createLogic(@NotNull final TechniqueDef techniqueDef) {
         switch (techniqueDef.getLightMode()) {
             case SinglePass: {

@@ -14,6 +14,7 @@ import com.jme3.material.logic.*;
 import com.jme3.material.plugin.export.materialdef.J3mdExporter;
 import com.jme3.material.plugins.J3MLoader;
 import com.jme3.math.Vector2f;
+import com.jme3.renderer.RenderManager;
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.UniformBinding;
@@ -21,11 +22,11 @@ import com.jme3.shader.VariableMapping;
 import com.ss.editor.FileExtensions;
 import com.ss.editor.Messages;
 import com.ss.editor.annotation.BackgroundThread;
-import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.manager.ResourceManager;
 import com.ss.editor.plugin.api.dialog.GenericFactoryDialog;
-import com.ss.editor.plugin.api.editor.material.BaseMaterialEditor3DState.ModelType;
+import com.ss.editor.plugin.api.editor.material.BaseMaterialEditor3DPart;
 import com.ss.editor.plugin.api.editor.material.BaseMaterialFileEditor;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
 import com.ss.editor.shader.nodes.PluginMessages;
@@ -52,10 +53,10 @@ import com.ss.editor.ui.component.editor.EditorDescription;
 import com.ss.editor.ui.component.editor.state.EditorState;
 import com.ss.editor.ui.component.tab.EditorToolComponent;
 import com.ss.editor.ui.control.property.PropertyEditor;
-import com.ss.editor.ui.css.CSSClasses;
+import com.ss.editor.ui.css.CssClasses;
 import com.ss.editor.ui.dialog.asset.virtual.StringVirtualAssetEditorDialog;
 import com.ss.editor.ui.util.DynamicIconSupport;
-import com.ss.editor.ui.util.UIUtils;
+import com.ss.editor.ui.util.UiUtils;
 import com.ss.editor.util.EditorUtil;
 import com.ss.editor.util.MaterialUtils;
 import com.ss.rlib.ui.util.FXUtils;
@@ -88,7 +89,7 @@ import java.util.function.Supplier;
  * @author JavaSaBr
  */
 public class ShaderNodesFileEditor extends
-        BaseMaterialFileEditor<ShaderNodesEditor3DState, ShaderNodesEditorState, ShaderNodesChangeConsumer> implements
+        BaseMaterialFileEditor<ShaderNodesEditor3DPart, ShaderNodesEditorState, ShaderNodesChangeConsumer> implements
         ShaderNodesChangeConsumer {
 
     @NotNull
@@ -183,23 +184,23 @@ public class ShaderNodesFileEditor extends
     private boolean ignoreLightModeChanges;
 
     @Override
-    @FXThread
-    protected @NotNull ShaderNodesEditor3DState create3DEditorState() {
-        return new ShaderNodesEditor3DState(this);
+    @FxThread
+    protected @NotNull ShaderNodesEditor3DPart create3DEditorPart() {
+        return new ShaderNodesEditor3DPart(this);
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @Nullable Supplier<EditorState> getEditorStateFactory() {
         return ShaderNodesEditorState::new;
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void doOpenFile(@NotNull final Path file) throws IOException {
         super.doOpenFile(file);
 
-        final AssetManager assetManager = EDITOR.getAssetManager();
+        final AssetManager assetManager = EditorUtil.getAssetManager();
         final BinaryImporter importer = BinaryImporter.getInstance();
         importer.setAssetManager(assetManager);
 
@@ -238,18 +239,18 @@ public class ShaderNodesFileEditor extends
         });
 
         setMaterialDef(materialDef);
-        getEditor3DState().updateMaterial(EDITOR.getDefaultMaterial());
 
-        final ShaderNodesEditor3DState editor3DState = getEditor3DState();
-        editor3DState.changeMode(ModelType.BOX);
+        final ShaderNodesEditor3DPart editor3DPart = getEditor3DPart();
+        editor3DPart.updateMaterial(EditorUtil.getDefaultMaterial());
+        editor3DPart.changeMode(BaseMaterialEditor3DPart.ModelType.BOX);
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void loadState() {
         super.loadState();
 
-        EXECUTOR_MANAGER.addFXTask(this::buildMaterial);
+        EXECUTOR_MANAGER.addFxTask(this::buildMaterial);
 
         final ShaderNodesEditorState editorState = getEditorState();
         if (editorState == null) {
@@ -298,7 +299,7 @@ public class ShaderNodesFileEditor extends
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void createEditorAreaPane() {
         super.createEditorAreaPane();
 
@@ -316,21 +317,24 @@ public class ShaderNodesFileEditor extends
         });
 
         FXUtils.addToPane(splitPanel, editorAreaPane);
-        FXUtils.addClassTo(splitPanel, CSSClasses.FILE_EDITOR_TOOL_SPLIT_PANE);
+        FXUtils.addClassTo(splitPanel, CssClasses.FILE_EDITOR_TOOL_SPLIT_PANE);
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void createToolComponents(@NotNull final EditorToolComponent container, @NotNull final StackPane root) {
         super.createToolComponents(container, root);
 
-        fragmentPreview = new FragmentShaderCodePreviewComponent(EDITOR.getAssetManager(), EDITOR.getRenderManager());
+        final AssetManager assetManager = EditorUtil.getAssetManager();
+        final RenderManager renderManager = EditorUtil.getRenderManager();
+
+        fragmentPreview = new FragmentShaderCodePreviewComponent(assetManager, renderManager);
         fragmentPreview.prefHeightProperty().bind(root.heightProperty());
 
-        vertexPreview = new VertexShaderCodePreviewComponent(EDITOR.getAssetManager(), EDITOR.getRenderManager());
+        vertexPreview = new VertexShaderCodePreviewComponent(assetManager, renderManager);
         vertexPreview.prefHeightProperty().bind(root.heightProperty());
 
-        matDefPreview = new MaterialDefCodePreviewComponent(EDITOR.getAssetManager(), EDITOR.getRenderManager());
+        matDefPreview = new MaterialDefCodePreviewComponent(assetManager, renderManager);
         matDefPreview.prefHeightProperty().bind(root.heightProperty());
 
         container.addComponent(vertexPreview, PluginMessages.SNS_EDITOR_TOOL_VERTEX);
@@ -359,7 +363,7 @@ public class ShaderNodesFileEditor extends
      *
      * @return the fragment preview component.
      */
-    @FXThread
+    @FxThread
     private @NotNull ShaderCodePreviewComponent getFragmentPreview() {
         return notNull(fragmentPreview);
     }
@@ -369,7 +373,7 @@ public class ShaderNodesFileEditor extends
      *
      * @return the vertex preview component.
      */
-    @FXThread
+    @FxThread
     private @NotNull ShaderCodePreviewComponent getVertexPreview() {
         return notNull(vertexPreview);
     }
@@ -379,13 +383,13 @@ public class ShaderNodesFileEditor extends
      *
      * @return the material definition preview component.
      */
-    @FXThread
+    @FxThread
     private @NotNull MaterialDefCodePreviewComponent getMatDefPreview() {
         return notNull(matDefPreview);
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void createActions(@NotNull final HBox container) {
         super.createActions(container);
 
@@ -401,12 +405,12 @@ public class ShaderNodesFileEditor extends
 
         FXUtils.addToPane(exportAction, importAction, container);
 
-        FXUtils.addClassesTo(exportAction, importAction, CSSClasses.FLAT_BUTTON, CSSClasses.FILE_EDITOR_TOOLBAR_BUTTON);
+        FXUtils.addClassesTo(exportAction, importAction, CssClasses.FLAT_BUTTON, CssClasses.FILE_EDITOR_TOOLBAR_BUTTON);
         DynamicIconSupport.addSupport(exportAction, importAction);
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void createToolbar(@NotNull final HBox container) {
         super.createToolbar(container);
 
@@ -433,15 +437,15 @@ public class ShaderNodesFileEditor extends
 
         FXUtils.addToPane(lightModeLabel, lightModeComboBox, container);
         FXUtils.addToPane(techniqueLabel, techniqueComboBox, addTechnique, container);
-        FXUtils.addClassTo(techniqueLabel, lightModeLabel, CSSClasses.FILE_EDITOR_TOOLBAR_LABEL);
-        FXUtils.addClassTo(techniqueComboBox, lightModeComboBox, CSSClasses.FILE_EDITOR_TOOLBAR_FIELD);
-        FXUtils.addClassesTo(addTechnique, CSSClasses.FLAT_BUTTON, CSSClasses.FILE_EDITOR_TOOLBAR_BUTTON);
+        FXUtils.addClassTo(techniqueLabel, lightModeLabel, CssClasses.FILE_EDITOR_TOOLBAR_LABEL);
+        FXUtils.addClassTo(techniqueComboBox, lightModeComboBox, CssClasses.FILE_EDITOR_TOOLBAR_FIELD);
+        FXUtils.addClassesTo(addTechnique, CssClasses.FLAT_BUTTON, CssClasses.FILE_EDITOR_TOOLBAR_BUTTON);
     }
 
     /**
      * Add new technique.
      */
-    @FXThread
+    @FxThread
     private void addTechnique() {
 
         final Array<PropertyDefinition> definitions = ArrayFactory.newArray(PropertyDefinition.class);
@@ -452,7 +456,7 @@ public class ShaderNodesFileEditor extends
         dialog.show();
     }
 
-    @FXThread
+    @FxThread
     private boolean validateTechnique(@NotNull final VarTable vars) {
         final String name = vars.getString(PROP_TECHNIQUE_NAME);
         final MaterialDef materialDef = getMaterialDef();
@@ -460,7 +464,7 @@ public class ShaderNodesFileEditor extends
         return techniqueDefs == null && !name.isEmpty();
     }
 
-    @FXThread
+    @FxThread
     private void addTechnique(@NotNull final VarTable vars) {
 
         final ShaderNodeVariable vertexGlobal = new ShaderNodeVariable("vec4", "Global", "position", null, "");
@@ -514,19 +518,19 @@ public class ShaderNodesFileEditor extends
     /**
      * Export the result material definition as a file.
      */
-    @FXThread
+    @FxThread
     private void export() {
-        UIUtils.openSaveAsDialog(this::export, FileExtensions.JME_MATERIAL_DEFINITION, ACTION_TESTER);
+        UiUtils.openSaveAsDialog(this::export, FileExtensions.JME_MATERIAL_DEFINITION, ACTION_TESTER);
     }
 
     /**
      * Import other material definition file to this project.
      */
-    @FXThread
+    @FxThread
     private void importMatDef() {
         final ResourceManager resourceManager = ResourceManager.getInstance();
         final Array<String> resources = resourceManager.getAvailableResources(FileExtensions.JME_MATERIAL_DEFINITION);
-        UIUtils.openResourceAssetDialog(this::importMatDef, this::validateMatDef, resources);
+        UiUtils.openResourceAssetDialog(this::importMatDef, this::validateMatDef, resources);
     }
 
     /**
@@ -535,7 +539,7 @@ public class ShaderNodesFileEditor extends
      * @param assetPath the asset path.
      * @return the message or null if it's ok.
      */
-    @FXThread
+    @FxThread
     private String validateMatDef(@NotNull final String assetPath) {
 
         final String message = StringVirtualAssetEditorDialog.DEFAULT_VALIDATOR.apply(assetPath);
@@ -543,7 +547,7 @@ public class ShaderNodesFileEditor extends
             return message;
         }
 
-        final AssetManager assetManager = EDITOR.getAssetManager();
+        final AssetManager assetManager = EditorUtil.getAssetManager();
         final MaterialDef materialDef = (MaterialDef) assetManager.loadAsset(assetPath);
         final Collection<String> techniqueDefsNames = materialDef.getTechniqueDefsNames();
 
@@ -564,7 +568,7 @@ public class ShaderNodesFileEditor extends
      *
      * @param path the file.
      */
-    @FXThread
+    @FxThread
     private void export(@NotNull final Path path) {
 
         final J3mdExporter exporter = new J3mdExporter();
@@ -584,10 +588,10 @@ public class ShaderNodesFileEditor extends
      *
      * @param resource the resource.
      */
-    @FXThread
+    @FxThread
     private void importMatDef(@NotNull final String resource) {
 
-        final AssetManager assetManager = EDITOR.getAssetManager();
+        final AssetManager assetManager = EditorUtil.getAssetManager();
         final MaterialDef matDef = (MaterialDef) assetManager.loadAsset(resource);
 
         setMaterialDef(matDef);
@@ -599,7 +603,7 @@ public class ShaderNodesFileEditor extends
      *
      * @return the light modes combo box.
      */
-    @FXThread
+    @FxThread
     private @NotNull ComboBox<LightMode> getLightModeComboBox() {
         return notNull(lightModeComboBox);
     }
@@ -607,7 +611,7 @@ public class ShaderNodesFileEditor extends
     /**
      * @return true if need to skip changes of light modes.
      */
-    @FXThread
+    @FxThread
     private boolean isIgnoreLightModeChanges() {
         return ignoreLightModeChanges;
     }
@@ -615,7 +619,7 @@ public class ShaderNodesFileEditor extends
     /**
      * @param ignoreLightModeChanges true if need to skip changes of light modes.
      */
-    @FXThread
+    @FxThread
     private void setIgnoreLightModeChanges(final boolean ignoreLightModeChanges) {
         this.ignoreLightModeChanges = ignoreLightModeChanges;
     }
@@ -623,7 +627,7 @@ public class ShaderNodesFileEditor extends
     /**
      * Handle changing the technique.
      */
-    @FXThread
+    @FxThread
     private void changeTechnique(@Nullable final String newValue) {
 
         final Material currentMaterial = getCurrentMaterial();
@@ -657,7 +661,7 @@ public class ShaderNodesFileEditor extends
 
         getFragmentPreview().load(techniqueDef);
         getVertexPreview().load(techniqueDef);
-        getEditor3DState().selectTechnique(currentMaterial, newValue);
+        getEditor3DPart().selectTechnique(currentMaterial, newValue);
 
         setIgnoreLightModeChanges(true);
         try {
@@ -670,7 +674,7 @@ public class ShaderNodesFileEditor extends
     /**
      * Handle changing the light mode of this current technique.
      */
-    @FXThread
+    @FxThread
     private void changeLightMode(@Nullable final LightMode prevLightMode, @Nullable final LightMode newLightMode) {
         if (isIgnoreLightModeChanges() || prevLightMode == null || newLightMode == null) return;
 
@@ -683,7 +687,7 @@ public class ShaderNodesFileEditor extends
     /**
      * @return the project file.
      */
-    @FXThread
+    @FxThread
     private @NotNull ShaderNodesProject getProject() {
         return notNull(project);
     }
@@ -691,7 +695,7 @@ public class ShaderNodesFileEditor extends
     /**
      * @param project the project file.
      */
-    @FXThread
+    @FxThread
     private void setProject(@NotNull final ShaderNodesProject project) {
         this.project = project;
     }
@@ -699,7 +703,7 @@ public class ShaderNodesFileEditor extends
     /**
      * @return the current built material.
      */
-    @FXThread
+    @FxThread
     private @Nullable Material getCurrentMaterial() {
         return currentMaterial;
     }
@@ -707,7 +711,7 @@ public class ShaderNodesFileEditor extends
     /**
      * @param currentMaterial the current built material.
      */
-    @FXThread
+    @FxThread
     private void setCurrentMaterial(@Nullable final Material currentMaterial) {
         this.currentMaterial = currentMaterial;
     }
@@ -717,7 +721,7 @@ public class ShaderNodesFileEditor extends
      *
      * @param materialDef the current edited material definition.
      */
-    @FXThread
+    @FxThread
     private void setMaterialDef(@NotNull final MaterialDef materialDef) {
         this.materialDef = materialDef;
     }
@@ -737,7 +741,7 @@ public class ShaderNodesFileEditor extends
     /**
      * Build material for shader nodes.
      */
-    @FXThread
+    @FxThread
     private void buildMaterial() {
 
         final Material currentMaterial = getCurrentMaterial();
@@ -773,7 +777,7 @@ public class ShaderNodesFileEditor extends
 
         setCurrentMaterial(newMaterial);
         getShaderNodesContainer().notifyChangedMaterial();
-        getEditor3DState().updateMaterial(newMaterial);
+        getEditor3DPart().updateMaterial(newMaterial);
         getMatDefPreview().load(newMaterial.getMaterialDef());
 
         if (items.contains(currentTechnique)) {
@@ -797,7 +801,7 @@ public class ShaderNodesFileEditor extends
         final Collection<MatParam> materialParams = materialDef.getMaterialParams();
         final Collection<String> techniqueDefsNames = materialDef.getTechniqueDefsNames();
 
-        final MaterialDef newMaterialDef = new MaterialDef(EDITOR.getAssetManager(), materialDef.getAssetName());
+        final MaterialDef newMaterialDef = new MaterialDef(EditorUtil.getAssetManager(), materialDef.getAssetName());
 
         materialParams.stream()
                 .filter(MatParamTexture.class::isInstance)
@@ -827,7 +831,7 @@ public class ShaderNodesFileEditor extends
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void notifyAddedMapping(@NotNull final ShaderNode shaderNode, @NotNull final VariableMapping mapping) {
         buildMaterial();
         final ShaderNodesContainer container = getShaderNodesContainer();
@@ -835,7 +839,7 @@ public class ShaderNodesFileEditor extends
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void notifyRemovedMapping(@NotNull final ShaderNode shaderNode, @NotNull final VariableMapping mapping) {
         buildMaterial();
         final ShaderNodesContainer container = getShaderNodesContainer();
@@ -843,7 +847,7 @@ public class ShaderNodesFileEditor extends
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void notifyReplacedMapping(@NotNull final ShaderNode shaderNode, @NotNull final VariableMapping oldMapping,
                                       @NotNull final VariableMapping newMapping) {
         buildMaterial();
@@ -851,7 +855,7 @@ public class ShaderNodesFileEditor extends
         container.refreshLines();
     }
 
-    @FXThread
+    @FxThread
     @Override
     public void notifyAddedMatParameter(@NotNull final MatParam matParam, @NotNull final Vector2f location) {
         buildMaterial();
@@ -859,7 +863,7 @@ public class ShaderNodesFileEditor extends
         container.addMatParam(matParam, location);
     }
 
-    @FXThread
+    @FxThread
     @Override
     public void notifyRemovedMatParameter(@NotNull final MatParam matParam) {
         buildMaterial();
@@ -867,7 +871,7 @@ public class ShaderNodesFileEditor extends
         container.removeMatParam(matParam);
     }
 
-    @FXThread
+    @FxThread
     @Override
     public void notifyAddedAttribute(@NotNull final ShaderNodeVariable variable, @NotNull final Vector2f location) {
         buildMaterial();
@@ -875,7 +879,7 @@ public class ShaderNodesFileEditor extends
         container.addNodeElement(variable, location);
     }
 
-    @FXThread
+    @FxThread
     @Override
     public void notifyRemovedAttribute(@NotNull final ShaderNodeVariable variable) {
         buildMaterial();
@@ -884,7 +888,7 @@ public class ShaderNodesFileEditor extends
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void notifyAddedWorldParameter(@NotNull final UniformBinding binding, @NotNull final Vector2f location) {
         buildMaterial();
         final ShaderNodesContainer container = getShaderNodesContainer();
@@ -892,7 +896,7 @@ public class ShaderNodesFileEditor extends
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void notifyRemovedWorldParameter(@NotNull final UniformBinding binding) {
         buildMaterial();
         final ShaderNodesContainer container = getShaderNodesContainer();
@@ -900,7 +904,7 @@ public class ShaderNodesFileEditor extends
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void notifyAddedShaderNode(@NotNull final ShaderNode shaderNode, @NotNull final Vector2f location) {
         buildMaterial();
         final ShaderNodesContainer container = getShaderNodesContainer();
@@ -908,7 +912,7 @@ public class ShaderNodesFileEditor extends
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void notifyRemovedRemovedShaderNode(@NotNull final ShaderNode shaderNode) {
         buildMaterial();
         final ShaderNodesContainer container = getShaderNodesContainer();
@@ -916,7 +920,7 @@ public class ShaderNodesFileEditor extends
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void notifyChangeState(@NotNull final ShaderNode shaderNode, @NotNull final Vector2f location,
                                   final double width) {
 
@@ -926,7 +930,7 @@ public class ShaderNodesFileEditor extends
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void notifyChangeState(@NotNull final ShaderNodeVariable variable, @NotNull final Vector2f location,
                                   final double width) {
 
@@ -936,7 +940,7 @@ public class ShaderNodesFileEditor extends
     }
 
     @Override
-    @FXThread
+    @FxThread
     public @Nullable Vector2f getLocation(@NotNull final ShaderNode shaderNode) {
         final TechniqueDefState state = getTechniqueDefState();
         if (state == null) return null;
@@ -945,7 +949,7 @@ public class ShaderNodesFileEditor extends
     }
 
     @Override
-    @FXThread
+    @FxThread
     public @Nullable Vector2f getLocation(@NotNull final ShaderNodeVariable variable) {
         final TechniqueDefState state = getTechniqueDefState();
         if (state == null) return null;
@@ -954,7 +958,7 @@ public class ShaderNodesFileEditor extends
     }
 
     @Override
-    @FXThread
+    @FxThread
     public double getWidth(@NotNull final ShaderNode shaderNode) {
         final TechniqueDefState state = getTechniqueDefState();
         if (state == null) return 0D;
@@ -963,7 +967,7 @@ public class ShaderNodesFileEditor extends
     }
 
     @Override
-    @FXThread
+    @FxThread
     public double getWidth(@NotNull final ShaderNodeVariable variable) {
         final TechniqueDefState state = getTechniqueDefState();
         if (state == null) return 0D;
@@ -972,7 +976,7 @@ public class ShaderNodesFileEditor extends
     }
 
     @Override
-    @FXThread
+    @FxThread
     public @Nullable Vector2f getGlobalNodeLocation(final boolean input) {
         final TechniqueDefState state = getTechniqueDefState();
         if (state == null) return null;
@@ -980,7 +984,7 @@ public class ShaderNodesFileEditor extends
     }
 
     @Override
-    @FXThread
+    @FxThread
     public double getGlobalNodeWidth(final boolean input) {
         final TechniqueDefState state = getTechniqueDefState();
         if (state == null) return 0D;
@@ -988,19 +992,19 @@ public class ShaderNodesFileEditor extends
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void notifyAddedTechnique(@NotNull final TechniqueDef techniqueDef) {
         buildMaterial();
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void notifyRemovedTechnique(@NotNull final TechniqueDef techniqueDef) {
         buildMaterial();
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void notifyChangeGlobalNodeState(final boolean input, @NotNull final Vector2f location, final double width) {
 
         final TechniqueDefState state = getTechniqueDefState();
@@ -1020,7 +1024,7 @@ public class ShaderNodesFileEditor extends
      *
      * @return the current technique definition state.
      */
-    @FXThread
+    @FxThread
     private @Nullable TechniqueDefState getTechniqueDefState() {
 
         final ShaderNodesEditorState editorState = getEditorState();
@@ -1035,9 +1039,9 @@ public class ShaderNodesFileEditor extends
     }
 
     @Override
-    @FXThread
-    public void notifyFXChangeProperty(@NotNull final Object object, @NotNull final String propertyName) {
-        super.notifyFXChangeProperty(object, propertyName);
+    @FxThread
+    public void notifyFxChangeProperty(@NotNull final Object object, @NotNull final String propertyName) {
+        super.notifyFxChangeProperty(object, propertyName);
 
         if (object instanceof MatParam) {
             final PropertyEditor<ShaderNodesChangeConsumer> propertyEditor = getPropertyEditor();

@@ -14,7 +14,7 @@ import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.global.OutputGlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.InputShaderNodeParameter;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.OutputShaderNodeParameter;
-import com.ss.editor.util.GLSLType;
+import com.ss.editor.util.GlslType;
 import com.ss.rlib.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -447,7 +447,7 @@ public class ShaderNodeUtils {
     @FromAnyThread
     public static boolean isRequired(@NotNull final ShaderNodeVariable variable) {
 
-        final GLSLType glslType = GLSLType.ofRawType(variable.getType());
+        final GlslType glslType = GlslType.ofRawType(variable.getType());
 
         switch (glslType) {
             case SAMPLER_2D:

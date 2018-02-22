@@ -6,7 +6,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.VariableMapping;
-import com.ss.editor.annotation.JMEThread;
+import com.ss.editor.annotation.JmeThread;
 import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesChangeConsumer;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,9 +33,9 @@ public class RemoveVariableOperation extends RemoveOperation {
     }
 
     @Override
-    @JMEThread
-    protected void redoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.redoImplInJMEThread(editor);
+    @JmeThread
+    protected void redoImplInJmeThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.redoImplInJmeThread(editor);
 
         for (final ShaderNode shaderNode : shaderNodes) {
             final List<VariableMapping> mappings = findInMappingsByNNRightVar(shaderNode, variable);
@@ -47,9 +47,9 @@ public class RemoveVariableOperation extends RemoveOperation {
     }
 
     @Override
-    @JMEThread
-    protected void undoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.undoImplInJMEThread(editor);
+    @JmeThread
+    protected void undoImplInJmeThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.undoImplInJmeThread(editor);
 
         for (final Map.Entry<ShaderNode, List<VariableMapping>> entry : toRestore.entrySet()) {
             final ShaderNode shaderNode = entry.getKey();

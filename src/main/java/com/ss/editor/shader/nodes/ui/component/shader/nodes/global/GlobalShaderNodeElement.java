@@ -2,7 +2,7 @@ package com.ss.editor.shader.nodes.ui.component.shader.nodes.global;
 
 import com.jme3.material.ShaderGenerationInfo;
 import com.jme3.shader.ShaderNodeVariable;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.ShaderNodeParameter;
@@ -24,10 +24,14 @@ public class GlobalShaderNodeElement extends ShaderNodeElement<ShaderGenerationI
     }
 
     @Override
-    @FXThread
+    @FxThread
     public @Nullable ShaderNodeParameter parameterFor(@NotNull final ShaderNodeVariable variable,
                                                       final boolean fromOutputMapping, final boolean input) {
-        if (!NAMESPACE.equals(variable.getNameSpace())) return null;
+
+        if (!NAMESPACE.equals(variable.getNameSpace())) {
+            return null;
+        }
+
         return super.parameterFor(variable, fromOutputMapping, input);
     }
 }

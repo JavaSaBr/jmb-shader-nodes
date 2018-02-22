@@ -1,6 +1,6 @@
 package com.ss.editor.shader.nodes.ui.control.tree.node.definition;
 
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.model.shader.node.definition.SndDocumentation;
@@ -26,14 +26,14 @@ public class SndDocumentationTreeNode extends TreeNode<SndDocumentation> {
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void fillContextMenu(@NotNull final NodeTree<?> nodeTree, @NotNull final ObservableList<MenuItem> items) {
         super.fillContextMenu(nodeTree, items);
         items.add(new EditSndDocumentationAction(nodeTree, this));
     }
 
     @Override
-    @FXThread
+    @FxThread
     public @Nullable Image getIcon() {
         return PluginIcons.DOCUMENT_16;
     }

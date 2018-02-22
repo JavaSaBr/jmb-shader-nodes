@@ -8,10 +8,9 @@ import com.jme3.material.TechniqueDef;
 import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeDefinition;
-import com.ss.editor.Editor;
 import com.ss.editor.FileExtensions;
 import com.ss.editor.Messages;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.manager.ResourceManager;
 import com.ss.editor.plugin.api.dialog.GenericFactoryDialog;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
@@ -20,7 +19,8 @@ import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.action.ShaderNodeAction;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.operation.add.AddShaderNodeOperation;
-import com.ss.editor.ui.util.UIUtils;
+import com.ss.editor.ui.util.UiUtils;
+import com.ss.editor.util.EditorUtil;
 import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
@@ -34,12 +34,10 @@ import java.util.List;
  */
 public class AddNodeShaderNodeAction extends ShaderNodeAction<TechniqueDef> {
 
-    @NotNull
-    private static final ResourceManager RESOURCE_MANAGER = ResourceManager.getInstance();
+    public static final String PROP_DEFINITION = "definition";
 
     @NotNull
-    private static final Editor EDITOR = Editor.getInstance();
-    public static final String PROP_DEFINITION = "definition";
+    private static final ResourceManager RESOURCE_MANAGER = ResourceManager.getInstance();
 
     public AddNodeShaderNodeAction(@NotNull final ShaderNodesContainer container,
                                    @NotNull final TechniqueDef techniqueDef, @NotNull final Vector2f location) {
@@ -47,17 +45,17 @@ public class AddNodeShaderNodeAction extends ShaderNodeAction<TechniqueDef> {
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull String getName() {
         return PluginMessages.SHADER_NODE;
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void process() {
         super.process();
         final Array<String> resources = RESOURCE_MANAGER.getAvailableResources(FileExtensions.JME_SHADER_NODE);
-        UIUtils.openResourceAssetDialog(this::addNode, resources);
+        UiUtils.openResourceAssetDialog(this::addNode, resources);
     }
 
     /**
@@ -65,13 +63,13 @@ public class AddNodeShaderNodeAction extends ShaderNodeAction<TechniqueDef> {
      *
      * @param resource the selected resource.
      */
-    @FXThread
+    @FxThread
     private void addNode(@NotNull final String resource) {
 
         final ShaderNodeDefinitionKey key = new ShaderNodeDefinitionKey(resource);
         key.setLoadDocumentation(true);
 
-        final AssetManager assetManager = EDITOR.getAssetManager();
+        final AssetManager assetManager = EditorUtil.getAssetManager();
         final List<ShaderNodeDefinition> definitions = assetManager.loadAsset(key);
 
         if (definitions.isEmpty()) {
@@ -108,7 +106,7 @@ public class AddNodeShaderNodeAction extends ShaderNodeAction<TechniqueDef> {
      *
      * @param definition the new definition.
      */
-    @FXThread
+    @FxThread
     private void addDefinition(final ShaderNodeDefinition definition) {
 
         final TechniqueDef techniqueDef = getObject();

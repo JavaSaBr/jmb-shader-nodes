@@ -2,7 +2,7 @@ package com.ss.editor.shader.nodes.ui.component.shader.nodes.main;
 
 import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNodeVariable;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.action.ShaderNodeAction;
@@ -26,19 +26,19 @@ public class AttributeShaderNodeElement extends OutputVariableShaderNodeElement 
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull String getTitleText() {
         return PluginMessages.NODE_ELEMENT_VERTEX_ATTRIBUTE;
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull String getNameSpace() {
         return NAMESPACE;
     }
 
     @Override
-    @FXThread
+    @FxThread
     public @Nullable ShaderNodeAction<?> getDeleteAction() {
         return new RemoveAttributeShaderNodeAction(getContainer(), getObject(),
                 new Vector2f((float) getLayoutX(), (float) getLayoutY()));

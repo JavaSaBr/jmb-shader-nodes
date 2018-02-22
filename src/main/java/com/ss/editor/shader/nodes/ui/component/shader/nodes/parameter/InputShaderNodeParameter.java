@@ -1,8 +1,8 @@
 package com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter;
 
-import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE_INPUT_PARAMETER;
+import static com.ss.editor.shader.nodes.ui.PluginCssClasses.SHADER_NODE_INPUT_PARAMETER;
 import com.jme3.shader.ShaderNodeVariable;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.socket.InputSocketElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.socket.SocketElement;
@@ -23,13 +23,13 @@ public class InputShaderNodeParameter extends ShaderNodeParameter {
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull SocketElement createSocket() {
         return new InputSocketElement(this);
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void createContent() {
         super.createContent();
         FXUtils.addToPane(getSocket(), this);

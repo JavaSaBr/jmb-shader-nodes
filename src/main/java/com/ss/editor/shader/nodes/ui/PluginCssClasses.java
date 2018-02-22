@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author JavaSaBr
  */
-public interface PluginCSSClasses {
+public interface PluginCssClasses {
 
     @NotNull String SHADER_NODES_ROOT = "shader-nodes-root";
     @NotNull String SHADER_NODE = "shader-node";

@@ -3,7 +3,7 @@ package com.ss.editor.shader.nodes.ui.component.shader.nodes.action.add;
 import com.jme3.material.TechniqueDef;
 import com.jme3.math.Vector2f;
 import com.jme3.shader.UniformBinding;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.operation.add.AddWorldParameterOperation;
@@ -43,19 +43,19 @@ public class AddWorldParamShaderNodeAction extends AddTechniqueDefParameterShade
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull String getName() {
         return PluginMessages.WORLD_PARAMETER;
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull String getDialogTitle() {
         return PluginMessages.ACTION_ADD_WORLD_PARAMETER_TITLE;
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void addParameter(@NotNull final VarTable vars) {
 
         final ShaderNodesContainer container = getContainer();

@@ -1,6 +1,6 @@
 package com.ss.editor.shader.nodes.ui.component;
 
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.ui.control.code.BaseCodeArea;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.jetbrains.annotations.NotNull;
@@ -32,13 +32,13 @@ public class SndDocumentationArea extends BaseCodeArea {
     );
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull String[][] getAvailableClasses() {
         return AVAILABLE_CLASSES;
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull StyleSpans<? extends Collection<String>> calculateStyleSpans(@NotNull final String text) {
         return computeHighlighting(PATTERN, text);
     }

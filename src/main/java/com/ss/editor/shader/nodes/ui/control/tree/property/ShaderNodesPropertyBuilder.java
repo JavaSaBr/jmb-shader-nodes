@@ -4,14 +4,14 @@ import static com.ss.editor.extension.property.EditablePropertyType.*;
 import com.jme3.shader.ShaderNodeDefinition;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.Messages;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.extension.property.EditableProperty;
 import com.ss.editor.extension.property.SimpleProperty;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.ui.control.property.builder.PropertyBuilder;
 import com.ss.editor.ui.control.property.builder.impl.EditableObjectPropertyBuilder;
-import com.ss.editor.util.GLSLType;
+import com.ss.editor.util.GlslType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,9 +27,9 @@ import java.util.List;
 public class ShaderNodesPropertyBuilder extends EditableObjectPropertyBuilder<ChangeConsumer> {
 
     @NotNull
-    private static final EnumSet<GLSLType> NOT_AVAILABLE_DEFAULT_VALUE = EnumSet.of(
-            GLSLType.SAMPLER_2D,
-            GLSLType.SAMPLER_CUBE
+    private static final EnumSet<GlslType> NOT_AVAILABLE_DEFAULT_VALUE = EnumSet.of(
+            GlslType.SAMPLER_2D,
+            GlslType.SAMPLER_CUBE
     );
 
     /**
@@ -53,7 +53,7 @@ public class ShaderNodesPropertyBuilder extends EditableObjectPropertyBuilder<Ch
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @Nullable List<EditableProperty<?, ?>> getProperties(@NotNull final Object object) {
 
         if (!(object instanceof ShaderNodeDefinition || object instanceof ShaderNodeVariable)) {
@@ -72,10 +72,10 @@ public class ShaderNodesPropertyBuilder extends EditableObjectPropertyBuilder<Ch
         } else if (object instanceof ShaderNodeVariable) {
 
             final ShaderNodeVariable variable = (ShaderNodeVariable) object;
-            final GLSLType glslType = GLSLType.ofRawType(variable.getType());
+            final GlslType glslType = GlslType.ofRawType(variable.getType());
 
             result.add(new SimpleProperty<>(ENUM, Messages.MODEL_PROPERTY_TYPE, variable,
-                    var -> GLSLType.ofRawType(var.getType()),
+                    var -> GlslType.ofRawType(var.getType()),
                     (var, type) -> var.setType(type.getRawType())));
 
             if (!NOT_AVAILABLE_DEFAULT_VALUE.contains(glslType)) {

@@ -8,7 +8,7 @@ import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.jme3.renderer.Caps;
 import com.jme3.shader.Shader;
 import com.jme3.shader.ShaderNodeDefinition;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.plugin.api.dialog.GenericFactoryDialog;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
@@ -47,19 +47,19 @@ public class AddSndShaderSourceAction extends AbstractNodeAction<ChangeConsumer>
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull String getName() {
         return PluginMessages.ACTION_ADD_SHADER_NODE_SOURCE;
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @Nullable Image getIcon() {
         return Icons.ADD_16;
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void process() {
         super.process();
 
@@ -84,7 +84,7 @@ public class AddSndShaderSourceAction extends AbstractNodeAction<ChangeConsumer>
      *
      * @param vars the vars of the definition.
      */
-    @FXThread
+    @FxThread
     private boolean validate(@NotNull final VarTable vars) {
 
         if (!vars.has(PROP_SHADER_RESOURCE)) {
@@ -106,7 +106,7 @@ public class AddSndShaderSourceAction extends AbstractNodeAction<ChangeConsumer>
      *
      * @param vars the vars of the source.
      */
-    @FXThread
+    @FxThread
     private void addShaderSource(@NotNull final VarTable vars) {
 
         final String language = vars.getString(PROP_LANGUAGE);

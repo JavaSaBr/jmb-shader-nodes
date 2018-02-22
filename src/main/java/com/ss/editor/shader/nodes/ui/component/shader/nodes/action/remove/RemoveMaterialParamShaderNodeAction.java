@@ -7,7 +7,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.Messages;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.action.ShaderNodeAction;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.main.MainShaderNodeElement;
@@ -31,13 +31,13 @@ public class RemoveMaterialParamShaderNodeAction extends ShaderNodeAction<Shader
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull String getName() {
         return Messages.MODEL_NODE_TREE_ACTION_REMOVE;
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void process() {
         super.process();
 

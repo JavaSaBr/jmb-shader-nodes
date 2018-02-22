@@ -5,7 +5,7 @@ import com.jme3.material.TechniqueDef;
 import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
-import com.ss.editor.annotation.JMEThread;
+import com.ss.editor.annotation.JmeThread;
 import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesChangeConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,9 +38,9 @@ public class RemoveUniformVariableOperation extends RemoveVariableOperation {
     }
 
     @Override
-    @JMEThread
-    protected void redoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.redoImplInJMEThread(editor);
+    @JmeThread
+    protected void redoImplInJmeThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.redoImplInJmeThread(editor);
 
         final ShaderGenerationInfo info = techniqueDef.getShaderGenerationInfo();
         final List<ShaderNodeVariable> vertexUniforms = info.getVertexUniforms();
@@ -56,9 +56,9 @@ public class RemoveUniformVariableOperation extends RemoveVariableOperation {
     }
 
     @Override
-    @JMEThread
-    protected void undoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.undoImplInJMEThread(editor);
+    @JmeThread
+    protected void undoImplInJmeThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.undoImplInJmeThread(editor);
 
         final ShaderGenerationInfo info = techniqueDef.getShaderGenerationInfo();
         final List<ShaderNodeVariable> vertexUniforms = info.getVertexUniforms();

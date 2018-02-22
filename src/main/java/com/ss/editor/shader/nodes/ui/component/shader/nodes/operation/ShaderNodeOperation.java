@@ -1,7 +1,7 @@
 package com.ss.editor.shader.nodes.ui.component.shader.nodes.operation;
 
-import com.ss.editor.annotation.FXThread;
-import com.ss.editor.annotation.JMEThread;
+import com.ss.editor.annotation.FxThread;
+import com.ss.editor.annotation.JmeThread;
 import com.ss.editor.model.undo.impl.AbstractEditorOperation;
 import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesChangeConsumer;
 import org.jetbrains.annotations.NotNull;
@@ -14,40 +14,40 @@ import org.jetbrains.annotations.NotNull;
 public class ShaderNodeOperation extends AbstractEditorOperation<ShaderNodesChangeConsumer> {
 
     @Override
-    @FXThread
+    @FxThread
     protected void redoImpl(@NotNull final ShaderNodesChangeConsumer editor) {
-        EXECUTOR_MANAGER.addJMETask(() -> {
-            redoImplInJMEThread(editor);
-            EXECUTOR_MANAGER.addFXTask(() -> redoImplInFXThread(editor));
+        EXECUTOR_MANAGER.addJmeTask(() -> {
+            redoImplInJmeThread(editor);
+            EXECUTOR_MANAGER.addFxTask(() -> redoImplInFxThread(editor));
         });
     }
 
-    @JMEThread
-    protected void redoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
+    @JmeThread
+    protected void redoImplInJmeThread(@NotNull final ShaderNodesChangeConsumer editor) {
 
     }
 
-    @FXThread
-    protected void redoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
+    @FxThread
+    protected void redoImplInFxThread(@NotNull final ShaderNodesChangeConsumer editor) {
 
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void undoImpl(@NotNull final ShaderNodesChangeConsumer editor) {
-        EXECUTOR_MANAGER.addJMETask(() -> {
-            undoImplInJMEThread(editor);
-        EXECUTOR_MANAGER.addFXTask(() -> undoImplInFXThread(editor));
+        EXECUTOR_MANAGER.addJmeTask(() -> {
+            undoImplInJmeThread(editor);
+        EXECUTOR_MANAGER.addFxTask(() -> undoImplInFxThread(editor));
     });
     }
 
-    @JMEThread
-    protected void undoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
+    @JmeThread
+    protected void undoImplInJmeThread(@NotNull final ShaderNodesChangeConsumer editor) {
 
     }
 
-    @FXThread
-    protected void undoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
+    @FxThread
+    protected void undoImplInFxThread(@NotNull final ShaderNodesChangeConsumer editor) {
 
     }
 }

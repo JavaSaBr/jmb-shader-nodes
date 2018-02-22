@@ -7,7 +7,7 @@ import com.jme3.math.Vector2f;
 import com.jme3.shader.VarType;
 import com.jme3.texture.image.ColorSpace;
 import com.ss.editor.Messages;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
 import com.ss.editor.shader.nodes.PluginMessages;
@@ -50,13 +50,13 @@ public class AddMaterialTextureShaderNodeAction extends AddMaterialParamShaderNo
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull String getName() {
         return PluginMessages.MATERIAL_TEXTURE;
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull Array<PropertyDefinition> getDefinitions() {
         final Array<PropertyDefinition> definitions = super.getDefinitions();
         definitions.add(new PropertyDefinition(ENUM, Messages.MODEL_PROPERTY_COLOR_SPACE, PROP_COLOR_SPACE, ColorSpace.Linear));
@@ -76,7 +76,7 @@ public class AddMaterialTextureShaderNodeAction extends AddMaterialParamShaderNo
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void addParam(@NotNull final VarTable vars) {
 
         final ShaderNodesContainer container = getContainer();

@@ -2,7 +2,7 @@ package com.ss.editor.shader.nodes.ui.control.tree.action;
 
 import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.ss.editor.Messages;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.shader.nodes.model.shader.node.definition.SndShaderSource;
 import com.ss.editor.shader.nodes.model.shader.node.definition.SndShaderSources;
@@ -27,19 +27,19 @@ public class DeleteSndShaderSourceAction extends AbstractNodeAction<ChangeConsum
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull String getName() {
         return Messages.MODEL_NODE_TREE_ACTION_REMOVE;
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @Nullable Image getIcon() {
         return Icons.REMOVE_16;
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void process() {
         super.process();
 

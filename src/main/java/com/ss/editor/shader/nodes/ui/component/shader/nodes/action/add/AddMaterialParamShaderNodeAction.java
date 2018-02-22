@@ -9,7 +9,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.math.Vector4f;
 import com.jme3.shader.VarType;
 import com.ss.editor.Messages;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.plugin.api.dialog.GenericFactoryDialog;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
@@ -65,13 +65,13 @@ public class AddMaterialParamShaderNodeAction extends ShaderNodeAction<MaterialD
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull String getName() {
         return PluginMessages.MATERIAL_PARAMETER;
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void process() {
         super.process();
 
@@ -87,7 +87,7 @@ public class AddMaterialParamShaderNodeAction extends ShaderNodeAction<MaterialD
      *
      * @return the list of required properties.
      */
-    @FXThread
+    @FxThread
     protected @NotNull Array<PropertyDefinition> getDefinitions() {
 
         final Array<String> varTypes = getVarTypes();
@@ -135,7 +135,7 @@ public class AddMaterialParamShaderNodeAction extends ShaderNodeAction<MaterialD
      *
      * @param vars the variables.
      */
-    @FXThread
+    @FxThread
     protected void addParam(@NotNull final VarTable vars) {
 
         final ShaderNodesContainer container = getContainer();
@@ -191,7 +191,7 @@ public class AddMaterialParamShaderNodeAction extends ShaderNodeAction<MaterialD
      * @param vars the variables.
      * @return true if the values are valid.
      */
-    @FXThread
+    @FxThread
     protected boolean validate(@NotNull final VarTable vars) {
         final String name = vars.getString(PROP_NAME);
         return getObject().getMaterialParam(name) == null;

@@ -1,7 +1,7 @@
 package com.ss.editor.shader.nodes.ui.component.shader.nodes.action;
 
 import com.jme3.math.Vector2f;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodesContainer;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
@@ -53,7 +53,7 @@ public abstract class ShaderNodeAction<T> extends MenuItem {
     /**
      * @return the location.
      */
-    @FXThread
+    @FxThread
     public @NotNull Vector2f getLocation() {
         return location;
     }
@@ -61,7 +61,7 @@ public abstract class ShaderNodeAction<T> extends MenuItem {
     /**
      * @return the shader nodes container.
      */
-    @FXThread
+    @FxThread
     public @NotNull ShaderNodesContainer getContainer() {
         return container;
     }
@@ -69,7 +69,7 @@ public abstract class ShaderNodeAction<T> extends MenuItem {
     /**
      * @return the additional object.
      */
-    @FXThread
+    @FxThread
     public @NotNull T getObject() {
         return object;
     }
@@ -79,13 +79,13 @@ public abstract class ShaderNodeAction<T> extends MenuItem {
      *
      * @return the name of this action.
      */
-    @FXThread
+    @FxThread
     protected abstract @NotNull String getName();
 
     /**
      * Execute this action.
      */
-    @FXThread
+    @FxThread
     protected void process() {
     }
 
@@ -94,7 +94,7 @@ public abstract class ShaderNodeAction<T> extends MenuItem {
      *
      * @return he icon or null.
      */
-    @FXThread
+    @FxThread
     protected @Nullable Image getIcon() {
         return null;
     }

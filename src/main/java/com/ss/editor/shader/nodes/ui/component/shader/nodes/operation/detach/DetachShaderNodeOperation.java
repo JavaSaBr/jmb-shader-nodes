@@ -2,9 +2,9 @@ package com.ss.editor.shader.nodes.ui.component.shader.nodes.operation.detach;
 
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.VariableMapping;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.annotation.FromAnyThread;
-import com.ss.editor.annotation.JMEThread;
+import com.ss.editor.annotation.JmeThread;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.operation.ShaderNodeOperation;
 import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesChangeConsumer;
 import org.jetbrains.annotations.NotNull;
@@ -58,16 +58,16 @@ public class DetachShaderNodeOperation extends ShaderNodeOperation {
     }
 
     @Override
-    @JMEThread
-    protected void redoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.redoImplInJMEThread(editor);
+    @JmeThread
+    protected void redoImplInJmeThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.redoImplInJmeThread(editor);
         getMappings().remove(oldMapping);
     }
 
     @Override
-    @FXThread
-    protected void redoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.redoImplInFXThread(editor);
+    @FxThread
+    protected void redoImplInFxThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.redoImplInFxThread(editor);
         editor.notifyRemovedMapping(shaderNode, oldMapping);
     }
 
@@ -76,22 +76,22 @@ public class DetachShaderNodeOperation extends ShaderNodeOperation {
      *
      * @return the mapping list.
      */
-    @JMEThread
+    @JmeThread
     protected @NotNull List<VariableMapping> getMappings() {
         throw new RuntimeException();
     }
 
     @Override
-    @JMEThread
-    protected void undoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.undoImplInJMEThread(editor);
+    @JmeThread
+    protected void undoImplInJmeThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.undoImplInJmeThread(editor);
         getMappings().add(oldMapping);
     }
 
     @Override
-    @FXThread
-    protected void undoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.undoImplInFXThread(editor);
+    @FxThread
+    protected void undoImplInFxThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.undoImplInFxThread(editor);
         editor.notifyAddedMapping(shaderNode, oldMapping);
     }
 }

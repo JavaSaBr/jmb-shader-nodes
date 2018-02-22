@@ -1,6 +1,6 @@
 package com.ss.editor.shader.nodes.ui.control.tree.node.definition;
 
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.shader.nodes.model.shader.node.definition.SndShaderSource;
 import com.ss.editor.shader.nodes.ui.control.tree.action.DeleteSndShaderSourceAction;
@@ -25,14 +25,14 @@ public class SndShaderSourceTreeNode extends TreeNode<SndShaderSource> {
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void fillContextMenu(@NotNull final NodeTree<?> nodeTree, @NotNull final ObservableList<MenuItem> items) {
         super.fillContextMenu(nodeTree, items);
         items.add(new DeleteSndShaderSourceAction(nodeTree, this));
     }
 
     @Override
-    @FXThread
+    @FxThread
     public @Nullable Image getIcon() {
         return PluginIcons.CODE_16;
     }

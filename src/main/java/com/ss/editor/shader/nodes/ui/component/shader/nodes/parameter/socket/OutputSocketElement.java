@@ -1,7 +1,7 @@
 package com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.socket;
 
-import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE_PARAMETER_OUTPUT_SOCKET;
-import com.ss.editor.annotation.FXThread;
+import static com.ss.editor.shader.nodes.ui.PluginCssClasses.SHADER_NODE_PARAMETER_OUTPUT_SOCKET;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.ShaderNodeParameter;
@@ -61,7 +61,7 @@ public class OutputSocketElement extends SocketElement {
      *
      * @param mouseEvent the mouse event.
      */
-    @FXThread
+    @FxThread
     private void handleMouseDragged(final MouseEvent mouseEvent) {
         final ShaderNodeParameter parameter = getParameter();
         final ShaderNodeElement<?> nodeElement = parameter.getNodeElement();
@@ -76,7 +76,7 @@ public class OutputSocketElement extends SocketElement {
      *
      * @param dragEvent the drag event.
      */
-    @FXThread
+    @FxThread
     private void handleStopDrag(@NotNull final DragEvent dragEvent) {
         setCursor(Cursor.DEFAULT);
 
@@ -94,7 +94,7 @@ public class OutputSocketElement extends SocketElement {
      *
      * @param mouseEvent the mouse event.
      */
-    @FXThread
+    @FxThread
     private void handleStartDrag(@NotNull final MouseEvent mouseEvent) {
         setCursor(Cursor.MOVE);
 

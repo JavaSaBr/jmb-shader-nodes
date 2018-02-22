@@ -2,7 +2,7 @@ package com.ss.editor.shader.nodes.ui.control.tree.action;
 
 import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.jme3.shader.ShaderNodeDefinition;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.model.shader.node.definition.SndDocumentation;
@@ -28,19 +28,19 @@ public class EditSndDocumentationAction extends AbstractNodeAction<ChangeConsume
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull String getName() {
         return PluginMessages.ACTION_ADD_EDIT_DOCUMENTATION;
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @Nullable Image getIcon() {
         return Icons.EDIT_16;
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void process() {
         super.process();
 

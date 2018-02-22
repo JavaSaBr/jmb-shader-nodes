@@ -1,11 +1,11 @@
 package com.ss.editor.shader.nodes.ui.component.shader.nodes;
 
-import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE;
-import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE_HEADER;
+import static com.ss.editor.shader.nodes.ui.PluginCssClasses.SHADER_NODE;
+import static com.ss.editor.shader.nodes.ui.PluginCssClasses.SHADER_NODE_HEADER;
 import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.*;
 import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNodeVariable;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.action.ShaderNodeAction;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.action.remove.RemoveRelationShaderNodeAction;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.line.VariableLine;
@@ -127,7 +127,7 @@ public class ShaderNodeElement<T> extends VBox {
      *
      * @return the container of nodes parameters.
      */
-    @FXThread
+    @FxThread
     protected @NotNull VBox getParametersContainer() {
         return parametersContainer;
     }
@@ -137,7 +137,7 @@ public class ShaderNodeElement<T> extends VBox {
      *
      * @return the tooltip.
      */
-    @FXThread
+    @FxThread
     protected @NotNull Optional<Tooltip> createTooltip() {
         return Optional.empty();
     }
@@ -147,7 +147,7 @@ public class ShaderNodeElement<T> extends VBox {
      *
      * @param event the context menu requested event.
      */
-    @FXThread
+    @FxThread
     private void handleContextMenuRequested(@NotNull final ContextMenuEvent event) {
         final ShaderNodesContainer container = getContainer();
         container.handleContextMenuEvent(event);
@@ -161,7 +161,7 @@ public class ShaderNodeElement<T> extends VBox {
      * @param outputParameter the output parameter.
      * @return true of we can attach.
      */
-    @FXThread
+    @FxThread
     public boolean canAttach(@NotNull final InputShaderNodeParameter inputParameter,
                              @NotNull final OutputShaderNodeParameter outputParameter) {
 
@@ -185,7 +185,7 @@ public class ShaderNodeElement<T> extends VBox {
      * @param inputParameter  the input parameter.
      * @param outputParameter the output parameter.
      */
-    @FXThread
+    @FxThread
     public void attach(@NotNull final InputShaderNodeParameter inputParameter,
                        @NotNull final OutputShaderNodeParameter outputParameter) {
     }
@@ -193,7 +193,7 @@ public class ShaderNodeElement<T> extends VBox {
     /**
      * @return the container of this nodes.
      */
-    @FXThread
+    @FxThread
     public @NotNull ShaderNodesContainer getContainer() {
         return container;
     }
@@ -201,7 +201,7 @@ public class ShaderNodeElement<T> extends VBox {
     /**
      * @return the shader object.
      */
-    @FXThread
+    @FxThread
     public @NotNull T getObject() {
         return object;
     }
@@ -214,7 +214,7 @@ public class ShaderNodeElement<T> extends VBox {
      * @param input             true if the variable is input variable.
      * @return the parameter or null.
      */
-    @FXThread
+    @FxThread
     public @Nullable ShaderNodeParameter parameterFor(@NotNull final ShaderNodeVariable variable,
                                                       final boolean fromOutputMapping, final boolean input) {
         return parametersContainer.getChildren().stream()
@@ -230,7 +230,7 @@ public class ShaderNodeElement<T> extends VBox {
      *
      * @return the title text of this nodes.
      */
-    @FXThread
+    @FxThread
     protected @NotNull String getTitleText() {
         return "Title";
     }
@@ -238,7 +238,7 @@ public class ShaderNodeElement<T> extends VBox {
     /**
      * Create UI content of this nodes.
      */
-    @FXThread
+    @FxThread
     protected void createContent() {
 
         final StackPane header = new StackPane();
@@ -256,7 +256,7 @@ public class ShaderNodeElement<T> extends VBox {
     /**
      * Reset layout of this nodes.
      */
-    @FXThread
+    @FxThread
     public void resetLayout() {
         final double layoutX = getLayoutX();
         final double layoutY = getLayoutY();
@@ -271,7 +271,7 @@ public class ShaderNodeElement<T> extends VBox {
      *
      * @param container the parameters container.
      */
-    @FXThread
+    @FxThread
     protected void fillParameters(@NotNull final VBox container) {
     }
 
@@ -280,7 +280,7 @@ public class ShaderNodeElement<T> extends VBox {
      *
      * @param event the mouse event.
      */
-    @FXThread
+    @FxThread
     private void handleMouseDragged(@NotNull final MouseEvent event) {
 
         if (event.getTarget() instanceof SocketElement) {
@@ -320,7 +320,7 @@ public class ShaderNodeElement<T> extends VBox {
      *
      * @param event the mouse released event.
      */
-    @FXThread
+    @FxThread
     private void handleMouseReleased(@NotNull final MouseEvent event) {
         if (isResizing()) {
             setResizing(false);
@@ -338,7 +338,7 @@ public class ShaderNodeElement<T> extends VBox {
      *
      * @param event the mouse moved event.
      */
-    @FXThread
+    @FxThread
     private void handleMouseMoved(@NotNull final MouseEvent event) {
 
         if (event.getTarget() instanceof SocketElement) {
@@ -358,7 +358,7 @@ public class ShaderNodeElement<T> extends VBox {
      *
      * @param selected true if this nodes is selected.
      */
-    @FXThread
+    @FxThread
     public void setSelected(final boolean selected) {
         this.selected.setValue(selected);
     }
@@ -368,7 +368,7 @@ public class ShaderNodeElement<T> extends VBox {
      *
      * @param event the mouse pressed event.
      */
-    @FXThread
+    @FxThread
     private void handleMousePressed(@NotNull final MouseEvent event) {
 
         if (event.getTarget() instanceof SocketElement) {
@@ -402,7 +402,7 @@ public class ShaderNodeElement<T> extends VBox {
      * @param event the mouse event.
      * @return true if we can start to resize.
      */
-    @FXThread
+    @FxThread
     protected boolean isInResizableZone(@NotNull final MouseEvent event) {
         return event.getX() > (getWidth() - RESIZE_MARGIN);
     }
@@ -410,7 +410,7 @@ public class ShaderNodeElement<T> extends VBox {
     /**
      * @return true if this nodes is dragging now.
      */
-    @FXThread
+    @FxThread
     protected boolean isDragging() {
         return dragging;
     }
@@ -418,7 +418,7 @@ public class ShaderNodeElement<T> extends VBox {
     /**
      * @param dragging true if this nodes is dragging now.
      */
-    @FXThread
+    @FxThread
     protected void setDragging(final boolean dragging) {
         this.dragging = dragging;
     }
@@ -426,7 +426,7 @@ public class ShaderNodeElement<T> extends VBox {
     /**
      * @return true if this nodes is resizing now.
      */
-    @FXThread
+    @FxThread
     protected boolean isResizing() {
         return resizing;
     }
@@ -434,7 +434,7 @@ public class ShaderNodeElement<T> extends VBox {
     /**
      * @param resizing true if this nodes is resizing now.
      */
-    @FXThread
+    @FxThread
     protected void setResizing(final boolean resizing) {
         this.resizing = resizing;
     }
@@ -444,7 +444,7 @@ public class ShaderNodeElement<T> extends VBox {
      *
      * @return the action or null.
      */
-    @FXThread
+    @FxThread
     public @Nullable ShaderNodeAction<?> getDeleteAction() {
         return null;
     }
@@ -455,7 +455,7 @@ public class ShaderNodeElement<T> extends VBox {
      * @param line the line.
      * @return the action or null.
      */
-    @FXThread
+    @FxThread
     public @Nullable ShaderNodeAction<?> getDetachAction(@NotNull final VariableLine line) {
         return new RemoveRelationShaderNodeAction(getContainer(), line, Vector2f.ZERO);
     }

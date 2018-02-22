@@ -1,12 +1,12 @@
 package com.ss.editor.shader.nodes.ui.control.tree.node.definition;
 
-import com.ss.editor.annotation.FXThread;
 import com.ss.editor.annotation.FromAnyThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.model.shader.node.definition.SndShaderSource;
 import com.ss.editor.shader.nodes.model.shader.node.definition.SndShaderSources;
-import com.ss.editor.shader.nodes.ui.control.tree.action.AddSndShaderSourceAction;
 import com.ss.editor.shader.nodes.ui.PluginIcons;
+import com.ss.editor.shader.nodes.ui.control.tree.action.AddSndShaderSourceAction;
 import com.ss.editor.ui.control.tree.NodeTree;
 import com.ss.editor.ui.control.tree.node.TreeNode;
 import com.ss.rlib.util.array.Array;
@@ -37,20 +37,20 @@ public class SndShaderSourcesTreeNode extends TreeNode<SndShaderSources> {
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void fillContextMenu(@NotNull final NodeTree<?> nodeTree, @NotNull final ObservableList<MenuItem> items) {
         super.fillContextMenu(nodeTree, items);
         items.add(new AddSndShaderSourceAction(nodeTree, this));
     }
 
     @Override
-    @FXThread
+    @FxThread
     public @Nullable Image getIcon() {
         return PluginIcons.CODE_16;
     }
 
     @Override
-    @FXThread
+    @FxThread
     public boolean hasChildren(@NotNull final NodeTree<?> nodeTree) {
         final SndShaderSources element = getElement();
         final Map<String, String> sourceMap = element.getShadeSourceMap();
@@ -58,7 +58,7 @@ public class SndShaderSourcesTreeNode extends TreeNode<SndShaderSources> {
     }
 
     @Override
-    @FXThread
+    @FxThread
     public @NotNull Array<TreeNode<?>> getChildren(@NotNull final NodeTree<?> nodeTree) {
 
         final SndShaderSources element = getElement();

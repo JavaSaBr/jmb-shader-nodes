@@ -3,9 +3,8 @@ package com.ss.editor.shader.nodes.ui.preview;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.ShaderNodeDefinitionKey;
 import com.jme3.shader.ShaderNodeDefinition;
-import com.ss.editor.Editor;
 import com.ss.editor.FileExtensions;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.ui.component.SndDocumentationArea;
 import com.ss.editor.ui.preview.impl.AbstractFilePreview;
 import com.ss.editor.util.EditorUtil;
@@ -24,11 +23,8 @@ import java.util.List;
  */
 public class SndFilePreview extends AbstractFilePreview<SndDocumentationArea> {
 
-    @NotNull
-    private static final Editor EDITOR = Editor.getInstance();
-
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull SndDocumentationArea createGraphicsNode() {
         final SndDocumentationArea documentationArea = new SndDocumentationArea();
         documentationArea.setEditable(false);
@@ -36,7 +32,7 @@ public class SndFilePreview extends AbstractFilePreview<SndDocumentationArea> {
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void initialize(@NotNull final SndDocumentationArea node, @NotNull final StackPane pane) {
         super.initialize(node, pane);
         node.prefWidthProperty().bind(pane.widthProperty());
@@ -44,7 +40,7 @@ public class SndFilePreview extends AbstractFilePreview<SndDocumentationArea> {
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void show(@NotNull final Path file) {
         super.show(file);
 
@@ -52,13 +48,13 @@ public class SndFilePreview extends AbstractFilePreview<SndDocumentationArea> {
         final ShaderNodeDefinitionKey key = new ShaderNodeDefinitionKey(assetPath);
         key.setLoadDocumentation(true);
 
-        final AssetManager assetManager = EDITOR.getAssetManager();
+        final AssetManager assetManager = EditorUtil.getAssetManager();
         final List<ShaderNodeDefinition> definitionList = assetManager.loadAsset(key);
 
         show(definitionList);
     }
 
-    @FXThread
+    @FxThread
     private void show(@NotNull final List<ShaderNodeDefinition> definitionList) {
 
         final SndDocumentationArea documentationArea = getGraphicsNode();
@@ -97,27 +93,27 @@ public class SndFilePreview extends AbstractFilePreview<SndDocumentationArea> {
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void show(@NotNull final String resource) {
         super.show(resource);
 
         final ShaderNodeDefinitionKey key = new ShaderNodeDefinitionKey(resource);
         key.setLoadDocumentation(true);
 
-        final AssetManager assetManager = EDITOR.getAssetManager();
+        final AssetManager assetManager = EditorUtil.getAssetManager();
         final List<ShaderNodeDefinition> definitionList = assetManager.loadAsset(key);
 
         show(definitionList);
     }
 
     @Override
-    @FXThread
+    @FxThread
     public boolean isSupport(@NotNull final Path file) {
         final String extension = FileUtils.getExtension(file);
         return FileExtensions.JME_SHADER_NODE.equals(extension);
     }
 
-    @FXThread
+    @FxThread
     @Override
     public boolean isSupport(@NotNull final String resource) {
         final String extension = FileUtils.getExtension(resource);
@@ -125,7 +121,7 @@ public class SndFilePreview extends AbstractFilePreview<SndDocumentationArea> {
     }
 
     @Override
-    @FXThread
+    @FxThread
     public int getOrder() {
         return 10;
     }

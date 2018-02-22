@@ -2,7 +2,7 @@ package com.ss.editor.shader.nodes.ui.control.tree.operation;
 
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.Messages;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.model.undo.impl.AbstractEditorOperation;
 import com.ss.editor.shader.nodes.model.shader.node.definition.SndParameters;
@@ -49,16 +49,16 @@ public class RenameSndParameterOperation extends AbstractEditorOperation<ChangeC
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void redoImpl(@NotNull final ChangeConsumer editor) {
         variable.setName(newName);
-        editor.notifyFXChangeProperty(parameters, variable, Messages.MODEL_PROPERTY_NAME);
+        editor.notifyFxChangeProperty(parameters, variable, Messages.MODEL_PROPERTY_NAME);
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void undoImpl(@NotNull final ChangeConsumer editor) {
         variable.setName(oldName);
-        editor.notifyFXChangeProperty(parameters, variable, Messages.MODEL_PROPERTY_NAME);
+        editor.notifyFxChangeProperty(parameters, variable, Messages.MODEL_PROPERTY_NAME);
     }
 }

@@ -6,7 +6,7 @@ import com.jme3.material.TechniqueDef;
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.VariableMapping;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodeElement;
@@ -38,13 +38,13 @@ public class OutputGlobalShaderNodeElement extends GlobalShaderNodeElement {
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull String getTitleText() {
         return PluginMessages.NODE_ELEMENT_GLOBAL_OUTPUT;
     }
 
     @Override
-    @FXThread
+    @FxThread
     public @Nullable ShaderNodeParameter parameterFor(final @NotNull ShaderNodeVariable variable,
                                                       final boolean fromOutputMapping, final boolean input) {
         if (!fromOutputMapping) return null;
@@ -52,7 +52,7 @@ public class OutputGlobalShaderNodeElement extends GlobalShaderNodeElement {
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected void fillParameters(@NotNull final VBox container) {
         super.fillParameters(container);
 
@@ -68,7 +68,7 @@ public class OutputGlobalShaderNodeElement extends GlobalShaderNodeElement {
     }
 
     @Override
-    @FXThread
+    @FxThread
     public boolean canAttach(@NotNull final InputShaderNodeParameter inputParameter,
                              @NotNull final OutputShaderNodeParameter outputParameter) {
 
@@ -89,7 +89,7 @@ public class OutputGlobalShaderNodeElement extends GlobalShaderNodeElement {
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void attach(@NotNull final InputShaderNodeParameter inputParameter,
                        @NotNull final OutputShaderNodeParameter outputParameter) {
         super.attach(inputParameter, outputParameter);

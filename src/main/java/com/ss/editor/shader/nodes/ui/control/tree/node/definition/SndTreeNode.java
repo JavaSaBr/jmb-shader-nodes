@@ -2,7 +2,7 @@ package com.ss.editor.shader.nodes.ui.control.tree.node.definition;
 
 import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.jme3.shader.ShaderNodeDefinition;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.shader.nodes.model.shader.node.definition.*;
@@ -33,7 +33,7 @@ public class SndTreeNode extends TreeNode<ShaderNodeDefinition> {
     }
 
     @Override
-    @FXThread
+    @FxThread
     public @Nullable Image getIcon() {
 
         final ShaderNodeDefinition element = getElement();
@@ -53,7 +53,7 @@ public class SndTreeNode extends TreeNode<ShaderNodeDefinition> {
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void changeName(@NotNull final NodeTree<?> nodeTree, @NotNull final String newName) {
         if (StringUtils.equals(getName(), newName)) return;
 
@@ -68,19 +68,19 @@ public class SndTreeNode extends TreeNode<ShaderNodeDefinition> {
     }
 
     @Override
-    @FXThread
+    @FxThread
     public boolean canEditName() {
         return true;
     }
 
     @Override
-    @FXThread
+    @FxThread
     public boolean hasChildren(@NotNull final NodeTree<?> nodeTree) {
         return true;
     }
 
     @Override
-    @FXThread
+    @FxThread
     public @NotNull Array<TreeNode<?>> getChildren(@NotNull final NodeTree<?> nodeTree) {
 
         final ShaderNodeDefinition definition = getElement();
@@ -95,7 +95,7 @@ public class SndTreeNode extends TreeNode<ShaderNodeDefinition> {
     }
 
     @Override
-    @FXThread
+    @FxThread
     public void fillContextMenu(@NotNull final NodeTree<?> nodeTree, @NotNull final ObservableList<MenuItem> items) {
         super.fillContextMenu(nodeTree, items);
         items.add(new DeleteSndAction(nodeTree, this));

@@ -3,7 +3,7 @@ package com.ss.editor.shader.nodes.ui.component.preview;
 import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.jme3.asset.AssetManager;
 import com.jme3.renderer.RenderManager;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.ui.control.code.BaseCodeArea;
 import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +40,7 @@ public abstract class CodePreviewComponent extends VBox {
         createComponents();
     }
 
-    @FXThread
+    @FxThread
     protected abstract void createComponents();
 
     /**
@@ -48,7 +48,7 @@ public abstract class CodePreviewComponent extends VBox {
      *
      * @return the render manager.
      */
-    @FXThread
+    @FxThread
     protected @NotNull RenderManager getRenderManager() {
         return renderManager;
     }
@@ -58,7 +58,7 @@ public abstract class CodePreviewComponent extends VBox {
      *
      * @return the asset manager.
      */
-    @FXThread
+    @FxThread
     protected @NotNull AssetManager getAssetManager() {
         return assetManager;
     }
@@ -68,7 +68,7 @@ public abstract class CodePreviewComponent extends VBox {
      *
      * @return the code area.
      */
-    @FXThread
+    @FxThread
     protected @NotNull BaseCodeArea getCodeArea() {
         return notNull(codeArea);
     }

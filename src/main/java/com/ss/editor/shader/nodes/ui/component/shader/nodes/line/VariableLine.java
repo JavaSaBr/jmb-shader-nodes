@@ -1,7 +1,7 @@
 package com.ss.editor.shader.nodes.ui.component.shader.nodes.line;
 
-import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE_LINE;
-import com.ss.editor.annotation.FXThread;
+import static com.ss.editor.shader.nodes.ui.PluginCssClasses.SHADER_NODE_LINE;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodesContainer;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.ShaderNodeParameter;
@@ -38,7 +38,7 @@ public class VariableLine extends CubicCurve {
      *
      * @param event the menu requested event.
      */
-    @FXThread
+    @FxThread
     private void handleContextMenuRequested(@NotNull final ContextMenuEvent event) {
         final ShaderNodeElement<?> nodeElement = inParameter.getNodeElement();
         final ShaderNodesContainer container = nodeElement.getContainer();
@@ -51,7 +51,7 @@ public class VariableLine extends CubicCurve {
      *
      * @return the input parameter.
      */
-    @FXThread
+    @FxThread
     public @NotNull ShaderNodeParameter getInParameter() {
         return inParameter;
     }
@@ -61,7 +61,7 @@ public class VariableLine extends CubicCurve {
      *
      * @return the output parameter.
      */
-    @FXThread
+    @FxThread
     public @NotNull ShaderNodeParameter getOutParameter() {
         return outParameter;
     }
@@ -69,7 +69,7 @@ public class VariableLine extends CubicCurve {
     /**
      * Configure the line.
      */
-    @FXThread
+    @FxThread
     private void configureLine() {
 
         final SocketElement outSocket = outParameter.getSocket();

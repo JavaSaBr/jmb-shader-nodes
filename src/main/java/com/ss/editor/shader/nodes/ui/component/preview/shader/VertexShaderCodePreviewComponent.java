@@ -3,7 +3,7 @@ package com.ss.editor.shader.nodes.ui.component.preview.shader;
 import com.jme3.asset.AssetManager;
 import com.jme3.renderer.RenderManager;
 import com.jme3.shader.Shader;
-import com.ss.editor.annotation.FXThread;
+import com.ss.editor.annotation.FxThread;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -19,7 +19,7 @@ public class VertexShaderCodePreviewComponent extends ShaderCodePreviewComponent
     }
 
     @Override
-    @FXThread
+    @FxThread
     protected @NotNull Shader.ShaderType getShaderType() {
         return Shader.ShaderType.Vertex;
     }

@@ -7,7 +7,7 @@ import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.VariableMapping;
 import com.ss.editor.annotation.FromAnyThread;
-import com.ss.editor.annotation.JMEThread;
+import com.ss.editor.annotation.JmeThread;
 import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesChangeConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -69,9 +69,9 @@ public class AttachVarToGlobalNodeOperation extends AttachShaderNodeOperation {
     }
 
     @Override
-    @JMEThread
-    protected void redoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.redoImplInJMEThread(editor);
+    @JmeThread
+    protected void redoImplInJmeThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.redoImplInJmeThread(editor);
 
         final List<VariableMapping> outputMapping = getShaderNode().getOutputMapping();
         final TechniqueDef techniqueDef = getTechniqueDef();
@@ -143,9 +143,9 @@ public class AttachVarToGlobalNodeOperation extends AttachShaderNodeOperation {
     }
 
     @Override
-    @JMEThread
-    protected void undoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.undoImplInJMEThread(editor);
+    @JmeThread
+    protected void undoImplInJmeThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.undoImplInJmeThread(editor);
 
         final TechniqueDef techniqueDef = getTechniqueDef();
         final ShaderGenerationInfo info = techniqueDef.getShaderGenerationInfo();
