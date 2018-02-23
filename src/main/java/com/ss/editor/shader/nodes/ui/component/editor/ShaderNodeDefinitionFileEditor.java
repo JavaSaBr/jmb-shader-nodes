@@ -171,7 +171,7 @@ public class ShaderNodeDefinitionFileEditor extends BaseFileEditorWithSplitRight
      * @param objects the selected objects.
      */
     @FxThread
-    private void selectFromTree(@NotNull final Array<Object> objects) {
+    private void selectFromTree(@Nullable final Array<Object> objects) {
         setEditedShader(null);
 
         final GLSLCodeArea codeArea = getCodeArea();

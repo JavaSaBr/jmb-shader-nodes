@@ -24,7 +24,11 @@ public class VariableShaderNodeElement extends ShaderNodeElement<ShaderNodeVaria
     @Override
     public @Nullable ShaderNodeParameter parameterFor(@NotNull final ShaderNodeVariable variable,
                                                       final boolean fromOutputMapping, final boolean input) {
-        if (!getNameSpace().equals(variable.getNameSpace())) return null;
+
+        if (!getNameSpace().equals(variable.getNameSpace())) {
+            return null;
+        }
+
         return super.parameterFor(variable, fromOutputMapping, input);
     }
 

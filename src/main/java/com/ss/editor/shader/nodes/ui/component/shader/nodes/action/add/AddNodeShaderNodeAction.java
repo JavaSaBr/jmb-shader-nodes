@@ -34,11 +34,10 @@ import java.util.List;
  */
 public class AddNodeShaderNodeAction extends ShaderNodeAction<TechniqueDef> {
 
-    @NotNull
-    private static final ResourceManager RESOURCE_MANAGER = ResourceManager.getInstance();
+    public static final String PROP_DEFINITION = "definition";
 
     @NotNull
-    private static final String PROP_DEFINITION = "definition";
+    private static final ResourceManager RESOURCE_MANAGER = ResourceManager.getInstance();
 
     public AddNodeShaderNodeAction(@NotNull final ShaderNodesContainer container,
                                    @NotNull final TechniqueDef techniqueDef, @NotNull final Vector2f location) {

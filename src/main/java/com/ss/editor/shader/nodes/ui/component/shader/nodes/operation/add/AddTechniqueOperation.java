@@ -36,22 +36,22 @@ public class AddTechniqueOperation extends ShaderNodeOperation {
 
     @Override
     @JmeThread
-    protected void redoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.redoImplInJMEThread(editor);
+    protected void redoImplInJmeThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.redoImplInJmeThread(editor);
         materialDef.addTechniqueDef(techniqueDef);
     }
 
     @Override
     @FxThread
-    protected void redoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.redoImplInFXThread(editor);
+    protected void redoImplInFxThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.redoImplInFxThread(editor);
         editor.notifyAddedTechnique(techniqueDef);
     }
 
     @Override
     @JmeThread
-    protected void undoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.undoImplInJMEThread(editor);
+    protected void undoImplInJmeThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.undoImplInJmeThread(editor);
 
         final List<TechniqueDef> techniqueDefs = materialDef.getTechniqueDefs(techniqueDef.getName());
         techniqueDefs.remove(techniqueDef);
@@ -59,8 +59,8 @@ public class AddTechniqueOperation extends ShaderNodeOperation {
 
     @Override
     @FxThread
-    protected void undoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.undoImplInFXThread(editor);
+    protected void undoImplInFxThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.undoImplInFxThread(editor);
         editor.notifyRemovedTechnique(techniqueDef);
     }
 }

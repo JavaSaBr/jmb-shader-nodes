@@ -24,8 +24,8 @@ public class AttachAttributeToShaderNodeOperation extends AttachShaderNodeOperat
 
     @Override
     @JmeThread
-    protected void redoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.redoImplInJMEThread(editor);
+    protected void redoImplInJmeThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.redoImplInJmeThread(editor);
 
         final List<VariableMapping> inputMapping = getShaderNode().getInputMapping();
 
@@ -40,8 +40,8 @@ public class AttachAttributeToShaderNodeOperation extends AttachShaderNodeOperat
 
     @Override
     @JmeThread
-    protected void undoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.undoImplInJMEThread(editor);
+    protected void undoImplInJmeThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.undoImplInJmeThread(editor);
 
         final List<VariableMapping> inputMapping = getShaderNode().getInputMapping();
 

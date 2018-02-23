@@ -83,6 +83,7 @@ public class ShaderNodeDefinitionsFileCreator extends GenericFileCreator {
         AVAILABLE_TYPES.add(ShaderType.Fragment.name());
 
         final Renderer renderer = EditorUtil.getRenderer();
+
         final EnumSet<Caps> caps = renderer.getCaps();
         caps.stream().filter(cap -> cap.name().startsWith("GLSL"))
                 .map(Enum::name)

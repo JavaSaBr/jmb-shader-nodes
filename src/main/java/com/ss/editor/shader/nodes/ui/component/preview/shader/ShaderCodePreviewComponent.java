@@ -1,6 +1,6 @@
 package com.ss.editor.shader.nodes.ui.component.preview.shader;
 
-import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_CODE_PREVIEW_CONTAINER;
+import static com.ss.editor.shader.nodes.ui.PluginCssClasses.SHADER_CODE_PREVIEW_CONTAINER;
 import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.TechniqueDef;
@@ -10,8 +10,8 @@ import com.jme3.renderer.Renderer;
 import com.jme3.shader.Shader;
 import com.jme3.shader.ShaderGenerator;
 import com.ss.editor.Messages;
-import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.annotation.FxThread;
+import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.annotation.JmeThread;
 import com.ss.editor.manager.ExecutorManager;
 import com.ss.editor.shader.nodes.ui.component.preview.CodePreviewComponent;

@@ -35,7 +35,11 @@ public class InputGlobalShaderNodeElement extends GlobalShaderNodeElement {
     @FxThread
     public @Nullable ShaderNodeParameter parameterFor(final @NotNull ShaderNodeVariable variable,
                                                       final boolean fromOutputMapping, final boolean input) {
-        if (fromOutputMapping) return null;
+
+        if (fromOutputMapping) {
+            return null;
+        }
+
         return super.parameterFor(variable, fromOutputMapping, input);
     }
 

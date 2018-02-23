@@ -9,7 +9,7 @@ import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.ui.control.tree.operation.ChangeSndDocumentationOperation;
-import com.ss.editor.shader.nodes.ui.PluginCSSClasses;
+import com.ss.editor.shader.nodes.ui.PluginCssClasses;
 import com.ss.editor.shader.nodes.ui.component.SndDocumentationArea;
 import com.ss.editor.ui.dialog.AbstractSimpleEditorDialog;
 import com.ss.rlib.ui.util.FXUtils;
@@ -75,7 +75,7 @@ public class EditSndDocumentationDialog extends AbstractSimpleEditorDialog {
         editorArea.setOnKeyReleased(event -> consumeIf(event,
                 keyEvent -> keyEvent.getCode() == KeyCode.ENTER));
 
-        FXUtils.addClassTo(editorArea, PluginCSSClasses.SHADER_NODE_DEF_DOCUMENTATION_DIALOG);
+        FXUtils.addClassTo(editorArea, PluginCssClasses.SHADER_NODE_DEF_DOCUMENTATION_DIALOG);
         FXUtils.addToPane(editorArea, root);
     }
 

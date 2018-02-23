@@ -27,7 +27,11 @@ public class GlobalShaderNodeElement extends ShaderNodeElement<ShaderGenerationI
     @FxThread
     public @Nullable ShaderNodeParameter parameterFor(@NotNull final ShaderNodeVariable variable,
                                                       final boolean fromOutputMapping, final boolean input) {
-        if (!NAMESPACE.equals(variable.getNameSpace())) return null;
+
+        if (!NAMESPACE.equals(variable.getNameSpace())) {
+            return null;
+        }
+
         return super.parameterFor(variable, fromOutputMapping, input);
     }
 }

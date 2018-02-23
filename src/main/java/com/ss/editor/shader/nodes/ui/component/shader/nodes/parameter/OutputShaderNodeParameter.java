@@ -1,6 +1,6 @@
 package com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter;
 
-import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE_OUTPUT_PARAMETER;
+import static com.ss.editor.shader.nodes.ui.PluginCssClasses.SHADER_NODE_OUTPUT_PARAMETER;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodeElement;

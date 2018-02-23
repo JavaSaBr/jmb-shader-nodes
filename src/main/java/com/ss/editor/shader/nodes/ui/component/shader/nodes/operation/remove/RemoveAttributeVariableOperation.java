@@ -27,8 +27,8 @@ public class RemoveAttributeVariableOperation extends RemoveVariableOperation {
 
     @Override
     @JmeThread
-    protected void redoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.redoImplInJMEThread(editor);
+    protected void redoImplInJmeThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.redoImplInJmeThread(editor);
 
         final ShaderGenerationInfo info = techniqueDef.getShaderGenerationInfo();
         info.getAttributes().remove(variable);
@@ -36,15 +36,15 @@ public class RemoveAttributeVariableOperation extends RemoveVariableOperation {
 
     @Override
     @FxThread
-    protected void redoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.redoImplInFXThread(editor);
+    protected void redoImplInFxThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.redoImplInFxThread(editor);
         editor.notifyRemovedAttribute(variable);
     }
 
     @Override
     @JmeThread
-    protected void undoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.undoImplInJMEThread(editor);
+    protected void undoImplInJmeThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.undoImplInJmeThread(editor);
 
         final ShaderGenerationInfo info = techniqueDef.getShaderGenerationInfo();
         info.getAttributes().add(variable);
@@ -52,8 +52,8 @@ public class RemoveAttributeVariableOperation extends RemoveVariableOperation {
 
     @Override
     @FxThread
-    protected void undoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.undoImplInFXThread(editor);
+    protected void undoImplInFxThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.undoImplInFxThread(editor);
         editor.notifyAddedAttribute(variable, location);
     }
 }

@@ -70,8 +70,8 @@ public class AttachVarToGlobalNodeOperation extends AttachShaderNodeOperation {
 
     @Override
     @JmeThread
-    protected void redoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.redoImplInJMEThread(editor);
+    protected void redoImplInJmeThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.redoImplInJmeThread(editor);
 
         final List<VariableMapping> outputMapping = getShaderNode().getOutputMapping();
         final TechniqueDef techniqueDef = getTechniqueDef();
@@ -144,8 +144,8 @@ public class AttachVarToGlobalNodeOperation extends AttachShaderNodeOperation {
 
     @Override
     @JmeThread
-    protected void undoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.undoImplInJMEThread(editor);
+    protected void undoImplInJmeThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.undoImplInJmeThread(editor);
 
         final TechniqueDef techniqueDef = getTechniqueDef();
         final ShaderGenerationInfo info = techniqueDef.getShaderGenerationInfo();

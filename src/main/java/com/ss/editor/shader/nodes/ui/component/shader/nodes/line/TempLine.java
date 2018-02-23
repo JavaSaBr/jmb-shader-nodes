@@ -1,6 +1,6 @@
 package com.ss.editor.shader.nodes.ui.component.shader.nodes.line;
 
-import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE_TEMP_LINE;
+import static com.ss.editor.shader.nodes.ui.PluginCssClasses.SHADER_NODE_TEMP_LINE;
 import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.socket.SocketElement;
 import javafx.scene.shape.CubicCurve;

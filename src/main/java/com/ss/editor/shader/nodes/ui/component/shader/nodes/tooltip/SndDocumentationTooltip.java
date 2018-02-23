@@ -5,7 +5,7 @@ import com.jme3.asset.AssetManager;
 import com.jme3.asset.ShaderNodeDefinitionKey;
 import com.jme3.shader.ShaderNodeDefinition;
 import com.ss.editor.annotation.FxThread;
-import com.ss.editor.shader.nodes.ui.PluginCSSClasses;
+import com.ss.editor.shader.nodes.ui.PluginCssClasses;
 import com.ss.editor.shader.nodes.ui.component.SndDocumentationArea;
 import com.ss.editor.ui.tooltip.CustomTooltip;
 import com.ss.editor.util.EditorUtil;
@@ -45,7 +45,7 @@ public class SndDocumentationTooltip extends CustomTooltip<BorderPane> {
         this.documentation = new SndDocumentationArea();
         this.documentation.setEditable(false);
         root.setCenter(documentation);
-        FXUtils.addClassesTo(documentation, PluginCSSClasses.SHADER_NODE_DEF_DOCUMENTATION_TOOLTIP);
+        FXUtils.addClassesTo(documentation, PluginCssClasses.SHADER_NODE_DEF_DOCUMENTATION_TOOLTIP);
     }
 
     /**

@@ -112,8 +112,8 @@ public abstract class AddSndParameterAction extends AbstractNodeAction<ChangeCon
             return false;
         }
 
-        final GlslType glslType = vars.getEnum(PROP_TYPE, GlslType.class);
-        final String rawType = glslType.getRawType();
+        final GlslType GlslType = vars.getEnum(PROP_TYPE, GlslType.class);
+        final String rawType = GlslType.getRawType();
 
         final List<ShaderNodeVariable> oppositeParameters = getOppositeParameters(definition);
         final Optional<ShaderNodeVariable> oppositeParameter = oppositeParameters.stream()
@@ -140,8 +140,9 @@ public abstract class AddSndParameterAction extends AbstractNodeAction<ChangeCon
         final SndParameters parameters = (SndParameters) node.getElement();
 
         final String name = vars.getString(PROP_NAME);
-        final GlslType glslType = vars.getEnum(PROP_TYPE, GlslType.class);
-        final ShaderNodeVariable variable = new ShaderNodeVariable(glslType.getRawType(), name);
+        final GlslType GlslType = vars.getEnum(PROP_TYPE, GlslType.class);
+
+        final ShaderNodeVariable variable = new ShaderNodeVariable(GlslType.getRawType(), name);
 
         final ChangeConsumer changeConsumer = notNull(getNodeTree().getChangeConsumer());
         changeConsumer.execute(new AddSndParameterOperation(parameters, variable));

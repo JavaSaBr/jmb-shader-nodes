@@ -26,7 +26,7 @@ import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.annotation.FxThread;
 import com.ss.editor.manager.ResourceManager;
 import com.ss.editor.plugin.api.dialog.GenericFactoryDialog;
-import com.ss.editor.plugin.api.editor.material.BaseMaterialEditor3DPart.ModelType;
+import com.ss.editor.plugin.api.editor.material.BaseMaterialEditor3DPart;
 import com.ss.editor.plugin.api.editor.material.BaseMaterialFileEditor;
 import com.ss.editor.plugin.api.property.PropertyDefinition;
 import com.ss.editor.shader.nodes.PluginMessages;
@@ -242,7 +242,7 @@ public class ShaderNodesFileEditor extends
 
         final ShaderNodesEditor3DPart editor3DPart = getEditor3DPart();
         editor3DPart.updateMaterial(EditorUtil.getDefaultMaterial());
-        editor3DPart.changeMode(ModelType.BOX);
+        editor3DPart.changeMode(BaseMaterialEditor3DPart.ModelType.BOX);
     }
 
     @Override

@@ -1,12 +1,12 @@
 package com.ss.editor.shader.nodes.ui.control.tree.node.definition;
 
-import com.ss.editor.annotation.FxThread;
 import com.ss.editor.annotation.FromAnyThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.model.shader.node.definition.SndShaderSource;
 import com.ss.editor.shader.nodes.model.shader.node.definition.SndShaderSources;
-import com.ss.editor.shader.nodes.ui.control.tree.action.AddSndShaderSourceAction;
 import com.ss.editor.shader.nodes.ui.PluginIcons;
+import com.ss.editor.shader.nodes.ui.control.tree.action.AddSndShaderSourceAction;
 import com.ss.editor.ui.control.tree.NodeTree;
 import com.ss.editor.ui.control.tree.node.TreeNode;
 import com.ss.rlib.util.array.Array;

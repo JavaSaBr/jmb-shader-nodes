@@ -1,7 +1,7 @@
 package com.ss.editor.shader.nodes.ui.component.shader.nodes;
 
-import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE;
-import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODE_HEADER;
+import static com.ss.editor.shader.nodes.ui.PluginCssClasses.SHADER_NODE;
+import static com.ss.editor.shader.nodes.ui.PluginCssClasses.SHADER_NODE_HEADER;
 import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.*;
 import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNodeVariable;

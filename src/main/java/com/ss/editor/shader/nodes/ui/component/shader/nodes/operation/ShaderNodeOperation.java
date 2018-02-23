@@ -17,18 +17,18 @@ public class ShaderNodeOperation extends AbstractEditorOperation<ShaderNodesChan
     @FxThread
     protected void redoImpl(@NotNull final ShaderNodesChangeConsumer editor) {
         EXECUTOR_MANAGER.addJmeTask(() -> {
-            redoImplInJMEThread(editor);
-            EXECUTOR_MANAGER.addFxTask(() -> redoImplInFXThread(editor));
+            redoImplInJmeThread(editor);
+            EXECUTOR_MANAGER.addFxTask(() -> redoImplInFxThread(editor));
         });
     }
 
     @JmeThread
-    protected void redoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
+    protected void redoImplInJmeThread(@NotNull final ShaderNodesChangeConsumer editor) {
 
     }
 
     @FxThread
-    protected void redoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
+    protected void redoImplInFxThread(@NotNull final ShaderNodesChangeConsumer editor) {
 
     }
 
@@ -36,18 +36,18 @@ public class ShaderNodeOperation extends AbstractEditorOperation<ShaderNodesChan
     @FxThread
     protected void undoImpl(@NotNull final ShaderNodesChangeConsumer editor) {
         EXECUTOR_MANAGER.addJmeTask(() -> {
-            undoImplInJMEThread(editor);
-        EXECUTOR_MANAGER.addFxTask(() -> undoImplInFXThread(editor));
+            undoImplInJmeThread(editor);
+        EXECUTOR_MANAGER.addFxTask(() -> undoImplInFxThread(editor));
     });
     }
 
     @JmeThread
-    protected void undoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
+    protected void undoImplInJmeThread(@NotNull final ShaderNodesChangeConsumer editor) {
 
     }
 
     @FxThread
-    protected void undoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
+    protected void undoImplInFxThread(@NotNull final ShaderNodesChangeConsumer editor) {
 
     }
 }

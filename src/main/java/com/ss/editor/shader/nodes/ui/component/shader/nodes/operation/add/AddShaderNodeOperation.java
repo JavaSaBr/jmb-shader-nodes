@@ -55,8 +55,8 @@ public class AddShaderNodeOperation extends ShaderNodeOperation {
 
     @Override
     @JmeThread
-    protected void redoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.redoImplInJMEThread(editor);
+    protected void redoImplInJmeThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.redoImplInJmeThread(editor);
 
         final List<ShaderNode> shaderNodes = techniqueDef.getShaderNodes();
         previousShaderNodes = new ArrayList<>(shaderNodes);
@@ -84,15 +84,15 @@ public class AddShaderNodeOperation extends ShaderNodeOperation {
 
     @Override
     @FxThread
-    protected void redoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.redoImplInFXThread(editor);
+    protected void redoImplInFxThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.redoImplInFxThread(editor);
         editor.notifyAddedShaderNode(shaderNode, location);
     }
 
     @Override
     @JmeThread
-    protected void undoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.undoImplInJMEThread(editor);
+    protected void undoImplInJmeThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.undoImplInJmeThread(editor);
         final List<ShaderNode> shaderNodes = techniqueDef.getShaderNodes();
         shaderNodes.clear();
         shaderNodes.addAll(previousShaderNodes);
@@ -101,8 +101,8 @@ public class AddShaderNodeOperation extends ShaderNodeOperation {
 
     @Override
     @FxThread
-    protected void undoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.undoImplInFXThread(editor);
+    protected void undoImplInFxThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.undoImplInFxThread(editor);
         editor.notifyRemovedRemovedShaderNode(shaderNode);
     }
 }

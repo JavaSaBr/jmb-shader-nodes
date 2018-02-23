@@ -37,7 +37,6 @@ public class ShaderNodesEditor3DPart extends BaseMaterialEditor3DPart<ShaderNode
      */
     @JmeThread
     private void selectTechniqueImpl(@NotNull final Material material, @NotNull final String name) {
-        //FIXME
         material.selectTechnique(name, EditorUtil.getRenderManager());
         updateMaterialImpl(material);
     }

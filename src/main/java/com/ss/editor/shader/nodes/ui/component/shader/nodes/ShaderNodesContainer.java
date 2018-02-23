@@ -1,6 +1,6 @@
 package com.ss.editor.shader.nodes.ui.component.shader.nodes;
 
-import static com.ss.editor.shader.nodes.ui.PluginCSSClasses.SHADER_NODES_ROOT;
+import static com.ss.editor.shader.nodes.ui.PluginCssClasses.SHADER_NODES_ROOT;
 import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.hasInMappingByRightVar;
 import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.hasOutMappingByLeftVar;
 import static com.ss.rlib.util.ObjectUtils.notNull;

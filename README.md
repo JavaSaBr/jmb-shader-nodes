@@ -1,8 +1,8 @@
-## Shader Nodes Plugin 1.1.0
+## Shader Nodes Plugin 1.1.1
 
 It's a plugin for jMonkeyBuilder to support working with shader modes.
 
-#### It requires jMonkeyBuilder 1.3.2 or higher.
+#### It requires jMonkeyBuilder 1.7.0 or higher.
 
 Creating the shader nodes project file:
 

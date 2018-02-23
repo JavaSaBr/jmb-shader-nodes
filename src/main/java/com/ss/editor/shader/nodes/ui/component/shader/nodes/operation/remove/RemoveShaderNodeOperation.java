@@ -42,8 +42,8 @@ public class RemoveShaderNodeOperation extends RemoveOperation {
 
     @Override
     @JmeThread
-    protected void redoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.redoImplInJMEThread(editor);
+    protected void redoImplInJmeThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.redoImplInJmeThread(editor);
 
         for (final ShaderNode otherNode : shaderNodes) {
 
@@ -68,15 +68,15 @@ public class RemoveShaderNodeOperation extends RemoveOperation {
 
     @Override
     @FxThread
-    protected void redoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.redoImplInFXThread(editor);
+    protected void redoImplInFxThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.redoImplInFxThread(editor);
         editor.notifyRemovedRemovedShaderNode(shaderNode);
     }
 
     @Override
     @JmeThread
-    protected void undoImplInJMEThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.undoImplInJMEThread(editor);
+    protected void undoImplInJmeThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.undoImplInJmeThread(editor);
 
         for (final Map.Entry<ShaderNode, List<VariableMapping>> entry : toRestore.entrySet()) {
             final ShaderNode shaderNode = entry.getKey();
@@ -91,8 +91,8 @@ public class RemoveShaderNodeOperation extends RemoveOperation {
 
     @Override
     @FxThread
-    protected void undoImplInFXThread(@NotNull final ShaderNodesChangeConsumer editor) {
-        super.undoImplInFXThread(editor);
+    protected void undoImplInFxThread(@NotNull final ShaderNodesChangeConsumer editor) {
+        super.undoImplInFxThread(editor);
         editor.notifyAddedShaderNode(shaderNode, location);
     }
 }
