@@ -295,10 +295,10 @@ public class ShaderNodeElement<T> extends VBox {
         } else {
 
             final Parent parent = getParent();
-            final Point2D posiInParent = parent.sceneToLocal(event.getSceneX(), event.getSceneY());
+            final Point2D posInParent = parent.sceneToLocal(event.getSceneX(), event.getSceneY());
 
-            double offsetX = posiInParent.getX() - mouseX;
-            double offsetY = posiInParent.getY() - mouseY;
+            double offsetX = posInParent.getX() - mouseX;
+            double offsetY = posInParent.getY() - mouseY;
 
             x = Math.max(x + offsetX, 10D);
             y = Math.max(y + offsetY, 10D);
@@ -308,8 +308,8 @@ public class ShaderNodeElement<T> extends VBox {
             setDragging(true);
 
             // again set current Mouse x AND y position
-            mouseX = posiInParent.getX();
-            mouseY = posiInParent.getY();
+            mouseX = posInParent.getX();
+            mouseY = posInParent.getY();
         }
 
         event.consume();

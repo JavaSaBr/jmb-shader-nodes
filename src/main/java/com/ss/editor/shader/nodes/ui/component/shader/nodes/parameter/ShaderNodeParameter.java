@@ -81,6 +81,8 @@ public class ShaderNodeParameter extends HBox {
     }
 
     /**
+     * Get the type label.
+     *
      * @return the type label.
      */
     @FxThread
@@ -89,6 +91,8 @@ public class ShaderNodeParameter extends HBox {
     }
 
     /**
+     * Get the name label.
+     *
      * @return the name label.
      */
     @FxThread
@@ -97,6 +101,8 @@ public class ShaderNodeParameter extends HBox {
     }
 
     /**
+     * Get the socket.
+     *
      * @return the socket.
      */
     @FxThread
@@ -105,6 +111,8 @@ public class ShaderNodeParameter extends HBox {
     }
 
     /**
+     * Get the variable.
+     * 
      * @return the variable.
      */
     @FxThread
