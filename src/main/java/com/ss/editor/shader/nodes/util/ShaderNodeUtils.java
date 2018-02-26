@@ -11,16 +11,23 @@ import com.jme3.shader.UniformBinding;
 import com.jme3.shader.VariableMapping;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodeElement;
+import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodesContainer;
+import com.ss.editor.shader.nodes.ui.component.shader.nodes.global.GlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.global.OutputGlobalShaderNodeElement;
+import com.ss.editor.shader.nodes.ui.component.shader.nodes.main.AttributeShaderNodeElement;
+import com.ss.editor.shader.nodes.ui.component.shader.nodes.main.MaterialShaderNodeElement;
+import com.ss.editor.shader.nodes.ui.component.shader.nodes.main.WorldShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.InputShaderNodeParameter;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.OutputShaderNodeParameter;
 import com.ss.editor.util.GlslType;
 import com.ss.rlib.util.StringUtils;
+import com.ss.rlib.util.dictionary.DictionaryFactory;
+import com.ss.rlib.util.dictionary.ObjectDictionary;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.function.BiFunction;
 
 /**
  * The utility class.
@@ -28,6 +35,47 @@ import java.util.List;
  * @author JavaSaBr
  */
 public class ShaderNodeUtils {
+
+    @NotNull
+    private static final ObjectDictionary<String, BiFunction<ShaderNodesContainer, ShaderNodeVariable, ShaderNodeElement<?>>> NODE_ELEMENT_FACTORIES =
+            DictionaryFactory.newObjectDictionary();
+
+    static {
+        NODE_ELEMENT_FACTORIES.put(MaterialShaderNodeElement.NAMESPACE, MaterialShaderNodeElement::new);
+        NODE_ELEMENT_FACTORIES.put(WorldShaderNodeElement.NAMESPACE, WorldShaderNodeElement::new);
+        NODE_ELEMENT_FACTORIES.put(AttributeShaderNodeElement.NAMESPACE, AttributeShaderNodeElement::new);
+    }
+
+    @NotNull
+    private static final Set<String> SYSTEM_NAMESPACES = new HashSet<>(Arrays.asList(
+            MaterialShaderNodeElement.NAMESPACE,
+            GlobalShaderNodeElement.NAMESPACE,
+            WorldShaderNodeElement.NAMESPACE,
+            AttributeShaderNodeElement.NAMESPACE
+    ));
+
+    /**
+     * Return true of the node name is user's shader node.
+     *
+     * @param shaderNodeName the shader node name.
+     * @return true of the node name is user's shader node.
+     */
+    public static boolean isUserShaderNode(@NotNull final String shaderNodeName) {
+        return !SYSTEM_NAMESPACES.contains(shaderNodeName);
+    }
+
+    /**
+     * Create a shader node element for the shader node variable.
+     *
+     * @param container the shader node container.
+     * @param var       the shader node variable.
+     * @return the option of shader node element.
+     */
+    public static @NotNull Optional<ShaderNodeElement<?>> createNodeElement(@NotNull final ShaderNodesContainer container,
+                                                                            @NotNull final ShaderNodeVariable var) {
+        return NODE_ELEMENT_FACTORIES.getOptional(var.getNameSpace())
+                .map(factory -> factory.apply(container, var));
+    }
 
     /**
      * Find a material parameter with the name.

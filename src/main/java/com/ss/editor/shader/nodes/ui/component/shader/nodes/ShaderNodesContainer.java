@@ -16,7 +16,6 @@ import com.ss.editor.manager.ExecutorManager;
 import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.action.ShaderNodeAction;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.action.add.*;
-import com.ss.editor.shader.nodes.ui.component.shader.nodes.global.GlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.global.InputGlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.global.OutputGlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.line.TempLine;
@@ -25,6 +24,7 @@ import com.ss.editor.shader.nodes.ui.component.shader.nodes.main.*;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.ShaderNodeParameter;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.socket.SocketElement;
 import com.ss.editor.shader.nodes.util.MaterialDefUtils;
+import com.ss.editor.shader.nodes.util.ShaderNodeUtils;
 import com.ss.rlib.logging.Logger;
 import com.ss.rlib.logging.LoggerManager;
 import com.ss.rlib.ui.util.FXUtils;
@@ -48,10 +48,7 @@ import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Predicate;
 
 /**
@@ -68,6 +65,7 @@ public class ShaderNodesContainer extends ScrollPane {
 
     @NotNull
     private static final ExecutorManager EXECUTOR_MANAGER = ExecutorManager.getInstance();
+
 
     /**
      * All current nodes elements.
@@ -378,8 +376,7 @@ public class ShaderNodesContainer extends ScrollPane {
      */
     @FxThread
     private void resetLayout() {
-        final Array<ShaderNodeElement<?>> nodeElements = getNodeElements();
-        nodeElements.forEach(ShaderNodeElement::resetLayout);
+        getNodeElements().forEach(ShaderNodeElement::resetLayout);
     }
 
     /**
@@ -471,6 +468,7 @@ public class ShaderNodesContainer extends ScrollPane {
 
         if (source == root) {
 
+            //FIXME localization
             final Menu menu = new Menu("Add");
             menu.getItems().addAll(new AddMaterialParamShaderNodeAction(this, materialDef, location),
                     new AddMaterialTextureShaderNodeAction(this, materialDef, location),
@@ -513,7 +511,9 @@ public class ShaderNodesContainer extends ScrollPane {
     public void updateAttaching(final double sceneX, final double sceneY) {
 
         final TempLine tempLine = getTempLine();
-        if (tempLine == null) return;
+        if (tempLine == null) {
+            return;
+        }
 
         final Point2D localCoords = root.sceneToLocal(sceneX, sceneY);
         tempLine.updateEnd(localCoords.getX(), localCoords.getY());
@@ -526,7 +526,9 @@ public class ShaderNodesContainer extends ScrollPane {
     public void finishAttaching() {
 
         final TempLine tempLine = getTempLine();
-        if (tempLine == null) return;
+        if (tempLine == null) {
+            return;
+        }
 
         FXUtils.removeFromParent(tempLine, root);
         setTempLine(null);
@@ -566,7 +568,10 @@ public class ShaderNodesContainer extends ScrollPane {
      */
     @FxThread
     public void show(@NotNull final TechniqueDef techniqueDef) {
-        if (techniqueDef.equals(this.techniqueDef)) return;
+
+        if (techniqueDef.equals(this.techniqueDef)) {
+            return;
+        }
 
         this.techniqueDef = techniqueDef;
 
@@ -599,10 +604,7 @@ public class ShaderNodesContainer extends ScrollPane {
         nodeElements.add(new OutputGlobalShaderNodeElement(this, shaderGenerationInfo));
 
         for (final ShaderNodeVariable variable : uniforms) {
-            final ShaderNodeElement<?> nodeElement = createNodeElement(variable);
-            if (nodeElement != null) {
-                nodeElements.add(nodeElement);
-            }
+            createNodeElement(variable).ifPresent(nodeElements::add);
         }
 
         final List<ShaderNode> shaderNodes = techniqueDef.getShaderNodes();
@@ -642,13 +644,12 @@ public class ShaderNodesContainer extends ScrollPane {
      * Find a shader node by the name.
      *
      * @param name the name.
-     * @return the found shader node or null.
+     * @return the optional of the shader node.
      */
     @FxThread
-    public @Nullable ShaderNode findShaderNodeByName(@NotNull final String name) {
+    private ShaderNode findShaderNodeByName(@NotNull final String name) {
 
-        if (MaterialShaderNodeElement.NAMESPACE.equals(name) || GlobalShaderNodeElement.NAMESPACE.equals(name) ||
-                WorldShaderNodeElement.NAMESPACE.equals(name) || AttributeShaderNodeElement.NAMESPACE.equals(name)) {
+        if (ShaderNodeUtils.isUserShaderNode(name)) {
             return null;
         }
 
@@ -713,30 +714,30 @@ public class ShaderNodesContainer extends ScrollPane {
      * Find a nodes element by the variable.
      *
      * @param variable the variable.
-     * @return the nodes element or null.
+     * @return the node element.
      */
     @FxThread
-    private @Nullable ShaderNodeElement<?> findNodeElementByVariable(@NotNull final ShaderNodeVariable variable) {
-        return (ShaderNodeElement<?>) root.getChildren().stream()
+    private @NotNull Optional<? extends ShaderNodeElement<?>> findNodeElementByVariable(@NotNull final ShaderNodeVariable variable) {
+        return root.getChildren().stream()
                     .filter(ShaderNodeElement.class::isInstance)
-                    .map(ShaderNodeElement.class::cast)
+                    .map(sne -> (ShaderNodeElement<?>) sne)
                     .filter(element -> element.getObject().equals(variable))
-                    .findAny().orElse(null);
+                    .findAny();
     }
 
     /**
      * Find a nodes element by the object.
      *
      * @param object the object.
-     * @return the nodes element or null.
+     * @return the node element.
      */
     @FxThread
-    private @Nullable ShaderNodeElement<?> findNodeElementByObject(@NotNull final Object object) {
-        return (ShaderNodeElement<?>) root.getChildren().stream()
+    private @NotNull Optional<? extends ShaderNodeElement<?>> findNodeElementByObject(@NotNull final Object object) {
+        return root.getChildren().stream()
                 .filter(ShaderNodeElement.class::isInstance)
-                .map(ShaderNodeElement.class::cast)
+                .map(sne -> (ShaderNodeElement<?>) sne)
                 .filter(element -> element.getObject().equals(object))
-                .findAny().orElse(null);
+                .findAny();
     }
 
     /**
@@ -749,11 +750,12 @@ public class ShaderNodesContainer extends ScrollPane {
      */
     @FxThread
     private @Nullable ShaderNodeParameter findByVariable(@NotNull final ShaderNodeVariable variable,
-                                                         final boolean fromOutputMapping, final boolean input) {
+                                                         final boolean fromOutputMapping,
+                                                         final boolean input) {
         return root.getChildren().stream()
                 .filter(ShaderNodeElement.class::isInstance)
                 .map(ShaderNodeElement.class::cast)
-                .map(shaderNodeElement -> shaderNodeElement.parameterFor(variable, fromOutputMapping, input))
+                .map(sne -> sne.parameterFor(variable, fromOutputMapping, input))
                 .filter(Objects::nonNull)
                 .findAny().orElse(null);
     }
@@ -811,13 +813,7 @@ public class ShaderNodesContainer extends ScrollPane {
      */
     @FxThread
     public void addNodeElement(@NotNull final ShaderNodeVariable variable, @NotNull final Vector2f location) {
-
-        final ShaderNodeElement<?> nodeElement = createNodeElement(variable);
-        if (nodeElement == null) {
-            return;
-        }
-
-        addNodeElement(nodeElement, location);
+        createNodeElement(variable).ifPresent(element -> addNodeElement(element, location));
     }
 
     /**
@@ -872,9 +868,7 @@ public class ShaderNodesContainer extends ScrollPane {
      */
     @FxThread
     public void removeShaderNode(@NotNull final ShaderNode shaderNode) {
-        final ShaderNodeElement<?> nodeElement = findNodeElementByObject(shaderNode);
-        if (nodeElement == null) return;
-        removeNodeElement(nodeElement);
+        findNodeElementByObject(shaderNode).ifPresent(this::removeNodeElement);
     }
 
     /**
@@ -884,13 +878,7 @@ public class ShaderNodesContainer extends ScrollPane {
      */
     @FxThread
     public void removeNodeElement(@NotNull final ShaderNodeVariable variable) {
-
-        final ShaderNodeElement<?> nodeElement = findNodeElementByVariable(variable);
-        if (nodeElement == null) {
-            return;
-        }
-
-        removeNodeElement(nodeElement);
+        findNodeElementByVariable(variable).ifPresent(this::removeNodeElement);
     }
 
     /**
@@ -909,22 +897,11 @@ public class ShaderNodesContainer extends ScrollPane {
      * Create a nodes element for the variable.
      *
      * @param variable the variable.
-     * @return the nodes element.
+     * @return the optional of shader node element.
      */
     @FxThread
-    private @Nullable ShaderNodeElement<?> createNodeElement(@NotNull ShaderNodeVariable variable) {
-
-        ShaderNodeElement<?> nodeElement = null;
-
-        final String nameSpace = variable.getNameSpace();
-        if (MaterialShaderNodeElement.NAMESPACE.equals(nameSpace)) {
-            nodeElement = new MaterialShaderNodeElement(this, variable);
-        } else if (WorldShaderNodeElement.NAMESPACE.equals(nameSpace)) {
-            nodeElement = new WorldShaderNodeElement(this, variable);
-        } else if (AttributeShaderNodeElement.NAMESPACE.equals(nameSpace)) {
-            nodeElement = new AttributeShaderNodeElement(this, variable);
-        }
-        return nodeElement;
+    private @NotNull Optional<ShaderNodeElement<?>> createNodeElement(@NotNull final ShaderNodeVariable variable) {
+        return ShaderNodeUtils.createNodeElement(this, variable);
     }
 
     /**

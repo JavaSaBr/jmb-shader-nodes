@@ -295,10 +295,10 @@ public class ShaderNodeElement<T> extends VBox {
         } else {
 
             final Parent parent = getParent();
-            final Point2D parentCoords = parent.sceneToLocal(event.getSceneX(), event.getSceneY());
+            final Point2D posiInParent = parent.sceneToLocal(event.getSceneX(), event.getSceneY());
 
-            double offsetX = parentCoords.getX() - mouseX;
-            double offsetY = parentCoords.getY() - mouseY;
+            double offsetX = posiInParent.getX() - mouseX;
+            double offsetY = posiInParent.getY() - mouseY;
 
             x = Math.max(x + offsetX, 10D);
             y = Math.max(y + offsetY, 10D);
@@ -308,8 +308,8 @@ public class ShaderNodeElement<T> extends VBox {
             setDragging(true);
 
             // again set current Mouse x AND y position
-            mouseX = parentCoords.getX();
-            mouseY = parentCoords.getY();
+            mouseX = posiInParent.getX();
+            mouseY = posiInParent.getY();
         }
 
         event.consume();
@@ -373,7 +373,9 @@ public class ShaderNodeElement<T> extends VBox {
 
         if (event.getTarget() instanceof SocketElement) {
             return;
-        } else if (event.getButton() != MouseButton.MIDDLE) {
+        }
+
+        if (event.getButton() != MouseButton.MIDDLE) {
             container.requestSelect(this);
         }
 
@@ -383,11 +385,11 @@ public class ShaderNodeElement<T> extends VBox {
         } else {
 
             final Parent parent = getParent();
-            final Point2D parentCoords = parent.sceneToLocal(event.getSceneX(), event.getSceneY());
+            final Point2D posInParent = parent.sceneToLocal(event.getSceneX(), event.getSceneY());
 
             // record the current mouse X and Y position on Node
-            mouseX = parentCoords.getX();
-            mouseY = parentCoords.getY();
+            mouseX = posInParent.getX();
+            mouseY = posInParent.getY();
 
             x = getLayoutX();
             y = getLayoutY();
