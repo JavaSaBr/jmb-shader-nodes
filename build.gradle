@@ -14,20 +14,23 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'idea'
 apply plugin: 'org.junit.platform.gradle.plugin'
+apply plugin: 'application'
 
 group = 'com.spaceshift'
 version = '1.1.1'
 
 ext.artifactId = 'shader-nodes'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 1.9
+targetCompatibility = 1.9
 
 compileTestJava {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
     options.compilerArgs += '-parameters'
 }
+
+mainClassName = "com.ss.editor.DevelopPluginStarter"
 
 ext.junitPlatformVersion = "1.0.0"
 ext.junitJupiterVersion = "5.0.0"
@@ -47,6 +50,7 @@ repositories {
     mavenCentral()
     jcenter()
     maven { url 'https://jitpack.io' }
+    maven { url "https://dl.bintray.com/javasabr/maven" }
 }
 
 configurations {
@@ -58,7 +62,7 @@ javadoc {
 }
 
 dependencies {
-    compile 'com.github.JavaSaBr:jmonkeybuilder:develop-SNAPSHOT'
+    compile 'com.spaceshift:jmonkeybuilder:1.7.3-2'
 
     testCompile "org.junit.platform:junit-platform-commons:$junitPlatformVersion"
     testRuntime "org.junit.platform:junit-platform-engine:$junitPlatformVersion"
@@ -71,21 +75,6 @@ dependencies {
 
     // Only needed to run tests in an (IntelliJ) IDE(A) that bundles an older version
     testCompile "org.junit.platform:junit-platform-launcher:$junitPlatformVersion"
-}
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
 }
 
 task cleanPluginFolders(type: Delete) {
@@ -182,12 +171,8 @@ task wrapper(type: Wrapper) {
     gradleVersion = '4.5.1'
 }
 
-defaultTasks 'install'
-
-// To specify a license in the pom:
-install {
-    repositories.mavenInstaller {
-        pom.version = version
-        pom.artifactId = artifactId
-    }
+run.dependsOn {
+    preparePlugin
 }
+
+run.jvmArgs(Arrays.asList("-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005"))
