@@ -14,6 +14,7 @@ public interface PluginCssClasses {
     @NotNull String SHADER_NODE_HEADER = "header";
     @NotNull String SHADER_NODE_PARAMETER = "shader-node-parameter";
     @NotNull String SHADER_NODE_INPUT_PARAMETER = "shader-node-input-parameter";
+    @NotNull String SHADER_NODE_INPUT_PARAMETER_CONTAINER = "shader-node-input-parameter-container";
     @NotNull String SHADER_NODE_OUTPUT_PARAMETER = "shader-node-output-parameter";
     @NotNull String SHADER_NODE_MATERIAL_OUTPUT_PARAMETER = "shader-node-material-output-parameter";
     @NotNull String SHADER_NODE_PARAMETER_SOCKET = "shader-node-parameter-socket";

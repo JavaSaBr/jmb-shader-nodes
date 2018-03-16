@@ -8,7 +8,7 @@ import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.socket.SocketElement;
 import com.ss.rlib.ui.util.FXUtils;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.GridPane;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author JavaSaBr
  */
-public class ShaderNodeParameter extends HBox {
+public class ShaderNodeParameter extends GridPane {
 
     /**
      * The shader nodes element.
@@ -112,7 +112,7 @@ public class ShaderNodeParameter extends HBox {
 
     /**
      * Get the variable.
-     * 
+     *
      * @return the variable.
      */
     @FxThread

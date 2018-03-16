@@ -34,12 +34,27 @@
 }
 
 .shader-node-parameter {
-    -fx-spacing: 2px;
+    -fx-hgap: 2px;
 }
 
 .shader-node-input-parameter {
     -fx-alignment: center-left;
     -fx-padding: 0px 0px 0px -4px;
+}
+
+.shader-node-input-parameter > .label {
+    -fx-min-width: 40px;
+    -fx-alignment: center-right;
+}
+
+.shader-node-input-parameter-container {
+    -fx-alignment: center-left;
+}
+
+
+.shader-node-input-parameter > .hbox {
+    -fx-padding: 1px 3px 1px 8px;
+    -fx-alignment: center;
 }
 
 .shader-node-output-parameter {

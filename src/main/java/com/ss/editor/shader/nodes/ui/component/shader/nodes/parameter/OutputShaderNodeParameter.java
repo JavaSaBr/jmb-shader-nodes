@@ -32,9 +32,8 @@ public class OutputShaderNodeParameter extends ShaderNodeParameter {
     @FxThread
     protected void createContent() {
         super.createContent();
-
-        FXUtils.addToPane(getTypeLabel(), this);
-        FXUtils.addToPane(getNameLabel(), this);
-        FXUtils.addToPane(getSocket(), this);
+        add(getTypeLabel(), 0, 0);
+        add(getNameLabel(), 1, 0);
+        add(getSocket(), 2, 0);
     }
 }

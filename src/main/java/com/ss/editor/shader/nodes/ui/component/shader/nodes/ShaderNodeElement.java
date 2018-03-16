@@ -191,6 +191,8 @@ public class ShaderNodeElement<T> extends VBox {
     }
 
     /**
+     * Get the container of this nodes.
+     *
      * @return the container of this nodes.
      */
     @FxThread
@@ -199,6 +201,8 @@ public class ShaderNodeElement<T> extends VBox {
     }
 
     /**
+     * Get the shader object.
+     *
      * @return the shader object.
      */
     @FxThread
@@ -216,7 +220,8 @@ public class ShaderNodeElement<T> extends VBox {
      */
     @FxThread
     public @Nullable ShaderNodeParameter parameterFor(@NotNull final ShaderNodeVariable variable,
-                                                      final boolean fromOutputMapping, final boolean input) {
+                                                      final boolean fromOutputMapping,
+                                                      final boolean input) {
         return parametersContainer.getChildren().stream()
                 .filter(ShaderNodeParameter.class::isInstance)
                 .filter(node -> input ? node instanceof InputShaderNodeParameter : node instanceof OutputShaderNodeParameter)
@@ -410,6 +415,8 @@ public class ShaderNodeElement<T> extends VBox {
     }
 
     /**
+     * Return true if this nodes is dragging now.
+     *
      * @return true if this nodes is dragging now.
      */
     @FxThread
@@ -418,6 +425,8 @@ public class ShaderNodeElement<T> extends VBox {
     }
 
     /**
+     * Set true if this nodes is dragging now.
+     *
      * @param dragging true if this nodes is dragging now.
      */
     @FxThread
@@ -426,6 +435,8 @@ public class ShaderNodeElement<T> extends VBox {
     }
 
     /**
+     * Return true if this nodes is resizing now.
+     *
      * @return true if this nodes is resizing now.
      */
     @FxThread
@@ -434,6 +445,8 @@ public class ShaderNodeElement<T> extends VBox {
     }
 
     /**
+     * Set true if this nodes is resizing now.
+     *
      * @param resizing true if this nodes is resizing now.
      */
     @FxThread
