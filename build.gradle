@@ -21,12 +21,12 @@ version = '1.1.1'
 
 ext.artifactId = 'shader-nodes'
 
-sourceCompatibility = 1.9
-targetCompatibility = 1.9
+sourceCompatibility = 1.10
+targetCompatibility = 1.10
 
 compileTestJava {
-    sourceCompatibility = 1.9
-    targetCompatibility = 1.9
+    sourceCompatibility = 1.10
+    targetCompatibility = 1.10
     options.compilerArgs += '-parameters'
 }
 
@@ -62,7 +62,7 @@ javadoc {
 }
 
 dependencies {
-    compile 'com.spaceshift:jmonkeybuilder:1.7.3-2'
+    compile 'com.spaceshift:jmonkeybuilder:1.7.3-3'
 
     testCompile "org.junit.platform:junit-platform-commons:$junitPlatformVersion"
     testRuntime "org.junit.platform:junit-platform-engine:$junitPlatformVersion"
@@ -168,7 +168,7 @@ task deployPlugin(type: Zip, dependsOn: 'preparePlugin') {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.5.1'
+    gradleVersion = '4.6'
 }
 
 run.dependsOn {
