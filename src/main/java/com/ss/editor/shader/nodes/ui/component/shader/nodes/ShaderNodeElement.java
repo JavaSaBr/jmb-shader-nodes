@@ -13,6 +13,7 @@ import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.InputShade
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.OutputShaderNodeParameter;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.ShaderNodeParameter;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.socket.SocketElement;
+import com.ss.editor.shader.nodes.util.ShaderNodeUtils;
 import com.ss.rlib.ui.util.FXUtils;
 import com.ss.rlib.util.StringUtils;
 import javafx.beans.property.BooleanProperty;
@@ -149,7 +150,7 @@ public class ShaderNodeElement<T> extends VBox {
      */
     @FxThread
     private void handleContextMenuRequested(@NotNull final ContextMenuEvent event) {
-        final ShaderNodesContainer container = getContainer();
+        final var container = getContainer();
         container.handleContextMenuEvent(event);
         event.consume();
     }
@@ -169,11 +170,10 @@ public class ShaderNodeElement<T> extends VBox {
             return false;
         }
 
-        final ShaderNodeVariable inVar = inputParameter.getVariable();
-        final ShaderNodeVariable outVar = outputParameter.getVariable();
-
-        final String inType = inVar.getType();
-        final String outType = outVar.getType();
+        var inVar = inputParameter.getVariable();
+        var outVar = outputParameter.getVariable();
+        var inType = inVar.getType();
+        var outType = outVar.getType();
 
         return isAccessibleType(inType, outType) || !StringUtils.isEmpty(calculateRightSwizzling(inVar, outVar)) ||
                 !StringUtils.isEmpty(calculateLeftSwizzling(inVar, outVar));
@@ -224,8 +224,8 @@ public class ShaderNodeElement<T> extends VBox {
                                                       final boolean input) {
         return parametersContainer.getChildren().stream()
                 .filter(ShaderNodeParameter.class::isInstance)
-                .filter(node -> input ? node instanceof InputShaderNodeParameter : node instanceof OutputShaderNodeParameter)
                 .map(ShaderNodeParameter.class::cast)
+                .filter(node -> input == isInput(node))
                 .filter(parameter -> parameter.getVariable().getName().equals(variable.getName()))
                 .findAny().orElse(null);
     }
@@ -246,8 +246,8 @@ public class ShaderNodeElement<T> extends VBox {
     @FxThread
     protected void createContent() {
 
-        final StackPane header = new StackPane();
-        final Label titleLabel = new Label(getTitleText());
+        var header = new StackPane();
+        var titleLabel = new Label(getTitleText());
 
         FXUtils.addClassTo(header, SHADER_NODE_HEADER);
 
@@ -263,8 +263,8 @@ public class ShaderNodeElement<T> extends VBox {
      */
     @FxThread
     public void resetLayout() {
-        final double layoutX = getLayoutX();
-        final double layoutY = getLayoutY();
+        var layoutX = getLayoutX();
+        var layoutY = getLayoutY();
         setLayoutX(-1D);
         setLayoutY(-1D);
         setLayoutX(layoutX);
@@ -293,17 +293,16 @@ public class ShaderNodeElement<T> extends VBox {
         }
 
         if (isResizing()) {
-            final double mouseX = event.getX();
+            var mouseX = event.getX();
             setPrefWidth(getPrefWidth() + (mouseX - x));
             resetLayout();
             x = mouseX;
         } else {
 
-            final Parent parent = getParent();
-            final Point2D posInParent = parent.sceneToLocal(event.getSceneX(), event.getSceneY());
-
-            double offsetX = posInParent.getX() - mouseX;
-            double offsetY = posInParent.getY() - mouseY;
+            var parent = getParent();
+            var posInParent = parent.sceneToLocal(event.getSceneX(), event.getSceneY());
+            var offsetX = posInParent.getX() - mouseX;
+            var offsetY = posInParent.getY() - mouseY;
 
             x = Math.max(x + offsetX, 10D);
             y = Math.max(y + offsetY, 10D);
@@ -389,8 +388,8 @@ public class ShaderNodeElement<T> extends VBox {
             x = event.getX();
         } else {
 
-            final Parent parent = getParent();
-            final Point2D posInParent = parent.sceneToLocal(event.getSceneX(), event.getSceneY());
+            final var parent = getParent();
+            final var posInParent = parent.sceneToLocal(event.getSceneX(), event.getSceneY());
 
             // record the current mouse X and Y position on Node
             mouseX = posInParent.getX();

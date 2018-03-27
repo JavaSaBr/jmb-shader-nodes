@@ -102,16 +102,16 @@ public class InputSocketElement extends SocketElement {
     private void handleDragDropped(@NotNull final DragEvent dragEvent) {
         droppable.setValue(false);
 
-        final InputShaderNodeParameter parameter = (InputShaderNodeParameter) getParameter();
-        final ShaderNodeElement<?> nodeElement = parameter.getNodeElement();
+        var parameter = (InputShaderNodeParameter) getParameter();
+        var nodeElement = parameter.getNodeElement();
 
-        final Object gestureSource = dragEvent.getGestureSource();
+        var gestureSource = dragEvent.getGestureSource();
         if (!(gestureSource instanceof SocketElement)) {
             return;
         }
 
-        final SocketElement outputSocket = (SocketElement) gestureSource;
-        final OutputShaderNodeParameter outputParameter = (OutputShaderNodeParameter) outputSocket.getParameter();
+        var outputSocket = (SocketElement) gestureSource;
+        var outputParameter = (OutputShaderNodeParameter) outputSocket.getParameter();
 
         if (!nodeElement.canAttach(parameter, outputParameter)) {
             return;
@@ -128,22 +128,23 @@ public class InputSocketElement extends SocketElement {
     @FxThread
     private void handleDragOver(@NotNull final DragEvent dragEvent) {
 
-        final InputShaderNodeParameter parameter = (InputShaderNodeParameter) getParameter();
-        final ShaderNodeElement<?> nodeElement = parameter.getNodeElement();
-        final ShaderNodesContainer container = nodeElement.getContainer();
+        var parameter = (InputShaderNodeParameter) getParameter();
+        var nodeElement = parameter.getNodeElement();
+        var container = nodeElement.getContainer();
         container.updateAttaching(dragEvent.getSceneX(), dragEvent.getSceneY());
 
-        final Object gestureSource = dragEvent.getGestureSource();
+        var gestureSource = dragEvent.getGestureSource();
         if (!(gestureSource instanceof SocketElement)) {
             return;
         }
 
-        final SocketElement outputSocket = (SocketElement) gestureSource;
+        var outputSocket = (SocketElement) gestureSource;
         if (!nodeElement.canAttach(parameter, (OutputShaderNodeParameter) outputSocket.getParameter())) {
             return;
         }
 
-        final Point2D scene = localToScene(getWidth() / 2, getHeight() / 2);
+        var scene = localToScene(getWidth() / 2, getHeight() / 2);
+
         container.updateAttaching(scene.getX(), scene.getY());
 
         dragEvent.acceptTransferModes(TransferMode.MOVE);

@@ -62,12 +62,15 @@ public class OutputSocketElement extends SocketElement {
      * @param mouseEvent the mouse event.
      */
     @FxThread
-    private void handleMouseDragged(final MouseEvent mouseEvent) {
-        final ShaderNodeParameter parameter = getParameter();
-        final ShaderNodeElement<?> nodeElement = parameter.getNodeElement();
-        final ShaderNodesContainer container = nodeElement.getContainer();
+    private void handleMouseDragged(@NotNull final MouseEvent mouseEvent) {
+
+        var container = getParameter()
+            .getNodeElement()
+            .getContainer();
+
         container.startAttaching(this);
         container.updateAttaching(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+
         mouseEvent.consume();
     }
 
@@ -80,12 +83,12 @@ public class OutputSocketElement extends SocketElement {
     private void handleStopDrag(@NotNull final DragEvent dragEvent) {
         setCursor(Cursor.DEFAULT);
 
-        final ShaderNodeParameter parameter = getParameter();
-        final ShaderNodeElement<?> nodeElement = parameter.getNodeElement();
-        final ShaderNodesContainer container = nodeElement.getContainer();
-        container.finishAttaching();
+        getParameter().getNodeElement()
+            .getContainer()
+            .finishAttaching();
 
         dragEvent.consume();
+
         dragged.setValue(false);
     }
 
@@ -98,15 +101,15 @@ public class OutputSocketElement extends SocketElement {
     private void handleStartDrag(@NotNull final MouseEvent mouseEvent) {
         setCursor(Cursor.MOVE);
 
-        final ClipboardContent content = new ClipboardContent();
+        var content = new ClipboardContent();
         content.put(DATA_FORMAT, "");
 
-        final Dragboard dragBoard = startDragAndDrop(TransferMode.MOVE);
+        var dragBoard = startDragAndDrop(TransferMode.MOVE);
         dragBoard.setContent(content);
 
-        final ShaderNodeParameter parameter = getParameter();
-        final ShaderNodeElement<?> nodeElement = parameter.getNodeElement();
-        final ShaderNodesContainer container = nodeElement.getContainer();
+        var parameter = getParameter();
+        var nodeElement = parameter.getNodeElement();
+        var container = nodeElement.getContainer();
         container.startAttaching(this);
         container.updateAttaching(mouseEvent.getSceneX(), mouseEvent.getSceneY());
 

@@ -19,6 +19,7 @@ import com.ss.editor.shader.nodes.ui.component.shader.nodes.main.MaterialShaderN
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.main.WorldShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.InputShaderNodeParameter;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.OutputShaderNodeParameter;
+import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.ShaderNodeParameter;
 import com.ss.editor.util.GlslType;
 import com.ss.rlib.util.StringUtils;
 import com.ss.rlib.util.dictionary.DictionaryFactory;
@@ -505,6 +506,16 @@ public class ShaderNodeUtils {
         }
 
         return StringUtils.isEmpty(variable.getDefaultValue());
+    }
+
+    /**
+     * Return true if the parameter is input parameter.
+     *
+     * @param parameter the parameter.
+     * @return true if the parameter is input parameter.
+     */
+    public static boolean isInput(@NotNull final ShaderNodeParameter parameter) {
+        return parameter instanceof InputShaderNodeParameter;
     }
 
     /**

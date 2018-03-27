@@ -57,7 +57,7 @@ public class MainShaderNodeElement extends ShaderNodeElement<ShaderNode> {
     public @Nullable ShaderNodeParameter parameterFor(@NotNull final ShaderNodeVariable variable,
                                                       final boolean fromOutputMapping, final boolean input) {
 
-        final ShaderNode shaderNode = getObject();
+        var shaderNode = getObject();
         if (!shaderNode.getName().equals(variable.getNameSpace())) {
             return null;
         }
@@ -70,16 +70,16 @@ public class MainShaderNodeElement extends ShaderNodeElement<ShaderNode> {
     protected void fillParameters(@NotNull final VBox container) {
         super.fillParameters(container);
 
-        final ShaderNode shaderNode = getObject();
-        final ShaderNodeDefinition definition = shaderNode.getDefinition();
-        final List<ShaderNodeVariable> inputs = definition.getInputs();
-        final List<ShaderNodeVariable> outputs = definition.getOutputs();
+        var shaderNode = getObject();
+        var definition = shaderNode.getDefinition();
+        var inputs = definition.getInputs();
+        var outputs = definition.getOutputs();
 
-        for (final ShaderNodeVariable variable : inputs) {
+        for (var variable : inputs) {
             FXUtils.addToPane(new InputShaderNodeParameter(this, variable), container);
         }
 
-        for (final ShaderNodeVariable variable : outputs) {
+        for (var variable : outputs) {
             FXUtils.addToPane(new OutputShaderNodeParameter(this, variable), container);
         }
     }
@@ -88,16 +88,16 @@ public class MainShaderNodeElement extends ShaderNodeElement<ShaderNode> {
     @FxThread
     public void attach(@NotNull final InputShaderNodeParameter inputParameter,
                        @NotNull final OutputShaderNodeParameter outputParameter) {
+
         super.attach(inputParameter, outputParameter);
 
-        final ShaderNodeElement<?> nodeElement = outputParameter.getNodeElement();
+        var nodeElement = outputParameter.getNodeElement();
+        var inVar = inputParameter.getVariable();
+        var outVar = outputParameter.getVariable();
+        var shaderNode = getObject();
+        var currentMapping = findInMappingByNLeftVar(shaderNode, inVar);
 
-        final ShaderNodeVariable inVar = inputParameter.getVariable();
-        final ShaderNodeVariable outVar = outputParameter.getVariable();
-        final ShaderNode shaderNode = getObject();
-
-        final VariableMapping currentMapping = findInMappingByNLeftVar(shaderNode, inVar);
-        final VariableMapping newMapping = makeMapping(inputParameter, outputParameter);
+        var newMapping = makeMapping(inputParameter, outputParameter);
         newMapping.setRightSwizzling(calculateRightSwizzling(inVar, outVar));
 
         if (StringUtils.isEmpty(newMapping.getRightSwizzling())) {
@@ -108,7 +108,7 @@ public class MainShaderNodeElement extends ShaderNodeElement<ShaderNode> {
             return;
         }
 
-        final ShaderNodesChangeConsumer changeConsumer = getContainer().getChangeConsumer();
+        final var changeConsumer = getContainer().getChangeConsumer();
 
         if (nodeElement instanceof InputGlobalShaderNodeElement) {
             changeConsumer.execute(new AttachGlobalToShaderNodeOperation(shaderNode, newMapping, currentMapping));
@@ -117,23 +117,23 @@ public class MainShaderNodeElement extends ShaderNodeElement<ShaderNode> {
             return;
         }
 
-        final ShaderNodesContainer container = nodeElement.getContainer();
-        final TechniqueDef techniqueDef = container.getTechniqueDef();
+        var container = nodeElement.getContainer();
+        var techniqueDef = container.getTechniqueDef();
 
         if (nodeElement instanceof MainShaderNodeElement) {
 
-            final ShaderNode outShaderNode = ((MainShaderNodeElement) nodeElement).getObject();
+            var outShaderNode = ((MainShaderNodeElement) nodeElement).getObject();
 
             changeConsumer.execute(new AttachVarToShaderNodeOperation(shaderNode, newMapping,
                     currentMapping, techniqueDef, outShaderNode));
 
         } else if (nodeElement instanceof MaterialShaderNodeElement || nodeElement instanceof WorldShaderNodeElement) {
 
-            final Shader.ShaderType type = shaderNode.getDefinition().getType();
+            var type = shaderNode.getDefinition().getType();
 
             if (type == Shader.ShaderType.Vertex) {
 
-                final List<ShaderNode> fragmentNodes = container.findWithRightInputVar(newMapping.getLeftVariable(),
+                final var fragmentNodes = container.findWithRightInputVar(newMapping.getLeftVariable(),
                         FragmentShaderNodeElement.class);
 
                 newMapping.getLeftVariable().setShaderOutput(!fragmentNodes.isEmpty());

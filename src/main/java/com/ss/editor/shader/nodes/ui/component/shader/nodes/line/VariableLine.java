@@ -18,9 +18,15 @@ import org.jetbrains.annotations.NotNull;
  */
 public class VariableLine extends CubicCurve {
 
+    /**
+     * The output parameter.
+     */
     @NotNull
     private final ShaderNodeParameter outParameter;
 
+    /**
+     * The imput parameter.
+     */
     @NotNull
     private final ShaderNodeParameter inParameter;
 
@@ -40,8 +46,8 @@ public class VariableLine extends CubicCurve {
      */
     @FxThread
     private void handleContextMenuRequested(@NotNull final ContextMenuEvent event) {
-        final ShaderNodeElement<?> nodeElement = inParameter.getNodeElement();
-        final ShaderNodesContainer container = nodeElement.getContainer();
+        var nodeElement = inParameter.getNodeElement();
+        var container = nodeElement.getContainer();
         container.handleContextMenuEvent(event);
         event.consume();
     }
@@ -72,8 +78,8 @@ public class VariableLine extends CubicCurve {
     @FxThread
     private void configureLine() {
 
-        final SocketElement outSocket = outParameter.getSocket();
-        final SocketElement inSocket = inParameter.getSocket();
+        var outSocket = outParameter.getSocket();
+        var inSocket = inParameter.getSocket();
 
         startXProperty().bind(outSocket.centerXPropertyProperty());
         startYProperty().bind(outSocket.centerYPropertyProperty());

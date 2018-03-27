@@ -53,7 +53,7 @@ public class EditSndDocumentationDialog extends AbstractSimpleEditorDialog {
         this.consumer = consumer;
         this.definition = definition;
         //TODO replace to using util method
-        final String documentation = definition.getDocumentation();
+        var documentation = definition.getDocumentation();
         getEditorArea().loadContent(documentation == null ? "" : documentation.trim());
     }
 
@@ -97,10 +97,10 @@ public class EditSndDocumentationDialog extends AbstractSimpleEditorDialog {
     protected void processOk() {
         super.processOk();
 
-        final String documentation = definition.getDocumentation();
+        var documentation = definition.getDocumentation();
         //TODO replace to using util method
-        final String oldVersion = documentation == null? "" : documentation;
-        final String newVersion = getEditorArea().getText();
+        var oldVersion = documentation == null? "" : documentation;
+        var newVersion = getEditorArea().getText();
 
         consumer.execute(new ChangeSndDocumentationOperation(definition, oldVersion, newVersion));
     }

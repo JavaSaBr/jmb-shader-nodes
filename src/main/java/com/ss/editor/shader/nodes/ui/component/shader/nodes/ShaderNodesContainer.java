@@ -66,7 +66,6 @@ public class ShaderNodesContainer extends ScrollPane {
     @NotNull
     private static final ExecutorManager EXECUTOR_MANAGER = ExecutorManager.getInstance();
 
-
     /**
      * All current nodes elements.
      */
@@ -131,7 +130,7 @@ public class ShaderNodesContainer extends ScrollPane {
 
         FXUtils.addClassTo(root, SHADER_NODES_ROOT);
 
-        final VBox centered = new VBox(zoomNode);
+        var centered = new VBox(zoomNode);
         centered.setAlignment(Pos.CENTER);
 
         setPannable(true);
@@ -178,10 +177,10 @@ public class ShaderNodesContainer extends ScrollPane {
     @FxThread
     private void invalidateSizes() {
 
-        final ShaderNodesChangeConsumer consumer = getChangeConsumer();
-        final Array<ShaderNodeElement<?>> nodeElements = getNodeElements();
+        var consumer = getChangeConsumer();
+        var nodeElements = getNodeElements();
 
-        for (final ShaderNodeElement<?> nodeElement : nodeElements) {
+        for (var nodeElement : nodeElements) {
             nodeElement.resetLayout();
 
             final Object object = nodeElement.getObject();
@@ -216,12 +215,11 @@ public class ShaderNodesContainer extends ScrollPane {
     @FxThread
     private void invalidateLayout() {
 
-        final ShaderNodesChangeConsumer consumer = getChangeConsumer();
-        final Array<ShaderNodeElement<?>> nodeElements = getNodeElements();
+        var consumer = getChangeConsumer();
+        var nodeElements = getNodeElements();
+        var skipped = 0;
 
-        int skipped = 0;
-
-        for (final ShaderNodeElement<?> nodeElement : nodeElements) {
+        for (var nodeElement : nodeElements) {
             nodeElement.resetLayout();
 
             final Object object = nodeElement.getObject();
@@ -261,12 +259,12 @@ public class ShaderNodesContainer extends ScrollPane {
     @FxThread
     private void layoutNodes() {
 
-        final Array<ShaderNodeElement<?>> nodeElements = getNodeElements();
-        final ShaderNodeElement<?> inputElement = nodeElements.stream()
+        var nodeElements = getNodeElements();
+        var inputElement = nodeElements.stream()
                 .filter(InputGlobalShaderNodeElement.class::isInstance)
                 .findAny().orElse(null);
 
-        final ShaderNodeElement<?> outputElement = nodeElements.stream()
+        var outputElement = nodeElements.stream()
                 .filter(OutputGlobalShaderNodeElement.class::isInstance)
                 .findAny().orElse(null);
 
@@ -274,22 +272,22 @@ public class ShaderNodesContainer extends ScrollPane {
         isInput = isInput.or(MaterialShaderNodeElement.class::isInstance)
                 .or(WorldShaderNodeElement.class::isInstance);
 
-        final List<ShaderNodeElement<?>> inputNodes = nodeElements.stream()
+        var inputNodes = nodeElements.stream()
                 .filter(isInput)
                 .sorted((first, second) -> StringUtils.compare(first.getClass().getName(), second.getClass().getName()))
                 .collect(toList());
 
-        final List<ShaderNodeElement<?>> vertexNodes = nodeElements.stream()
+        var vertexNodes = nodeElements.stream()
                 .filter(VertexShaderNodeElement.class::isInstance)
                 .collect(toList());
 
-        final List<ShaderNodeElement<?>> fragmentNodes = nodeElements.stream()
+        var fragmentNodes = nodeElements.stream()
                 .filter(FragmentShaderNodeElement.class::isInstance)
                 .collect(toList());
 
-        float inputElementStartX = 10F;
-        float inputElementStartY = 10F;
-        float inputElementEndY = inputElementStartY;
+        var inputElementStartX = 10F;
+        var inputElementStartY = 10F;
+        var inputElementEndY = inputElementStartY;
 
         if (inputElement != null) {
             inputElement.autosize();
@@ -302,10 +300,10 @@ public class ShaderNodesContainer extends ScrollPane {
             inputElementEndY = (float) (inputElementStartY + inputElement.getHeight() + 30F);
         }
 
-        float inputNodeStartY = inputElementEndY;
-        float maxInputParameterWidth = 0;
+        var inputNodeStartY = inputElementEndY;
+        var maxInputParameterWidth = 0F;
 
-        for (final ShaderNodeElement<?> inNode : inputNodes) {
+        for (var inNode : inputNodes) {
 
             inNode.autosize();
             inNode.setLayoutX(inputElementStartX);
@@ -318,12 +316,12 @@ public class ShaderNodesContainer extends ScrollPane {
             maxInputParameterWidth = (float) Math.max(maxInputParameterWidth, inNode.getWidth() + 80D);
         }
 
-        float vertexNodeStartX = inputElementStartX + maxInputParameterWidth;
-        float vertexNodeStartY = inputElementEndY - 10F;
-        float maxVertexNodeWidth = 0F;
-        float maxVertexHeight = 0F;
+        var vertexNodeStartX = inputElementStartX + maxInputParameterWidth;
+        var vertexNodeStartY = inputElementEndY - 10F;
+        var maxVertexNodeWidth = 0F;
+        var maxVertexHeight = 0F;
 
-        for (final ShaderNodeElement<?> vertexNode : vertexNodes) {
+        for (var vertexNode : vertexNodes) {
 
             vertexNode.autosize();
             vertexNode.setLayoutX(vertexNodeStartX);
@@ -337,12 +335,12 @@ public class ShaderNodesContainer extends ScrollPane {
             maxVertexHeight = (float) Math.max(maxVertexHeight, vertexNode.getHeight() + 10D);
         }
 
-        float fragmentNodeStartX = inputElementStartX + maxInputParameterWidth + 40F;
-        float fragmentNodeStartY = inputElementEndY + 70F + maxVertexHeight;
-        float maxFragmentNodeWidth = 0F;
-        float maxFragmentHeight = 0F;
+        var fragmentNodeStartX = inputElementStartX + maxInputParameterWidth + 40F;
+        var fragmentNodeStartY = inputElementEndY + 70F + maxVertexHeight;
+        var maxFragmentNodeWidth = 0F;
+        var maxFragmentHeight = 0F;
 
-        for (final ShaderNodeElement<?> fragmentNode : fragmentNodes) {
+        for (var fragmentNode : fragmentNodes) {
 
             fragmentNode.autosize();
             fragmentNode.setLayoutX(fragmentNodeStartX);
@@ -356,10 +354,10 @@ public class ShaderNodesContainer extends ScrollPane {
             maxFragmentHeight = (float) Math.max(maxFragmentHeight, fragmentNode.getHeight() + 10D);
         }
 
-        float outputStartX = Math.max(fragmentNodeStartX, vertexNodeStartX);
+        var outputStartX = Math.max(fragmentNodeStartX, vertexNodeStartX);
         outputStartX += 10D;
 
-        float outputStartY = vertexNodeStartY + maxVertexHeight;
+        var outputStartY = vertexNodeStartY + maxVertexHeight;
 
         if (outputElement != null) {
             outputElement.autosize();
@@ -407,8 +405,7 @@ public class ShaderNodesContainer extends ScrollPane {
     @FxThread
     public void startAttaching(@NotNull final SocketElement sourceSocket) {
 
-        TempLine tempLine = getTempLine();
-
+        var tempLine = getTempLine();
         if (tempLine != null) {
             FXUtils.removeFromParent(tempLine, root);
             setTempLine(null);
@@ -453,23 +450,23 @@ public class ShaderNodesContainer extends ScrollPane {
     @FxThread
     public void handleContextMenuEvent(@NotNull final ContextMenuEvent event) {
 
-        final Object source = event.getSource();
+        var source = event.getSource();
 
         if (contextMenu.isShowing()) {
             contextMenu.hide();
         }
 
-        final Vector2f location = new Vector2f((float) event.getX(), (float) event.getY());
-        final TechniqueDef techniqueDef = getTechniqueDef();
-        final MaterialDef materialDef = getChangeConsumer().getMaterialDef();
+        var location = new Vector2f((float) event.getX(), (float) event.getY());
+        var techniqueDef = getTechniqueDef();
+        var materialDef = getChangeConsumer().getMaterialDef();
 
-        final ObservableList<MenuItem> items = contextMenu.getItems();
+        var items = contextMenu.getItems();
         items.clear();
 
         if (source == root) {
 
             //FIXME localization
-            final Menu menu = new Menu("Add");
+            var menu = new Menu("Add");
             menu.getItems().addAll(new AddMaterialParamShaderNodeAction(this, materialDef, location),
                     new AddMaterialTextureShaderNodeAction(this, materialDef, location),
                     new AddWorldParamShaderNodeAction(this, techniqueDef, location),
@@ -480,8 +477,8 @@ public class ShaderNodesContainer extends ScrollPane {
 
         } else if (source instanceof ShaderNodeElement) {
 
-            final ShaderNodeElement<?> nodeElement = (ShaderNodeElement<?>) source;
-            final ShaderNodeAction<?> deleteAction = nodeElement.getDeleteAction();
+            var nodeElement = (ShaderNodeElement<?>) source;
+            var deleteAction = nodeElement.getDeleteAction();
 
             if(deleteAction != null) {
                 items.add(deleteAction);
@@ -489,9 +486,9 @@ public class ShaderNodesContainer extends ScrollPane {
 
         } else if (source instanceof VariableLine) {
 
-            final ShaderNodeParameter parameter = ((VariableLine) source).getInParameter();
-            final ShaderNodeElement<?> nodeElement = parameter.getNodeElement();
-            final ShaderNodeAction<?> detachAction = nodeElement.getDetachAction((VariableLine) source);
+            var parameter = ((VariableLine) source).getInParameter();
+            var nodeElement = parameter.getNodeElement();
+            var detachAction = nodeElement.getDetachAction((VariableLine) source);
 
             if (detachAction != null) {
                 items.add(detachAction);
@@ -510,12 +507,12 @@ public class ShaderNodesContainer extends ScrollPane {
     @FxThread
     public void updateAttaching(final double sceneX, final double sceneY) {
 
-        final TempLine tempLine = getTempLine();
+        var tempLine = getTempLine();
         if (tempLine == null) {
             return;
         }
 
-        final Point2D localCoords = root.sceneToLocal(sceneX, sceneY);
+        var localCoords = root.sceneToLocal(sceneX, sceneY);
         tempLine.updateEnd(localCoords.getX(), localCoords.getY());
     }
 
@@ -525,7 +522,7 @@ public class ShaderNodesContainer extends ScrollPane {
     @FxThread
     public void finishAttaching() {
 
-        final TempLine tempLine = getTempLine();
+        var tempLine = getTempLine();
         if (tempLine == null) {
             return;
         }
@@ -542,7 +539,7 @@ public class ShaderNodesContainer extends ScrollPane {
     @FxThread
     public void requestSelect(@NotNull final ShaderNodeElement<?> requester) {
 
-        final ObservableList<Node> children = root.getChildren();
+        var children = root.getChildren();
         children.stream().filter(node -> node != requester)
                 .filter(ShaderNodeElement.class::isInstance)
                 .map(node -> (ShaderNodeElement<?>) node)
@@ -575,26 +572,26 @@ public class ShaderNodesContainer extends ScrollPane {
 
         this.techniqueDef = techniqueDef;
 
-        final ShaderGenerationInfo shaderGenerationInfo = techniqueDef.getShaderGenerationInfo();
-        final Pane root = getRoot();
+        var shaderGenerationInfo = techniqueDef.getShaderGenerationInfo();
+        var root = getRoot();
         root.getChildren().clear();
 
-        final Array<ShaderNodeElement<?>> nodeElements = getNodeElements();
+        var nodeElements = getNodeElements();
         nodeElements.clear();
 
-        final ShaderNodesChangeConsumer consumer = getChangeConsumer();
-        final MaterialDef materialDef = consumer.getMaterialDef();
+        var consumer = getChangeConsumer();
+        var materialDef = consumer.getMaterialDef();
 
-        final Map<String, MatParam> matParams = MaterialDefUtils.getMatParams(materialDef);
-        final List<UniformBinding> worldBindings = techniqueDef.getWorldBindings();
+        var matParams = MaterialDefUtils.getMatParams(materialDef);
+        var worldBindings = techniqueDef.getWorldBindings();
 
         final List<ShaderNodeVariable> uniforms = new ArrayList<>();
 
-        for (final MatParam matParam : matParams.values()) {
+        for (var matParam : matParams.values()) {
             uniforms.add(MaterialShaderNodeElement.toVariable(matParam));
         }
 
-        for (final UniformBinding worldBinding : worldBindings) {
+        for (var worldBinding : worldBindings) {
             uniforms.add(WorldShaderNodeElement.toVariable(worldBinding));
         }
 
@@ -603,14 +600,14 @@ public class ShaderNodesContainer extends ScrollPane {
         nodeElements.add(new InputGlobalShaderNodeElement(this, shaderGenerationInfo));
         nodeElements.add(new OutputGlobalShaderNodeElement(this, shaderGenerationInfo));
 
-        for (final ShaderNodeVariable variable : uniforms) {
+        for (var variable : uniforms) {
             createNodeElement(variable).ifPresent(nodeElements::add);
         }
 
-        final List<ShaderNode> shaderNodes = techniqueDef.getShaderNodes();
+        var shaderNodes = techniqueDef.getShaderNodes();
 
-        for (final ShaderNode shaderNode : shaderNodes) {
-            final ShaderNodeDefinition definition = shaderNode.getDefinition();
+        for (var shaderNode : shaderNodes) {
+            var definition = shaderNode.getDefinition();
             if (definition.getType() == Shader.ShaderType.Vertex) {
                 nodeElements.add(new VertexShaderNodeElement(this, shaderNode));
             } else if (definition.getType() == Shader.ShaderType.Fragment) {
@@ -618,7 +615,9 @@ public class ShaderNodesContainer extends ScrollPane {
             }
         }
 
-        nodeElements.forEach(root.getChildren(), (nodeElement, nodes) -> nodes.add(nodeElement));
+        nodeElements.forEach(root.getChildren(),
+            (nodeElement, nodes) -> nodes.add(nodeElement));
+
         refreshLines();
 
         EXECUTOR_MANAGER.addFxTask(this::invalidateSizes);
@@ -676,10 +675,10 @@ public class ShaderNodesContainer extends ScrollPane {
     private @NotNull List<ShaderNode> findUsedFrom(@NotNull final List<ShaderNode> result,
                                                    @NotNull final ShaderNode shaderNode) {
 
-        for (final VariableMapping mapping : shaderNode.getInputMapping()) {
+        for (var mapping : shaderNode.getInputMapping()) {
 
-            final ShaderNodeVariable rightVariable = mapping.getRightVariable();
-            final ShaderNode usedNode = findShaderNodeByName(rightVariable.getNameSpace());
+            var rightVariable = mapping.getRightVariable();
+            var usedNode = findShaderNodeByName(rightVariable.getNameSpace());
 
             if (usedNode == null || result.contains(usedNode)) {
                 continue;
@@ -791,7 +790,8 @@ public class ShaderNodesContainer extends ScrollPane {
     @FxThread
     public void addShaderNode(@NotNull final ShaderNode shaderNode, @NotNull final Vector2f location) {
 
-        final ShaderNodeDefinition definition = shaderNode.getDefinition();
+        var definition = shaderNode.getDefinition();
+
         final MainShaderNodeElement nodeElement;
 
         if (definition.getType() == Shader.ShaderType.Vertex) {
@@ -825,10 +825,10 @@ public class ShaderNodesContainer extends ScrollPane {
     @FxThread
     private void addNodeElement(@NotNull final ShaderNodeElement<?> nodeElement, @NotNull final Vector2f location) {
 
-        final ObservableList<Node> children = root.getChildren();
+        var children = root.getChildren();
         children.add(nodeElement);
 
-        final Array<ShaderNodeElement<?>> nodeElements = getNodeElements();
+        var nodeElements = getNodeElements();
         nodeElements.add(nodeElement);
 
         refreshLines();
@@ -930,25 +930,25 @@ public class ShaderNodesContainer extends ScrollPane {
     @FxThread
     public void refreshLines() {
 
-        final ObservableList<Node> children = root.getChildren();
-        final List<Node> lines = children.stream()
+        var children = root.getChildren();
+        var lines = children.stream()
                 .filter(VariableLine.class::isInstance)
                 .collect(toList());
 
         children.removeAll(lines);
 
-        final List<ShaderNode> shaderNodes = getTechniqueDef().getShaderNodes();
+        var shaderNodes = getTechniqueDef().getShaderNodes();
 
-        for (final ShaderNode shaderNode : shaderNodes) {
+        for (var shaderNode : shaderNodes) {
 
-            final List<VariableMapping> inputMapping = shaderNode.getInputMapping();
-            final List<VariableMapping> outputMapping = shaderNode.getOutputMapping();
+            var inputMapping = shaderNode.getInputMapping();
+            var outputMapping = shaderNode.getOutputMapping();
 
             buildLines(children, inputMapping, false);
             buildLines(children, outputMapping, true);
         }
 
-        final List<Node> toBack = children.stream()
+        var toBack = children.stream()
                 .filter(VariableLine.class::isInstance)
                 .collect(toList());
 
@@ -966,17 +966,17 @@ public class ShaderNodesContainer extends ScrollPane {
     private void buildLines(@NotNull final ObservableList<Node> children, @NotNull final List<VariableMapping> mappings,
                             final boolean fromOutputMapping) {
 
-        for (final VariableMapping variableMapping : mappings) {
+        for (var variableMapping : mappings) {
 
-            final ShaderNodeVariable leftVariable = variableMapping.getLeftVariable();
-            final ShaderNodeVariable rightVariable = variableMapping.getRightVariable();
+            var leftVariable = variableMapping.getLeftVariable();
+            var rightVariable = variableMapping.getRightVariable();
 
             if (rightVariable == null) {
                 continue;
             }
 
-            final ShaderNodeParameter leftParameter = findByVariable(leftVariable, fromOutputMapping, true);
-            final ShaderNodeParameter rightParameter = findByVariable(rightVariable, fromOutputMapping, false);
+            var leftParameter = findByVariable(leftVariable, fromOutputMapping, true);
+            var rightParameter = findByVariable(rightVariable, fromOutputMapping, false);
 
             if (leftParameter == null || rightParameter == null) {
                 LOGGER.warning("not found parameters for " + leftVariable + " and  " + rightVariable);
@@ -1004,30 +1004,30 @@ public class ShaderNodesContainer extends ScrollPane {
     @FxThread
     private void handleScrollEvent(@NotNull final ScrollEvent event) {
 
-        final double zoomFactor = event.getDeltaY() * ZOOM_INTENSITY;
-        final double newScale = scaleValue + zoomFactor;
+        var zoomFactor = event.getDeltaY() * ZOOM_INTENSITY;
+        var newScale = scaleValue + zoomFactor;
 
-        final Region content = (Region) getContent();
-        final Point2D positionInRoot = root.sceneToLocal(event.getSceneX(), event.getSceneY());
-        final Point2D positionInContent = content.sceneToLocal(root.localToScene(positionInRoot));
+        var content = (Region) getContent();
+        var positionInRoot = root.sceneToLocal(event.getSceneX(), event.getSceneY());
+        var positionInContent = content.sceneToLocal(root.localToScene(positionInRoot));
 
         scaleValue = Math.min(Math.max(newScale, 0.2F), 1F);
         updateScale();
         requestLayout();
         layout();
 
-        final Point2D newPositionInContent = content.sceneToLocal(root.localToScene(positionInRoot));
-        final Point2D diff = newPositionInContent.subtract(positionInContent);
+        var newPositionInContent = content.sceneToLocal(root.localToScene(positionInRoot));
+        var diff = newPositionInContent.subtract(positionInContent);
 
-        final Bounds viewport = getViewportBounds();
-        final Bounds contentBounds = content.getLayoutBounds();
+        var viewport = getViewportBounds();
+        var contentBounds = content.getLayoutBounds();
 
-        final double viewScaleX = viewport.getWidth() / contentBounds.getWidth();
-        final double viewScaleY = viewport.getHeight() / contentBounds.getHeight();
-        final double viewX = diff.getX() * viewScaleX;
-        final double viewY = diff.getY() * viewScaleY;
-        final double newHValue = viewX / viewport.getWidth();
-        final double newYValue = viewY / viewport.getHeight();
+        var viewScaleX = viewport.getWidth() / contentBounds.getWidth();
+        var viewScaleY = viewport.getHeight() / contentBounds.getHeight();
+        var viewX = diff.getX() * viewScaleX;
+        var viewY = diff.getY() * viewScaleY;
+        var newHValue = viewX / viewport.getWidth();
+        var newYValue = viewY / viewport.getHeight();
 
         setHvalue(getHvalue() + newHValue);
         setVvalue(getVvalue() + newYValue);
@@ -1052,11 +1052,11 @@ public class ShaderNodesContainer extends ScrollPane {
     @FxThread
     public void notifyResized(@NotNull final ShaderNodeElement<?> nodeElement) {
 
-        final Object object = nodeElement.getObject();
-        final ShaderNodesChangeConsumer consumer = getChangeConsumer();
-        final double width = nodeElement.getPrefWidth();
+        var object = nodeElement.getObject();
+        var consumer = getChangeConsumer();
+        var width = nodeElement.getPrefWidth();
 
-        final Vector2f location = new Vector2f((float) nodeElement.getLayoutX(), (float) nodeElement.getLayoutY());
+        var location = new Vector2f((float) nodeElement.getLayoutX(), (float) nodeElement.getLayoutY());
 
         if (object instanceof ShaderNode) {
             consumer.notifyChangeState((ShaderNode) object, location, width);

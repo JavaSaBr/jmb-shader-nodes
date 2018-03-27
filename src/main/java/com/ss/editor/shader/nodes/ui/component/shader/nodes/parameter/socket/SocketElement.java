@@ -1,6 +1,7 @@
 package com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.socket;
 
 import com.ss.editor.annotation.FxThread;
+import com.ss.editor.manager.ExecutorManager;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.ShaderNodeParameter;
 import javafx.beans.property.DoubleProperty;
@@ -19,6 +20,9 @@ import org.jetbrains.annotations.Nullable;
  * @author JavaSaBr
  */
 public class SocketElement extends Pane {
+
+    @NotNull
+    private static final ExecutorManager EXECUTOR_MANAGER = ExecutorManager.getInstance();
 
     /**
      * The center X property.
@@ -43,9 +47,11 @@ public class SocketElement extends Pane {
         this.centerXProperty = new SimpleDoubleProperty();
         this.centerYProperty = new SimpleDoubleProperty();
 
-        final ShaderNodeElement<?> nodeElement = parameter.getNodeElement();
-        nodeElement.layoutXProperty().addListener(this::updateCenterCoords);
-        nodeElement.layoutYProperty().addListener(this::updateCenterCoords);
+        var element = parameter.getNodeElement();
+        element.layoutXProperty().addListener(this::updateCenterCoords);
+        element.layoutYProperty().addListener(this::updateCenterCoords);
+        element.heightProperty().addListener((observable, oldValue, newValue) ->
+                EXECUTOR_MANAGER.addFxTask(this::updateCenterCoords));
     }
 
     /**
@@ -60,6 +66,14 @@ public class SocketElement extends Pane {
 
     /**
      * Update coords of this socket.
+     */
+    @FxThread
+    public void updateCenterCoords() {
+        updateCenterCoords(null, null, null);
+    }
+
+    /**
+     * Update coords of this socket.
      *
      * @param observable the observable.
      * @param oldValue   the old value.
@@ -67,24 +81,26 @@ public class SocketElement extends Pane {
      */
     @FxThread
     private void updateCenterCoords(@Nullable final ObservableValue<? extends Number> observable,
-                                    @Nullable final Number oldValue, @Nullable final Number newValue) {
+                                    @Nullable final Number oldValue,
+                                    @Nullable final Number newValue) {
 
-        final ShaderNodeParameter parameter = getParameter();
-        final ShaderNodeElement<?> nodeElement = parameter.getNodeElement();
-        final Parent parent = nodeElement.getParent();
-
+        var parameter = getParameter();
+        var nodeElement = parameter.getNodeElement();
+        var parent = nodeElement.getParent();
         if (parent == null) {
             return;
         }
 
-        final Point2D scene = localToScene(getWidth() / 2, getHeight() / 2);
-        final Point2D local = parent.sceneToLocal(scene.getX(), scene.getY());
+        var scene = localToScene(getWidth() / 2, getHeight() / 2);
+        var local = parent.sceneToLocal(scene.getX(), scene.getY());
 
         centerXProperty.setValue(local.getX());
         centerYProperty.setValue(local.getY());
     }
 
     /**
+     * Get the center X property.
+     *
      * @return the center X property.
      */
     @FxThread
@@ -93,6 +109,8 @@ public class SocketElement extends Pane {
     }
 
     /**
+     * Get the center Y property.
+     *
      * @return the center Y property.
      */
     @FxThread

@@ -3,6 +3,7 @@ package com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter;
 import static com.ss.editor.shader.nodes.ui.PluginCssClasses.SHADER_NODE_INPUT_PARAMETER;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.annotation.FxThread;
+import com.ss.editor.manager.ExecutorManager;
 import com.ss.editor.shader.nodes.ui.PluginCssClasses;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.socket.InputSocketElement;
@@ -93,10 +94,10 @@ public class InputShaderNodeParameter extends ShaderNodeParameter {
         this.expressionField = new TextField();
         this.expressionField.prefWidthProperty().bind(widthProperty());
 
-        final HBox parameterContainer = new HBox(getSocket(), getNameLabel(), getTypeLabel());
+        var parameterContainer = new HBox(getSocket(), getNameLabel(), getTypeLabel());
         parameterContainer.prefWidthProperty().bind(widthProperty());
 
-        final HBox expressionContainer = new HBox(expressionField);
+        var expressionContainer = new HBox(expressionField);
         expressionContainer.managedProperty().bind(useExpression.selectedProperty());
         expressionContainer.visibleProperty().bind(useExpression.selectedProperty());
         expressionContainer.prefWidthProperty().bind(widthProperty());
