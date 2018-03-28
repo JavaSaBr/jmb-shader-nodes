@@ -87,7 +87,8 @@ public class AttachShaderNodeOperation extends ShaderNodeOperation {
     }
 
     @FxThread
-    protected void notify(@NotNull final ShaderNodesChangeConsumer editor, @Nullable final VariableMapping oldMapping,
+    protected void notify(@NotNull final ShaderNodesChangeConsumer editor,
+                          @Nullable final VariableMapping oldMapping,
                           @Nullable final VariableMapping newMapping) {
 
         if (oldMapping != null && newMapping != null) {

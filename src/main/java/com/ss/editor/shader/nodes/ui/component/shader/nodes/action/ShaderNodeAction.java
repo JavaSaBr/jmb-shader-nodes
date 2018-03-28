@@ -34,8 +34,10 @@ public abstract class ShaderNodeAction<T> extends MenuItem {
     @NotNull
     private final Vector2f location;
 
-    public ShaderNodeAction(@NotNull final ShaderNodesContainer container, @NotNull final T object,
+    public ShaderNodeAction(@NotNull final ShaderNodesContainer container,
+                            @NotNull final T object,
                             @NotNull final Vector2f location) {
+
         this.container = container;
         this.object = object;
         this.location = location;
@@ -43,14 +45,15 @@ public abstract class ShaderNodeAction<T> extends MenuItem {
         setOnAction(event -> process());
         setText(getName());
 
-        final Image icon = getIcon();
-
+        var icon = getIcon();
         if (icon != null) {
             setGraphic(new ImageView(icon));
         }
     }
 
     /**
+     * Get the location.
+     *
      * @return the location.
      */
     @FxThread
@@ -59,6 +62,8 @@ public abstract class ShaderNodeAction<T> extends MenuItem {
     }
 
     /**
+     * Get the shader nodes container.
+     *
      * @return the shader nodes container.
      */
     @FxThread
@@ -67,6 +72,8 @@ public abstract class ShaderNodeAction<T> extends MenuItem {
     }
 
     /**
+     * Get the additional object.
+     *
      * @return the additional object.
      */
     @FxThread
@@ -75,7 +82,7 @@ public abstract class ShaderNodeAction<T> extends MenuItem {
     }
 
     /**
-     * Gets name.
+     * Get the name of this action.
      *
      * @return the name of this action.
      */
@@ -92,7 +99,7 @@ public abstract class ShaderNodeAction<T> extends MenuItem {
     /**
      * The icon of this action.
      *
-     * @return he icon or null.
+     * @return the icon or null.
      */
     @FxThread
     protected @Nullable Image getIcon() {

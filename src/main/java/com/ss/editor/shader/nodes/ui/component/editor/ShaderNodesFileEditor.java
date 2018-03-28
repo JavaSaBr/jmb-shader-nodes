@@ -837,15 +837,25 @@ public class ShaderNodesFileEditor extends
     @FxThread
     public void notifyAddedMapping(@NotNull final ShaderNode shaderNode, @NotNull final VariableMapping mapping) {
         buildMaterial();
-        final ShaderNodesContainer container = getShaderNodesContainer();
-        container.refreshLines();
+        handleChangeMapping(shaderNode);
     }
 
     @Override
     @FxThread
     public void notifyRemovedMapping(@NotNull final ShaderNode shaderNode, @NotNull final VariableMapping mapping) {
         buildMaterial();
-        final ShaderNodesContainer container = getShaderNodesContainer();
+        handleChangeMapping(shaderNode);
+    }
+
+    /**
+     * Handle of changing mapping of the shader node.
+     *
+     * @param shaderNode the shader node.
+     */
+    @FxThread
+    protected void handleChangeMapping(@NotNull final ShaderNode shaderNode) {
+        var container = getShaderNodesContainer();
+        container.refreshShaderNode(shaderNode);
         container.refreshLines();
     }
 

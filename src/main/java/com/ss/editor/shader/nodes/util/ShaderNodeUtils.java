@@ -1,5 +1,6 @@
 package com.ss.editor.shader.nodes.util;
 
+import static com.ss.rlib.util.dictionary.DictionaryFactory.newObjectDictionary;
 import static java.util.stream.Collectors.toList;
 import com.jme3.material.MatParam;
 import com.jme3.material.MaterialDef;
@@ -15,6 +16,7 @@ import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodesContainer
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.global.GlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.global.OutputGlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.main.AttributeShaderNodeElement;
+import com.ss.editor.shader.nodes.ui.component.shader.nodes.main.MainShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.main.MaterialShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.main.WorldShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.InputShaderNodeParameter;
@@ -22,13 +24,14 @@ import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.OutputShad
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.ShaderNodeParameter;
 import com.ss.editor.util.GlslType;
 import com.ss.rlib.util.StringUtils;
-import com.ss.rlib.util.dictionary.DictionaryFactory;
 import com.ss.rlib.util.dictionary.ObjectDictionary;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 /**
  * The utility class.
@@ -37,9 +40,12 @@ import java.util.function.BiFunction;
  */
 public class ShaderNodeUtils {
 
+    interface NodeElementFactory extends
+        BiFunction<ShaderNodesContainer, ShaderNodeVariable, ShaderNodeElement<?>> {
+    }
+
     @NotNull
-    private static final ObjectDictionary<String, BiFunction<ShaderNodesContainer, ShaderNodeVariable, ShaderNodeElement<?>>> NODE_ELEMENT_FACTORIES =
-            DictionaryFactory.newObjectDictionary();
+    private static final ObjectDictionary<String, NodeElementFactory> NODE_ELEMENT_FACTORIES = newObjectDictionary();
 
     static {
         NODE_ELEMENT_FACTORIES.put(MaterialShaderNodeElement.NAMESPACE, MaterialShaderNodeElement::new);
@@ -48,12 +54,12 @@ public class ShaderNodeUtils {
     }
 
     @NotNull
-    private static final Set<String> SYSTEM_NAMESPACES = new HashSet<>(Arrays.asList(
+    private static final Set<String> SYSTEM_NAMESPACES = Set.of(
             MaterialShaderNodeElement.NAMESPACE,
             GlobalShaderNodeElement.NAMESPACE,
             WorldShaderNodeElement.NAMESPACE,
             AttributeShaderNodeElement.NAMESPACE
-    ));
+    );
 
     /**
      * Return true of the node name is user's shader node.
@@ -360,7 +366,7 @@ public class ShaderNodeUtils {
      * @return the UI type.
      */
     @FromAnyThread
-    public static @NotNull String getAttributeUIType(@NotNull final VertexBuffer.Type attribute) {
+    public static @NotNull String getAttributeUiType(@NotNull final VertexBuffer.Type attribute) {
         switch (attribute) {
             case BoneWeight:
             case BindPoseNormal:
@@ -443,9 +449,10 @@ public class ShaderNodeUtils {
      */
     @FromAnyThread
     public static boolean containsByNN(@NotNull final Collection<ShaderNodeVariable> variables,
-                                       @NotNull final String name, @NotNull final String nameSpace) {
+                                       @NotNull final String name,
+                                       @NotNull final String nameSpace) {
 
-        for (final ShaderNodeVariable variable : variables) {
+        for (var variable : variables) {
 
             if (!StringUtils.equals(variable.getNameSpace(), nameSpace)) {
                 continue;
@@ -473,11 +480,11 @@ public class ShaderNodeUtils {
             return inType.equals(outType);
         }
 
-        final String[] inTypes = inType.split("[|]");
-        final String[] outTypes = outType.split("[|]");
+        var inTypes = inType.split("[|]");
+        var outTypes = outType.split("[|]");
 
-        for (final String subInType : inTypes) {
-            for (final String subOutType : outTypes) {
+        for (var subInType : inTypes) {
+            for (var subOutType : outTypes) {
                 if (subInType.equals(subOutType)) {
                     return true;
                 }
@@ -496,7 +503,7 @@ public class ShaderNodeUtils {
     @FromAnyThread
     public static boolean isRequired(@NotNull final ShaderNodeVariable variable) {
 
-        final GlslType glslType = GlslType.ofRawType(variable.getType());
+        var glslType = GlslType.ofRawType(variable.getType());
 
         switch (glslType) {
             case SAMPLER_2D:
@@ -529,8 +536,8 @@ public class ShaderNodeUtils {
     public static @NotNull String calculateRightSwizzling(@NotNull final ShaderNodeVariable leftVar,
                                                           @NotNull final ShaderNodeVariable rightVar) {
 
-        final String leftType = leftVar.getType();
-        final String rightType = rightVar.getType();
+        var leftType = leftVar.getType();
+        var rightType = rightVar.getType();
 
         if (leftType == null || rightType == null) {
             return "";
@@ -617,5 +624,30 @@ public class ShaderNodeUtils {
         }
 
         return "";
+    }
+
+    /**
+     * Return true if we can use expression for the node variable.
+     *
+     * @param nodeElement the node element.
+     * @param variable    the shader node variable.
+     * @return true if we can use expression for the node variable.
+     */
+    public static boolean canUseExpression(@NotNull final ShaderNodeElement<?> nodeElement,
+                                           @NotNull final ShaderNodeVariable variable) {
+
+        if (!(nodeElement instanceof MainShaderNodeElement)) {
+            return false;
+        }
+
+        switch (GlslType.ofRawType(variable.getType())) {
+            case SAMPLER_2D:
+            case SAMPLER_CUBE: {
+                return false;
+            }
+            default: {
+                return true;
+            }
+        }
     }
 }

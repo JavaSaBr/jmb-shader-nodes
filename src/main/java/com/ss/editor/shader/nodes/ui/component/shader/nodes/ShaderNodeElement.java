@@ -150,9 +150,7 @@ public class ShaderNodeElement<T> extends VBox {
      */
     @FxThread
     private void handleContextMenuRequested(@NotNull final ContextMenuEvent event) {
-        final var container = getContainer();
-        container.handleContextMenuEvent(event);
-        event.consume();
+        getContainer().handleContextMenuEvent(event);
     }
 
     /**
@@ -269,6 +267,17 @@ public class ShaderNodeElement<T> extends VBox {
         setLayoutY(-1D);
         setLayoutX(layoutX);
         setLayoutY(layoutY);
+    }
+
+    /**
+     * Refresh this component.
+     */
+    @FxThread
+    public void refresh() {
+        getParametersContainer().getChildren()
+            .stream()
+            .map(ShaderNodeParameter.class::cast)
+            .forEach(ShaderNodeParameter::refresh);
     }
 
     /**

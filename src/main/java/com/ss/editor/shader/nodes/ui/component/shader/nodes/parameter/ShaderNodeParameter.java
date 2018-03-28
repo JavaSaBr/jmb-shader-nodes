@@ -61,6 +61,13 @@ public class ShaderNodeParameter extends GridPane {
     }
 
     /**
+     * Refresh this parameter.
+     */
+    @FxThread
+    public void refresh() {
+    }
+
+    /**
      * Get the shader nodes element.
      *
      * @return the shader nodes element.
@@ -125,13 +132,8 @@ public class ShaderNodeParameter extends GridPane {
      */
     @FxThread
     protected void createContent() {
-
-        final ShaderNodeVariable variable = getVariable();
-
-        final Label nameLabel = getNameLabel();
-        nameLabel.setText(variable.getName());
-
-        final Label typeLabel = getTypeLabel();
-        typeLabel.setText(variable.getType());
+        var variable = getVariable();
+        getNameLabel().setText(variable.getName());
+        getTypeLabel().setText(variable.getType());
     }
 }

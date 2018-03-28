@@ -39,13 +39,12 @@ public class RemoveAttributeShaderNodeAction extends ShaderNodeAction<ShaderNode
     protected void process() {
         super.process();
 
-        final ShaderNodesContainer container = getContainer();
-        final TechniqueDef techniqueDef = container.getTechniqueDef();
-        final ShaderNodeVariable variable = getObject();
+        var container = getContainer();
+        var techniqueDef = container.getTechniqueDef();
+        var variable = getObject();
+        var usingNodes = container.findWithRightInputVar(variable, MainShaderNodeElement.class);
 
-        final List<ShaderNode> usingNodes = container.findWithRightInputVar(variable, MainShaderNodeElement.class);
-
-        final ShaderNodesChangeConsumer consumer = container.getChangeConsumer();
-        consumer.execute(new RemoveAttributeVariableOperation(usingNodes, techniqueDef, variable, getLocation()));
+        container.getChangeConsumer()
+            .execute(new RemoveAttributeVariableOperation(usingNodes, techniqueDef, variable, getLocation()));
     }
 }

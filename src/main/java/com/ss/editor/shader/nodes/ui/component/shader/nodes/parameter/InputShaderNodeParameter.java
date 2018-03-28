@@ -1,20 +1,28 @@
 package com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter;
 
 import static com.ss.editor.shader.nodes.ui.PluginCssClasses.SHADER_NODE_INPUT_PARAMETER;
+import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.canUseExpression;
+
+import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.annotation.FxThread;
-import com.ss.editor.manager.ExecutorManager;
+import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.ui.PluginCssClasses;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodeElement;
+import com.ss.editor.shader.nodes.ui.component.shader.nodes.action.remove.RemoveRelationShaderNodeAction;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.socket.InputSocketElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.socket.SocketElement;
 import com.ss.editor.ui.css.CssClasses;
 import com.ss.rlib.ui.util.FXUtils;
+import javafx.event.ActionEvent;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The implementation of input shader nodes parameter.
@@ -22,7 +30,6 @@ import org.jetbrains.annotations.NotNull;
  * @author JavaSaBr
  */
 public class InputShaderNodeParameter extends ShaderNodeParameter {
-
 
     /**
      * The check box to use expression.
@@ -84,15 +91,30 @@ public class InputShaderNodeParameter extends ShaderNodeParameter {
         return new InputSocketElement(this);
     }
 
+    /**
+     * Return true if this parameter uses expression.
+     *
+     * @return true if this parameter uses expression.
+     */
+    @FxThread
+    public boolean isUsedExpression() {
+        return getUseExpression().isSelected();
+    }
+
     @Override
     @FxThread
     protected void createContent() {
         super.createContent();
 
-        this.useExpressionLabel = new Label("expr:");
+        this.useExpressionLabel = new Label(PluginMessages.NODE_ELEMENT_USE_EXPRESSION + ":");
         this.useExpression = new CheckBox();
+        this.useExpression.setDisable(!canUseExpression(getNodeElement(), getVariable()));
+        this.useExpression.setOnAction(this::handleChangeUseExpression);
         this.expressionField = new TextField();
         this.expressionField.prefWidthProperty().bind(widthProperty());
+        this.expressionField.setOnKeyReleased(this::handleChangeExpression);
+        this.expressionField.focusedProperty()
+            .addListener((observable, oldValue, newValue) -> handleChangeExpression(null));
 
         var parameterContainer = new HBox(getSocket(), getNameLabel(), getTypeLabel());
         parameterContainer.prefWidthProperty().bind(widthProperty());
@@ -109,5 +131,46 @@ public class InputShaderNodeParameter extends ShaderNodeParameter {
 
         FXUtils.addClassTo(parameterContainer, PluginCssClasses.SHADER_NODE_INPUT_PARAMETER_CONTAINER);
         FXUtils.addClassTo(expressionContainer, CssClasses.DEF_HBOX);
+    }
+
+    /**
+     * Handle of changing expression.
+     *
+     * @param event the key event or null.
+     */
+    @FxThread
+    private void handleChangeExpression(@Nullable final KeyEvent event) {
+
+        if (event != null && event.getCode() != KeyCode.ENTER) {
+            return;
+        }
+
+
+    }
+
+    /**
+     * Handle of using expression.
+     *
+     * @param event the action event.
+     */
+    @FxThread
+    private void handleChangeUseExpression(@NotNull final ActionEvent event) {
+
+        var useExpression = getUseExpression();
+        var container = getNodeElement().getContainer();
+
+        if (useExpression.isSelected()) {
+
+            var line = container.findLineByInParameter(this)
+                .orElseThrow(() -> new IllegalStateException("Can't find a variable line for the input parameter."));
+
+            var action = new RemoveRelationShaderNodeAction(container, line, Vector2f.ZERO);
+            action.process();
+
+        } else {
+
+            container.getChangeConsumer()
+                .execute(null);
+        }
     }
 }

@@ -28,7 +28,8 @@ import org.jetbrains.annotations.NotNull;
 public class RemoveRelationShaderNodeAction extends ShaderNodeAction<VariableLine> {
 
     public RemoveRelationShaderNodeAction(@NotNull final ShaderNodesContainer container,
-                                          @NotNull final VariableLine variableLine, @NotNull final Vector2f location) {
+                                          @NotNull final VariableLine variableLine,
+                                          @NotNull final Vector2f location) {
         super(container, variableLine, location);
     }
 
@@ -40,31 +41,31 @@ public class RemoveRelationShaderNodeAction extends ShaderNodeAction<VariableLin
 
     @Override
     @FxThread
-    protected void process() {
+    public void process() {
         super.process();
 
-        final ShaderNodesContainer container = getContainer();
-        final VariableLine variableLine = getObject();
+        var container = getContainer();
+        var variableLine = getObject();
 
-        final ShaderNodeParameter inParameter = variableLine.getInParameter();
-        final ShaderNodeElement<?> nodeElement = inParameter.getNodeElement();
+        var inParameter = variableLine.getInParameter();
+        var nodeElement = inParameter.getNodeElement();
 
-        final ShaderNodeParameter outParameter = variableLine.getOutParameter();
-        final ShaderNodeElement<?> outNodeElement = outParameter.getNodeElement();
+        var outParameter = variableLine.getOutParameter();
+        var outNodeElement = outParameter.getNodeElement();
 
-        final ShaderNodesChangeConsumer consumer = container.getChangeConsumer();
+        var consumer = container.getChangeConsumer();
 
         if (nodeElement instanceof OutputGlobalShaderNodeElement && outNodeElement instanceof MainShaderNodeElement) {
 
-            final ShaderNode shaderNode = ((MainShaderNodeElement) outNodeElement).getObject();
-            final VariableMapping mapping = notNull(findOutMappingByNNLeftVar(shaderNode, inParameter.getVariable()));
+            var shaderNode = ((MainShaderNodeElement) outNodeElement).getObject();
+            var mapping = notNull(findOutMappingByNNLeftVar(shaderNode, inParameter.getVariable()));
 
             consumer.execute(new OutputDetachShaderNodeOperation(shaderNode, mapping));
 
         } else if (nodeElement instanceof MainShaderNodeElement) {
 
-            final ShaderNode shaderNode = ((MainShaderNodeElement) nodeElement).getObject();
-            final VariableMapping mapping = notNull(findInMappingByNNLeftVar(shaderNode,
+            var shaderNode = ((MainShaderNodeElement) nodeElement).getObject();
+            var mapping = notNull(findInMappingByNNLeftVar(shaderNode,
                     inParameter.getVariable(), shaderNode.getName()));
 
             consumer.execute(new InputDetachShaderNodeOperation(shaderNode, mapping));

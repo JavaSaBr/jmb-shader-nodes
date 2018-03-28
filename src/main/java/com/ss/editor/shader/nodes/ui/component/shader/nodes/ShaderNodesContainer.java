@@ -7,20 +7,19 @@ import static com.ss.rlib.util.ObjectUtils.notNull;
 import static java.util.stream.Collectors.toList;
 import com.jme3.material.MatParam;
 import com.jme3.material.MaterialDef;
-import com.jme3.material.ShaderGenerationInfo;
 import com.jme3.material.TechniqueDef;
 import com.jme3.math.Vector2f;
 import com.jme3.shader.*;
 import com.ss.editor.annotation.FxThread;
 import com.ss.editor.manager.ExecutorManager;
 import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesChangeConsumer;
-import com.ss.editor.shader.nodes.ui.component.shader.nodes.action.ShaderNodeAction;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.action.add.*;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.global.InputGlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.global.OutputGlobalShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.line.TempLine;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.line.VariableLine;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.main.*;
+import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.InputShaderNodeParameter;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.ShaderNodeParameter;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.socket.SocketElement;
 import com.ss.editor.shader.nodes.util.MaterialDefUtils;
@@ -32,14 +31,11 @@ import com.ss.rlib.util.StringUtils;
 import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayFactory;
 import javafx.collections.ObservableList;
-import javafx.geometry.Bounds;
-import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
@@ -50,6 +46,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * The container of all shader nodes.
@@ -496,6 +493,8 @@ public class ShaderNodesContainer extends ScrollPane {
         }
 
         contextMenu.show(root, event.getScreenX(), event.getScreenY());
+
+        event.consume();
     }
 
     /**
@@ -539,11 +538,11 @@ public class ShaderNodesContainer extends ScrollPane {
     @FxThread
     public void requestSelect(@NotNull final ShaderNodeElement<?> requester) {
 
-        var children = root.getChildren();
-        children.stream().filter(node -> node != requester)
-                .filter(ShaderNodeElement.class::isInstance)
-                .map(node -> (ShaderNodeElement<?>) node)
-                .forEach(element -> element.setSelected(false));
+        root.getChildren().stream()
+            .filter(node -> node != requester)
+            .filter(ShaderNodeElement.class::isInstance)
+            .map(node -> (ShaderNodeElement<?>) node)
+            .forEach(element -> element.setSelected(false));
 
         requester.setSelected(true);
     }
@@ -658,6 +657,20 @@ public class ShaderNodesContainer extends ScrollPane {
                 .map(ShaderNodeElement::getObject)
                 .filter(shaderNode -> shaderNode.getName().equals(name))
                 .findAny().orElse(null);
+    }
+
+    /**
+     * Find a variable line for the shader node input parameter.
+     *
+     * @param parameter the input parameter.
+     * @return a variable line for the shader node input parameter.
+     */
+    public @NotNull Optional<VariableLine> findLineByInParameter(@NotNull final InputShaderNodeParameter parameter) {
+        return root.getChildren().stream()
+            .filter(VariableLine.class::isInstance)
+            .map(VariableLine.class::cast)
+            .filter(line -> line.getInParameter() == parameter)
+            .findAny();
     }
 
     /**
@@ -862,13 +875,25 @@ public class ShaderNodesContainer extends ScrollPane {
     }
 
     /**
-     * Remove the shader nodes.
+     * Remove the shader node.
      *
-     * @param shaderNode the shader nodes.
+     * @param shaderNode the shader node.
      */
     @FxThread
     public void removeShaderNode(@NotNull final ShaderNode shaderNode) {
-        findNodeElementByObject(shaderNode).ifPresent(this::removeNodeElement);
+        findNodeElementByObject(shaderNode)
+            .ifPresent(this::removeNodeElement);
+    }
+
+    /**
+     * Refresh the shader node.
+     *
+     * @param shaderNode the shader node.
+     */
+    @FxThread
+    public void refreshShaderNode(@NotNull final ShaderNode shaderNode) {
+        findNodeElementByObject(shaderNode)
+            .ifPresent(ShaderNodeElement::refresh);
     }
 
     /**
@@ -948,9 +973,11 @@ public class ShaderNodesContainer extends ScrollPane {
             buildLines(children, outputMapping, true);
         }
 
+        // we need to copy lines to a separated list,
+        // because the method Node.toBack modifies the children's list.
         var toBack = children.stream()
-                .filter(VariableLine.class::isInstance)
-                .collect(toList());
+            .filter(VariableLine.class::isInstance)
+            .collect(toList());
 
         toBack.forEach(Node::toBack);
     }
@@ -963,7 +990,8 @@ public class ShaderNodesContainer extends ScrollPane {
      * @param fromOutputMapping true if it's from output mapping.
      */
     @FxThread
-    private void buildLines(@NotNull final ObservableList<Node> children, @NotNull final List<VariableMapping> mappings,
+    private void buildLines(@NotNull final ObservableList<Node> children,
+                            @NotNull final List<VariableMapping> mappings,
                             final boolean fromOutputMapping) {
 
         for (var variableMapping : mappings) {

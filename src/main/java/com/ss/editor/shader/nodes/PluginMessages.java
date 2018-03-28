@@ -58,6 +58,7 @@ public interface PluginMessages {
     @NotNull String NODE_ELEMENT_VERTEX_ATTRIBUTE = RESOURCE_BUNDLE.getString("NodeElementVertexAttribute");
     @NotNull String NODE_ELEMENT_WORLD_PARAMETER = RESOURCE_BUNDLE.getString("NodeElementWorldParameter");
     @NotNull String NODE_ELEMENT_MATERIAL_PARAMETER = RESOURCE_BUNDLE.getString("NodeElementMaterialParameter");
+    @NotNull String NODE_ELEMENT_USE_EXPRESSION = RESOURCE_BUNDLE.getString("NodeElementUseExpression");
 
     @NotNull String TREE_NODE_PREVIEW_MATERIAL_SETTINGS = RESOURCE_BUNDLE.getString("TreeNodePreviewMaterialSettings");
     @NotNull String TREE_NODE_SHADER_NODE_DEFINITIONS = RESOURCE_BUNDLE.getString("TreeNodeShaderNodeDefinitions");

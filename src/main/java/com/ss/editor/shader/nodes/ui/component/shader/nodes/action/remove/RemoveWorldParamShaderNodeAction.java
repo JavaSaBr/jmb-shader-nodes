@@ -40,15 +40,14 @@ public class RemoveWorldParamShaderNodeAction extends ShaderNodeAction<ShaderNod
     protected void process() {
         super.process();
 
-        final ShaderNodesContainer container = getContainer();
-        final TechniqueDef techniqueDef = container.getTechniqueDef();
-        final ShaderNodeVariable variable = getObject();
-        final UniformBinding binding = UniformBinding.valueOf(variable.getName());
+        var container = getContainer();
+        var techniqueDef = container.getTechniqueDef();
+        var variable = getObject();
+        var binding = UniformBinding.valueOf(variable.getName());
+        var usingNodes = container.findWithRightInputVar(variable, MainShaderNodeElement.class);
 
-        final List<ShaderNode> usingNodes = container.findWithRightInputVar(variable, MainShaderNodeElement.class);
-
-        final ShaderNodesChangeConsumer consumer = container.getChangeConsumer();
-        consumer.execute(new RemoveWorldParameterVariableOperation(usingNodes, techniqueDef,
+        container.getChangeConsumer()
+            .execute(new RemoveWorldParameterVariableOperation(usingNodes, techniqueDef,
                 binding, variable, getLocation()));
     }
 }

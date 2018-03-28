@@ -72,7 +72,7 @@ public class AddAttributeShaderNodeAction extends AddTechniqueDefParameterShader
         final TechniqueDef techniqueDef = getObject();
 
         final String name = vars.getString(PROP_NAME);
-        final String attributeUIType = getAttributeUIType(VertexBuffer.Type.valueOf(name.substring(2, name.length())));
+        final String attributeUIType = getAttributeUiType(VertexBuffer.Type.valueOf(name.substring(2, name.length())));
         final String glslType = uiTypeToType(attributeUIType);
         final ShaderNodeVariable variable = new ShaderNodeVariable(glslType, NAMESPACE, name, null, "");
 

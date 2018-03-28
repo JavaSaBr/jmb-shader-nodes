@@ -1,7 +1,7 @@
 package com.ss.editor.shader.nodes.ui.component.shader.nodes.main;
 
 import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.*;
-import com.jme3.material.TechniqueDef;
+
 import com.jme3.math.Vector2f;
 import com.jme3.shader.*;
 import com.ss.editor.annotation.FxThread;
@@ -17,7 +17,6 @@ import com.ss.editor.shader.nodes.ui.component.shader.nodes.operation.attach.Att
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.InputShaderNodeParameter;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.OutputShaderNodeParameter;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.ShaderNodeParameter;
-import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesChangeConsumer;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.tooltip.SndDocumentationTooltip;
 import com.ss.rlib.ui.util.FXUtils;
 import com.ss.rlib.util.StringUtils;
@@ -26,7 +25,6 @@ import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -55,7 +53,8 @@ public class MainShaderNodeElement extends ShaderNodeElement<ShaderNode> {
     @FxThread
     @Override
     public @Nullable ShaderNodeParameter parameterFor(@NotNull final ShaderNodeVariable variable,
-                                                      final boolean fromOutputMapping, final boolean input) {
+                                                      final boolean fromOutputMapping,
+                                                      final boolean input) {
 
         var shaderNode = getObject();
         if (!shaderNode.getName().equals(variable.getNameSpace())) {
@@ -82,6 +81,14 @@ public class MainShaderNodeElement extends ShaderNodeElement<ShaderNode> {
         for (var variable : outputs) {
             FXUtils.addToPane(new OutputShaderNodeParameter(this, variable), container);
         }
+    }
+
+    @Override
+    public boolean canAttach(@NotNull final InputShaderNodeParameter inputParameter,
+                             @NotNull final OutputShaderNodeParameter outputParameter) {
+
+        return !inputParameter.isUsedExpression() &&
+            super.canAttach(inputParameter, outputParameter);
     }
 
     @Override
@@ -125,7 +132,7 @@ public class MainShaderNodeElement extends ShaderNodeElement<ShaderNode> {
             var outShaderNode = ((MainShaderNodeElement) nodeElement).getObject();
 
             changeConsumer.execute(new AttachVarToShaderNodeOperation(shaderNode, newMapping,
-                    currentMapping, techniqueDef, outShaderNode));
+                currentMapping, techniqueDef, outShaderNode));
 
         } else if (nodeElement instanceof MaterialShaderNodeElement || nodeElement instanceof WorldShaderNodeElement) {
 
@@ -133,10 +140,11 @@ public class MainShaderNodeElement extends ShaderNodeElement<ShaderNode> {
 
             if (type == Shader.ShaderType.Vertex) {
 
-                final var fragmentNodes = container.findWithRightInputVar(newMapping.getLeftVariable(),
-                        FragmentShaderNodeElement.class);
+                var fragmentNodes = container.findWithRightInputVar(newMapping.getLeftVariable(),
+                    FragmentShaderNodeElement.class);
 
-                newMapping.getLeftVariable().setShaderOutput(!fragmentNodes.isEmpty());
+                newMapping.getLeftVariable()
+                    .setShaderOutput(!fragmentNodes.isEmpty());
             }
 
             changeConsumer.execute(new AttachUniformToShaderNodeOperation(shaderNode, outVar, techniqueDef,

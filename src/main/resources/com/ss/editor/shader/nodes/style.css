@@ -43,14 +43,13 @@
 }
 
 .shader-node-input-parameter > .label {
-    -fx-min-width: 40px;
+    -fx-min-width: 50px;
     -fx-alignment: center-right;
 }
 
 .shader-node-input-parameter-container {
     -fx-alignment: center-left;
 }
-
 
 .shader-node-input-parameter > .hbox {
     -fx-padding: 1px 3px 1px 8px;

@@ -41,16 +41,16 @@ public class RemoveMaterialParamShaderNodeAction extends ShaderNodeAction<Shader
     protected void process() {
         super.process();
 
-        final ShaderNodesContainer container = getContainer();
-        final MaterialDef materialDef = container.getMaterialDef();
-        final TechniqueDef techniqueDef = container.getTechniqueDef();
-        final ShaderNodeVariable variable = getObject();
-        final MatParam matParam = materialDef.getMaterialParam(variable.getName());
+        var container = getContainer();
+        var materialDef = container.getMaterialDef();
+        var techniqueDef = container.getTechniqueDef();
+        var variable = getObject();
+        var matParam = materialDef.getMaterialParam(variable.getName());
 
-        final List<ShaderNode> usingNodes = container.findWithRightInputVar(variable, MainShaderNodeElement.class);
+        var usingNodes = container.findWithRightInputVar(variable, MainShaderNodeElement.class);
 
-        final ShaderNodesChangeConsumer consumer = container.getChangeConsumer();
-        consumer.execute(new RemoveMaterialParameterVariableOperation(usingNodes, materialDef, techniqueDef,
+        container.getChangeConsumer()
+            .execute(new RemoveMaterialParameterVariableOperation(usingNodes, materialDef, techniqueDef,
                 matParam, variable, getLocation()));
     }
 }
