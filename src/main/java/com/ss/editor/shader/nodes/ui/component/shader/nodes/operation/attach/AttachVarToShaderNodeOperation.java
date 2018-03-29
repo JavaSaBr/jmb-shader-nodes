@@ -57,11 +57,13 @@ public class AttachVarToShaderNodeOperation extends AttachShaderNodeOperation {
      */
     private boolean outShaderWasUnused;
 
-    public AttachVarToShaderNodeOperation(@NotNull final ShaderNode shaderNode,
-                                          @Nullable final VariableMapping newMapping,
-                                          @Nullable final VariableMapping oldMapping,
-                                          @NotNull final TechniqueDef techniqueDef,
-                                          @NotNull final ShaderNode outShaderNode) {
+    public AttachVarToShaderNodeOperation(
+        @NotNull final ShaderNode shaderNode,
+        @Nullable final VariableMapping newMapping,
+        @Nullable final VariableMapping oldMapping,
+        @NotNull final TechniqueDef techniqueDef,
+        @NotNull final ShaderNode outShaderNode
+    ) {
         super(shaderNode, newMapping, oldMapping);
         this.techniqueDef = techniqueDef;
         this.outShaderNode = outShaderNode;
@@ -72,19 +74,19 @@ public class AttachVarToShaderNodeOperation extends AttachShaderNodeOperation {
     protected void redoImplInJmeThread(@NotNull final ShaderNodesChangeConsumer editor) {
         super.redoImplInJmeThread(editor);
 
-        final ShaderNode shaderNode = getShaderNode();
-        final Shader.ShaderType inType = shaderNode.getDefinition().getType();
+        var shaderNode = getShaderNode();
+        var inType = shaderNode.getDefinition().getType();
 
-        final ShaderNode outShaderNode = getOutShaderNode();
-        final Shader.ShaderType outType = outShaderNode.getDefinition().getType();
+        var outShaderNode = getOutShaderNode();
+        var outType = outShaderNode.getDefinition().getType();
 
-        final VariableMapping newMapping = getNewMapping();
-        final ShaderGenerationInfo generationInfo = techniqueDef.getShaderGenerationInfo();
+        var newMapping = getNewMapping();
+        var generationInfo = techniqueDef.getShaderGenerationInfo();
 
         if (newMapping != null && outType == Shader.ShaderType.Vertex && inType != Shader.ShaderType.Vertex) {
 
-            final List<ShaderNodeVariable> varyings = generationInfo.getVaryings();
-            final ShaderNodeVariable rightVar = newMapping.getRightVariable();
+            var varyings = generationInfo.getVaryings();
+            var rightVar = newMapping.getRightVariable();
 
             if (!varyings.contains(rightVar)) {
                 varyings.add(rightVar);
@@ -97,9 +99,9 @@ public class AttachVarToShaderNodeOperation extends AttachShaderNodeOperation {
             toRevertOutput.getLeftVariable().setShaderOutput(true);
         }
 
-        final List<ShaderNode> shaderNodes = techniqueDef.getShaderNodes();
-        final int outSnIndex = shaderNodes.indexOf(outShaderNode);
-        final int snIndex = shaderNodes.indexOf(shaderNode);
+        var shaderNodes = techniqueDef.getShaderNodes();
+        var outSnIndex = shaderNodes.indexOf(outShaderNode);
+        var snIndex = shaderNodes.indexOf(shaderNode);
 
         if (outSnIndex > snIndex) {
             previousShaderOrder = new ArrayList<>(shaderNodes);
@@ -107,13 +109,13 @@ public class AttachVarToShaderNodeOperation extends AttachShaderNodeOperation {
             shaderNodes.add(snIndex, outShaderNode);
         }
 
-        final List<String> unusedNodes = generationInfo.getUnusedNodes();
+        var unusedNodes = generationInfo.getUnusedNodes();
         if (unusedNodes.contains(outShaderNode.getName())) {
             unusedNodes.remove(outShaderNode.getName());
             outShaderWasUnused = true;
         }
 
-        final List<VariableMapping> inputMapping = shaderNode.getInputMapping();
+        var inputMapping = shaderNode.getInputMapping();
 
         if (getOldMapping() != null) {
             inputMapping.remove(getOldMapping());
@@ -129,11 +131,11 @@ public class AttachVarToShaderNodeOperation extends AttachShaderNodeOperation {
     protected void undoImplInJmeThread(@NotNull final ShaderNodesChangeConsumer editor) {
         super.undoImplInJmeThread(editor);
 
-        final VariableMapping newMapping = getNewMapping();
-        final ShaderGenerationInfo generationInfo = techniqueDef.getShaderGenerationInfo();
+        var newMapping = getNewMapping();
+        var generationInfo = techniqueDef.getShaderGenerationInfo();
 
         if (newMapping != null && wasAddedToVaryings) {
-            final List<ShaderNodeVariable> varyings = generationInfo.getVaryings();
+            var varyings = generationInfo.getVaryings();
             varyings.remove(newMapping.getRightVariable());
             wasAddedToVaryings = false;
         }
@@ -144,20 +146,19 @@ public class AttachVarToShaderNodeOperation extends AttachShaderNodeOperation {
         }
 
         if (previousShaderOrder != null) {
-            final List<ShaderNode> shaderNodes = techniqueDef.getShaderNodes();
+            var shaderNodes = techniqueDef.getShaderNodes();
             shaderNodes.clear();
             shaderNodes.addAll(previousShaderOrder);
             previousShaderOrder = null;
         }
 
         if (outShaderWasUnused) {
-            final List<String> unusedNodes = generationInfo.getUnusedNodes();
+            var unusedNodes = generationInfo.getUnusedNodes();
             unusedNodes.add(outShaderNode.getName());
             outShaderWasUnused = false;
         }
 
-        final List<VariableMapping> inputMapping = getShaderNode().getInputMapping();
-
+        var inputMapping = getShaderNode().getInputMapping();
         if (newMapping != null) {
             inputMapping.remove(newMapping);
         }
@@ -168,7 +169,9 @@ public class AttachVarToShaderNodeOperation extends AttachShaderNodeOperation {
     }
 
     /**
-     * @return the output shader nodes.
+     * Get the output shader node.
+     *
+     * @return the output shader node.
      */
     @FromAnyThread
     private @NotNull ShaderNode getOutShaderNode() {

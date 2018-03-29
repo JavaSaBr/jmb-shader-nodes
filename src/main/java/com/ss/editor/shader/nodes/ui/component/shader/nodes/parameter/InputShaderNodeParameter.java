@@ -1,19 +1,23 @@
 package com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter;
 
 import static com.ss.editor.shader.nodes.ui.PluginCssClasses.SHADER_NODE_INPUT_PARAMETER;
-import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.canUseExpression;
+import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.*;
 
 import com.jme3.math.Vector2f;
+import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.ui.PluginCssClasses;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodeElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.action.remove.RemoveRelationShaderNodeAction;
+import com.ss.editor.shader.nodes.ui.component.shader.nodes.line.VariableLine;
+import com.ss.editor.shader.nodes.ui.component.shader.nodes.operation.attach.AttachVarExpressionToShaderNodeOperation;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.socket.InputSocketElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.socket.SocketElement;
 import com.ss.editor.ui.css.CssClasses;
 import com.ss.rlib.ui.util.FXUtils;
+import com.ss.rlib.util.StringUtils;
 import javafx.event.ActionEvent;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -23,6 +27,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 /**
  * The implementation of input shader nodes parameter.
@@ -145,7 +151,20 @@ public class InputShaderNodeParameter extends ShaderNodeParameter {
             return;
         }
 
+        var element = getNodeElement();
+        var shaderNode = (ShaderNode) element.getObject();
+        var container = element.getContainer();
+        var expressionField = getExpressionField();
+        var currentExpression = expressionField.getText();
+        var currentMapping = findInMappingByNLeftVar(shaderNode, getVariable());
+        if (currentMapping != null && StringUtils.equals(currentExpression, currentMapping.getRightExpression())) {
+            return;
+        }
 
+        var newMapping = makeExpressionMapping(this, currentExpression);
+
+        container.getChangeConsumer()
+            .execute(new AttachVarExpressionToShaderNodeOperation(shaderNode, newMapping, currentMapping));
     }
 
     /**
@@ -156,21 +175,21 @@ public class InputShaderNodeParameter extends ShaderNodeParameter {
     @FxThread
     private void handleChangeUseExpression(@NotNull final ActionEvent event) {
 
+        var element = getNodeElement();
+        var shaderNode = (ShaderNode) element.getObject();
         var useExpression = getUseExpression();
-        var container = getNodeElement().getContainer();
+        var container = element.getContainer();
 
         if (useExpression.isSelected()) {
 
-            var line = container.findLineByInParameter(this)
-                .orElseThrow(() -> new IllegalStateException("Can't find a variable line for the input parameter."));
-
-            var action = new RemoveRelationShaderNodeAction(container, line, Vector2f.ZERO);
-            action.process();
+            container.findLineByInParameter(this)
+                .map(line -> new RemoveRelationShaderNodeAction(container, line, Vector2f.ZERO))
+                .ifPresent(RemoveRelationShaderNodeAction::process);
 
         } else {
-
+            var currentMapping = findInMappingByNLeftVar(shaderNode, getVariable());
             container.getChangeConsumer()
-                .execute(null);
+                .execute(new AttachVarExpressionToShaderNodeOperation(shaderNode, null, currentMapping));
         }
     }
 }

@@ -194,8 +194,10 @@ public class ShaderNodeUtils {
      * @return the mapping or null.
      */
     @FromAnyThread
-    public static @Nullable VariableMapping findInMappingByNLeftVar(@NotNull final ShaderNode shaderNode,
-                                                                    @NotNull final ShaderNodeVariable variable) {
+    public static @Nullable VariableMapping findInMappingByNLeftVar(
+        @NotNull final ShaderNode shaderNode,
+        @NotNull final ShaderNodeVariable variable
+    ) {
         return shaderNode.getInputMapping().stream()
                 .filter(mapping -> equalsByName(mapping.getLeftVariable(), variable))
                 .findAny().orElse(null);
@@ -311,6 +313,39 @@ public class ShaderNodeUtils {
     }
 
     /**
+     * Make a new mapping with the expression.
+     *
+     * @param inputParameter the input parameter.
+     * @param expression     the expression.
+     * @return the new mapping.
+     */
+    @FromAnyThread
+    public static @NotNull VariableMapping makeExpressionMapping(
+        @NotNull final InputShaderNodeParameter inputParameter,
+        @NotNull final String expression
+    ) {
+
+        var element = inputParameter.getNodeElement();
+        var object = element.getObject();
+        var variable = inputParameter.getVariable();
+
+        final String nameSpace;
+
+        if (object instanceof ShaderNode) {
+            nameSpace = ((ShaderNode) object).getName();
+        } else {
+            nameSpace = variable.getNameSpace();
+        }
+
+        var newMapping = new VariableMapping();
+        newMapping.setLeftVariable(new ShaderNodeVariable(variable.getType(), nameSpace, variable.getName(),
+            null, variable.getPrefix()));
+        newMapping.setRightExpression(expression);
+
+        return newMapping;
+    }
+
+    /**
      * Make a new mapping between the parameters.
      *
      * @param inputParameter  the input parameter.
@@ -318,8 +353,10 @@ public class ShaderNodeUtils {
      * @return the new mapping.
      */
     @FromAnyThread
-    public static @NotNull VariableMapping makeMapping(@NotNull final InputShaderNodeParameter inputParameter,
-                                                       @NotNull final OutputShaderNodeParameter outputParameter) {
+    public static @NotNull VariableMapping makeMapping(
+        @NotNull final InputShaderNodeParameter inputParameter,
+        @NotNull final OutputShaderNodeParameter outputParameter
+    ) {
 
         final ShaderNodeElement<?> inElement = inputParameter.getNodeElement();
         final Object inObject = inElement.getObject();
