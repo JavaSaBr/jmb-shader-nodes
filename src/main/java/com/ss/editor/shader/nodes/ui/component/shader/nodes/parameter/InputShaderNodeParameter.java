@@ -2,16 +2,12 @@ package com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter;
 
 import static com.ss.editor.shader.nodes.ui.PluginCssClasses.SHADER_NODE_INPUT_PARAMETER;
 import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.*;
-
-import com.jme3.math.Vector2f;
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.PluginMessages;
 import com.ss.editor.shader.nodes.ui.PluginCssClasses;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.ShaderNodeElement;
-import com.ss.editor.shader.nodes.ui.component.shader.nodes.action.remove.RemoveRelationShaderNodeAction;
-import com.ss.editor.shader.nodes.ui.component.shader.nodes.line.VariableLine;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.operation.attach.AttachVarExpressionToShaderNodeOperation;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.socket.InputSocketElement;
 import com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter.socket.SocketElement;
@@ -27,8 +23,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Optional;
 
 /**
  * The implementation of input shader nodes parameter.
@@ -55,8 +49,10 @@ public class InputShaderNodeParameter extends ShaderNodeParameter {
     @NotNull
     private TextField expressionField;
 
-    public InputShaderNodeParameter(@NotNull final ShaderNodeElement<?> nodeElement,
-                                    @NotNull final ShaderNodeVariable variable) {
+    public InputShaderNodeParameter(
+            @NotNull final ShaderNodeElement<?> nodeElement,
+            @NotNull final ShaderNodeVariable variable
+    ) {
         super(nodeElement, variable);
         FXUtils.addClassTo(this, SHADER_NODE_INPUT_PARAMETER);
     }
@@ -147,7 +143,7 @@ public class InputShaderNodeParameter extends ShaderNodeParameter {
     @FxThread
     private void handleChangeExpression(@Nullable final KeyEvent event) {
 
-        if (event != null && event.getCode() != KeyCode.ENTER) {
+        if (isDisable() || event != null && event.getCode() != KeyCode.ENTER) {
             return;
         }
 
@@ -155,16 +151,42 @@ public class InputShaderNodeParameter extends ShaderNodeParameter {
         var shaderNode = (ShaderNode) element.getObject();
         var container = element.getContainer();
         var expressionField = getExpressionField();
-        var currentExpression = expressionField.getText();
-        var currentMapping = findInMappingByNLeftVar(shaderNode, getVariable());
-        if (currentMapping != null && StringUtils.equals(currentExpression, currentMapping.getRightExpression())) {
+        var expr = expressionField.getText();
+        var mapping = findInMappingByNLeftVar(shaderNode, getVariable());
+
+        if (mapping == null && StringUtils.isEmpty(expr)) {
+            return;
+        } else if (mapping != null && StringUtils.equals(expr, mapping.getRightExpression())) {
             return;
         }
 
-        var newMapping = makeExpressionMapping(this, currentExpression);
+        var newMapping = makeExpressionMapping(this, expr);
 
         container.getChangeConsumer()
-            .execute(new AttachVarExpressionToShaderNodeOperation(shaderNode, newMapping, currentMapping));
+            .execute(new AttachVarExpressionToShaderNodeOperation(shaderNode, newMapping, mapping));
+
+        setDisable(true);
+    }
+
+    @Override
+    public void refresh() {
+        super.refresh();
+
+        var element = getNodeElement();
+        var object = element.getObject();
+
+        if (object instanceof ShaderNode) {
+
+            var shaderNode = (ShaderNode) element.getObject();
+            var mapping = findInMappingByNLeftVar(shaderNode, getVariable());
+            var selected = mapping != null && mapping.getRightExpression() != null;
+            var expression = mapping != null ? mapping.getRightExpression() : "";
+
+            getUseExpression().setSelected(selected);
+            getExpressionField().setText(expression);
+        }
+
+        setDisable(false);
     }
 
     /**
@@ -179,17 +201,16 @@ public class InputShaderNodeParameter extends ShaderNodeParameter {
         var shaderNode = (ShaderNode) element.getObject();
         var useExpression = getUseExpression();
         var container = element.getContainer();
+        var mapping = findInMappingByNLeftVar(shaderNode, getVariable());
+        var expression = getExpressionField().getText();
 
         if (useExpression.isSelected()) {
-
-            container.findLineByInParameter(this)
-                .map(line -> new RemoveRelationShaderNodeAction(container, line, Vector2f.ZERO))
-                .ifPresent(RemoveRelationShaderNodeAction::process);
-
-        } else {
-            var currentMapping = findInMappingByNLeftVar(shaderNode, getVariable());
+            var newMapping = makeExpressionMapping(this, expression);
             container.getChangeConsumer()
-                .execute(new AttachVarExpressionToShaderNodeOperation(shaderNode, null, currentMapping));
+                    .execute(new AttachVarExpressionToShaderNodeOperation(shaderNode, newMapping, mapping));
+        } else {
+            container.getChangeConsumer()
+                .execute(new AttachVarExpressionToShaderNodeOperation(shaderNode, null, mapping));
         }
     }
 }

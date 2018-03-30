@@ -15,9 +15,9 @@ import org.jetbrains.annotations.Nullable;
 public class AttachVarExpressionToShaderNodeOperation extends AttachShaderNodeOperation {
 
     public AttachVarExpressionToShaderNodeOperation(
-        @NotNull final ShaderNode shaderNode,
-        @Nullable final VariableMapping newMapping,
-        @Nullable final VariableMapping oldMapping
+            @NotNull final ShaderNode shaderNode,
+            @Nullable final VariableMapping newMapping,
+            @Nullable final VariableMapping oldMapping
     ) {
         super(shaderNode, newMapping, oldMapping);
     }

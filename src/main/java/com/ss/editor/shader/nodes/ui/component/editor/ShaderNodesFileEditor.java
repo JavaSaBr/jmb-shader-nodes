@@ -861,75 +861,69 @@ public class ShaderNodesFileEditor extends
 
     @Override
     @FxThread
-    public void notifyReplacedMapping(@NotNull final ShaderNode shaderNode, @NotNull final VariableMapping oldMapping,
-                                      @NotNull final VariableMapping newMapping) {
+    public void notifyReplacedMapping(
+            @NotNull final ShaderNode shaderNode,
+            @NotNull final VariableMapping oldMapping,
+            @NotNull final VariableMapping newMapping
+    ) {
         buildMaterial();
-        final ShaderNodesContainer container = getShaderNodesContainer();
-        container.refreshLines();
+        handleChangeMapping(shaderNode);
     }
 
     @FxThread
     @Override
     public void notifyAddedMatParameter(@NotNull final MatParam matParam, @NotNull final Vector2f location) {
         buildMaterial();
-        final ShaderNodesContainer container = getShaderNodesContainer();
-        container.addMatParam(matParam, location);
+        getShaderNodesContainer().addMatParam(matParam, location);
     }
 
     @FxThread
     @Override
     public void notifyRemovedMatParameter(@NotNull final MatParam matParam) {
         buildMaterial();
-        final ShaderNodesContainer container = getShaderNodesContainer();
-        container.removeMatParam(matParam);
+        getShaderNodesContainer().removeMatParam(matParam);
     }
 
     @FxThread
     @Override
     public void notifyAddedAttribute(@NotNull final ShaderNodeVariable variable, @NotNull final Vector2f location) {
         buildMaterial();
-        final ShaderNodesContainer container = getShaderNodesContainer();
-        container.addNodeElement(variable, location);
+        getShaderNodesContainer().addNodeElement(variable, location);
     }
 
     @FxThread
     @Override
     public void notifyRemovedAttribute(@NotNull final ShaderNodeVariable variable) {
         buildMaterial();
-        final ShaderNodesContainer container = getShaderNodesContainer();
-        container.removeNodeElement(variable);
+        getShaderNodesContainer().removeNodeElement(variable);
     }
 
     @Override
     @FxThread
     public void notifyAddedWorldParameter(@NotNull final UniformBinding binding, @NotNull final Vector2f location) {
         buildMaterial();
-        final ShaderNodesContainer container = getShaderNodesContainer();
-        container.addWorldParam(binding, location);
+        getShaderNodesContainer().addWorldParam(binding, location);
     }
 
     @Override
     @FxThread
     public void notifyRemovedWorldParameter(@NotNull final UniformBinding binding) {
         buildMaterial();
-        final ShaderNodesContainer container = getShaderNodesContainer();
-        container.removeWorldParam(binding);
+        getShaderNodesContainer().removeWorldParam(binding);
     }
 
     @Override
     @FxThread
     public void notifyAddedShaderNode(@NotNull final ShaderNode shaderNode, @NotNull final Vector2f location) {
         buildMaterial();
-        final ShaderNodesContainer container = getShaderNodesContainer();
-        container.addShaderNode(shaderNode, location);
+        getShaderNodesContainer().addShaderNode(shaderNode, location);
     }
 
     @Override
     @FxThread
     public void notifyRemovedRemovedShaderNode(@NotNull final ShaderNode shaderNode) {
         buildMaterial();
-        final ShaderNodesContainer container = getShaderNodesContainer();
-        container.removeShaderNode(shaderNode);
+        getShaderNodesContainer().removeShaderNode(shaderNode);
     }
 
     @Override

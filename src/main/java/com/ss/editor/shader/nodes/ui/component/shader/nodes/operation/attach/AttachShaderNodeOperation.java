@@ -2,10 +2,10 @@ package com.ss.editor.shader.nodes.ui.component.shader.nodes.operation.attach;
 
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.VariableMapping;
-import com.ss.editor.annotation.FxThread;
 import com.ss.editor.annotation.FromAnyThread;
-import com.ss.editor.shader.nodes.ui.component.shader.nodes.operation.ShaderNodeOperation;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.shader.nodes.ui.component.editor.ShaderNodesChangeConsumer;
+import com.ss.editor.shader.nodes.ui.component.shader.nodes.operation.ShaderNodeOperation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,9 +34,11 @@ public class AttachShaderNodeOperation extends ShaderNodeOperation {
     @Nullable
     private final VariableMapping oldMapping;
 
-    protected AttachShaderNodeOperation(@NotNull final ShaderNode shaderNode,
-                                        @Nullable final VariableMapping newMapping,
-                                        @Nullable final VariableMapping oldMapping) {
+    protected AttachShaderNodeOperation(
+            @NotNull final ShaderNode shaderNode,
+            @Nullable final VariableMapping newMapping,
+            @Nullable final VariableMapping oldMapping
+    ) {
         this.shaderNode = shaderNode;
         this.newMapping = newMapping;
         this.oldMapping = oldMapping;
@@ -87,10 +89,11 @@ public class AttachShaderNodeOperation extends ShaderNodeOperation {
     }
 
     @FxThread
-    protected void notify(@NotNull final ShaderNodesChangeConsumer editor,
-                          @Nullable final VariableMapping oldMapping,
-                          @Nullable final VariableMapping newMapping) {
-
+    protected void notify(
+            @NotNull final ShaderNodesChangeConsumer editor,
+            @Nullable final VariableMapping oldMapping,
+            @Nullable final VariableMapping newMapping
+    ) {
         if (oldMapping != null && newMapping != null) {
             editor.notifyReplacedMapping(shaderNode, oldMapping, newMapping);
         } else if (oldMapping != null) {

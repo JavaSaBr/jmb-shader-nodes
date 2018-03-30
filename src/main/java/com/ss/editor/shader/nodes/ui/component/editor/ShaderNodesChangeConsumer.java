@@ -9,8 +9,8 @@ import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
 import com.jme3.shader.UniformBinding;
 import com.jme3.shader.VariableMapping;
-import com.ss.editor.annotation.FxThread;
 import com.ss.editor.annotation.FromAnyThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +22,7 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
 
     /**
      * Get the edited material definition.
-     * 
+     *
      * @return the edited material definition.
      */
     @FromAnyThread
@@ -62,8 +62,11 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
      * @param newMapping the new variable mapping.
      */
     @FxThread
-    void notifyReplacedMapping(@NotNull final ShaderNode shaderNode, @NotNull final VariableMapping oldMapping,
-                               @NotNull final VariableMapping newMapping);
+    void notifyReplacedMapping(
+            @NotNull final ShaderNode shaderNode,
+            @NotNull final VariableMapping oldMapping,
+            @NotNull final VariableMapping newMapping
+    );
 
     /**
      * Notify about added the material parameter.
@@ -141,8 +144,11 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
      * @param width    the width.
      */
     @FxThread
-    void notifyChangeState(@NotNull final ShaderNodeVariable variable, @NotNull final Vector2f location,
-                           final double width);
+    void notifyChangeState(
+            @NotNull final ShaderNodeVariable variable,
+            @NotNull final Vector2f location,
+            final double width
+    );
 
     /**
      * Notify about changed state of the shader nodes.
