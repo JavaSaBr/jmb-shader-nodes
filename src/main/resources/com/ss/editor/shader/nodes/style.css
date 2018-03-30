@@ -40,15 +40,17 @@
 .shader-node-input-parameter {
     -fx-alignment: center-left;
     -fx-padding: 0px 0px 0px -4px;
+    -fx-hgap: 2px;
 }
 
-.shader-node-input-parameter > .label {
+.shader-node-input-parameter-expr-label {
     -fx-min-width: 50px;
     -fx-alignment: center-right;
 }
 
 .shader-node-input-parameter-container {
     -fx-alignment: center-left;
+    -fx-spacing: 2px;
 }
 
 .shader-node-input-parameter > .hbox {
@@ -90,6 +92,10 @@
 .shader-node-parameter-input-socket:required:droppable,
 .shader-node-parameter-input-socket:droppable {
     -fx-background-color: -fx-focus-color;
+}
+
+.shader-node-parameter-input-socket:disabled {
+    -fx-opacity: -var-disabled-opacity;
 }
 
 .shader-node-parameter-output-socket:hover {

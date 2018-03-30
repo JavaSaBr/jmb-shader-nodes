@@ -2,6 +2,8 @@ package com.ss.editor.shader.nodes.ui.component.shader.nodes.parameter;
 
 import static com.ss.editor.shader.nodes.ui.PluginCssClasses.SHADER_NODE_INPUT_PARAMETER;
 import static com.ss.editor.shader.nodes.util.ShaderNodeUtils.*;
+import static com.ss.rlib.util.ObjectUtils.notNull;
+
 import com.jme3.shader.ShaderNode;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.annotation.FxThread;
@@ -34,19 +36,19 @@ public class InputShaderNodeParameter extends ShaderNodeParameter {
     /**
      * The check box to use expression.
      */
-    @NotNull
+    @Nullable
     private CheckBox useExpression;
 
     /**
      * The label to use an expression.
      */
-    @NotNull
+    @Nullable
     private Label useExpressionLabel;
 
     /**
      * The field with expression.
      */
-    @NotNull
+    @Nullable
     private TextField expressionField;
 
     public InputShaderNodeParameter(
@@ -64,7 +66,7 @@ public class InputShaderNodeParameter extends ShaderNodeParameter {
      */
     @FxThread
     protected @NotNull CheckBox getUseExpression() {
-        return useExpression;
+        return notNull(useExpression);
     }
 
     /**
@@ -74,7 +76,7 @@ public class InputShaderNodeParameter extends ShaderNodeParameter {
      */
     @FxThread
     protected @NotNull Label getUseExpressionLabel() {
-        return useExpressionLabel;
+        return notNull(useExpressionLabel);
     }
 
     /**
@@ -84,7 +86,7 @@ public class InputShaderNodeParameter extends ShaderNodeParameter {
      */
     @FxThread
     protected @NotNull TextField getExpressionField() {
-        return expressionField;
+        return notNull(expressionField);
     }
 
     @Override
@@ -108,31 +110,48 @@ public class InputShaderNodeParameter extends ShaderNodeParameter {
     protected void createContent() {
         super.createContent();
 
-        this.useExpressionLabel = new Label(PluginMessages.NODE_ELEMENT_USE_EXPRESSION + ":");
-        this.useExpression = new CheckBox();
-        this.useExpression.setDisable(!canUseExpression(getNodeElement(), getVariable()));
-        this.useExpression.setOnAction(this::handleChangeUseExpression);
-        this.expressionField = new TextField();
-        this.expressionField.prefWidthProperty().bind(widthProperty());
-        this.expressionField.setOnKeyReleased(this::handleChangeExpression);
-        this.expressionField.focusedProperty()
-            .addListener((observable, oldValue, newValue) -> handleChangeExpression(null));
+        if (canUseExpression(getNodeElement(), getVariable())) {
 
-        var parameterContainer = new HBox(getSocket(), getNameLabel(), getTypeLabel());
-        parameterContainer.prefWidthProperty().bind(widthProperty());
+            var element = getNodeElement();
+            var shaderNode = (ShaderNode) element.getObject();
+            var mapping = findInMappingByNLeftVar(shaderNode, getVariable());
+            var selected = mapping != null && mapping.getRightExpression() != null;
+            var expression = mapping != null ? mapping.getRightExpression() : "";
 
-        var expressionContainer = new HBox(expressionField);
-        expressionContainer.managedProperty().bind(useExpression.selectedProperty());
-        expressionContainer.visibleProperty().bind(useExpression.selectedProperty());
-        expressionContainer.prefWidthProperty().bind(widthProperty());
+            useExpressionLabel = new Label(PluginMessages.NODE_ELEMENT_USE_EXPRESSION + ":");
+            useExpression = new CheckBox();
+            useExpression.setOnAction(this::handleChangeUseExpression);
+            useExpression.setSelected(selected);
+            expressionField = new TextField(expression);
+            expressionField.prefWidthProperty().bind(widthProperty());
+            expressionField.setOnKeyReleased(this::handleChangeExpression);
+            expressionField.focusedProperty()
+                .addListener((observable, oldValue, newValue) -> handleChangeExpression(null));
 
-        add(parameterContainer, 0, 0);
-        add(getUseExpressionLabel(), 1, 0);
-        add(getUseExpression(), 2, 0);
-        add(expressionContainer, 0, 1, 3, 1);
+            var parameterContainer = new HBox(getSocket(), getNameLabel(), getTypeLabel());
+            parameterContainer.prefWidthProperty().bind(widthProperty());
 
-        FXUtils.addClassTo(parameterContainer, PluginCssClasses.SHADER_NODE_INPUT_PARAMETER_CONTAINER);
-        FXUtils.addClassTo(expressionContainer, CssClasses.DEF_HBOX);
+            getSocket().disableProperty().bind(useExpression.selectedProperty());
+
+            var expressionContainer = new HBox(expressionField);
+            expressionContainer.managedProperty().bind(useExpression.selectedProperty());
+            expressionContainer.visibleProperty().bind(useExpression.selectedProperty());
+            expressionContainer.prefWidthProperty().bind(widthProperty());
+
+            add(parameterContainer, 0, 0);
+            add(getUseExpressionLabel(), 1, 0);
+            add(getUseExpression(), 2, 0);
+            add(expressionContainer, 0, 1, 3, 1);
+
+            FXUtils.addClassTo(useExpressionLabel, PluginCssClasses.SHADER_NODE_INPUT_PARAMETER_EXPR_LABEL);
+            FXUtils.addClassTo(parameterContainer, PluginCssClasses.SHADER_NODE_INPUT_PARAMETER_CONTAINER);
+            FXUtils.addClassTo(expressionContainer, CssClasses.DEF_HBOX);
+
+        } else {
+            add(getSocket(), 0, 0);
+            add(getNameLabel(), 1, 0);
+            add(getTypeLabel(), 2, 0);
+        }
     }
 
     /**
@@ -180,10 +199,12 @@ public class InputShaderNodeParameter extends ShaderNodeParameter {
             var shaderNode = (ShaderNode) element.getObject();
             var mapping = findInMappingByNLeftVar(shaderNode, getVariable());
             var selected = mapping != null && mapping.getRightExpression() != null;
-            var expression = mapping != null ? mapping.getRightExpression() : "";
 
             getUseExpression().setSelected(selected);
-            getExpressionField().setText(expression);
+
+            if (mapping != null) {
+                getExpressionField().setText(mapping.getRightExpression());
+            }
         }
 
         setDisable(false);
