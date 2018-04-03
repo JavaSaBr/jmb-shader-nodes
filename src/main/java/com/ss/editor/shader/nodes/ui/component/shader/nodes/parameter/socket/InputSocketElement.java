@@ -74,7 +74,7 @@ public class InputSocketElement extends SocketElement {
         }
     };
 
-    public InputSocketElement(@NotNull final ShaderNodeParameter parameter) {
+    public InputSocketElement(@NotNull ShaderNodeParameter parameter) {
         super(parameter);
         setOnDragOver(this::handleDragOver);
         setOnDragDropped(this::handleDragDropped);
@@ -89,7 +89,7 @@ public class InputSocketElement extends SocketElement {
      * @param dragEvent the drag event.
      */
     @FxThread
-    private void handleDragExited(@NotNull final DragEvent dragEvent) {
+    private void handleDragExited(@NotNull DragEvent dragEvent) {
         droppable.setValue(false);
     }
 
@@ -99,7 +99,7 @@ public class InputSocketElement extends SocketElement {
      * @param dragEvent the drag event.
      */
     @FxThread
-    private void handleDragDropped(@NotNull final DragEvent dragEvent) {
+    private void handleDragDropped(@NotNull DragEvent dragEvent) {
         droppable.setValue(false);
 
         var parameter = (InputShaderNodeParameter) getParameter();
@@ -126,7 +126,7 @@ public class InputSocketElement extends SocketElement {
      * @param dragEvent the drag event.
      */
     @FxThread
-    private void handleDragOver(@NotNull final DragEvent dragEvent) {
+    private void handleDragOver(@NotNull DragEvent dragEvent) {
 
         var parameter = (InputShaderNodeParameter) getParameter();
         var nodeElement = parameter.getNodeElement();

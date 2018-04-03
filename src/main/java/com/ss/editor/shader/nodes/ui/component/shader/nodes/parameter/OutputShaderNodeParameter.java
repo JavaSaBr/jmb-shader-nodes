@@ -16,8 +16,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class OutputShaderNodeParameter extends ShaderNodeParameter {
 
-    public OutputShaderNodeParameter(@NotNull final ShaderNodeElement<?> nodeElement,
-                                     @NotNull final ShaderNodeVariable variable) {
+    public OutputShaderNodeParameter(@NotNull ShaderNodeElement<?> nodeElement, @NotNull ShaderNodeVariable variable) {
         super(nodeElement, variable);
         FXUtils.addClassTo(this, SHADER_NODE_OUTPUT_PARAMETER);
     }

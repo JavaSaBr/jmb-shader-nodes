@@ -175,4 +175,4 @@ run.dependsOn {
     preparePlugin
 }
 
-run.jvmArgs(Arrays.asList("-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005"))
+run.jvmArgs(Arrays.asList("-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005", "-Duser.country=EU", "-Duser.language=en"))

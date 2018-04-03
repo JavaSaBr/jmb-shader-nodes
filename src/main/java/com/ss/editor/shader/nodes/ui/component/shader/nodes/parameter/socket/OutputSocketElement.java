@@ -48,7 +48,7 @@ public class OutputSocketElement extends SocketElement {
         }
     };
 
-    public OutputSocketElement(@NotNull final ShaderNodeParameter parameter) {
+    public OutputSocketElement(@NotNull ShaderNodeParameter parameter) {
         super(parameter);
         setOnDragDetected(this::handleStartDrag);
         setOnDragDone(this::handleStopDrag);
@@ -59,19 +59,19 @@ public class OutputSocketElement extends SocketElement {
     /**
      * Handle dragging.
      *
-     * @param mouseEvent the mouse event.
+     * @param event the mouse event.
      */
     @FxThread
-    private void handleMouseDragged(@NotNull final MouseEvent mouseEvent) {
+    private void handleMouseDragged(@NotNull MouseEvent event) {
 
         var container = getParameter()
             .getNodeElement()
             .getContainer();
 
         container.startAttaching(this);
-        container.updateAttaching(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+        container.updateAttaching(event.getSceneX(), event.getSceneY());
 
-        mouseEvent.consume();
+        event.consume();
     }
 
     /**
@@ -80,7 +80,7 @@ public class OutputSocketElement extends SocketElement {
      * @param dragEvent the drag event.
      */
     @FxThread
-    private void handleStopDrag(@NotNull final DragEvent dragEvent) {
+    private void handleStopDrag(@NotNull DragEvent dragEvent) {
         setCursor(Cursor.DEFAULT);
 
         getParameter().getNodeElement()
@@ -98,7 +98,7 @@ public class OutputSocketElement extends SocketElement {
      * @param mouseEvent the mouse event.
      */
     @FxThread
-    private void handleStartDrag(@NotNull final MouseEvent mouseEvent) {
+    private void handleStartDrag(@NotNull MouseEvent mouseEvent) {
         setCursor(Cursor.MOVE);
 
         var content = new ClipboardContent();
@@ -109,11 +109,13 @@ public class OutputSocketElement extends SocketElement {
 
         var parameter = getParameter();
         var nodeElement = parameter.getNodeElement();
+
         var container = nodeElement.getContainer();
         container.startAttaching(this);
         container.updateAttaching(mouseEvent.getSceneX(), mouseEvent.getSceneY());
 
         dragged.setValue(true);
+
         mouseEvent.consume();
     }
 }

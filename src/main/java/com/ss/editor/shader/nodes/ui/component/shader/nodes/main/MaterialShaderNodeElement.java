@@ -42,16 +42,15 @@ public class MaterialShaderNodeElement extends OutputVariableShaderNodeElement {
      * @return the shader nodes variable.
      */
     @FromAnyThread
-    public static @NotNull ShaderNodeVariable toVariable(@NotNull final MatParam matParam) {
-        final VarType type = matParam.getVarType();
-        final String glslType = type.getGlslType();
-        final String resultType = glslType.contains("|") ? glslType.split("[|]")[0] : glslType;
+    public static @NotNull ShaderNodeVariable toVariable(@NotNull MatParam matParam) {
+        var type = matParam.getVarType();
+        var glslType = type.getGlslType();
+        var resultType = glslType.contains("|") ? glslType.split("[|]")[0] : glslType;
         return new ShaderNodeVariable(resultType, NAMESPACE, matParam.getName(),
                 null, "m_");
     }
 
-    public MaterialShaderNodeElement(@NotNull final ShaderNodesContainer container,
-                                     @NotNull final ShaderNodeVariable variable) {
+    public MaterialShaderNodeElement(@NotNull ShaderNodesContainer container, @NotNull ShaderNodeVariable variable) {
         super(container, variable);
     }
 
@@ -59,12 +58,12 @@ public class MaterialShaderNodeElement extends OutputVariableShaderNodeElement {
     @FxThread
     protected @NotNull OutputShaderNodeParameter newParameter() {
 
-        final ShaderNodeVariable variable = getObject();
-        final ShaderNodesContainer container = getContainer();
-        final MaterialDef materialDef = container.getMaterialDef();
-        final MatParam materialParam = materialDef.getMaterialParam(variable.getName());
+        var variable = getObject();
+        var container = getContainer();
+        var materialDef = container.getMaterialDef();
+        var materialParam = materialDef.getMaterialParam(variable.getName());
 
-        final PropertyControl<ChangeConsumer, MatParam, ?> control = buildControl(container.getChangeConsumer(), materialParam);
+        var control = buildControl(container.getChangeConsumer(), materialParam);
         if (control == null) {
             return super.newParameter();
         }
@@ -93,13 +92,14 @@ public class MaterialShaderNodeElement extends OutputVariableShaderNodeElement {
         getParametersContainer().getChildren().stream()
                 .filter(EditableMaterialShaderNodeParameter.class::isInstance)
                 .map(EditableMaterialShaderNodeParameter.class::cast)
-                .forEach(EditableMaterialShaderNodeParameter::sync);
+                .forEach(EditableMaterialShaderNodeParameter::requestLayout);
     }
 
     @FxThread
-    private @Nullable PropertyControl<ChangeConsumer, MatParam, ?> buildControl(@NotNull final ChangeConsumer consumer,
-                                                                                @NotNull final MatParam param) {
-
+    private @Nullable PropertyControl<ChangeConsumer, MatParam, ?> buildControl(
+        @NotNull ChangeConsumer consumer,
+        @NotNull MatParam param
+    ) {
         switch (param.getVarType()) {
             case Boolean: {
 
@@ -139,32 +139,31 @@ public class MaterialShaderNodeElement extends OutputVariableShaderNodeElement {
     }
 
     @FxThread
-    private <T> T getCurrentValue(@NotNull final MatParam matParam) {
+    private <T> T getCurrentValue(@NotNull MatParam matParam) {
 
-        final ShaderNodesChangeConsumer changeConsumer = getContainer().getChangeConsumer();
-        final Material material = changeConsumer.getPreviewMaterial();
-
+        var changeConsumer = getContainer().getChangeConsumer();
+        var material = changeConsumer.getPreviewMaterial();
         if (material == null) {
             return null;
         }
 
-        final MatParam param = material.getParam(matParam.getName());
-        final T value = param == null ? null : unsafeCast(param.getValue());
+        var param = material.getParam(matParam.getName());
+        T value = param == null ? null : unsafeCast(param.getValue());
 
         if (value instanceof Vector4f) {
-            final Vector4f vector4f = (Vector4f) value;
-            return unsafeCast(new ColorRGBA(vector4f.getX(), vector4f.getY(), vector4f.getZ(), vector4f.getW()));
+            var vector4f = (Vector4f) value;
+            return unsafeCast(new ColorRGBA(vector4f.getX(), vector4f.getY(),
+                vector4f.getZ(), vector4f.getW()));
         }
 
         return value;
     }
 
     @JmeThread
-    private <T> void applyValue(@NotNull final MatParam matParam, @Nullable T value) {
+    private <T> void applyValue(@NotNull MatParam matParam, @Nullable T value) {
 
-        final ShaderNodesChangeConsumer changeConsumer = getContainer().getChangeConsumer();
-        final Material material = changeConsumer.getPreviewMaterial();
-
+        var changeConsumer = getContainer().getChangeConsumer();
+        var material = changeConsumer.getPreviewMaterial();
         if (material == null) {
             return;
         }

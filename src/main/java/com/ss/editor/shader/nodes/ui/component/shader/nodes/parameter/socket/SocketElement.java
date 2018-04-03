@@ -42,7 +42,7 @@ public class SocketElement extends Pane {
     @NotNull
     private final ShaderNodeParameter parameter;
 
-    public SocketElement(@NotNull final ShaderNodeParameter parameter) {
+    public SocketElement(@NotNull ShaderNodeParameter parameter) {
         this.parameter = parameter;
         this.centerXProperty = new SimpleDoubleProperty();
         this.centerYProperty = new SimpleDoubleProperty();
@@ -80,9 +80,11 @@ public class SocketElement extends Pane {
      * @param newValue   the new value.
      */
     @FxThread
-    private void updateCenterCoords(@Nullable final ObservableValue<? extends Number> observable,
-                                    @Nullable final Number oldValue,
-                                    @Nullable final Number newValue) {
+    private void updateCenterCoords(
+        @Nullable ObservableValue<? extends Number> observable,
+        @Nullable Number oldValue,
+        @Nullable Number newValue
+    ) {
 
         var parameter = getParameter();
         var nodeElement = parameter.getNodeElement();

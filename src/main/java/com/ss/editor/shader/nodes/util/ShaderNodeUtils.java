@@ -67,7 +67,7 @@ public class ShaderNodeUtils {
      * @param shaderNodeName the shader node name.
      * @return true of the node name is user's shader node.
      */
-    public static boolean isUserShaderNode(@NotNull final String shaderNodeName) {>
+    public static boolean isUserShaderNode(@NotNull String shaderNodeName) {
         return !SYSTEM_NAMESPACES.contains(shaderNodeName);
     }
 

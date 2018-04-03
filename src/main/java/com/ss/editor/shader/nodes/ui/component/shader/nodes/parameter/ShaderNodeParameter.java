@@ -48,8 +48,7 @@ public class ShaderNodeParameter extends GridPane {
     @NotNull
     private final Label typeLabel;
 
-    public ShaderNodeParameter(@NotNull final ShaderNodeElement<?> nodeElement,
-                               @NotNull final ShaderNodeVariable variable) {
+    public ShaderNodeParameter(@NotNull ShaderNodeElement<?> nodeElement, @NotNull ShaderNodeVariable variable) {
         this.nodeElement = nodeElement;
         this.variable = variable;
         this.socket = createSocket();

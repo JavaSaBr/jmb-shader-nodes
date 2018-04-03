@@ -25,24 +25,26 @@ public class EditableMaterialShaderNodeParameter extends OutputShaderNodeParamet
     @NotNull
     private final PropertyControl<ChangeConsumer, MatParam, ?> propertyControl;
 
-    public EditableMaterialShaderNodeParameter(@NotNull final MaterialShaderNodeElement nodeElement,
-                                               @NotNull final ShaderNodeVariable variable,
-                                               @NotNull final PropertyControl<ChangeConsumer, MatParam, ?> propertyControl) {
+    public EditableMaterialShaderNodeParameter(
+        @NotNull MaterialShaderNodeElement nodeElement,
+        @NotNull ShaderNodeVariable variable,
+        @NotNull PropertyControl<ChangeConsumer, MatParam, ?> propertyControl
+    ) {
         super(nodeElement, variable);
         this.propertyControl = propertyControl;
 
         propertyControl.prefWidthProperty().bind(widthProperty());
 
-        FXUtils.addToPane(propertyControl, this);
-        FXUtils.addToPane(getSocket(), this);
+        add(propertyControl, 0, 0);
+        add(getSocket(), 1, 0);
+
         FXUtils.addClassTo(this, SHADER_NODE_MATERIAL_OUTPUT_PARAMETER);
+        refresh();
     }
 
-    /**
-     * Sync the current value of this parameter.
-     */
-    @FxThread
-    public void sync() {
+    @Override
+    public void refresh() {
+        super.refresh();
         propertyControl.sync();
     }
 

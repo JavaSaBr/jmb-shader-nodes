@@ -51,10 +51,7 @@ public class InputShaderNodeParameter extends ShaderNodeParameter {
     @Nullable
     private TextField expressionField;
 
-    public InputShaderNodeParameter(
-            @NotNull final ShaderNodeElement<?> nodeElement,
-            @NotNull final ShaderNodeVariable variable
-    ) {
+    public InputShaderNodeParameter(@NotNull ShaderNodeElement<?> nodeElement, @NotNull ShaderNodeVariable variable) {
         super(nodeElement, variable);
         FXUtils.addClassTo(this, SHADER_NODE_INPUT_PARAMETER);
     }
@@ -160,7 +157,7 @@ public class InputShaderNodeParameter extends ShaderNodeParameter {
      * @param event the key event or null.
      */
     @FxThread
-    private void handleChangeExpression(@Nullable final KeyEvent event) {
+    private void handleChangeExpression(@Nullable KeyEvent event) {
 
         if (isDisable() || event != null && event.getCode() != KeyCode.ENTER) {
             return;
@@ -216,7 +213,7 @@ public class InputShaderNodeParameter extends ShaderNodeParameter {
      * @param event the action event.
      */
     @FxThread
-    private void handleChangeUseExpression(@NotNull final ActionEvent event) {
+    private void handleChangeUseExpression(@NotNull ActionEvent event) {
 
         var element = getNodeElement();
         var shaderNode = (ShaderNode) element.getObject();
@@ -224,6 +221,7 @@ public class InputShaderNodeParameter extends ShaderNodeParameter {
         var container = element.getContainer();
         var mapping = findInMappingByNLeftVar(shaderNode, getVariable());
         var expression = getExpressionField().getText();
+        expression = expression == null ? "" : expression;
 
         if (useExpression.isSelected()) {
             var newMapping = makeExpressionMapping(this, expression);

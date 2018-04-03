@@ -193,9 +193,10 @@ public class J3mdTechniqueDefWriter {
         out.write("            }\n");
     }
 
-    private void writeVariableMapping(final OutputStreamWriter out, final ShaderNode shaderNode,
-                                      final VariableMapping mapping, final Collection<MatParam> matParams)
-            throws IOException {
+    private void writeVariableMapping(OutputStreamWriter out,
+                                      ShaderNode shaderNode,
+                                      VariableMapping mapping,
+                                      Collection<MatParam> matParams) throws IOException {
 
         final ShaderNodeVariable leftVar = mapping.getLeftVariable();
         final ShaderNodeVariable rightVar = mapping.getRightVariable();
