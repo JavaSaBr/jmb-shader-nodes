@@ -62,7 +62,7 @@ javadoc {
 }
 
 dependencies {
-    compile 'com.spaceshift:jmonkeybuilder:1.7.3-3'
+    compile 'com.spaceshift:jmonkeybuilder:1.7.3-4'
 
     testCompile "org.junit.platform:junit-platform-commons:$junitPlatformVersion"
     testRuntime "org.junit.platform:junit-platform-engine:$junitPlatformVersion"
