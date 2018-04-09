@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class DeleteSndShaderSourceAction extends AbstractNodeAction<ChangeConsumer> {
 
-    public DeleteSndShaderSourceAction(@NotNull final NodeTree<?> nodeTree, @NotNull final TreeNode<?> node) {
+    public DeleteSndShaderSourceAction(@NotNull NodeTree<?> nodeTree, @NotNull TreeNode<?> node) {
         super(nodeTree, node);
     }
 
@@ -43,12 +43,12 @@ public class DeleteSndShaderSourceAction extends AbstractNodeAction<ChangeConsum
     protected void process() {
         super.process();
 
-        final TreeNode<?> node = getNode();
-        final TreeNode<?> parent = notNull(node.getParent());
-        final SndShaderSource shaderSource = (SndShaderSource) node.getElement();
-        final SndShaderSources shaderSources = (SndShaderSources) parent.getElement();
+        var node = getNode();
+        var parent = notNull(node.getParent());
+        var shaderSource = (SndShaderSource) node.getElement();
+        var shaderSources = (SndShaderSources) parent.getElement();
 
-        final ChangeConsumer changeConsumer = notNull(getNodeTree().getChangeConsumer());
+        var changeConsumer = notNull(getNodeTree().getChangeConsumer());
         changeConsumer.execute(new DeleteSndShaderSourceOperation(shaderSources, shaderSource));
     }
 }

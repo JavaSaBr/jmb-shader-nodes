@@ -22,7 +22,7 @@ public class SndFilePreviewFactory implements FilePreviewFactory {
 
     @Override
     @FxThread
-    public void createFilePreviews(@NotNull final Array<FilePreview> result) {
+    public void createFilePreviews(@NotNull Array<FilePreview> result) {
         result.add(new SndFilePreview());
     }
 }

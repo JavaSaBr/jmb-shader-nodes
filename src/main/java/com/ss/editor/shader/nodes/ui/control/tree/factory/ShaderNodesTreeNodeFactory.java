@@ -30,7 +30,7 @@ public class ShaderNodesTreeNodeFactory implements TreeNodeFactory {
 
     @Override
     @FxThread
-    public <T, V extends TreeNode<T>> @Nullable V createFor(@Nullable final T element, final long objectId) {
+    public <T, V extends TreeNode<T>> @Nullable V createFor(@Nullable T element, long objectId) {
 
         if (element instanceof PreviewMaterialSettings) {
             return unsafeCast(new PreviewMaterialSettingsTreeNode((PreviewMaterialSettings) element, objectId));

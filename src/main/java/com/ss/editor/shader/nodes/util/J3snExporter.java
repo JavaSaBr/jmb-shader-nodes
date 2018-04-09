@@ -1,6 +1,5 @@
 package com.ss.editor.shader.nodes.util;
 
-import com.jme3.shader.Shader;
 import com.jme3.shader.ShaderNodeDefinition;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.rlib.util.StringUtils;
@@ -30,17 +29,17 @@ public class J3snExporter {
      * @param definitions the definitions.
      * @param out         the output stream.
      */
-    public void export(@NotNull final List<ShaderNodeDefinition> definitions, @NotNull final OutputStream out) {
+    public void export(@NotNull List<ShaderNodeDefinition> definitions, @NotNull OutputStream out) {
 
-        final StringBuilder builder = new StringBuilder();
+        var builder = new StringBuilder();
         builder.append("ShaderNodeDefinitions {\n");
         definitions.forEach(definition -> write(definition, builder));
         builder.append("}");
 
-        final String result = builder.toString();
+        var result = builder.toString();
         try {
             out.write(result.getBytes("UTF-8"));
-        } catch (final IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -51,22 +50,22 @@ public class J3snExporter {
      * @param definition the definition.
      * @param builder    the builder.
      */
-    private void write(@NotNull final ShaderNodeDefinition definition, @NotNull final StringBuilder builder) {
+    private void write(@NotNull ShaderNodeDefinition definition, @NotNull StringBuilder builder) {
         indent(builder, 1);
 
         builder.append("ShaderNodeDefinition ")
                 .append(definition.getName())
                 .append(" {\n");
 
-        final Shader.ShaderType type = definition.getType();
+        var type = definition.getType();
 
-        final List<String> shadersPath = definition.getShadersPath();
-        final List<String> shadersLanguage = definition.getShadersLanguage();
+        var shadersPath = definition.getShadersPath();
+        var shadersLanguage = definition.getShadersLanguage();
 
-        final String documentation = definition.getDocumentation();
+        var documentation = definition.getDocumentation();
 
-        final List<ShaderNodeVariable> inputs = definition.getInputs();
-        final List<ShaderNodeVariable> outputs = definition.getOutputs();
+        var inputs = definition.getInputs();
+        var outputs = definition.getOutputs();
 
         indent(builder, 2);
 
@@ -74,10 +73,10 @@ public class J3snExporter {
                 .append(type.name())
                 .append("\n\n");
 
-        for (int i = 0; i < shadersPath.size(); i++) {
+        for (var i = 0; i < shadersPath.size(); i++) {
 
-            final String path = shadersPath.get(i);
-            final String language = shadersLanguage.get(i);
+            var path = shadersPath.get(i);
+            var language = shadersLanguage.get(i);
 
             indent(builder, 2);
 
@@ -119,16 +118,19 @@ public class J3snExporter {
      * @param builder   the builder.
      * @param name      the name of parameters node.
      */
-    private void write(@NotNull final List<ShaderNodeVariable> variables, @NotNull final StringBuilder builder,
-                       @NotNull final String name) {
+    private void write(
+            @NotNull List<ShaderNodeVariable> variables,
+            @NotNull StringBuilder builder,
+            @NotNull String name
+    ) {
 
         indent(builder, 2);
         builder.append(name).append(" {\n");
 
-        for (final ShaderNodeVariable variable : variables) {
+        for (var variable : variables) {
             indent(builder, 3);
 
-            final String defaultValue = variable.getDefaultValue();
+            var defaultValue = variable.getDefaultValue();
 
             builder.append(variable.getType())
                     .append(' ')
@@ -152,13 +154,16 @@ public class J3snExporter {
      * @param builder the builder.
      * @param name    the name of node.
      */
-    private void writeStrings(@NotNull final List<String> values, @NotNull final StringBuilder builder,
-                              @NotNull final String name) {
+    private void writeStrings(
+            @NotNull List<String> values,
+            @NotNull StringBuilder builder,
+            @NotNull String name
+    ) {
 
         indent(builder, 2);
         builder.append(name).append(" {\n");
 
-        for (final String value : values) {
+        for (var value : values) {
             indent(builder, 3);
             builder.append(value).append('\n');
         }
@@ -173,14 +178,17 @@ public class J3snExporter {
      * @param builder the builder.
      * @param level   the level.
      */
-    private void indent(@NotNull final StringBuilder builder, final int level) {
-        if (level < 1) return;
+    private void indent(@NotNull StringBuilder builder, int level) {
 
-        int count = level * 4;
+        if (level < 1) {
+            return;
+        }
+
+        var count = level * 4;
 
         builder.ensureCapacity(builder.length() + count);
 
-        for (int i = 0; i < count; i++) {
+        for (var i = 0; i < count; i++) {
             builder.append(' ');
         }
     }

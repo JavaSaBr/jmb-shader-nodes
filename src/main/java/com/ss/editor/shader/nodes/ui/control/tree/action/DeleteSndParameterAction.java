@@ -20,9 +20,9 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author JavaSaBr
  */
-public class DeleteSndarameterAction extends AbstractNodeAction<ChangeConsumer> {
+public class DeleteSndParameterAction extends AbstractNodeAction<ChangeConsumer> {
 
-    public DeleteSndarameterAction(@NotNull final NodeTree<?> nodeTree, @NotNull final TreeNode<?> node) {
+    public DeleteSndParameterAction(@NotNull NodeTree<?> nodeTree, @NotNull TreeNode<?> node) {
         super(nodeTree, node);
     }
 
@@ -43,12 +43,12 @@ public class DeleteSndarameterAction extends AbstractNodeAction<ChangeConsumer> 
     protected void process() {
         super.process();
 
-        final TreeNode<?> node = getNode();
-        final TreeNode<?> parent = notNull(node.getParent());
-        final ShaderNodeVariable variable = (ShaderNodeVariable) node.getElement();
-        final SndParameters parameters = (SndParameters) parent.getElement();
+        var node = getNode();
+        var parent = notNull(node.getParent());
+        var variable = (ShaderNodeVariable) node.getElement();
+        var parameters = (SndParameters) parent.getElement();
 
-        final ChangeConsumer changeConsumer = notNull(getNodeTree().getChangeConsumer());
+        var changeConsumer = notNull(getNodeTree().getChangeConsumer());
         changeConsumer.execute(new DeleteSndParameterOperation(parameters, variable));
     }
 }

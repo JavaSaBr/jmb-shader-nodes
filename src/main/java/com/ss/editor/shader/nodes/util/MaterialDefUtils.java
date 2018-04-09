@@ -32,7 +32,7 @@ public class MaterialDefUtils {
      * @return the mat params.
      */
     @FromAnyThread
-    public static @NotNull Map<String, MatParam> getMatParams(@NotNull final MaterialDef def) {
+    public static @NotNull Map<String, MatParam> getMatParams(@NotNull MaterialDef def) {
         return notNull(getFieldValue(def, MAT_PARAMS_FIELD));
     }
 }

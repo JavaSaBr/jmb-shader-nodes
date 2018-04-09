@@ -1,6 +1,5 @@
 package com.ss.editor.shader.nodes;
 
-import com.jme3.asset.AssetManager;
 import com.jme3.shader.glsl.AstGlsl150ShaderGenerator;
 import com.jme3.shader.glsl.AstShaderGenerator;
 import com.ss.editor.FileExtensions;
@@ -45,37 +44,37 @@ public class ShaderNodesEditorPlugin extends EditorPlugin {
     @NotNull
     public static final String PROJECT_FILE_EXTENSION = "j3snm";
 
-    public ShaderNodesEditorPlugin(@NotNull final PluginContainer pluginContainer) {
+    public ShaderNodesEditorPlugin(@NotNull PluginContainer pluginContainer) {
         super(pluginContainer);
     }
 
     @Override
-    public void onAfterCreateJmeContext(@NotNull final PluginSystem pluginSystem) {
+    public void onAfterCreateJmeContext(@NotNull PluginSystem pluginSystem) {
         super.onAfterCreateJmeContext(pluginSystem);
         System.setProperty(AstShaderGenerator.PROP_USE_CASE, "false");
-        final AssetManager assetManager = EditorUtil.getAssetManager();
+        var assetManager = EditorUtil.getAssetManager();
         assetManager.setShaderGenerator(new AstGlsl150ShaderGenerator(assetManager));
     }
 
     @FxThread
     @Override
-    public void onBeforeCreateJavaFxContext(@NotNull final PluginSystem pluginSystem) {
+    public void onBeforeCreateJavaFxContext(@NotNull PluginSystem pluginSystem) {
         super.onBeforeCreateJavaFxContext(pluginSystem);
-        final ResourceManager resourceManager = ResourceManager.getInstance();
+        var resourceManager = ResourceManager.getInstance();
         resourceManager.registerInterestedFileType(FileExtensions.JME_SHADER_NODE);
         resourceManager.registerInterestedFileType(FileExtensions.GLSL_LIB);
     }
 
     @Override
     @FromAnyThread
-    public void register(@NotNull final CssRegistry registry) {
+    public void register(@NotNull CssRegistry registry) {
         super.register(registry);
         registry.register("com/ss/editor/shader/nodes/style.css", getClassLoader());
     }
 
     @Override
     @FromAnyThread
-    public void register(@NotNull final FileCreatorRegistry registry) {
+    public void register(@NotNull FileCreatorRegistry registry) {
         super.register(registry);
         registry.register(ShaderNodesProjectFileCreator.DESCRIPTION);
         registry.register(ShaderNodeDefinitionsFileCreator.DESCRIPTION);
@@ -83,7 +82,7 @@ public class ShaderNodesEditorPlugin extends EditorPlugin {
 
     @Override
     @FromAnyThread
-    public void register(@NotNull final EditorRegistry registry) {
+    public void register(@NotNull EditorRegistry registry) {
         super.register(registry);
         registry.register(ShaderNodesFileEditor.DESCRIPTION);
         registry.register(ShaderNodeDefinitionFileEditor.DESCRIPTION);
@@ -91,21 +90,21 @@ public class ShaderNodesEditorPlugin extends EditorPlugin {
 
     @Override
     @FromAnyThread
-    public void register(@NotNull final TreeNodeFactoryRegistry registry) {
+    public void register(@NotNull TreeNodeFactoryRegistry registry) {
         super.register(registry);
         registry.register(ShaderNodesTreeNodeFactory.getInstance());
     }
 
     @Override
     @FromAnyThread
-    public void register(@NotNull final PropertyBuilderRegistry registry) {
+    public void register(@NotNull PropertyBuilderRegistry registry) {
         super.register(registry);
         registry.register(ShaderNodesPropertyBuilder.getInstance());
     }
 
     @Override
     @FromAnyThread
-    public void register(@NotNull final FileIconManager iconManager) {
+    public void register(@NotNull FileIconManager iconManager) {
         super.register(iconManager);
         iconManager.register((path, extension) -> {
             if (PROJECT_FILE_EXTENSION.equals(extension)) {
@@ -118,7 +117,7 @@ public class ShaderNodesEditorPlugin extends EditorPlugin {
 
     @Override
     @FromAnyThread
-    public void register(@NotNull final FilePreviewFactoryRegistry registry) {
+    public void register(@NotNull FilePreviewFactoryRegistry registry) {
         super.register(registry);
         registry.register(SndFilePreviewFactory.getInstance());
     }

@@ -28,10 +28,11 @@ import com.ss.rlib.util.dictionary.ObjectDictionary;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiFunction;
-import java.util.function.Supplier;
-import java.util.stream.IntStream;
 
 /**
  * The utility class.
@@ -79,8 +80,8 @@ public class ShaderNodeUtils {
      * @return the option of shader node element.
      */
     public static @NotNull Optional<ShaderNodeElement<?>> createNodeElement(
-        @NotNull final ShaderNodesContainer container,
-        @NotNull final ShaderNodeVariable var
+        @NotNull ShaderNodesContainer container,
+        @NotNull ShaderNodeVariable var
     ) {
         return NODE_ELEMENT_FACTORIES.getOptional(var.getNameSpace())
             .map(factory -> factory.apply(container, var));
@@ -95,8 +96,8 @@ public class ShaderNodeUtils {
      */
     @FromAnyThread
     public static @Nullable MatParam findMatParameterByName(
-        @NotNull final MaterialDef materialDef,
-        @NotNull final String name
+        @NotNull MaterialDef materialDef,
+        @NotNull String name
     ) {
         return materialDef.getMaterialParams().stream()
                 .filter(matParam -> matParam.getName().equals(name))
@@ -112,8 +113,8 @@ public class ShaderNodeUtils {
      */
     @FromAnyThread
     public static @Nullable UniformBinding findWorldBindingByName(
-        @NotNull final TechniqueDef techniqueDef,
-        @NotNull final String name
+        @NotNull TechniqueDef techniqueDef,
+        @NotNull String name
     ) {
         return techniqueDef.getWorldBindings().stream()
                 .filter(binding -> binding.name().equals(name))
@@ -129,8 +130,8 @@ public class ShaderNodeUtils {
      */
     @FromAnyThread
     public static @Nullable ShaderNodeVariable findAttributeByName(
-        @NotNull final TechniqueDef techniqueDef,
-        @NotNull final String name
+        @NotNull TechniqueDef techniqueDef,
+        @NotNull String name
     ) {
         return techniqueDef.getShaderGenerationInfo().getAttributes().stream()
                 .filter(variable -> variable.getName().equals(name))
@@ -146,8 +147,8 @@ public class ShaderNodeUtils {
      */
     @FromAnyThread
     public static @Nullable ShaderNode findByName(
-        @NotNull final TechniqueDef techniqueDef,
-        @NotNull final String name
+        @NotNull TechniqueDef techniqueDef,
+        @NotNull String name
     ) {
         return techniqueDef.getShaderNodes().stream()
                 .filter(shaderNode -> shaderNode.getName().equals(name))
@@ -163,8 +164,8 @@ public class ShaderNodeUtils {
      */
     @FromAnyThread
     public static boolean equalsByNameAndNameSpace(
-        @NotNull final ShaderNodeVariable first,
-        @NotNull final ShaderNodeVariable second
+        @NotNull ShaderNodeVariable first,
+        @NotNull ShaderNodeVariable second
     ) {
         return StringUtils.equals(first.getName(), second.getName()) &&
                 StringUtils.equals(first.getNameSpace(), second.getNameSpace());
@@ -179,8 +180,8 @@ public class ShaderNodeUtils {
      */
     @FromAnyThread
     public static boolean equalsByName(
-        @NotNull final ShaderNodeVariable first,
-        @NotNull final ShaderNodeVariable second
+        @NotNull ShaderNodeVariable first,
+        @NotNull ShaderNodeVariable second
     ) {
         return StringUtils.equals(first.getName(), second.getName());
     }
@@ -194,8 +195,8 @@ public class ShaderNodeUtils {
      */
     @FromAnyThread
     public static @Nullable VariableMapping findOutMappingByNNLeftVar(
-        @NotNull final ShaderNode shaderNode,
-        @NotNull final ShaderNodeVariable variable
+        @NotNull ShaderNode shaderNode,
+        @NotNull ShaderNodeVariable variable
     ) {
         return shaderNode.getOutputMapping().stream()
                 .filter(mapping -> equalsByNameAndNameSpace(mapping.getLeftVariable(), variable))
@@ -211,8 +212,8 @@ public class ShaderNodeUtils {
      */
     @FromAnyThread
     public static @Nullable VariableMapping findInMappingByNLeftVar(
-        @NotNull final ShaderNode shaderNode,
-        @NotNull final ShaderNodeVariable variable
+        @NotNull ShaderNode shaderNode,
+        @NotNull ShaderNodeVariable variable
     ) {
         return shaderNode.getInputMapping().stream()
                 .filter(mapping -> equalsByName(mapping.getLeftVariable(), variable))
@@ -229,8 +230,8 @@ public class ShaderNodeUtils {
      */
     @FromAnyThread
     public static @Nullable VariableMapping findInMappingByNNRightVar(
-        @NotNull final ShaderNode shaderNode,
-        @NotNull final ShaderNodeVariable variable
+        @NotNull ShaderNode shaderNode,
+        @NotNull ShaderNodeVariable variable
     ) {
         return shaderNode.getInputMapping().stream()
                 .filter(mapping -> equalsByNameAndNameSpace(mapping.getRightVariable(), variable))
@@ -246,8 +247,8 @@ public class ShaderNodeUtils {
      */
     @FromAnyThread
     public static @NotNull List<VariableMapping> findInMappingsByNNRightVar(
-        @NotNull final ShaderNode shaderNode,
-        @NotNull final ShaderNodeVariable variable
+        @NotNull ShaderNode shaderNode,
+        @NotNull ShaderNodeVariable variable
     ) {
         return shaderNode.getInputMapping().stream()
                 .filter(mapping -> equalsByNameAndNameSpace(mapping.getRightVariable(), variable))
@@ -264,9 +265,9 @@ public class ShaderNodeUtils {
      */
     @FromAnyThread
     public static @NotNull List<VariableMapping> findInMappingsByNNRightVar(
-        @NotNull final ShaderNode shaderNode,
-        @NotNull final ShaderNodeVariable variable,
-        @NotNull final String nameSpace
+        @NotNull ShaderNode shaderNode,
+        @NotNull ShaderNodeVariable variable,
+        @NotNull String nameSpace
     ) {
         return shaderNode.getInputMapping().stream()
                 .filter(mapping -> equalsByName(mapping.getRightVariable(), variable))
@@ -283,8 +284,8 @@ public class ShaderNodeUtils {
      */
     @FromAnyThread
     public static @Nullable VariableMapping findInMappingByNNLeftVar(
-        @NotNull final ShaderNode shaderNode,
-        @NotNull final ShaderNodeVariable variable
+        @NotNull ShaderNode shaderNode,
+        @NotNull ShaderNodeVariable variable
     ) {
         return shaderNode.getInputMapping().stream()
                 .filter(mapping -> equalsByNameAndNameSpace(mapping.getLeftVariable(), variable))
@@ -301,9 +302,9 @@ public class ShaderNodeUtils {
      */
     @FromAnyThread
     public static @Nullable VariableMapping findInMappingByNNLeftVar(
-        @NotNull final ShaderNode shaderNode,
-        @NotNull final ShaderNodeVariable variable,
-        @NotNull final String nameSpace
+        @NotNull ShaderNode shaderNode,
+        @NotNull ShaderNodeVariable variable,
+        @NotNull String nameSpace
     ) {
         return shaderNode.getInputMapping().stream()
                 .filter(mapping -> equalsByName(mapping.getLeftVariable(), variable))
@@ -320,8 +321,8 @@ public class ShaderNodeUtils {
      */
     @FromAnyThread
     public static boolean hasOutMappingByLeftVar(
-        @NotNull final ShaderNode shaderNode,
-        @NotNull final ShaderNodeVariable variable
+        @NotNull ShaderNode shaderNode,
+        @NotNull ShaderNodeVariable variable
     ) {
         return shaderNode.getOutputMapping()
                 .stream().anyMatch(mapping -> equalsByNameAndNameSpace(mapping.getLeftVariable(), variable));
@@ -336,8 +337,8 @@ public class ShaderNodeUtils {
      */
     @FromAnyThread
     public static boolean hasInMappingByRightVar(
-        @NotNull final ShaderNode shaderNode,
-        @NotNull final ShaderNodeVariable variable
+        @NotNull ShaderNode shaderNode,
+        @NotNull ShaderNodeVariable variable
     ) {
         return shaderNode.getInputMapping()
                 .stream().anyMatch(mapping -> equalsByNameAndNameSpace(mapping.getRightVariable(), variable));
@@ -352,8 +353,8 @@ public class ShaderNodeUtils {
      */
     @FromAnyThread
     public static @NotNull VariableMapping makeExpressionMapping(
-        @NotNull final InputShaderNodeParameter inputParameter,
-        @NotNull final String expression
+        @NotNull InputShaderNodeParameter inputParameter,
+        @NotNull String expression
     ) {
 
         var element = inputParameter.getNodeElement();
@@ -385,8 +386,8 @@ public class ShaderNodeUtils {
      */
     @FromAnyThread
     public static @NotNull VariableMapping makeMapping(
-        @NotNull final InputShaderNodeParameter inputParameter,
-        @NotNull final OutputShaderNodeParameter outputParameter
+        @NotNull InputShaderNodeParameter inputParameter,
+        @NotNull OutputShaderNodeParameter outputParameter
     ) {
 
         final ShaderNodeElement<?> inElement = inputParameter.getNodeElement();
@@ -517,9 +518,9 @@ public class ShaderNodeUtils {
      */
     @FromAnyThread
     public static boolean containsByNN(
-        @NotNull final Collection<ShaderNodeVariable> variables,
-        @NotNull final String name,
-        @NotNull final String nameSpace
+        @NotNull Collection<ShaderNodeVariable> variables,
+        @NotNull String name,
+        @NotNull String nameSpace
     ) {
 
         for (var variable : variables) {
@@ -544,7 +545,7 @@ public class ShaderNodeUtils {
      * @return true if these types are accessible.
      */
     @FromAnyThread
-    public static boolean isAccessibleType(@NotNull final String inType, @NotNull final String outType) {
+    public static boolean isAccessibleType(@NotNull String inType, @NotNull String outType) {
 
         if (!inType.contains("|") && !outType.contains("|")) {
             return inType.equals(outType);
@@ -571,7 +572,7 @@ public class ShaderNodeUtils {
      * @return true of this variable is required.
      */
     @FromAnyThread
-    public static boolean isRequired(@NotNull final ShaderNodeVariable variable) {
+    public static boolean isRequired(@NotNull ShaderNodeVariable variable) {
 
         var glslType = GlslType.ofRawType(variable.getType());
 
@@ -591,7 +592,7 @@ public class ShaderNodeUtils {
      * @param parameter the parameter.
      * @return true if the parameter is input parameter.
      */
-    public static boolean isInput(@NotNull final ShaderNodeParameter parameter) {
+    public static boolean isInput(@NotNull ShaderNodeParameter parameter) {
         return parameter instanceof InputShaderNodeParameter;
     }
 
@@ -603,8 +604,10 @@ public class ShaderNodeUtils {
      * @return the right swizzling or null.
      */
     @FromAnyThread
-    public static @NotNull String calculateRightSwizzling(@NotNull final ShaderNodeVariable leftVar,
-                                                          @NotNull final ShaderNodeVariable rightVar) {
+    public static @NotNull String calculateRightSwizzling(
+            @NotNull ShaderNodeVariable leftVar,
+            @NotNull ShaderNodeVariable rightVar
+    ) {
 
         var leftType = leftVar.getType();
         var rightType = rightVar.getType();
@@ -654,8 +657,10 @@ public class ShaderNodeUtils {
      * @return the left swizzling or null.
      */
     @FromAnyThread
-    public static @NotNull String calculateLeftSwizzling(@NotNull final ShaderNodeVariable leftVar,
-                                                         @NotNull final ShaderNodeVariable rightVar) {
+    public static @NotNull String calculateLeftSwizzling(
+            @NotNull ShaderNodeVariable leftVar,
+            @NotNull ShaderNodeVariable rightVar
+    ) {
 
         //FIXME
         if (true) {
@@ -704,8 +709,8 @@ public class ShaderNodeUtils {
      * @return true if we can use expression for the node variable.
      */
     public static boolean canUseExpression(
-        @NotNull final ShaderNodeElement<?> nodeElement,
-        @NotNull final ShaderNodeVariable variable
+        @NotNull ShaderNodeElement<?> nodeElement,
+        @NotNull ShaderNodeVariable variable
     ) {
 
         if (!(nodeElement instanceof MainShaderNodeElement)) {

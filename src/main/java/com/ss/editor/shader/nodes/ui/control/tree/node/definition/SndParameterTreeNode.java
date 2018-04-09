@@ -6,7 +6,7 @@ import com.ss.editor.annotation.FxThread;
 import com.ss.editor.annotation.FromAnyThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.shader.nodes.model.shader.node.definition.SndParameters;
-import com.ss.editor.shader.nodes.ui.control.tree.action.DeleteSndarameterAction;
+import com.ss.editor.shader.nodes.ui.control.tree.action.DeleteSndParameterAction;
 import com.ss.editor.shader.nodes.ui.control.tree.operation.RenameSndParameterOperation;
 import com.ss.editor.shader.nodes.ui.PluginIcons;
 import com.ss.editor.ui.control.tree.NodeTree;
@@ -33,7 +33,7 @@ public class SndParameterTreeNode extends TreeNode<ShaderNodeVariable> {
     @FxThread
     public void fillContextMenu(@NotNull final NodeTree<?> nodeTree, @NotNull final ObservableList<MenuItem> items) {
         super.fillContextMenu(nodeTree, items);
-        items.add(new DeleteSndarameterAction(nodeTree, this));
+        items.add(new DeleteSndParameterAction(nodeTree, this));
     }
 
     @FxThread

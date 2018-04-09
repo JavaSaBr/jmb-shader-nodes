@@ -1,11 +1,9 @@
 package com.ss.editor.shader.nodes.ui.control.tree.action;
 
 import static com.ss.rlib.util.ObjectUtils.notNull;
-import com.jme3.shader.ShaderNodeDefinition;
 import com.ss.editor.annotation.FxThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.shader.nodes.PluginMessages;
-import com.ss.editor.shader.nodes.model.shader.node.definition.SndDocumentation;
 import com.ss.editor.shader.nodes.ui.control.tree.node.definition.SndDocumentationTreeNode;
 import com.ss.editor.shader.nodes.ui.dialog.EditSndDocumentationDialog;
 import com.ss.editor.ui.Icons;
@@ -23,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class EditSndDocumentationAction extends AbstractNodeAction<ChangeConsumer> {
 
-    public EditSndDocumentationAction(@NotNull final NodeTree<?> nodeTree, @NotNull final TreeNode<?> node) {
+    public EditSndDocumentationAction(@NotNull NodeTree<?> nodeTree, @NotNull TreeNode<?> node) {
         super(nodeTree, node);
     }
 
@@ -44,14 +42,14 @@ public class EditSndDocumentationAction extends AbstractNodeAction<ChangeConsume
     protected void process() {
         super.process();
 
-        final SndDocumentationTreeNode node = (SndDocumentationTreeNode) getNode();
-        final SndDocumentation documentation = node.getElement();
-        final ShaderNodeDefinition definition = documentation.getDefinition();
+        var node = (SndDocumentationTreeNode) getNode();
+        var documentation = node.getElement();
+        var definition = documentation.getDefinition();
 
-        final NodeTree<ChangeConsumer> nodeTree = getNodeTree();
-        final ChangeConsumer changeConsumer = notNull(nodeTree.getChangeConsumer());
+        var nodeTree = getNodeTree();
+        var changeConsumer = notNull(nodeTree.getChangeConsumer());
 
-        final EditSndDocumentationDialog dialog = new EditSndDocumentationDialog(changeConsumer, definition);
+        var dialog = new EditSndDocumentationDialog(changeConsumer, definition);
         dialog.show();
     }
 }

@@ -4,13 +4,13 @@ import static com.ss.editor.ui.util.UiUtils.consumeIf;
 import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.jme3.shader.ShaderNodeDefinition;
 import com.ss.editor.Messages;
-import com.ss.editor.annotation.FxThread;
 import com.ss.editor.annotation.FromAnyThread;
+import com.ss.editor.annotation.FxThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.shader.nodes.PluginMessages;
-import com.ss.editor.shader.nodes.ui.control.tree.operation.ChangeSndDocumentationOperation;
 import com.ss.editor.shader.nodes.ui.PluginCssClasses;
 import com.ss.editor.shader.nodes.ui.component.SndDocumentationArea;
+import com.ss.editor.shader.nodes.ui.control.tree.operation.ChangeSndDocumentationOperation;
 import com.ss.editor.ui.dialog.AbstractSimpleEditorDialog;
 import com.ss.rlib.ui.util.FXUtils;
 import javafx.scene.input.KeyCode;
@@ -48,8 +48,10 @@ public class EditSndDocumentationDialog extends AbstractSimpleEditorDialog {
     @Nullable
     private SndDocumentationArea editorArea;
 
-    public EditSndDocumentationDialog(@NotNull final ChangeConsumer consumer,
-                                      @NotNull final ShaderNodeDefinition definition) {
+    public EditSndDocumentationDialog(
+            @NotNull ChangeConsumer consumer,
+            @NotNull ShaderNodeDefinition definition
+    ) {
         this.consumer = consumer;
         this.definition = definition;
         //TODO replace to using util method
@@ -69,7 +71,7 @@ public class EditSndDocumentationDialog extends AbstractSimpleEditorDialog {
 
     @Override
     @FxThread
-    protected void createContent(@NotNull final VBox root) {
+    protected void createContent(@NotNull VBox root) {
         super.createContent(root);
 
         editorArea = new SndDocumentationArea();

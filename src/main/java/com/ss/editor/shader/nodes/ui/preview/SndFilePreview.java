@@ -1,6 +1,5 @@
 package com.ss.editor.shader.nodes.ui.preview;
 
-import com.jme3.asset.AssetManager;
 import com.jme3.asset.ShaderNodeDefinitionKey;
 import com.jme3.shader.ShaderNodeDefinition;
 import com.ss.editor.FileExtensions;
@@ -26,14 +25,14 @@ public class SndFilePreview extends AbstractFilePreview<SndDocumentationArea> {
     @Override
     @FxThread
     protected @NotNull SndDocumentationArea createGraphicsNode() {
-        final SndDocumentationArea documentationArea = new SndDocumentationArea();
+        var documentationArea = new SndDocumentationArea();
         documentationArea.setEditable(false);
         return documentationArea;
     }
 
     @Override
     @FxThread
-    protected void initialize(@NotNull final SndDocumentationArea node, @NotNull final StackPane pane) {
+    protected void initialize(@NotNull SndDocumentationArea node, @NotNull StackPane pane) {
         super.initialize(node, pane);
         node.prefWidthProperty().bind(pane.widthProperty());
         node.prefHeightProperty().bind(pane.heightProperty());
@@ -41,27 +40,27 @@ public class SndFilePreview extends AbstractFilePreview<SndDocumentationArea> {
 
     @Override
     @FxThread
-    public void show(@NotNull final Path file) {
+    public void show(@NotNull Path file) {
         super.show(file);
 
-        final String assetPath = EditorUtil.toAssetPath(file);
-        final ShaderNodeDefinitionKey key = new ShaderNodeDefinitionKey(assetPath);
+        var assetPath = EditorUtil.toAssetPath(file);
+        var key = new ShaderNodeDefinitionKey(assetPath);
         key.setLoadDocumentation(true);
 
-        final AssetManager assetManager = EditorUtil.getAssetManager();
-        final List<ShaderNodeDefinition> definitionList = assetManager.loadAsset(key);
+        var assetManager = EditorUtil.getAssetManager();
+        var definitionList = assetManager.loadAsset(key);
 
         show(definitionList);
     }
 
     @FxThread
-    private void show(@NotNull final List<ShaderNodeDefinition> definitionList) {
+    private void show(@NotNull List<ShaderNodeDefinition> definitionList) {
 
-        final SndDocumentationArea documentationArea = getGraphicsNode();
+        var documentationArea = getGraphicsNode();
 
         if (definitionList.size() == 1) {
 
-            String documentation = definitionList.get(0).getDocumentation();
+            var documentation = definitionList.get(0).getDocumentation();
             if(StringUtils.isEmpty(documentation)) {
                 documentationArea.reloadContent(" ");
                 return;
@@ -75,12 +74,14 @@ public class SndFilePreview extends AbstractFilePreview<SndDocumentationArea> {
             return;
         }
 
-        final StringBuilder result = new StringBuilder();
+        var result = new StringBuilder();
 
-        for (final ShaderNodeDefinition definition : definitionList) {
+        for (var definition : definitionList) {
 
-            final String documentation = definition.getDocumentation();
-            if (StringUtils.isEmpty(documentation)) continue;
+            var documentation = definition.getDocumentation();
+            if (StringUtils.isEmpty(documentation)) {
+                continue;
+            }
 
             result.append("// ----- ")
                     .append(definition.getName())
@@ -94,29 +95,29 @@ public class SndFilePreview extends AbstractFilePreview<SndDocumentationArea> {
 
     @Override
     @FxThread
-    public void show(@NotNull final String resource) {
+    public void show(@NotNull String resource) {
         super.show(resource);
 
-        final ShaderNodeDefinitionKey key = new ShaderNodeDefinitionKey(resource);
+        var key = new ShaderNodeDefinitionKey(resource);
         key.setLoadDocumentation(true);
 
-        final AssetManager assetManager = EditorUtil.getAssetManager();
-        final List<ShaderNodeDefinition> definitionList = assetManager.loadAsset(key);
+        var assetManager = EditorUtil.getAssetManager();
+        var definitionList = assetManager.loadAsset(key);
 
         show(definitionList);
     }
 
     @Override
     @FxThread
-    public boolean isSupport(@NotNull final Path file) {
-        final String extension = FileUtils.getExtension(file);
+    public boolean isSupport(@NotNull Path file) {
+        var extension = FileUtils.getExtension(file);
         return FileExtensions.JME_SHADER_NODE.equals(extension);
     }
 
     @FxThread
     @Override
-    public boolean isSupport(@NotNull final String resource) {
-        final String extension = FileUtils.getExtension(resource);
+    public boolean isSupport(@NotNull String resource) {
+        var extension = FileUtils.getExtension(resource);
         return FileExtensions.JME_SHADER_NODE.equals(extension);
     }
 

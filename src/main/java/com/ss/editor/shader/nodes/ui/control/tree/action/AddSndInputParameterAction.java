@@ -16,20 +16,22 @@ import java.util.List;
  */
 public class AddSndInputParameterAction extends AddSndParameterAction {
 
-    public AddSndInputParameterAction(@NotNull final NodeTree<?> nodeTree,
-                                      @NotNull final TreeNode<?> node) {
+    public AddSndInputParameterAction(
+            @NotNull NodeTree<?> nodeTree,
+            @NotNull TreeNode<?> node
+    ) {
         super(nodeTree, node);
     }
 
     @Override
     @FxThread
-    protected @NotNull List<ShaderNodeVariable> getCurrentParameters(@NotNull final ShaderNodeDefinition definition) {
+    protected @NotNull List<ShaderNodeVariable> getCurrentParameters(@NotNull ShaderNodeDefinition definition) {
         return definition.getInputs();
     }
 
     @Override
     @FxThread
-    protected @NotNull List<ShaderNodeVariable> getOppositeParameters(@NotNull final ShaderNodeDefinition definition) {
+    protected @NotNull List<ShaderNodeVariable> getOppositeParameters(@NotNull ShaderNodeDefinition definition) {
         return definition.getOutputs();
     }
 }

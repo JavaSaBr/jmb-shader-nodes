@@ -40,7 +40,7 @@ public class AddSndAction extends AbstractNodeAction<ChangeConsumer> {
     @NotNull
     private static final String PROP_TYPE = "type";
 
-    public AddSndAction(@NotNull final NodeTree<?> nodeTree, @NotNull final TreeNode<?> node) {
+    public AddSndAction(@NotNull NodeTree<?> nodeTree, @NotNull TreeNode<?> node) {
         super(nodeTree, node);
     }
 
@@ -66,7 +66,7 @@ public class AddSndAction extends AbstractNodeAction<ChangeConsumer> {
         definitions.add(new PropertyDefinition(STRING_FROM_LIST, Messages.MODEL_PROPERTY_TYPE, PROP_TYPE,
                 ShaderType.Vertex.name(), AVAILABLE_TYPES));
 
-        final GenericFactoryDialog dialog = new GenericFactoryDialog(definitions, this::addDefinition, this::validate);
+        var dialog = new GenericFactoryDialog(definitions, this::addDefinition, this::validate);
         dialog.setTitle(getName());
         dialog.show();
     }
@@ -77,12 +77,12 @@ public class AddSndAction extends AbstractNodeAction<ChangeConsumer> {
      * @param vars the vars of the definition.
      */
     @FxThread
-    private boolean validate(@NotNull final VarTable vars) {
+    private boolean validate(@NotNull VarTable vars) {
 
-        final String name = vars.getString(PROP_NAME);
+        var name = vars.getString(PROP_NAME);
 
-        final TreeNode<?> node = getNode();
-        final SndList element = (SndList) node.getElement();
+        var node = getNode();
+        var element = (SndList) node.getElement();
 
         return element.getDefinitions().stream()
                 .noneMatch(definition -> definition.getName().equals(name));
@@ -94,22 +94,22 @@ public class AddSndAction extends AbstractNodeAction<ChangeConsumer> {
      * @param vars the vars of the definition.
      */
     @FxThread
-    private void addDefinition(@NotNull final VarTable vars) {
+    private void addDefinition(@NotNull VarTable vars) {
 
-        final String definitionName = vars.getString(PROP_NAME);
-        final ShaderType type = vars.getEnum(PROP_TYPE, ShaderType.class);
+        var definitionName = vars.getString(PROP_NAME);
+        var type = vars.getEnum(PROP_TYPE, ShaderType.class);
 
-        final TreeNode<?> node = getNode();
-        final SndList element = (SndList) node.getElement();
+        var node = getNode();
+        var element = (SndList) node.getElement();
 
-        final ShaderNodeDefinition definition = new ShaderNodeDefinition();
+        var definition = new ShaderNodeDefinition();
         definition.setName(definitionName);
         definition.setType(type);
         definition.setDocumentation("");
         definition.setInputs(new ArrayList<>());
         definition.setOutputs(new ArrayList<>());
 
-        final ChangeConsumer changeConsumer = notNull(getNodeTree().getChangeConsumer());
+        var changeConsumer = notNull(getNodeTree().getChangeConsumer());
         changeConsumer.execute(new AddSndOperation(element, definition));
     }
 }

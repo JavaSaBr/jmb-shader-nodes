@@ -6,8 +6,6 @@ import static com.ss.editor.shader.nodes.ui.component.creator.ShaderNodeDefiniti
 import static com.ss.editor.util.EditorUtil.toAssetPath;
 import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.jme3.renderer.Caps;
-import com.jme3.shader.Shader;
-import com.jme3.shader.ShaderNodeDefinition;
 import com.ss.editor.annotation.FxThread;
 import com.ss.editor.model.undo.editor.ChangeConsumer;
 import com.ss.editor.plugin.api.dialog.GenericFactoryDialog;
@@ -42,7 +40,7 @@ public class AddSndShaderSourceAction extends AbstractNodeAction<ChangeConsumer>
     @NotNull
     private static final String PROP_SHADER_RESOURCE = "resource";
 
-    public AddSndShaderSourceAction(@NotNull final NodeTree<?> nodeTree, @NotNull final TreeNode<?> node) {
+    public AddSndShaderSourceAction(@NotNull NodeTree<?> nodeTree, @NotNull TreeNode<?> node) {
         super(nodeTree, node);
     }
 
@@ -63,10 +61,10 @@ public class AddSndShaderSourceAction extends AbstractNodeAction<ChangeConsumer>
     protected void process() {
         super.process();
 
-        final TreeNode<?> node = getNode();
-        final SndShaderSources shaderSources = (SndShaderSources) node.getElement();
-        final ShaderNodeDefinition definition = shaderSources.getDefinition();
-        final Shader.ShaderType type = definition.getType();
+        var node = getNode();
+        var shaderSources = (SndShaderSources) node.getElement();
+        var definition = shaderSources.getDefinition();
+        var type = definition.getType();
 
         final Array<PropertyDefinition> definitions = ArrayFactory.newArray(PropertyDefinition.class);
         definitions.add(new PropertyDefinition(STRING_FROM_LIST, PluginMessages.SND_CREATOR_LANGUAGE, PROP_LANGUAGE,
@@ -74,7 +72,7 @@ public class AddSndShaderSourceAction extends AbstractNodeAction<ChangeConsumer>
         definitions.add(new PropertyDefinition(FILE_FROM_ASSET_FOLDER, PluginMessages.SND_CREATOR_SOURCE_FILE,
                 PROP_SHADER_RESOURCE, null, type.getExtension()));
 
-        final GenericFactoryDialog dialog = new GenericFactoryDialog(definitions, this::addShaderSource, this::validate);
+        var dialog = new GenericFactoryDialog(definitions, this::addShaderSource, this::validate);
         dialog.setTitle(getName());
         dialog.show();
     }
@@ -85,18 +83,18 @@ public class AddSndShaderSourceAction extends AbstractNodeAction<ChangeConsumer>
      * @param vars the vars of the definition.
      */
     @FxThread
-    private boolean validate(@NotNull final VarTable vars) {
+    private boolean validate(@NotNull VarTable vars) {
 
         if (!vars.has(PROP_SHADER_RESOURCE)) {
             return false;
         }
 
-        final TreeNode<?> node = getNode();
-        final SndShaderSources shaderSources = (SndShaderSources) node.getElement();
-        final ShaderNodeDefinition definition = shaderSources.getDefinition();
+        var node = getNode();
+        var shaderSources = (SndShaderSources) node.getElement();
+        var definition = shaderSources.getDefinition();
 
-        final Path shaderFile = vars.get(PROP_SHADER_RESOURCE, Path.class);
-        final String shaderPath = toAssetPath(shaderFile);
+        var shaderFile = vars.get(PROP_SHADER_RESOURCE, Path.class);
+        var shaderPath = toAssetPath(shaderFile);
 
         return !definition.getShadersPath().contains(shaderPath);
     }
@@ -107,18 +105,17 @@ public class AddSndShaderSourceAction extends AbstractNodeAction<ChangeConsumer>
      * @param vars the vars of the source.
      */
     @FxThread
-    private void addShaderSource(@NotNull final VarTable vars) {
+    private void addShaderSource(@NotNull VarTable vars) {
 
-        final String language = vars.getString(PROP_LANGUAGE);
-        final Path shaderFile = vars.get(PROP_SHADER_RESOURCE, Path.class);
+        var language = vars.getString(PROP_LANGUAGE);
+        var shaderFile = vars.get(PROP_SHADER_RESOURCE, Path.class);
 
-        final TreeNode<?> node = getNode();
-        final SndShaderSources shaderSources = (SndShaderSources) node.getElement();
-        final ShaderNodeDefinition definition = shaderSources.getDefinition();
-        final SndShaderSource shaderSource =
-                new SndShaderSource(definition, language, toAssetPath(shaderFile));
+        var node = getNode();
+        var shaderSources = (SndShaderSources) node.getElement();
+        var definition = shaderSources.getDefinition();
+        var shaderSource = new SndShaderSource(definition, language, toAssetPath(shaderFile));
 
-        final ChangeConsumer changeConsumer = notNull(getNodeTree().getChangeConsumer());
+        var changeConsumer = notNull(getNodeTree().getChangeConsumer());
         changeConsumer.execute(new AddSndShaderSourceOperation(shaderSources, shaderSource));
     }
 }

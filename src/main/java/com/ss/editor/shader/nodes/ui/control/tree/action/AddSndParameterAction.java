@@ -27,7 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * The action to add new parameter.
@@ -42,7 +41,7 @@ public abstract class AddSndParameterAction extends AbstractNodeAction<ChangeCon
     @NotNull
     private static final String PROP_TYPE = "type";
 
-    public AddSndParameterAction(@NotNull final NodeTree<?> nodeTree, @NotNull final TreeNode<?> node) {
+    public AddSndParameterAction(@NotNull NodeTree<?> nodeTree, @NotNull TreeNode<?> node) {
         super(nodeTree, node);
     }
 
@@ -66,7 +65,8 @@ public abstract class AddSndParameterAction extends AbstractNodeAction<ChangeCon
      */
     @FxThread
     protected abstract @NotNull List<ShaderNodeVariable> getCurrentParameters(
-            @NotNull final ShaderNodeDefinition definition);
+            @NotNull ShaderNodeDefinition definition
+    );
 
     /**
      * Get the list of opposite parameters.
@@ -76,7 +76,8 @@ public abstract class AddSndParameterAction extends AbstractNodeAction<ChangeCon
      */
     @FxThread
     protected abstract @NotNull List<ShaderNodeVariable> getOppositeParameters(
-            @NotNull final ShaderNodeDefinition definition);
+            @NotNull ShaderNodeDefinition definition
+    );
 
     @Override
     @FxThread
@@ -87,7 +88,7 @@ public abstract class AddSndParameterAction extends AbstractNodeAction<ChangeCon
         definitions.add(new PropertyDefinition(STRING, Messages.MODEL_PROPERTY_NAME, PROP_NAME, "newVar"));
         definitions.add(new PropertyDefinition(ENUM, Messages.MODEL_PROPERTY_TYPE, PROP_TYPE, GlslType.FLOAT));
 
-        final GenericFactoryDialog dialog = new GenericFactoryDialog(definitions, this::addParameter, this::validate);
+        var dialog = new GenericFactoryDialog(definitions, this::addParameter, this::validate);
         dialog.setTitle(getName());
         dialog.show();
     }
@@ -98,25 +99,25 @@ public abstract class AddSndParameterAction extends AbstractNodeAction<ChangeCon
      * @param vars the vars of the new parameter.
      */
     @FxThread
-    private boolean validate(@NotNull final VarTable vars) {
+    private boolean validate(@NotNull VarTable vars) {
 
-        final TreeNode<?> node = getNode();
-        final SndParameters parameters = (SndParameters) node.getElement();
-        final ShaderNodeDefinition definition = parameters.getDefinition();
+        var node = getNode();
+        var parameters = (SndParameters) node.getElement();
+        var definition = parameters.getDefinition();
 
-        final String name = vars.getString(PROP_NAME);
-        final boolean exists = getCurrentParameters(definition).stream()
+        var name = vars.getString(PROP_NAME);
+        var exists = getCurrentParameters(definition).stream()
                 .anyMatch(variable -> variable.getName().equals(name));
 
         if (exists) {
             return false;
         }
 
-        final GlslType GlslType = vars.getEnum(PROP_TYPE, GlslType.class);
-        final String rawType = GlslType.getRawType();
+        var glslType = vars.getEnum(PROP_TYPE, GlslType.class);
+        var rawType = glslType.getRawType();
 
-        final List<ShaderNodeVariable> oppositeParameters = getOppositeParameters(definition);
-        final Optional<ShaderNodeVariable> oppositeParameter = oppositeParameters.stream()
+        var oppositeParameters = getOppositeParameters(definition);
+        var oppositeParameter = oppositeParameters.stream()
                 .filter(variable -> variable.getName().equals(name))
                 .findAny();
 
@@ -124,7 +125,7 @@ public abstract class AddSndParameterAction extends AbstractNodeAction<ChangeCon
             return true;
         }
 
-        final ShaderNodeVariable variable = oppositeParameter.get();
+        var variable = oppositeParameter.get();
         return StringUtils.equals(rawType, variable.getType());
     }
 
@@ -134,17 +135,17 @@ public abstract class AddSndParameterAction extends AbstractNodeAction<ChangeCon
      * @param vars the vars of the parameter.
      */
     @FxThread
-    private void addParameter(@NotNull final VarTable vars) {
+    private void addParameter(@NotNull VarTable vars) {
 
-        final TreeNode<?> node = getNode();
-        final SndParameters parameters = (SndParameters) node.getElement();
+        var node = getNode();
+        var parameters = (SndParameters) node.getElement();
 
-        final String name = vars.getString(PROP_NAME);
-        final GlslType GlslType = vars.getEnum(PROP_TYPE, GlslType.class);
+        var name = vars.getString(PROP_NAME);
+        var GlslType = vars.getEnum(PROP_TYPE, GlslType.class);
 
-        final ShaderNodeVariable variable = new ShaderNodeVariable(GlslType.getRawType(), name);
+        var variable = new ShaderNodeVariable(GlslType.getRawType(), name);
 
-        final ChangeConsumer changeConsumer = notNull(getNodeTree().getChangeConsumer());
+        var changeConsumer = notNull(getNodeTree().getChangeConsumer());
         changeConsumer.execute(new AddSndParameterOperation(parameters, variable));
     }
 }
