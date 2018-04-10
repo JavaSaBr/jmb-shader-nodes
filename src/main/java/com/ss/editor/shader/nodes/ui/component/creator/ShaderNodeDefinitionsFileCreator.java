@@ -82,15 +82,15 @@ public class ShaderNodeDefinitionsFileCreator extends GenericFileCreator {
         AVAILABLE_TYPES.add(ShaderType.Vertex.name());
         AVAILABLE_TYPES.add(ShaderType.Fragment.name());
 
-        final Renderer renderer = EditorUtil.getRenderer();
+        var renderer = EditorUtil.getRenderer();
 
-        final EnumSet<Caps> caps = renderer.getCaps();
+        var caps = renderer.getCaps();
         caps.stream().filter(cap -> cap.name().startsWith("GLSL"))
                 .map(Enum::name)
                 .sorted(StringUtils::compareIgnoreCase)
                 .forEach(AVAILABLE_GLSL::add);
 
-        final InputStream snResource = ShaderNodesProjectFileCreator.class
+        var snResource = ShaderNodesProjectFileCreator.class
                 .getResourceAsStream("/com/ss/editor/shader/nodes/template/ShaderNodeTemplate.j3sn");
 
         SN_TEMPLATE = FileUtils.read(snResource);
@@ -100,7 +100,7 @@ public class ShaderNodeDefinitionsFileCreator extends GenericFileCreator {
     @FromAnyThread
     protected @NotNull Array<PropertyDefinition> getPropertyDefinitions() {
 
-        final Array<PropertyDefinition> result = ArrayFactory.newArray(PropertyDefinition.class);
+        Array<PropertyDefinition> result = ArrayFactory.newArray(PropertyDefinition.class);
         result.add(new PropertyDefinition(EditablePropertyType.STRING,
                 PluginMessages.SND_CREATOR_DEFINITION_NAME, PROP_DEFINITION_NAME, "newShaderNode"));
         result.add(new PropertyDefinition(EditablePropertyType.STRING_FROM_LIST,
@@ -128,33 +128,33 @@ public class ShaderNodeDefinitionsFileCreator extends GenericFileCreator {
     protected void processOk() {
         super.hide();
 
-        final Path shaderNodeFile = notNull(getFileToCreate());
-        final Path folder = shaderNodeFile.getParent();
+        var shaderNodeFile = notNull(getFileToCreate());
+        var folder = shaderNodeFile.getParent();
 
-        final VarTable vars = getVars();
-        final String definitionName = vars.getString(PROP_DEFINITION_NAME);
-        final Caps language = vars.getEnum(PROP_LANGUAGE, Caps.class);
-        final ShaderType type = vars.getEnum(PROP_TYPE, ShaderType.class);
+        var vars = getVars();
+        var definitionName = vars.getString(PROP_DEFINITION_NAME);
+        var language = vars.getEnum(PROP_LANGUAGE, Caps.class);
+        var type = vars.getEnum(PROP_TYPE, ShaderType.class);
 
-        final Path shaderFile = folder.resolve(definitionName + "." + type.getExtension());
-        final Path assetShaderFile = notNull(getAssetFile(shaderFile));
-        final String assetShaderPath = toAssetPath(assetShaderFile);
+        var shaderFile = folder.resolve(definitionName + "." + type.getExtension());
+        var assetShaderFile = notNull(getAssetFile(shaderFile));
+        var assetShaderPath = toAssetPath(assetShaderFile);
 
-        String result = SN_TEMPLATE.replace("${name}", definitionName);
+        var result = SN_TEMPLATE.replace("${name}", definitionName);
         result = result.replace("${type}", type.name());
         result = result.replace("${glsl}", language.name());
         result = result.replace("${shader_path}", assetShaderPath);
 
-        try (final PrintWriter out = new PrintWriter(Files.newOutputStream(shaderNodeFile, WRITE, TRUNCATE_EXISTING, CREATE))) {
+        try (var out = new PrintWriter(Files.newOutputStream(shaderNodeFile, WRITE, TRUNCATE_EXISTING, CREATE))) {
             out.print(result);
-        } catch (final IOException e) {
+        } catch (IOException e) {
             EditorUtil.handleException(LOGGER, this, e);
             return;
         }
 
-        try (final PrintWriter out = new PrintWriter(Files.newOutputStream(shaderFile, WRITE, TRUNCATE_EXISTING, CREATE))) {
+        try (var out = new PrintWriter(Files.newOutputStream(shaderFile, WRITE, TRUNCATE_EXISTING, CREATE))) {
             out.print("void main() {\n\n}");
-        } catch (final IOException e) {
+        } catch (IOException e) {
             EditorUtil.handleException(LOGGER, this, e);
         }
     }

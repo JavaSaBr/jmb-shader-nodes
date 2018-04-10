@@ -17,7 +17,7 @@ public class SndDocumentation {
     @NotNull
     private final ShaderNodeDefinition definition;
 
-    public SndDocumentation(@NotNull final ShaderNodeDefinition definition) {
+    public SndDocumentation(@NotNull ShaderNodeDefinition definition) {
         this.definition = definition;
     }
 
@@ -45,7 +45,7 @@ public class SndDocumentation {
      *
      * @param documentation the documentation of this definition.
      */
-    public void setDocumentation(@NotNull final String documentation) {
+    public void setDocumentation(@NotNull String documentation) {
         this.definition.setDocumentation(documentation);
     }
 
@@ -53,14 +53,14 @@ public class SndDocumentation {
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final SndDocumentation that = (SndDocumentation) o;
+        var that = (SndDocumentation) o;
         if (!definition.equals(that.definition)) return false;
         return getDocumentation().equals(that.getDocumentation());
     }
 
     @Override
     public int hashCode() {
-        int result = definition.hashCode();
+        var result = definition.hashCode();
         result = 31 * result + getDocumentation().hashCode();
         return result;
     }

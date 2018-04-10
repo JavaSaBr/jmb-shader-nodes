@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PreviewMaterialSettings extends RootMaterialSettings {
 
-    public PreviewMaterialSettings(@NotNull final Material material) {
+    public PreviewMaterialSettings(@NotNull Material material) {
         super(material);
     }
 }

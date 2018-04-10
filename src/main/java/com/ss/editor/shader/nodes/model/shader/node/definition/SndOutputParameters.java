@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class SndOutputParameters extends SndParameters {
 
-    public SndOutputParameters(@NotNull final ShaderNodeDefinition definition) {
+    public SndOutputParameters(@NotNull ShaderNodeDefinition definition) {
         super(definition);
     }
 

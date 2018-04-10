@@ -197,36 +197,35 @@ public class ShaderNodesFileEditor extends
 
     @Override
     @FxThread
-    protected void doOpenFile(@NotNull final Path file) throws IOException {
+    protected void doOpenFile(@NotNull Path file) throws IOException {
         super.doOpenFile(file);
 
-        final AssetManager assetManager = EditorUtil.getAssetManager();
-        final BinaryImporter importer = BinaryImporter.getInstance();
+        var assetManager = EditorUtil.getAssetManager();
+        var importer = BinaryImporter.getInstance();
         importer.setAssetManager(assetManager);
 
-        try (final InputStream in = Files.newInputStream(file)) {
+        try (var in = Files.newInputStream(file)) {
             setProject((ShaderNodesProject) importer.load(in));
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
 
-        final ShaderNodesProject project = getProject();
-        final String materialDefContent = notNull(project.getMaterialDefContent());
+        var project = getProject();
+        var materialDefContent = notNull(project.getMaterialDefContent());
 
-        final ByteArrayInputStream materialDefStream =
-                new ByteArrayInputStream(materialDefContent.getBytes("UTF-8"));
+        var materialDefStream = new ByteArrayInputStream(materialDefContent.getBytes("UTF-8"));
 
-        final AssetKey<MaterialDef> tempKey = new AssetKey<>("tempMatDef");
-        final StreamAssetInfo assetInfo = new StreamAssetInfo(assetManager, tempKey, materialDefStream);
+        var tempKey = new AssetKey<MaterialDef>("tempMatDef");
+        var assetInfo = new StreamAssetInfo(assetManager, tempKey, materialDefStream);
 
-        final J3MLoader loader = new J3MLoader();
-        final MaterialDef materialDef = (MaterialDef) loader.load(assetInfo);
+        var loader = new J3MLoader();
+        var materialDef = (MaterialDef) loader.load(assetInfo);
 
         materialDef.getTechniqueDefsNames().forEach(techniqueDefName -> {
             materialDef.getTechniqueDefs(techniqueDefName).forEach(techniqueDef -> {
 
-                final ShaderGenerationInfo info = techniqueDef.getShaderGenerationInfo();
-                final List<ShaderNodeVariable> fragmentGlobals = info.getFragmentGlobals();
+                var info = techniqueDef.getShaderGenerationInfo();
+                var fragmentGlobals = info.getFragmentGlobals();
 
                 if (fragmentGlobals.isEmpty()) {
                     fragmentGlobals.add(new ShaderNodeVariable("vec4", GlobalShaderNodeElement.NAMESPACE, "color", null));
@@ -240,7 +239,7 @@ public class ShaderNodesFileEditor extends
 
         setMaterialDef(materialDef);
 
-        final ShaderNodesEditor3DPart editor3DPart = getEditor3DPart();
+        var editor3DPart = getEditor3DPart();
         editor3DPart.updateMaterial(EditorUtil.getDefaultMaterial());
         editor3DPart.changeMode(BaseMaterialEditor3DPart.ModelType.BOX);
     }
@@ -252,14 +251,14 @@ public class ShaderNodesFileEditor extends
 
         EXECUTOR_MANAGER.addFxTask(this::buildMaterial);
 
-        final ShaderNodesEditorState editorState = getEditorState();
+        var editorState = getEditorState();
         if (editorState == null) {
             return;
         }
 
         editorState.cleanUp(getMaterialDef());
 
-        final List<TechniqueDefState> defStates = editorState.getTechniqueDefStates();
+        var defStates = editorState.getTechniqueDefStates();
 
         if (defStates.isEmpty()) {
             defStates.addAll(getProject().getTechniqueDefStates());
@@ -268,24 +267,24 @@ public class ShaderNodesFileEditor extends
 
     @Override
     @BackgroundThread
-    protected void doSave(@NotNull final Path toStore) throws IOException {
+    protected void doSave(@NotNull Path toStore) throws IOException {
         super.doSave(toStore);
 
-        final BinaryExporter exporter = BinaryExporter.getInstance();
+        var exporter = BinaryExporter.getInstance();
 
-        final MaterialDef materialDef = getMaterialDef();
-        final Material currentMaterial = getCurrentMaterial();
-        final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        var materialDef = getMaterialDef();
+        var currentMaterial = getCurrentMaterial();
+        var bout = new ByteArrayOutputStream();
 
-        final ShaderNodesEditorState editorState = notNull(getEditorState());
-        final List<TechniqueDefState> defStates = editorState.getTechniqueDefStates();
+        var editorState = notNull(getEditorState());
+        var defStates = editorState.getTechniqueDefStates();
 
-        final J3mdExporter materialExporter = new J3mdExporter();
+        var materialExporter = new J3mdExporter();
         materialExporter.save(materialDef, bout);
 
-        final String materialDefContent = new String(bout.toByteArray(), "UTF-8");
+        var materialDefContent = new String(bout.toByteArray(), "UTF-8");
 
-        final ShaderNodesProject project = getProject();
+        var project = getProject();
         project.setMaterialDefContent(materialDefContent);
         project.updateTechniqueDefStates(defStates);
 
@@ -293,7 +292,7 @@ public class ShaderNodesFileEditor extends
             project.setMatParams(currentMaterial.getParams());
         }
 
-        try (final OutputStream out = Files.newOutputStream(toStore)) {
+        try (var out = Files.newOutputStream(toStore)) {
             exporter.save(project, out);
         }
     }

@@ -3,6 +3,7 @@ package com.ss.editor.shader.nodes.model.shader.node.definition;
 import com.jme3.shader.ShaderNodeDefinition;
 import com.ss.editor.annotation.FromAnyThread;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The class to present shader sources of a shader node definition.
@@ -29,8 +30,11 @@ public class SndShaderSource {
     @NotNull
     private final String shaderPath;
 
-    public SndShaderSource(@NotNull final ShaderNodeDefinition definition, @NotNull final String language,
-                           @NotNull final String shaderPath) {
+    public SndShaderSource(
+        @NotNull ShaderNodeDefinition definition,
+        @NotNull String language,
+        @NotNull String shaderPath
+    ) {
         this.definition = definition;
         this.language = language;
         this.shaderPath = shaderPath;
@@ -67,10 +71,10 @@ public class SndShaderSource {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final SndShaderSource that = (SndShaderSource) o;
+        var that = (SndShaderSource) o;
         if (!definition.equals(that.definition)) return false;
         if (!language.equals(that.language)) return false;
         return shaderPath.equals(that.shaderPath);
@@ -78,7 +82,7 @@ public class SndShaderSource {
 
     @Override
     public int hashCode() {
-        int result = definition.hashCode();
+        var result = definition.hashCode();
         result = 31 * result + language.hashCode();
         result = 31 * result + shaderPath.hashCode();
         return result;

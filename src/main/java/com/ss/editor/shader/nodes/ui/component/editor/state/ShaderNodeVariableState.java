@@ -46,8 +46,12 @@ public class ShaderNodeVariableState extends AbstractEditorState {
         this.location = Vector2f.ZERO;
     }
 
-    public ShaderNodeVariableState(@NotNull final String name, @NotNull final String nameSpace,
-                                   @NotNull final Vector2f location, final int width) {
+    public ShaderNodeVariableState(
+        @NotNull String name,
+        @NotNull String nameSpace,
+        @NotNull Vector2f location,
+        int width
+    ) {
         this.name = name;
         this.nameSpace = nameSpace;
         this.location = location;
@@ -71,7 +75,7 @@ public class ShaderNodeVariableState extends AbstractEditorState {
      * @param name the name of a variable.
      */
     @FxThread
-    public void setName(@NotNull final String name) {
+    public void setName(@NotNull String name) {
         this.name = name;
     }
 
@@ -91,7 +95,7 @@ public class ShaderNodeVariableState extends AbstractEditorState {
      * @param nameSpace the namespace of a variable.
      */
     @FxThread
-    public void setNameSpace(@NotNull final String nameSpace) {
+    public void setNameSpace(@NotNull String nameSpace) {
         this.nameSpace = nameSpace;
     }
 
@@ -111,7 +115,7 @@ public class ShaderNodeVariableState extends AbstractEditorState {
      * @param location the location of a variable.
      */
     @FxThread
-    public void setLocation(@NotNull final Vector2f location) {
+    public void setLocation(@NotNull Vector2f location) {
         this.location = location;
     }
 
@@ -131,7 +135,7 @@ public class ShaderNodeVariableState extends AbstractEditorState {
      * @param width the width of a variable.
      */
     @FxThread
-    public void setWidth(final int width) {
+    public void setWidth(int width) {
         this.width = width;
     }
 

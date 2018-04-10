@@ -49,7 +49,7 @@ public class ShaderNodesEditorState extends EditorMaterialEditorState {
 
     @Override
     @FxThread
-    public void setChangeHandler(@NotNull final Runnable changeHandler) {
+    public void setChangeHandler(@NotNull Runnable changeHandler) {
         super.setChangeHandler(changeHandler);
         techniqueDefStates.forEach(state -> state.setChangeHandler(changeHandler));
     }
@@ -61,9 +61,9 @@ public class ShaderNodesEditorState extends EditorMaterialEditorState {
      * @return the state.
      */
     @FxThread
-    public @NotNull TechniqueDefState getState(@NotNull final String techniqueDefName) {
+    public @NotNull TechniqueDefState getState(@NotNull String techniqueDefName) {
 
-        final Optional<TechniqueDefState> result = techniqueDefStates.stream()
+        var result = techniqueDefStates.stream()
                 .filter(state -> state.getName().equals(techniqueDefName))
                 .findAny();
 
@@ -71,7 +71,7 @@ public class ShaderNodesEditorState extends EditorMaterialEditorState {
             return result.get();
         }
 
-        final TechniqueDefState newState = new TechniqueDefState(techniqueDefName);
+        var newState = new TechniqueDefState(techniqueDefName);
         newState.setChangeHandler(notNull(getChangeHandler()));
 
         techniqueDefStates.add(newState);
@@ -86,14 +86,14 @@ public class ShaderNodesEditorState extends EditorMaterialEditorState {
      * @param materialDef the material definition.
      */
     @FxThread
-    public void cleanUp(@NotNull final MaterialDef materialDef) {
+    public void cleanUp(@NotNull MaterialDef materialDef) {
         LOGGER.debug(this, editorState -> "The state before cleanup: " + editorState);
 
-        final Collection<String> defsNames = materialDef.getTechniqueDefsNames();
+        var defsNames = materialDef.getTechniqueDefsNames();
 
-        for (Iterator<TechniqueDefState> iterator = techniqueDefStates.iterator(); iterator.hasNext(); ) {
+        for (var iterator = techniqueDefStates.iterator(); iterator.hasNext(); ) {
 
-            final TechniqueDefState state = iterator.next();
+            var state = iterator.next();
 
             if (!defsNames.contains(state.getName())) {
                 iterator.remove();
@@ -101,8 +101,8 @@ public class ShaderNodesEditorState extends EditorMaterialEditorState {
                 continue;
             }
 
-            final List<TechniqueDef> techniqueDefs = materialDef.getTechniqueDefs(state.getName());
-            final TechniqueDef techniqueDef = techniqueDefs.get(0);
+            var techniqueDefs = materialDef.getTechniqueDefs(state.getName());
+            var techniqueDef = techniqueDefs.get(0);
 
             state.cleanUp(materialDef, techniqueDef);
         }
@@ -113,9 +113,9 @@ public class ShaderNodesEditorState extends EditorMaterialEditorState {
     @Override
     public String toString() {
 
-        final StringBuilder builder = new StringBuilder("ShaderNodesEditorState:\n");
+        var builder = new StringBuilder("ShaderNodesEditorState:\n");
 
-        for (final TechniqueDefState defState : techniqueDefStates) {
+        for (var defState : techniqueDefStates) {
             builder.append("\t").append(defState).append('\n');
         }
 

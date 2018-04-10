@@ -52,7 +52,8 @@ public class ShaderNodesProjectFileCreator extends GenericFileCreator {
     private static final String MD_TEMPLATE;
 
     static {
-        final InputStream mdResource = ShaderNodesProjectFileCreator.class
+
+        var mdResource = ShaderNodesProjectFileCreator.class
                 .getResourceAsStream("/com/ss/editor/shader/nodes/template/MaterialDefinition.j3md");
 
         MD_TEMPLATE = FileUtils.read(mdResource);
@@ -62,7 +63,7 @@ public class ShaderNodesProjectFileCreator extends GenericFileCreator {
     @FromAnyThread
     protected @NotNull Array<PropertyDefinition> getPropertyDefinitions() {
 
-        final Array<PropertyDefinition> definitions = ArrayFactory.newArray(PropertyDefinition.class);
+        Array<PropertyDefinition> definitions = ArrayFactory.newArray(PropertyDefinition.class);
         definitions.add(new PropertyDefinition(ENUM, Messages.MODEL_PROPERTY_LIGHT_MODE, PROP_TECHNIQUE_LIGHT_MODE,
                 TechniqueDef.LightMode.SinglePassAndImageBased));
 
@@ -83,18 +84,18 @@ public class ShaderNodesProjectFileCreator extends GenericFileCreator {
 
     @Override
     @BackgroundThread
-    protected void writeData(@NotNull final VarTable vars, @NotNull final Path resultFile) throws IOException {
+    protected void writeData(@NotNull VarTable vars, @NotNull Path resultFile) throws IOException {
         super.writeData(vars, resultFile);
 
-        final TechniqueDef.LightMode lightMode = vars.getEnum(PROP_TECHNIQUE_LIGHT_MODE, TechniqueDef.LightMode.class);
-        final String updated = MD_TEMPLATE.replace("%light_mode%", lightMode.name());
+        var lightMode = vars.getEnum(PROP_TECHNIQUE_LIGHT_MODE, TechniqueDef.LightMode.class);
+        var updated = MD_TEMPLATE.replace("%light_mode%", lightMode.name());
 
-        final ShaderNodesProject project = new ShaderNodesProject();
+        var project = new ShaderNodesProject();
         project.setMaterialDefContent(updated);
 
-        final BinaryExporter exporter = BinaryExporter.getInstance();
+        var exporter = BinaryExporter.getInstance();
 
-        try (final OutputStream out = Files.newOutputStream(resultFile)) {
+        try (var out = Files.newOutputStream(resultFile)) {
             exporter.save(project, out);
         }
     }

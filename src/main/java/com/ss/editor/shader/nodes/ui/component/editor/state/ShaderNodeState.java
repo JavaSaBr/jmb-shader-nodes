@@ -39,7 +39,7 @@ public class ShaderNodeState extends AbstractEditorState {
         this.location = Vector2f.ZERO;
     }
 
-    public ShaderNodeState(@NotNull final String name, @NotNull final Vector2f location, final int width) {
+    public ShaderNodeState(@NotNull String name, @NotNull Vector2f location, int width) {
         this.name = name;
         this.location = location;
         this.width = width;
@@ -61,7 +61,7 @@ public class ShaderNodeState extends AbstractEditorState {
      * @param name the name of a shader nodes.
      */
     @FxThread
-    public void setName(@NotNull final String name) {
+    public void setName(@NotNull String name) {
         this.name = name;
     }
 
@@ -81,7 +81,7 @@ public class ShaderNodeState extends AbstractEditorState {
      * @param location the location of a shader nodes.
      */
     @FxThread
-    public void setLocation(@NotNull final Vector2f location) {
+    public void setLocation(@NotNull Vector2f location) {
         this.location = location;
     }
 
@@ -101,7 +101,7 @@ public class ShaderNodeState extends AbstractEditorState {
      * @param width the width of a shader nodes.
      */
     @FxThread
-    public void setWidth(final int width) {
+    public void setWidth(int width) {
         this.width = width;
     }
 

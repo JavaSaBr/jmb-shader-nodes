@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ShaderNodesEditor3DPart extends BaseMaterialEditor3DPart<ShaderNodesFileEditor> {
 
-    public ShaderNodesEditor3DPart(@NotNull final ShaderNodesFileEditor fileEditor) {
+    public ShaderNodesEditor3DPart(@NotNull ShaderNodesFileEditor fileEditor) {
         super(fileEditor);
     }
 
@@ -25,7 +25,7 @@ public class ShaderNodesEditor3DPart extends BaseMaterialEditor3DPart<ShaderNode
      * @param name     the name.
      */
     @FromAnyThread
-    public void selectTechnique(@NotNull final Material material, @NotNull final String name) {
+    public void selectTechnique(@NotNull Material material, @NotNull String name) {
         EXECUTOR_MANAGER.addJmeTask(() -> selectTechniqueImpl(material, name));
     }
 
@@ -36,13 +36,13 @@ public class ShaderNodesEditor3DPart extends BaseMaterialEditor3DPart<ShaderNode
      * @param name     the name.
      */
     @JmeThread
-    private void selectTechniqueImpl(@NotNull final Material material, @NotNull final String name) {
+    private void selectTechniqueImpl(@NotNull Material material, @NotNull String name) {
         material.selectTechnique(name, EditorUtil.getRenderManager());
         updateMaterialImpl(material);
     }
 
     @Override
-    protected void handleMaterialException(@NotNull final RuntimeException exception) {
+    protected void handleMaterialException(@NotNull RuntimeException exception) {
         LOGGER.warning(this, exception);
     }
 }

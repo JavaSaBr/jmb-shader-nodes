@@ -19,7 +19,7 @@ public class SndList {
     @NotNull
     private List<ShaderNodeDefinition> definitions;
 
-    public SndList(@NotNull final List<ShaderNodeDefinition> definitions) {
+    public SndList(@NotNull List<ShaderNodeDefinition> definitions) {
         this.definitions = definitions;
     }
 

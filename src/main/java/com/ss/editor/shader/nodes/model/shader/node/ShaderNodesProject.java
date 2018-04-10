@@ -53,7 +53,7 @@ public class ShaderNodesProject implements JmeCloneable, Savable {
      * @param techniqueDefStates the states of technique definitions of this project.
      */
     @FromAnyThread
-    public void updateTechniqueDefStates(@NotNull final List<TechniqueDefState> techniqueDefStates) {
+    public void updateTechniqueDefStates(@NotNull List<TechniqueDefState> techniqueDefStates) {
         this.techniqueDefStates = new ArrayList<>(techniqueDefStates);
     }
 
@@ -73,7 +73,7 @@ public class ShaderNodesProject implements JmeCloneable, Savable {
      * @param matParams the settings list of preview material.
      */
     @FromAnyThread
-    public void setMatParams(@NotNull final Collection<MatParam> matParams) {
+    public void setMatParams(@NotNull Collection<MatParam> matParams) {
         this.matParams = new ArrayList<>(matParams);
     }
 
@@ -103,7 +103,7 @@ public class ShaderNodesProject implements JmeCloneable, Savable {
      * @param materialDefContent the content of material definition.
      */
     @FromAnyThread
-    public void setMaterialDefContent(@NotNull final String materialDefContent) {
+    public void setMaterialDefContent(@NotNull String materialDefContent) {
         this.materialDefContent = materialDefContent;
     }
 
@@ -119,17 +119,17 @@ public class ShaderNodesProject implements JmeCloneable, Savable {
 
     @Override
     @JmeThread
-    public void cloneFields(@NotNull final Cloner cloner, @NotNull final Object original) {
+    public void cloneFields(@NotNull Cloner cloner, @NotNull Object original) {
         matParams = cloner.clone(matParams);
     }
 
     @Override
     @JmeThread
-    public void write(@NotNull final JmeExporter ex) throws IOException {
+    public void write(@NotNull JmeExporter ex) throws IOException {
 
-        final byte[] techStates = EditorUtil.serialize(techniqueDefStates);
+        var techStates = EditorUtil.serialize(techniqueDefStates);
 
-        final OutputCapsule out = ex.getCapsule(this);
+        var out = ex.getCapsule(this);
         out.writeSavableArrayList(matParams, "matParams", null);
         out.write(materialDefContent, "materialDefContent", null);
         out.write(techStates, "techniqueDefStates", null);
@@ -137,18 +137,19 @@ public class ShaderNodesProject implements JmeCloneable, Savable {
 
     @Override
     @JmeThread
-    public void read(@NotNull final JmeImporter im) throws IOException {
+    public void read(@NotNull JmeImporter im) throws IOException {
 
-        final InputCapsule in = im.getCapsule(this);
+        var in = im.getCapsule(this);
+
         matParams = unsafeCast(in.readSavableArrayList("matParams", new ArrayList<>()));
         materialDefContent = in.readString("materialDefContent", null);
 
-        final byte[] techStates = in.readByteArray("techniqueDefStates", null);
+        var techStates = in.readByteArray("techniqueDefStates", null);
 
         if (techStates != null) {
             try {
                 techniqueDefStates = EditorUtil.deserialize(techStates);
-            } catch (final RuntimeException e) {
+            } catch (RuntimeException e) {
                 // we can skip it
             }
         }

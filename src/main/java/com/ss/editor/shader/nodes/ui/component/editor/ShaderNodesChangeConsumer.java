@@ -43,7 +43,7 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
      * @param mapping    the variable mapping.
      */
     @FxThread
-    void notifyAddedMapping(@NotNull final ShaderNode shaderNode, @NotNull final VariableMapping mapping);
+    void notifyAddedMapping(@NotNull ShaderNode shaderNode, @NotNull VariableMapping mapping);
 
     /**
      * Notify about removed the variable mapping.
@@ -52,7 +52,7 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
      * @param mapping    the variable mapping.
      */
     @FxThread
-    void notifyRemovedMapping(@NotNull final ShaderNode shaderNode, @NotNull final VariableMapping mapping);
+    void notifyRemovedMapping(@NotNull ShaderNode shaderNode, @NotNull VariableMapping mapping);
 
     /**
      * Notify about replaced the variable mapping.
@@ -63,9 +63,9 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
      */
     @FxThread
     void notifyReplacedMapping(
-            @NotNull final ShaderNode shaderNode,
-            @NotNull final VariableMapping oldMapping,
-            @NotNull final VariableMapping newMapping
+        @NotNull ShaderNode shaderNode,
+        @NotNull VariableMapping oldMapping,
+        @NotNull VariableMapping newMapping
     );
 
     /**
@@ -75,7 +75,7 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
      * @param location the location.
      */
     @FxThread
-    void notifyAddedMatParameter(@NotNull final MatParam matParam, @NotNull Vector2f location);
+    void notifyAddedMatParameter(@NotNull MatParam matParam, @NotNull Vector2f location);
 
     /**
      * Notify about removed the material parameter.
@@ -83,7 +83,7 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
      * @param matParam the material parameter.
      */
     @FxThread
-    void notifyRemovedMatParameter(@NotNull final MatParam matParam);
+    void notifyRemovedMatParameter(@NotNull MatParam matParam);
 
     /**
      * Notify about added the attribute.
@@ -92,7 +92,7 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
      * @param location the location.
      */
     @FxThread
-    void notifyAddedAttribute(@NotNull final ShaderNodeVariable variable, @NotNull Vector2f location);
+    void notifyAddedAttribute(@NotNull ShaderNodeVariable variable, @NotNull Vector2f location);
 
     /**
      * Notify about removed the attribute.
@@ -100,7 +100,7 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
      * @param variable the variable of the attribute.
      */
     @FxThread
-    void notifyRemovedAttribute(@NotNull final ShaderNodeVariable variable);
+    void notifyRemovedAttribute(@NotNull ShaderNodeVariable variable);
 
     /**
      * Notify about added the world parameter.
@@ -109,7 +109,7 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
      * @param location the location.
      */
     @FxThread
-    void notifyAddedWorldParameter(@NotNull final UniformBinding binding, @NotNull Vector2f location);
+    void notifyAddedWorldParameter(@NotNull UniformBinding binding, @NotNull Vector2f location);
 
     /**
      * Notify about removed the world parameter.
@@ -117,7 +117,7 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
      * @param binding the binding.
      */
     @FxThread
-    void notifyRemovedWorldParameter(@NotNull final UniformBinding binding);
+    void notifyRemovedWorldParameter(@NotNull UniformBinding binding);
 
     /**
      * Notify about added the shader nodes.
@@ -126,7 +126,7 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
      * @param location   the location.
      */
     @FxThread
-    void notifyAddedShaderNode(@NotNull final ShaderNode shaderNode, @NotNull Vector2f location);
+    void notifyAddedShaderNode(@NotNull ShaderNode shaderNode, @NotNull Vector2f location);
 
     /**
      * Notify about removed the shader nodes.
@@ -134,7 +134,7 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
      * @param shaderNode the shader nodes.
      */
     @FxThread
-    void notifyRemovedRemovedShaderNode(@NotNull final ShaderNode shaderNode);
+    void notifyRemovedRemovedShaderNode(@NotNull ShaderNode shaderNode);
 
     /**
      * Notify about changed state of the shader nodes variable.
@@ -145,9 +145,9 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
      */
     @FxThread
     void notifyChangeState(
-            @NotNull final ShaderNodeVariable variable,
-            @NotNull final Vector2f location,
-            final double width
+        @NotNull ShaderNodeVariable variable,
+        @NotNull Vector2f location,
+        double width
     );
 
     /**
@@ -158,7 +158,7 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
      * @param width      the width.
      */
     @FxThread
-    void notifyChangeState(@NotNull final ShaderNode shaderNode, @NotNull final Vector2f location, final double width);
+    void notifyChangeState(@NotNull ShaderNode shaderNode, @NotNull Vector2f location, double width);
 
     /**
      * Notify about changed state of the global nodes.
@@ -168,7 +168,7 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
      * @param width    the width.
      */
     @FxThread
-    void notifyChangeGlobalNodeState(final boolean input, @NotNull final Vector2f location, final double width);
+    void notifyChangeGlobalNodeState(boolean input, @NotNull Vector2f location, double width);
 
     /**
      * Get saved location of the shader nodes.
@@ -177,7 +177,7 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
      * @return the location or null.
      */
     @FxThread
-    @Nullable Vector2f getLocation(@NotNull final ShaderNode shaderNode);
+    @Nullable Vector2f getLocation(@NotNull ShaderNode shaderNode);
 
     /**
      * Get saved location of the shader nodes variable.
@@ -186,7 +186,7 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
      * @return the location or null.
      */
     @FxThread
-    @Nullable Vector2f getLocation(@NotNull final ShaderNodeVariable variable);
+    @Nullable Vector2f getLocation(@NotNull ShaderNodeVariable variable);
 
     /**
      * Get saved location of the global nodes.
@@ -195,7 +195,7 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
      * @return the location or null.
      */
     @FxThread
-    @Nullable Vector2f getGlobalNodeLocation(final boolean input);
+    @Nullable Vector2f getGlobalNodeLocation(boolean input);
 
     /**
      * Get saved width of the shader nodes.
@@ -204,7 +204,7 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
      * @return the width or 0.
      */
     @FxThread
-    double getWidth(@NotNull final ShaderNode shaderNode);
+    double getWidth(@NotNull ShaderNode shaderNode);
 
     /**
      * Get saved width of the shader nodes variable.
@@ -213,7 +213,7 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
      * @return the width or null.
      */
     @FxThread
-    double getWidth(@NotNull final ShaderNodeVariable variable);
+    double getWidth(@NotNull ShaderNodeVariable variable);
 
     /**
      * Get saved width of the global nodes.
@@ -222,7 +222,7 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
      * @return the width or null.
      */
     @FxThread
-    double getGlobalNodeWidth(final boolean input);
+    double getGlobalNodeWidth(boolean input);
 
     /**
      * Notify about added the technique definition.
@@ -230,7 +230,7 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
      * @param techniqueDef the technique definition.
      */
     @FxThread
-    void notifyAddedTechnique(@NotNull final TechniqueDef techniqueDef);
+    void notifyAddedTechnique(@NotNull TechniqueDef techniqueDef);
 
     /**
      * Notify about removed the technique definition.
@@ -238,5 +238,5 @@ public interface ShaderNodesChangeConsumer extends ChangeConsumer {
      * @param techniqueDef the technique definition.
      */
     @FxThread
-    void notifyRemovedTechnique(@NotNull final TechniqueDef techniqueDef);
+    void notifyRemovedTechnique(@NotNull TechniqueDef techniqueDef);
 }

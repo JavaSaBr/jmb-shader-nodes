@@ -4,6 +4,7 @@ import com.jme3.shader.ShaderNodeDefinition;
 import com.jme3.shader.ShaderNodeVariable;
 import com.ss.editor.annotation.FromAnyThread;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public abstract class SndParameters {
     @NotNull
     private final ShaderNodeDefinition definition;
 
-    protected SndParameters(@NotNull final ShaderNodeDefinition definition) {
+    protected SndParameters(@NotNull ShaderNodeDefinition definition) {
         this.definition = definition;
     }
 
@@ -43,7 +44,7 @@ public abstract class SndParameters {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final SndParameters that = (SndParameters) o;

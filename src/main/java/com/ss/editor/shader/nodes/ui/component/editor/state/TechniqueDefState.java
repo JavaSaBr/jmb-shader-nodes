@@ -78,7 +78,7 @@ public class TechniqueDefState extends AbstractEditorState {
      */
     private int inputNodeWidth;
 
-    public TechniqueDefState(@NotNull final String name) {
+    public TechniqueDefState(@NotNull String name) {
         this.name = name;
         this.shaderNodeStates = new ArrayList<>();
         this.shaderVariableStates = new ArrayList<>();
@@ -93,15 +93,15 @@ public class TechniqueDefState extends AbstractEditorState {
      * @param techniqueDef the technique definition.
      */
     @FxThread
-    public void cleanUp(@NotNull final MaterialDef materialDef, @NotNull final TechniqueDef techniqueDef) {
+    public void cleanUp(@NotNull MaterialDef materialDef, @NotNull TechniqueDef techniqueDef) {
 
-        for (final Iterator<ShaderNodeVariableState> iterator = shaderVariableStates.iterator(); iterator.hasNext(); ) {
+        for (var iterator = shaderVariableStates.iterator(); iterator.hasNext(); ) {
 
-            final ShaderNodeVariableState state = iterator.next();
+            var state = iterator.next();
 
             if (MaterialShaderNodeElement.NAMESPACE.equals(state.getNameSpace())) {
 
-                final MatParam parameter = findMatParameterByName(materialDef, state.getName());
+                var parameter = findMatParameterByName(materialDef, state.getName());
 
                 if (parameter == null) {
                     iterator.remove();
@@ -110,7 +110,7 @@ public class TechniqueDefState extends AbstractEditorState {
 
             } else if (WorldShaderNodeElement.NAMESPACE.equals(state.getNameSpace())) {
 
-                final UniformBinding binding = findWorldBindingByName(techniqueDef, state.getName());
+                var binding = findWorldBindingByName(techniqueDef, state.getName());
 
                 if (binding == null) {
                     iterator.remove();
@@ -119,7 +119,7 @@ public class TechniqueDefState extends AbstractEditorState {
 
             } else if (AttributeShaderNodeElement.NAMESPACE.equals(state.getNameSpace())) {
 
-                final ShaderNodeVariable attribute = findAttributeByName(techniqueDef, state.getName());
+                var attribute = findAttributeByName(techniqueDef, state.getName());
 
                 if (attribute == null) {
                     iterator.remove();
@@ -128,10 +128,10 @@ public class TechniqueDefState extends AbstractEditorState {
             }
         }
 
-        for (final Iterator<ShaderNodeState> iterator = shaderNodeStates.iterator(); iterator.hasNext(); ) {
+        for (var iterator = shaderNodeStates.iterator(); iterator.hasNext(); ) {
 
-            final ShaderNodeState state = iterator.next();
-            final ShaderNode shaderNode = findByName(techniqueDef, state.getName());
+            var state = iterator.next();
+            var shaderNode = findByName(techniqueDef, state.getName());
 
             if (shaderNode == null) {
                 iterator.remove();
@@ -148,18 +148,21 @@ public class TechniqueDefState extends AbstractEditorState {
      * @param width    the width.
      */
     @FxThread
-    public void notifyChange(@NotNull final ShaderNodeVariable variable, @NotNull final Vector2f location,
-                             final double width) {
+    public void notifyChange(
+        @NotNull ShaderNodeVariable variable,
+        @NotNull Vector2f location,
+        double width
+    ) {
 
         LOGGER.debug(variable, location, (var, pos) -> "Changed shader node variable: " + var + " to location " + pos);
 
-        final Optional<ShaderNodeVariableState> state = shaderVariableStates.stream()
+        var state = shaderVariableStates.stream()
                 .filter(variableState -> variableState.getNameSpace().equals(variable.getNameSpace()))
                 .filter(variableState -> variableState.getName().equals(variable.getName()))
                 .findAny();
 
         if (state.isPresent()) {
-            final ShaderNodeVariableState variableState = state.get();
+            var variableState = state.get();
             variableState.setLocation(location);
             variableState.setWidth((int) width);
         } else {
@@ -180,17 +183,20 @@ public class TechniqueDefState extends AbstractEditorState {
      * @param width      the width.
      */
     @FxThread
-    public void notifyChange(@NotNull final ShaderNode shaderNode, @NotNull final Vector2f location,
-                             final double width) {
+    public void notifyChange(
+        @NotNull ShaderNode shaderNode,
+        @NotNull Vector2f location,
+        double width
+    ) {
 
         LOGGER.debug(shaderNode, location, (node, pos) -> "Changed shader node: " + node + " to location " + pos);
 
-        final Optional<ShaderNodeState> state = shaderNodeStates.stream()
+        var state = shaderNodeStates.stream()
                 .filter(variableState -> variableState.getName().equals(shaderNode.getName()))
                 .findAny();
 
         if (state.isPresent()) {
-            final ShaderNodeState nodeState = state.get();
+            var nodeState = state.get();
             nodeState.setLocation(location);
             nodeState.setWidth((int) width);
         } else {
@@ -209,7 +215,7 @@ public class TechniqueDefState extends AbstractEditorState {
      * @return the state or null.
      */
     @FxThread
-    public @Nullable ShaderNodeState getState(@NotNull final ShaderNode shaderNode) {
+    public @Nullable ShaderNodeState getState(@NotNull ShaderNode shaderNode) {
         return shaderNodeStates.stream()
                 .filter(varState -> varState.getName().equals(shaderNode.getName()))
                 .findAny().orElse(null);
@@ -222,7 +228,7 @@ public class TechniqueDefState extends AbstractEditorState {
      * @return the state or null.
      */
     @FxThread
-    public @Nullable ShaderNodeVariableState getState(@Nullable final ShaderNodeVariable variable) {
+    public @Nullable ShaderNodeVariableState getState(@Nullable ShaderNodeVariable variable) {
         if (variable == null) return null;
         return shaderVariableStates.stream()
                 .filter(variableState -> variableState.getNameSpace().equals(variable.getNameSpace()))
@@ -266,8 +272,8 @@ public class TechniqueDefState extends AbstractEditorState {
      * @param inputNodeLocation the location of input nodes.
      */
     @FxThread
-    public void setInputNodeLocation(@NotNull final Vector2f inputNodeLocation) {
-        final Vector2f prev = getInputNodeLocation();
+    public void setInputNodeLocation(@NotNull Vector2f inputNodeLocation) {
+        var prev = getInputNodeLocation();
         this.inputNodeLocation = inputNodeLocation;
         if (!prev.equals(inputNodeLocation)) notifyChange();
     }
@@ -278,8 +284,8 @@ public class TechniqueDefState extends AbstractEditorState {
      * @param outputNodeLocation the location of output nodes.
      */
     @FxThread
-    public void setOutputNodeLocation(@NotNull final Vector2f outputNodeLocation) {
-        final Vector2f prev = getOutputNodeLocation();
+    public void setOutputNodeLocation(@NotNull Vector2f outputNodeLocation) {
+        var prev = getOutputNodeLocation();
         this.outputNodeLocation = outputNodeLocation;
         if (!prev.equals(outputNodeLocation)) notifyChange();
     }
@@ -310,8 +316,8 @@ public class TechniqueDefState extends AbstractEditorState {
      * @param outputNodeWidth the width of output nodes.
      */
     @FxThread
-    public void setOutputNodeWidth(final int outputNodeWidth) {
-        final int prev = getOutputNodeWidth();
+    public void setOutputNodeWidth(int outputNodeWidth) {
+        var prev = getOutputNodeWidth();
         this.outputNodeWidth = outputNodeWidth;
         if (prev != outputNodeWidth) notifyChange();
     }
@@ -322,8 +328,8 @@ public class TechniqueDefState extends AbstractEditorState {
      * @param inputNodeWidth the width of input nodes.
      */
     @FxThread
-    public void setInputNodeWidth(final int inputNodeWidth) {
-        final int prev = getInputNodeWidth();
+    public void setInputNodeWidth(int inputNodeWidth) {
+        var prev = getInputNodeWidth();
         this.inputNodeWidth = inputNodeWidth;
         if (prev != inputNodeWidth) notifyChange();
     }
@@ -331,13 +337,13 @@ public class TechniqueDefState extends AbstractEditorState {
     @Override
     public String toString() {
 
-        final StringBuilder builder = new StringBuilder("TechniqueDefState");
+        var builder = new StringBuilder("TechniqueDefState");
         builder.append("(name:").append(name).append(")");
 
         if (!shaderNodeStates.isEmpty()) {
             builder.append("\n\t\tShader Nodes:\n");
 
-            for (final ShaderNodeState state : shaderNodeStates) {
+            for (var state : shaderNodeStates) {
                 builder.append("\t\t\t").append(state).append("\n");
             }
 
@@ -347,7 +353,7 @@ public class TechniqueDefState extends AbstractEditorState {
         if (!shaderVariableStates.isEmpty()) {
             builder.append("\n\t\tShader Variables:\n");
 
-            for (final ShaderNodeVariableState state : shaderVariableStates) {
+            for (var state : shaderVariableStates) {
                 builder.append("\t\t\t").append(state).append("\n");
             }
 

@@ -3,6 +3,7 @@ package com.ss.editor.shader.nodes.model.shader.node.definition;
 import com.jme3.shader.ShaderNodeDefinition;
 import com.ss.editor.annotation.FromAnyThread;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +23,7 @@ public class SndShaderSources {
     @NotNull
     private final ShaderNodeDefinition definition;
 
-    public SndShaderSources(@NotNull final ShaderNodeDefinition definition) {
+    public SndShaderSources(@NotNull ShaderNodeDefinition definition) {
         this.definition = definition;
     }
 
@@ -34,12 +35,12 @@ public class SndShaderSources {
     @FromAnyThread
     public @NotNull Map<String, String> getShadeSourceMap() {
 
-        final List<String> shadersPath = definition.getShadersPath();
-        final List<String> shadersLanguage = definition.getShadersLanguage();
+        var shadersPath = definition.getShadersPath();
+        var shadersLanguage = definition.getShadersLanguage();
 
-        final Map<String, String> result = new HashMap<>();
+        var result = new HashMap<String, String>();
 
-        for (int i = 0; i < shadersPath.size(); i++) {
+        for (var i = 0; i < shadersPath.size(); i++) {
             result.put(shadersPath.get(i), shadersLanguage.get(i));
         }
 
@@ -54,12 +55,12 @@ public class SndShaderSources {
     @FromAnyThread
     public @NotNull List<SndShaderSource> getShadeSources() {
 
-        final List<String> shadersPath = definition.getShadersPath();
-        final List<String> shadersLanguage = definition.getShadersLanguage();
+        var shadersPath = definition.getShadersPath();
+        var shadersLanguage = definition.getShadersLanguage();
 
-        final List<SndShaderSource> result = new ArrayList<>();
+        var result = new ArrayList<SndShaderSource>();
 
-        for (int i = 0; i < shadersPath.size(); i++) {
+        for (var i = 0; i < shadersPath.size(); i++) {
             result.add(new SndShaderSource(definition, shadersPath.get(i), shadersLanguage.get(i)));
         }
 
@@ -72,10 +73,10 @@ public class SndShaderSources {
      * @param shaderSource the new shader source.
      */
     @FromAnyThread
-    public void add(@NotNull final SndShaderSource shaderSource) {
+    public void add(@NotNull SndShaderSource shaderSource) {
 
-        final List<String> shadersPath = definition.getShadersPath();
-        final List<String> shadersLanguage = definition.getShadersLanguage();
+        var shadersPath = definition.getShadersPath();
+        var shadersLanguage = definition.getShadersLanguage();
 
         shadersPath.add(shaderSource.getShaderPath());
         shadersLanguage.add(shaderSource.getLanguage());
@@ -88,10 +89,10 @@ public class SndShaderSources {
      * @param shaderSource the new shader source.
      */
     @FromAnyThread
-    public void add(final int index, @NotNull final SndShaderSource shaderSource) {
+    public void add(int index, @NotNull SndShaderSource shaderSource) {
 
-        final List<String> shadersPath = definition.getShadersPath();
-        final List<String> shadersLanguage = definition.getShadersLanguage();
+        var shadersPath = definition.getShadersPath();
+        var shadersLanguage = definition.getShadersLanguage();
 
         shadersPath.add(index, shaderSource.getShaderPath());
         shadersLanguage.add(index, shaderSource.getLanguage());
@@ -103,12 +104,12 @@ public class SndShaderSources {
      * @param shaderSource the shader source.
      */
     @FromAnyThread
-    public void remove(@NotNull final SndShaderSource shaderSource) {
+    public void remove(@NotNull SndShaderSource shaderSource) {
 
-        final List<String> shadersPath = definition.getShadersPath();
-        final List<String> shadersLanguage = definition.getShadersLanguage();
+        var shadersPath = definition.getShadersPath();
+        var shadersLanguage = definition.getShadersLanguage();
 
-        final int index = indexOf(shaderSource);
+        var index = indexOf(shaderSource);
 
         if (index == -1) {
             throw new IllegalArgumentException("not found the shader source " + shaderSource);
@@ -125,15 +126,15 @@ public class SndShaderSources {
      * @return the position or -1.
      */
     @FromAnyThread
-    public int indexOf(@NotNull final SndShaderSource shaderSource) {
+    public int indexOf(@NotNull SndShaderSource shaderSource) {
 
-        final List<String> shadersPath = definition.getShadersPath();
-        final List<String> shadersLanguage = definition.getShadersLanguage();
+        var shadersPath = definition.getShadersPath();
+        var shadersLanguage = definition.getShadersLanguage();
 
-        for (int i = 0; i < shadersPath.size(); i++) {
+        for (var i = 0; i < shadersPath.size(); i++) {
 
-            final String path = shadersPath.get(i);
-            final String language = shadersLanguage.get(i);
+            var path = shadersPath.get(i);
+            var language = shadersLanguage.get(i);
 
             if (path.equals(shaderSource.getShaderPath()) && language.equals(shaderSource.getLanguage())) {
                 return i;
@@ -154,10 +155,10 @@ public class SndShaderSources {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final SndShaderSources that = (SndShaderSources) o;
+        var that = (SndShaderSources) o;
         return definition.equals(that.definition);
     }
 
