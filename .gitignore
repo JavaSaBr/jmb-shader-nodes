@@ -5,3 +5,8 @@
 /out/
 *.iml
 *.so
+/bin/
+/.settings/
+.project
+.classpath
+.dll
